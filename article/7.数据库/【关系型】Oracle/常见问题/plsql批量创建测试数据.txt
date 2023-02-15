@@ -1,0 +1,17 @@
+create table demo(
+       did varchar2(16) primary key,
+       dtime varchar2(16)
+);
+create index dtime_index on demo(dtime);
+
+declare dt date;
+begin 
+  dt := sysdate;
+  dt := next_day(dt,'ÐÇÆÚÒ»');
+  for i in  1..10000000 loop
+      insert into demo values(i,to_char(dt,'yyyymmdd'));
+      if mod(i,1000) = 0 then
+         commit;
+     end if;
+  end loop;
+end;

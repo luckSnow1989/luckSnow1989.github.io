@@ -1,0 +1,74 @@
+一、PL/SQL编程
+	1.主要的应用
+
+		函数(自定义函数)
+
+		存储过程
+
+		触发器
+		
+		游标
+
+
+PL/SQL 基本语法   类似于B语言
+
+if(){}
+
+if  then   
+
+end if
+
+
+定义常量   
+
+         常量名  constant 类型 := 值
+
+定义变量
+         变量名  类型
+		 
+		 
+		 
+		 
+		 
+函数（自定义函数）：
+
+
+
+
+使用JDBC调用存储过程：
+
+Callable
+
+
+------------------------------------------------------
+
+触发器：trigger     
+
+
+-------------------------------------------------------
+
+日志记录： log4J
+
+
+            两个jar包：
+			
+			      commons-logging.jar    通用日志记录包
+				  log4j.jar              核心包
+				  
+				  
+Log log = LogFactory.getLog(AccountDaoImpl.class);
+
+    级别       由高到低 
+	        fatal
+	        error
+		warning
+		info
+		debug
+
+     		log.fatal
+	   	error
+
+
+				  
+			
+			    

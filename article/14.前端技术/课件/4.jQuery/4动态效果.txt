@@ -1,0 +1,42 @@
+***************************************************************************
+一、动态效果：
+	1.将隐藏的显示出来，显示的隐藏起来
+		.show() 全写：.show([改变速度][回调函数]) 
+		.hide()
+		.toggle() 现在的显隐属性取反
+
+		.slideDown() .slideUp()  slideToggle()  跟  show() 和 hide()的效果相同了，现在已经不再使用了
+	2.变化效果
+		(1).fadeOut([speed],[easing],[fn])    淡入,只针对已经是隐藏的元素才有效。
+						
+			speed:三种预定速度之一的字符串("slow","normal", or "fast")或表示动画时长的毫秒数值(如：1000)
+			easing:(Optional) 用来指定切换效果，默认是"swing"，可用参数"linear"
+			fn:在动画完成时执行的函数，每个元素执行一次。
+		
+		(2).fadeOut([speed],[easing],[fn])   淡出，用法与淡入相同
+
+		(3).fadeTo([[speed],opacity,[easing],[fn]])
+			
+			speed:三种预定速度之一的字符串("slow","normal", or "fast")或表示动画时长的毫秒数值(如：1000)
+			opacity:一个0至1之间表示透明度的数字。
+			easing:(Optional) 用来指定切换效果，默认是"swing"，可用参数"linear"
+			fn:在动画完成时执行的函数，每个元素执行一次
+
+
+		(4).animate(params,[speed],[easing],[fn])
+			同时操作样式，变化效果，回调函数。
+			params:一组包含作为动画属性和终值的样式属性和及其值的集合
+			speed:三种预定速度之一的字符串("slow","normal", or "fast")或表示动画时长的毫秒数值(如：1000)
+			easing:要使用的擦除效果的名称(需要插件支持).默认jQuery提供"linear" 和 "swing".
+			fn:在动画完成时执行的函数，每个元素执行一次。
+
+
+		$('#bt7').click(function(){		  
+			$('#img').animate(
+				{'width': 300,'left': 200,'opacity': 0.25},
+				'slow',
+				function(){};
+			); 
+		});	
+ 
+ 

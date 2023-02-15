@@ -1,0 +1,14 @@
+<Context>  
+  <Resource name="itcast" 
+			type="javax.sql.DataSource"
+			username="root" 
+			password="123" 
+			driverClassName="com.mysql.jdbc.Driver"    
+			url="jdbc:mysql://127.0.0.1/mydb1"
+			maxIdle="3"
+			maxWait="5000"
+			maxActive="5"
+			initialSize="3"/>
+</Context>  
+
+ 

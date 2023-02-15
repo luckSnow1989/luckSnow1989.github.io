@@ -1,0 +1,2 @@
+案例：
+	https://gitee.com/luckSnow/spring-boot-example/tree/master/lab_005_web_tiles2

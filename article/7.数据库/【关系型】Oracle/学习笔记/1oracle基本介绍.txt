@@ -1,0 +1,68 @@
+---------------------------------------------------------
+一、主流的关系型数据库介绍
+
+	大型收费：
+	    Oracle  （甲骨文）
+		DB2      （IBM）  
+			主要使用的服务器：
+			WebSphere（WebSphere 是 IBM 的软件平台。它包含了编写、运行和监视全天候的工业强度的随需应变
+			Web 应用程序和跨平台、跨产品解决方案所需要的整个中间件基础设施，如服务器、服务和工具）
+		
+	中型收费：
+         SQL Server （微软）	
+		 
+		 Sybase （Sybase）  几乎已经没有在使用了  PowerDesigner
+		 
+	小型免费
+	     
+		 MySQL（甲骨文）,现在比较高的版本已经开始收费了。
+		 
+	
+二、oracle介绍
+	
+    1.  Oracle的版本：
+        8i   	internet
+        9i		
+        10g   	grid （网格）	
+        10g 	r2		
+		11g 		 （目前的主流版本）
+		12c 
+		
+	从11g开始oracle开始提供oracle Database 快捷版，与标准版和企业版的功能相同，但是不能集成多个数据库，并且是完全
+	免费，并且不受到oracle的技术支持。而标准版和企业版为正式版，可以免费使用和下载，在用作商用开发的时候，需要向
+	oracle购买授权码，获得授权后你当然第一时间获得补丁信息了，还有使用过程中如果有问题oracle也会协助处理。否则的话
+	属于非法使用
+		
+		
+	 
+全局数据库名  ORCL  SID ORCL	
+
+
+三、打开Oracle的方式：
+	开启服务：只需要启动service 和 listener，全局数据库名 默认是  ORCL
+	1.连接本地
+	
+		A.DOS  ，使用oracle官方的sql plus
+	
+		B.第三方客户端工具：最常用的 PLSQL Developer，只提供了32位，64位系统需要安装插件
+		
+	2.连别人	
+		需要经过配置	Net Configuration Assistent
+四、Oracle和MySQL用户使用的区别
+
+	MySQL  一个用户    操作多个数据库
+
+	Oracle  多个用户可以操作同一个数据库
+
+	默认： oracle提供了两个管理员用户   system   connect as  normal
+										sys      connect as  SYSDBA
+									  
+										可以把其他用户解锁  
+	 
+		 
+		 
+    	
+		 
+		 
+		 
+		 

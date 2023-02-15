@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<script type="text/javascript">
+			/**
+			 * extend 继承
+			 */
+
+			/**
+			 * 1.类工厂
+			 * 		当该函数有一个参数的时候，创建类
+			 * 		当该函数有两个参数的时候，第一个参数为创建类的基类，第二个是给基类添加的属性
+			 */
+			function extend(Obj, prop) {
+				/**
+				 * 任意类为F
+				 */
+				function F() {
+					alert("创建了一个对象");
+				}
+
+				if (typeof Obj == "object") {//Obj是json对象
+					/**
+					 *动态添加属性 
+					 */
+					for (var name in Obj) {//Obj是函数
+						var value = Obj[name];
+						F.prototype[name] = value;
+					}
+				} else {
+					F.prototype = Obj.prototype;
+					/**
+					 *动态添加属性 
+					 */
+					for (var name in prop) {
+						var value = prop[name];
+						F.prototype[name] = value;
+					}
+				}
+
+				return F;
+			}
+
+			/**
+			 * 2.一个json对象
+			 */
+			var json = {
+				id: 1,
+				name: '张三',
+				getAge: function() {
+					var year = new Date().getFullYear();
+					return year - 1989;
+				}
+			};
+
+			/**
+			 * 3.使用工厂创建一个类
+			 */
+			var Person = extend(json);
+			
+			//supPerson继承类Person的所有属性，并增加属性
+			var supPerson = extend(Person,{sex:'男'});
+			
+			/**
+			 * 4.使用这个类创建一个对象
+			 */
+			var sp = new supPerson();
+
+			alert(sp.id);
+			alert(sp.name);
+			alert(sp.sex);
+			alert(sp.getAge());
+		</script>
+	</body>
+
+</html>

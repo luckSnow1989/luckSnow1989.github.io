@@ -1,0 +1,154 @@
+jquery load()方法使用说明
+
+
+
+
+
+jquery load()方法是jquery ajax中无刷新中的一个方法了，他可以实现直接加载页面中的内容放到指定ID中，也可以带参数刷新页面哦，下面我来给大家介绍load()一些用法与常用见问题。 
+网站做一些改动，需要引用另一个网站的页面，于是用到了jQuery框加中的load方法。挺方便的。
+load(url, [data], [callback])手册上的说明很直接明了：
+载入远程 HTML 文件代码并插入至 DOM 中。默认使用 GET 方式 – 传递附加参数时自动转换为 POST 方式。jQuery 1.2 中，可以指定选择符，来筛选载入的 HTML 文档，DOM 中将仅插入筛选出的 HTML 代码。语法形如 “url #some > selector”。
+不过因为它传输数据时是用utf-8编码的，所以当调用页面编码不是utf-8的时候，就会出现乱码，而且url后边的筛选器只能是以id开始，如果筛选的内容没有定id的话是很让人抓狂的，希望在以后的版本里会支持更多的筛选器。
+加载页面全部内容：
+ 代码如下	复制代码
+$("#html").load("ajax_load.html");
+加载页面部分内容：
+ 代码如下	复制代码
+$("#html").load("ajax_load.html #left");
+加载页面全部内容，以POST形式发送附加参数，并在成功加载后给出提示：
+ 代码如下	复制代码
+$("#html").load("ajax_load.html", {"sort":"desc"}, function(){
+        alert("ajax_load.html load success!");
+});
+
+Jquery.load的方法可以一直load下去
+ 代码如下	复制代码
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%> 
+<% 
+String path = request.getContextPath(); 
+String basePath = request.getScheme() + "://" 
++ request.getServerName() + ":" + request.getServerPort() 
++ path + "/"; 
+int i = Integer.parseInt(request.getParameter("i")==null?"0":request.getParameter("i")); 
+%> 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> 
+<html> 
+<head> 
+<base href="<%=basePath%>"> 
+<title>用户登录</title> 
+<meta http-equiv="pragma" content="no-cache"> 
+<meta http-equiv="cache-control" content="no-cache"> 
+<meta http-equiv="expires" content="0"> 
+<meta http-equiv="keywords" content="keyword1,keyword2,keyword3"> 
+<meta http-equiv="description" content="This is my page"> 
+<script type="text/javascript" src="<%=path%>/Scripts/jquery-1.5.1.js"></script> 
+<script type="text/javascript"> 
+$(document).ready(function(){ 
+$("#h<%= i %>").click(function(){ 
+$("#d<%= i %>").load("<%=basePath%>index.jsp",{i:<%=i+1%>}); 
+}); 
+}); 
+</script> 
+</head> 
+<body> 
+this is index.jsp?i=<%= i %> 
+<input type="button" value="get<%= i+1 %>" id="h<%= i %>"> 
+<br> 
+<div id="d<%= i %>" style="border:1px; border-style: solid; margin: 5px;">load index.jsp?i=<%= i+1 %> here!</div> 
+</body> 
+</html>
+load不缓存方法
+
+1.jQuery提供一个防止ajax使用缓存的方法，
+ 代码如下	复制代码
+<script type="text/javascript" language="javascript">
+$.ajaxSetup ({
+cache: false //close AJAX cache
+});
+</script>
+这个方法在每次load页面的时候都要执行一次  否则只会再第一次时候有效 其他load 还会读取缓存页面
+2. 第二就是修改load 加载的url地址
+例如 再url 多加个时间参数就可以 这个方法再wap1.0 中 我也用过避免读取缓存
+ 
+load 中文乱码解决方法
+普通的调用方法很简单
+ 代码如下	复制代码
+$("#index_foot_container").load("foot.html");
+分析，一般引起load乱码是由于二者页面编码不致影起的，处理方法是
+1.我的显示页面index.html的编码是uft-8的；
+2.我的静态页面foot.html的编码是uft-8的；
+好了总结上面的我们来介绍一个实例文章评论实例
+
+二、相关的页面：(两个页面在同一目录下面) 
+ 1、 Article.aspx 文章详细显示页
+HTML页面结构： 
+               
+ 代码如下	复制代码
+    <input id="TopicID" type="hidden" value="<%=topicID %>" /> 
+                   <div id="ArticleContent"></div> 
+                    <div id="LoadArticleReply"></div>
+2、ArticleReply.aspx  评论加载页（显示页）
+HTML页面结构：一个repeater控件来显示评论内容 
+在pageload中加载数据，通过 后面的post传递的topicID 
+ 
+三、相关代码：
+1、Article.aspx 页面加载的时候 
+第一步：
+ 代码如下	复制代码
+public int topicID；//定义变量；然后在page_Load加载时取到topicID的值，同时要绑定文章 
+topicID = int.Parse(Request.QueryString["ID"]);//需要经过处理，否则会出现很多问题，这里我仅仅简单的作为演示
+第二步：加载文章评论方法：
+ 代码如下	复制代码
+<script type="text/javascript">
+    function LoadData() {
+        var tid = $("#TopicID").val();
+        $("#LoadArticleReply").load("/ArticleReply.aspx", { "ID": tid }, function() {
+            $("#LoadArticleReply").fadeIn("slow");
+        }
+        );
+    } 
+</script>
+这个时候我们来看看这个LoadData函数，取当前文章的ID序号，然后根据DIV的id来load评论的地址，文章的ID序号，还有一个显示的方式及速度，  
+通过load的url及ID，我们在ArticleReply.aspx  页面就可以去到文章的ID序号，来获取相关评论，然后呈现在ID为LoadArticleReply的DIV中了。 
+ 
+第三步：首次加载文章评论： 
+ 
+这个时候  Article.aspx初次加载的时候如果绑定文章评论呢？？在cs中又如何调用js中的？？ 
+当然还是Article.aspx.cs的page_Load中，
+ 代码如下	复制代码
+if (!Page.IsPostBack)  //首次加载文章评论，用脚本执行
+                {
+                    ClientScript.RegisterStartupScript(ClientScript.GetType(), "myscript", "<script>LoadData();</script>");//题外问题： 这里如果同时跟asp.net2.0中的login控件一起使用的时候会有个小问题，本文结束的时候介绍下
+                }
+ 
+第四步：发表评论时，提交评论与加载评论
+【提交评论请看本站 jquery ajax 介绍及在asp.net中的使用简单示例  】
+  1、提交评论： 
+  
+ 代码如下	复制代码
+function SubmitData() {
+            var id = $("#TopicID").val();
+            var commName = $("#txtNickName").val();
+            var commEmail = $("#txtEmail").val();
+            var commUrl = $("#txtUrl").val();
+            var comment = $("#ArticleComment").val();
+            $.ajax({
+                cache: "False",
+                type: "POST",
+                url: "/PostComment.aspx",
+                data: "ID=" + id + "&name=" + commName + "&url=" + commUrl + "&email=" + commEmail + "&comment=" + comment,
+                success: function(msg) {
+                    if (msg == "OK") {
+                        alert("发表成功！");
+                        //1、这是刷新页面全部数据
+                        // window.location.reload(true);
+                        //2、这里刷新局部数据 
+                        LoadData();
+                    }
+                    else if (msg == "Error") {
+                        alert("添加失败！");
+                    }
+                }
+            });
+        }
+ 

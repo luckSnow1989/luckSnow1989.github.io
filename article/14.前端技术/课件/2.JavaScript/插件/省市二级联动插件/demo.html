@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>城市选择插件</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="./cityPlugs/citySelect.css" />
+    <script type="text/javascript" src="./cityPlugs/citySelector.js"></script>
+    <script type="text/javascript" src="cityPlugs/second.js"></script>
+    
+    <link rel="stylesheet" href="./css/prettify.css"/>
+    <script type="text/javascript" src="./js/jquery-1.8.1.min.js"></script>
+    <script type="text/javascript" src="./cityPlugs/stations.js"></script>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td id="city_td">
+      	  城市：<input type="text" class="cityinput" id="city" value=""/></td>
+        <td>
+          <div id="station_div">
+		       站点：<input type="text" class="cityinput" id="select_station" "/>
+          </div>
+        </td>
+       </tr>
+    </table>
+    <script>
+		var city = "北京";
+		$(function () {	
+		    $('#city').val(city);
+	        var citysel=new Vcity.CitySelector({input:'city'});
+	        if(all_stations != null)//all_stations是stations.js中的文件，默认是使用这个的，也可以自己定义内容，亦可异步加载所需数据
+	        	addListerForSecond("city","select_station");  
+	  	});
+	</script>
+<!--     <dl>
+      <dd></dd>
+    </dl> -->
+<!-- 代码显示 -->
+<div style="width: 800px;float: left;">
+	<pre class="prettyprint linenums">
+&lt;!DOCTYPE HTML&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;城市选择插件&lt;/title&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8" /&gt;
+    &lt;!-- 插件样式（必须导入） --&gt;
+    &lt;link rel="stylesheet" href="cityPlugs/citySelect.css" /&gt;
+    &lt;!-- 插件js库（必须导入） --&gt;
+    &lt;script type="text/javascript" src="cityPlugs/citySelector.js"&gt;&lt;/script&gt;
+     &lt;!-- 第二级联动插件js库（非必须导入，有需要时导入） --&gt;
+    &lt;script type="text/javascript" src="cityPlugs/second.js"&gt;&lt;/script&gt;
+    &lt;!-- 不必须 --&gt;
+    &lt;script type="text/javascript" src="./js/jquery-1.8.1.min.js"&gt;&lt;/script&gt;
+    &lt;!-- 提供静态的二级联动第二级的数据，也可异步加载 --&gt;
+    &lt;script type="text/javascript" src="cityPlugs/stations.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;!-- 以input为入口的节点（必须导入） --&gt;
+    &lt;table&gt;
+      &lt;tr&gt;
+        &lt;td id="city_td"&gt;
+      	  城市：&lt;input type="text" class="cityinput" id="city" value=""/&gt;&lt;/td&gt;
+        &lt;td&gt;
+          &lt;div id="station_div"&gt;
+		       站点：&lt;input type="text" class="cityinput" id="select_station" /&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+       &lt;/tr&gt;
+    &lt;/table&gt;
+	
+  &lt;script&gt;
+    var city = "北京";//默认值选中北京
+	$(function () {	
+		$('#city').val(city);//初始化文本框
+		var citysel=new Vcity.CitySelector({input:'city'});//创建一级省市的文本框
+		if(all_stations != null)//all_stations是stations.js中的文件，默认是使用这个的，也可以自己定义内容，亦可异步加载所需数据
+			addListerForSecond("city","select_station");  //一级的文本框id,二级的文本框id
+  	});
+  &lt;/script&gt;
+	</pre>
+</div>
+<!-- 代码显示 -->	
+<br/>
+<span>如果打开该页面后出现错乱，请使用其他的浏览器使用chrome和Firefox测试没有问题，IE8以下会出现问题</span><br/>
+<span>请保持cityPlugs文件目录结构的完整性</span><br/>
+<span>如果需要自定义市、站点等数据，请参考插件库中的json的格式，生成内容</span><br/>
+<span>目前第一级的内容必须是静态数据</span><br/>
+<span>第二级内容可以是动态数据或静态数据</span><br/>
+<span>例如$.get('',{},function(data){</span>
+<span>all_stations = data</span><br/>
+<span>});</span><br/>
+<span>其中data的格式必须和stations.js文件中的格式相同</span><br/>
+<span>本项目中自带pinyin4j.jar，可用于生成汉子对应的拼音，具体用法</span><br/>
+<span>请参考/src/demo/TestMain.java中的方法</span><br/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="./js/prettify.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      prettyPrint();
+    });
+  </script> 

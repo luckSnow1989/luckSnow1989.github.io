@@ -1,0 +1,100 @@
+<div class="post">
+     <h3 class="title"><span>[Google Guava] 10-散列</span></h3>
+     <div class="post_content">
+      <p><a href="http://code.google.com/p/guava-libraries/wiki/HashingExplained">原文链接</a> <a href="http://ifeve.com/google-guava-hashing">译文链接</a> <strong>译者：</strong>沈义扬</p>
+<h2>概述</h2>
+<p>Java内建的散列码[hash code]概念被限制为32位，并且没有分离散列算法和它们所作用的数据，因此很难用备选算法进行替换。此外，使用Java内建方法实现的散列码通常是劣质的，部分是因为它们最终都依赖于JDK类中已有的劣质散列码。</p>
+<p>Object.hashCode往往很快，但是在预防碰撞上却很弱，也没有对分散性的预期。这使得它们很适合在散列表中运用，因为额外碰撞只会带来轻微的性能损失，同时差劲的分散性也可以容易地通过再散列来纠正（Java中所有合理的散列表都用了再散列方法）。然而，在简单散列表以外的散列运用中，Object.hashCode几乎总是达不到要求——因此，有了<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/hash/package-summary.html">com.google.common.hash</a>包。<span id="more-9001"></span></p>
+<h2>散列包的组成</h2>
+<p>在这个包的Java doc中，我们可以看到很多不同的类，但是文档中没有明显地表明它们是怎样 一起配合工作的。在介绍散列包中的类之前，让我们先来看下面这段代码范例：</p>
+<pre class="brush: java; title: ; notranslate" title="">HashFunction hf = Hashing.md5();
+HashCode hc = hf.newHasher()
+        .putLong(id)
+        .putString(name, Charsets.UTF_8)
+        .putObject(person, personFunnel)
+        .hash();
+</pre>
+<h3>HashFunction</h3>
+<p><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/hash/HashFunction.html">HashFunction</a>是一个单纯的（引用透明的）、无状态的方法，它把任意的数据块映射到固定数目的位指，并且保证相同的输入一定产生相同的输出，不同的输入尽可能产生不同的输出。</p>
+<h3>Hasher</h3>
+<p>HashFunction的实例可以提供有状态的<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/hash/Hasher.html">Hasher</a>，Hasher提供了流畅的语法把数据添加到散列运算，然后获取散列值。Hasher可以接受所有原生类型、字节数组、字节数组的片段、字符序列、特定字符集的字符序列等等，或者任何给定了Funnel实现的对象。</p>
+<p>Hasher实现了PrimitiveSink接口，这个接口为接受原生类型流的对象定义了fluent风格的API</p>
+<h3>Funnel</h3>
+<p>Funnel描述了如何把一个具体的对象类型分解为原生字段值，从而写入PrimitiveSink。比如，如果我们有这样一个类：</p>
+<pre class="brush: java; title: ; notranslate" title="">class Person {
+    final int id;
+    final String firstName;
+    final String lastName;
+    final int birthYear;
+}
+</pre>
+<p>它对应的Funnel实现可能是：</p>
+<pre class="brush: java; title: ; notranslate" title="">Funnel&lt;Person&gt; personFunnel = new Funnel&lt;Person&gt;() {
+    @Override
+    public void funnel(Person person, PrimitiveSink into) {
+        into
+            .putInt(person.id)
+            .putString(person.firstName, Charsets.UTF_8)
+            .putString(person.lastName, Charsets.UTF_8)
+            .putInt(birthYear);
+    }
+}
+</pre>
+<p><i>注：putString(“abc”, Charsets.UTF_8).putString(“def”, Charsets.UTF_8)完全等同于putString(“ab”, Charsets.UTF_8).putString(“cdef”, Charsets.UTF_8)，因为它们提供了相同的字节序列。这可能带来预料之外的散列冲突。增加某种形式的分隔符有助于消除散列冲突。</i></p>
+<h3>HashCode</h3>
+<p>一旦Hasher被赋予了所有输入，就可以通过<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/hash/Hasher.html#hash()">hash()</a>方法获取<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/hash/HashCode.html">HashCode</a>实例（多次调用hash()方法的结果是不确定的）。HashCode可以通过<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/hash/HashCode.html#asInt()">asInt()</a>、<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/hash/HashCode.html#asLong()">asLong()</a>、<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/hash/HashCode.html#asBytes()">asBytes()</a>方法来做相等性检测，此外，<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/hash/HashCode.html#writeBytesTo(byte[], int, int)">writeBytesTo(array, offset, maxLength)</a>把散列值的前maxLength字节写入字节数组。</p>
+<h2>布鲁姆过滤器[BloomFilter]</h2>
+<p>布鲁姆过滤器是哈希运算的一项优雅运用，它可以简单地基于Object.hashCode()实现。简而言之，布鲁姆过滤器是一种概率数据结构，它允许你检测某个对象是一定不在过滤器中，还是可能已经添加到过滤器了。<a href="http://en.wikipedia.org/wiki/Bloom_filter">布鲁姆过滤器的维基页面</a>对此作了全面的介绍，同时我们推荐github中的一个<a href="http://billmill.org/bloomfilter-tutorial/">教程</a>。</p>
+<p>Guava散列包有一个内建的布鲁姆过滤器实现，你只要提供Funnel就可以使用它。你可以使用<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/hash/BloomFilter.html#create(com.google.common.hash.Funnel, int, double)">create(Funnel funnel, int expectedInsertions, double falsePositiveProbability)</a>方法获取<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/hash/BloomFilter.html">BloomFilter&lt;T&gt;</a>，缺省误检率[falsePositiveProbability]为3%。BloomFilter&lt;T&gt;提供了<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/hash/BloomFilter.html#mightContain(T)">boolean mightContain(T)</a> 和<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/hash/BloomFilter.html#put(T)">void put(T)</a>，它们的含义都不言自明了。</p>
+<pre class="brush: java; title: ; notranslate" title="">BloomFilter&lt;Person&gt; friends = BloomFilter.create(personFunnel, 500, 0.01);
+for(Person friend : friendsList) {
+    friends.put(friend);
+}
+
+// 很久以后
+if (friends.mightContain(dude)) {
+    //dude不是朋友还运行到这里的概率为1%
+    //在这儿，我们可以在做进一步精确检查的同时触发一些异步加载
+}
+</pre>
+<h2>Hashing类</h2>
+<p>Hashing类提供了若干散列函数，以及运算HashCode对象的工具方法。</p>
+<h3>已提供的散列函数</h3>
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="126"><a href="http://docs.guava-libraries.googlecode.com/git-history/release12/javadoc/com/google/common/hash/Hashing.html#md5()"><tt>md5()</tt></a></td>
+<td width="118"><a href="http://docs.guava-libraries.googlecode.com/git-history/release12/javadoc/com/google/common/hash/Hashing.html#murmur3_128()"><tt>murmur3_128()</tt></a></td>
+<td width="205"><a href="http://docs.guava-libraries.googlecode.com/git-history/release12/javadoc/com/google/common/hash/Hashing.html#murmur3_32()"><tt>murmur3_32()</tt></a></td>
+<td width="169"><a href="http://docs.guava-libraries.googlecode.com/git-history/release12/javadoc/com/google/common/hash/Hashing.html#sha1()"><tt>sha1()</tt></a></td>
+</tr>
+<tr>
+<td width="126"><a href="http://docs.guava-libraries.googlecode.com/git-history/release12/javadoc/com/google/common/hash/Hashing.html#sha256()"><tt>sha256()</tt></a></td>
+<td width="118"><a href="http://docs.guava-libraries.googlecode.com/git-history/release12/javadoc/com/google/common/hash/Hashing.html#sha512()"><tt>sha512()</tt></a></td>
+<td width="205"><a href="http://docs.guava-libraries.googlecode.com/git-history/release12/javadoc/com/google/common/hash/Hashing.html#goodFastHash(int)"><tt>goodFastHash(int bits)</tt></a></td>
+<td width="169"></td>
+</tr>
+</tbody>
+</table>
+<h3>HashCode运算</h3>
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="216"><b>方法</b><b></b></td>
+<td width="403"><b>描述</b><b></b></td>
+</tr>
+<tr>
+<td width="216"><a href="http://docs.guava-libraries.googlecode.com/git-history/release12/javadoc/com/google/common/hash/Hashing.html#combineOrdered(java.lang.Iterable)"><tt>HashCode</tt><tt> </tt><tt>combineOrdered( Iterable&lt;HashCode&gt;)</tt></a></td>
+<td width="403">以有序方式联接散列码，如果两个散列集合用该方法联接出的散列码相同，那么散列集合的元素可能是顺序相等的</td>
+</tr>
+<tr>
+<td width="216"><a href="http://docs.guava-libraries.googlecode.com/git-history/release12/javadoc/com/google/common/hash/Hashing.html#combineUnordered(java.lang.Iterable)"><tt>HashCode &nbsp; combineUnordered( Iterable&lt;HashCode&gt;)</tt></a></td>
+<td width="403">以无序方式联接散列码，如果两个散列集合用该方法联接出的散列码相同，那么散列集合的元素可能在某种排序下是相等的</td>
+</tr>
+<tr>
+<td width="216"><a href="http://docs.guava-libraries.googlecode.com/git-history/release12/javadoc/com/google/common/hash/Hashing.html#consistentHash(com.google.common.hash.HashCode, int)"><tt>int &nbsp; consistentHash( HashCode, int buckets)</tt></a></td>
+<td width="403">为给定的”桶”大小返回一致性哈希值。当”桶”增长时，该方法保证最小程度的一致性哈希值变化。详见<a href="http://en.wikipedia.org/wiki/Consistent_hashing">一致性哈希</a>。</td>
+</tr>
+</tbody>
+</table>
+<div style="margin-top: 15px; font-style: italic">

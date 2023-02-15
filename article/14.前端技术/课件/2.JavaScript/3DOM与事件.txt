@@ -1,0 +1,99 @@
+DOM Document Object Model �ĵ�����ģ��  ����js��html css.����html�ĵ���Ϊ.
+DOM���ǰ�ҳ�浱����������ȫ����װ�ɶ���.
+HTML�ĵ�������Զ���.
+
+һ��DOM����ķ���
+	Document ***	�ĵ�
+	Element  ***	Ԫ��
+	Attribute		����
+	Text			�ı�
+	Common			
+	
+	1.����5����� ����һЩ��ͬ�����������Խ�֮����Ϊһ��Node�ڵ�
+					
+		��������:
+			parentNode - �ڵ㣨Ԫ�أ��ĸ��ڵ� 
+			firstChild �C �ڵ��µ�һ����Ԫ��
+			lastChild �C �ڵ������һ����Ԫ��
+			childNodes - �ڵ㣨Ԫ�أ����ӽڵ� 
+			
+		�ڵ�����:
+			attributes - �ڵ㣨Ԫ�أ������Խڵ�
+			nodeType �C �ڵ�����		Document ==> 9   Element ==> 1
+			nodeValue �C �ڵ�ֵ
+			nodeName �C �ڵ�����
+			innerHTML - �ڵ㣨Ԫ�أ����ı�ֵ	
+			
+	2.ҳ���л��Element����ķ�ʽ
+		document
+			getElementById();
+			getELementsByTagName();
+			getElementsByClassName();
+			getElementsByName();
+		Element
+			getELementsByTagName();
+			getElementsByClassName();
+�����¼�
+	��Element���󸽼�һЩ�¼�����.���Ե�������Function����.��ЩFunction������ʲôʱ��������?
+	ֻ�����Ե�����.
+	1.��������������:
+		onclick ==> ����ʱ����
+		ondblclick ==> ˫��ʱ����
+		onblur ==>  ʧȥ����ʱ����
+		onfocus ==> �õ�����ʱ����
+		onchange ==> ���ڱ�Ԫ��, ��Ԫ�ر��޸�ʱ����
+		onkeydown ==> �����̰���������ʱ
+		onmousemove ==> ������ƶ�ʱ����
+		onmousedown ==> ����갴������ʱ����
+		onmouseover ==> �����ָ��ʱ����
+		onmouseout ==> ������Ƴ�ʱ����
+		onsubmit ==> �����ύʱ����
+		onload  ==>  ֻ��body��ǩʹ��.��ҳ�������ɺ� ִ��.
+	
+	2.�¼�����Ļ��:
+		���ǻ���¼�����Ҫ�ҵ���̽��֪��(�¼�Event);
+		��������Event������?
+		Event���������¼�����ʱ������, �����ݸ����ǵ��¼�Function��.��������ֱ��ʹ�ü���.
+	Event����
+		����:
+			keyCode
+			button
+			clientX(�˽�) ���ص��¼�������ʱ�����ָ���ˮƽ���ꡣ 
+			clientY(�˽�) ���ص��¼�������ʱ�����ָ��Ĵ�ֱ���ꡣ
+		����:
+			preventDefault() ==> ��ֹĬ�Ϲ����¼��ķ���.  
+			stopPropergation ==> ��֯�¼������´���.
+
+��������ҳ��������ɾ�Ĳ�
+	��:
+		1.createElement(name)����Ԫ��
+		2.appendChild();��Ԫ�����
+		3.replaceChild
+		4.cloneNode
+
+	ɾ:
+		1.���Ҫɾ����Ԫ��
+		2.������ĸ�Ԫ��
+		3.ʹ��removeChild()����ɾ��
+	
+	��:
+		��һ�ַ�ʽ:
+			1.ʹ����������ɾ�������޸�
+		�ڶ��ַ�ʽ:
+			1.setAttribute(key,value);�����޸�����
+			2.ʹ��innerHTML�����޸�Ԫ�ص�����
+			
+	��:
+		ʹ��֮ǰ���ܵķ���.
+
+			
+�ġ�DHTML�ĸ��� Dynamic HTML ��̬��ҳ����
+	��������4�ż��� ==>  DOM HTML CSS JavaScript
+	��ͨ�׵Ļ�˵: DHTML���� �����ǵ�֮ǰѧ��DOM���������ǿ.
+	ʲô����ǿ?  �Զ�������,��ǿ�޷Ǿ��� �����µ����Ի�÷���.
+
+	
+	
+
+		
+		

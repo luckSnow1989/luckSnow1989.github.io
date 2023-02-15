@@ -1,0 +1,49 @@
+1、jQuery框架内核
+	(function(window, undefined){
+		//1.jQuery是一个对象
+		var jQuery = function(selector, context){......};
+		//2.prototype中的方法，只要利用jQuery的选择器获得jQuery对象，就能调用这些方法。
+		jQuery.fn = jQuery.prototype = {
+			length:0,
+			each:function(){},//遍历数组中的每一个元素
+			ready:function(fn){}//读取回调函数
+		}
+		
+		
+		
+		//将jQuery作为window的一个属性。使jQuery向外公开
+		//jQuery就是window一个属性
+		//$就也是window一个属性
+		window.jQuery = window.$ = jQuery;
+		
+		//于是，得出结论
+		//window.$.fn = jQuery.prototype = window.jQuery.prototype = $.prototype = window.jQuery.fn;
+	})(window);
+	
+2、插件机制(jQuery插件的开发)
+	$.fn.a = function(){}//该方法时jQuery对象的方法。
+	$.b = function(){}//该方法称为全局方法。
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

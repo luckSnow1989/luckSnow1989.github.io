@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		
+		<script type="text/javascript">
+			/**
+			 * this
+			 * 1.this，谁调用的这个函数，谁就是this
+			 * 1.在js中，this具有多态性。可以随时修改指向
+			 */
+			
+			//1.window调用
+			function person(){
+				alert(this);
+			}
+			person();
+			
+			//2.函数调用
+			function aa(){
+				
+			}
+			aa.a= person;
+			aa.a();
+			
+			//3.对象调用
+			var jsonObj = {getPerson:person};
+			jsonObj.getPerson();
+			
+			
+			/**
+			 * 4.利用call方法和apply方法改变this的指向
+			 */
+			person.call(aa);//等效于aa.person();
+			person.apply(aa);//等效于aa.person();
+			
+			/**
+			 * 如果有回调函数，回调函数中的this，调用者来确定
+			 */
+			//创建一个有回调函数的函数
+			function test(callback){
+				callback.call(this);//这个是window
+				callback.apply(aa);//修改指向
+			}
+			//调用这个函数
+			test(function(){
+				alert(this);
+			});
+		</script>
+	</body>
+</html>

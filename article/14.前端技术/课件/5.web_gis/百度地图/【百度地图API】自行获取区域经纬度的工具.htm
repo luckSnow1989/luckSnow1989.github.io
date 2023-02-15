@@ -1,0 +1,477 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>【百度地图API】自行获取区域经纬度的工具 - 酸奶小妹 - 博客园</title>
+<link type="text/css" rel="stylesheet" href="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/bundle-coffee.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/milkmap/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/milkmap/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/milkmap/wlwmanifest.xml">
+<script src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/encoder.js" type="text/javascript"></script><script src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/jquery.js" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'milkmap', cb_enable_mathjax=false;</script>
+<script src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/blog-common.js" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="http://www.cnblogs.com/milkmap/"><img id="blogLogo" src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/logo.gif" alt="返回主页"></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/milkmap/">酸奶小妹</a></h1>
+<h2>博客园只做教程发布，提问请到：http://lbsbbs.amap.com/</h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="navigator">
+			
+<!--done-->
+			<ul id="navList">
+				<li><a id="MyLinks1_HomeLink" class="menu" href="http://www.cnblogs.com/">博客园</a></li>
+				<li><a id="MyLinks1_IngLink" class="menu" href="http://home.cnblogs.com/ing/">闪存</a></li>
+				<li><a id="MyLinks1_MyHomeLink" class="menu" href="http://www.cnblogs.com/milkmap/">首页</a></li>
+				<li><a id="MyLinks1_NewPostLink" class="menu" rel="nofollow" href="http://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+				<li><a id="MyLinks1_ContactLink" accesskey="9" class="menu" rel="nofollow" href="http://msg.cnblogs.com/send/%E9%85%B8%E5%A5%B6%E5%B0%8F%E5%A6%B9">联系</a></li>
+				<li><a id="MyLinks1_Admin" class="menu" rel="nofollow" href="http://i.cnblogs.com/">管理</a></li>
+				<li><a id="MyLinks1_Syndication" class="menu" href="http://www.cnblogs.com/milkmap/rss">订阅</a>
+				<a id="MyLinks1_XMLLink" class="aHeaderXML" href="http://www.cnblogs.com/milkmap/rss"><img src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/xml.gif" alt="订阅"></a></li>
+			</ul>
+
+
+			<div class="blogStats">
+				
+				
+<!--done-->
+随笔- 120&nbsp;
+文章- 0&nbsp;
+评论- 936&nbsp;
+
+				
+			</div><!--end: blogStats -->
+		</div><!--end: navigator 博客导航栏 -->
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post">
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="http://www.cnblogs.com/milkmap/archive/2012/02/23/2365064.html">【百度地图API】自行获取区域经纬度的工具</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body"><p>摘要：上一章教大家如何建立自己的行政区域地图。这次为大家提供一个，可视化选择区域，并且能自动生成经纬度代码的工具。工具的源代码完全公开，并且做了详尽的注释。可以单纯做为一个工具，也可做为百度地图API的学习案例。</p>
+<p>&nbsp;</p>
+<p>工具说明：</p>
+<p>1、开关可以控制，是否在地图上建立折线覆盖物</p>
+<p>2、双击地图，会建立多边形覆盖物</p>
+<p>3、自动输入的经纬度信息，<strong>最后一行不要复制</strong>。因为map的dblclcik事件，会先触发两次click，最后才是dblclick。</p>
+<p>4、清除按钮可以清除覆盖物，清除经纬度数据，重新来一次</p>
+<p><img src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/2012022315590419.jpg" alt=""></p>
+<p>&nbsp;</p>
+<p><img src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/2012022316010425.jpg" alt=""></p>
+<p>&nbsp;</p>
+<p><img src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/2012022316005222.jpg" alt=""></p>
+<p>&nbsp;</p>
+<p><img src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/2012022316012271.jpg" alt=""></p>
+<p>&nbsp;</p>
+<p><img src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/2012022316013182.jpg" alt=""></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>全部源代码：</p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="color: #0000ff;">&lt;!</span><span style="color: #ff00ff;">DOCTYPE html</span><span style="color: #0000ff;">&gt;</span><br><span style="color: #0000ff;">&lt;</span><span style="color: #800000;">html</span><span style="color: #0000ff;">&gt;</span><br><span style="color: #0000ff;">&lt;</span><span style="color: #800000;">head</span><span style="color: #0000ff;">&gt;</span><br><span style="color: #0000ff;">&lt;</span><span style="color: #800000;">meta </span><span style="color: #ff0000;">http-equiv</span><span style="color: #0000ff;">="Content-Type"</span><span style="color: #ff0000;"> content</span><span style="color: #0000ff;">="text/html; charset=gb2312"</span> <span style="color: #0000ff;">/&gt;</span><br><span style="color: #0000ff;">&lt;</span><span style="color: #800000;">title</span><span style="color: #0000ff;">&gt;</span>行政区域工具<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">title</span><span style="color: #0000ff;">&gt;</span><br><span style="color: #0000ff;">&lt;</span><span style="color: #800000;">script </span><span style="color: #ff0000;">type</span><span style="color: #0000ff;">="text/javascript"</span><span style="color: #ff0000;"> src</span><span style="color: #0000ff;">="http://api.map.baidu.com/api?v=1.2"</span><span style="color: #0000ff;">&gt;&lt;/</span><span style="color: #800000;">script</span><span style="color: #0000ff;">&gt;</span><br><span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">head</span><span style="color: #0000ff;">&gt;</span><br><span style="color: #0000ff;">&lt;</span><span style="color: #800000;">body</span><span style="color: #0000ff;">&gt;</span><br><span style="color: #0000ff;">&lt;</span><span style="color: #800000;">div </span><span style="color: #ff0000;">style</span><span style="color: #0000ff;">="width:520px;height:340px;border:1px solid gray"</span><span style="color: #ff0000;"> id</span><span style="color: #0000ff;">="container"</span><span style="color: #0000ff;">&gt;&lt;/</span><span style="color: #800000;">div</span><span style="color: #0000ff;">&gt;</span><br><span style="color: #0000ff;">&lt;</span><span style="color: #800000;">p</span><span style="color: #0000ff;">&gt;&lt;</span><span style="color: #800000;">input </span><span style="color: #ff0000;">id</span><span style="color: #0000ff;">="startBtn"</span><span style="color: #ff0000;"> type</span><span style="color: #0000ff;">="button"</span><span style="color: #ff0000;"> onclick</span><span style="color: #0000ff;">="startTool();"</span><span style="color: #ff0000;"> value</span><span style="color: #0000ff;">="开启取点工具"</span> <span style="color: #0000ff;">/&gt;&lt;</span><span style="color: #800000;">input </span><span style="color: #ff0000;">type</span><span style="color: #0000ff;">="button"</span><span style="color: #ff0000;"> onclick</span><span style="color: #0000ff;">="map.clearOverlays();document.getElementById('info').innerHTML = '';points=[];"</span><span style="color: #ff0000;"> value</span><span style="color: #0000ff;">="清除"</span> <span style="color: #0000ff;">/&gt;&lt;/</span><span style="color: #800000;">p</span><span style="color: #0000ff;">&gt;</span><br><span style="color: #0000ff;">&lt;</span><span style="color: #800000;">div </span><span style="color: #ff0000;">id</span><span style="color: #0000ff;">="info"</span><span style="color: #0000ff;">&gt;&lt;/</span><span style="color: #800000;">div</span><span style="color: #0000ff;">&gt;</span><br><span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">body</span><span style="color: #0000ff;">&gt;</span><br><span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">html</span><span style="color: #0000ff;">&gt;</span><br><span style="color: #0000ff;">&lt;</span><span style="color: #800000;">script </span><span style="color: #ff0000;">type</span><span style="color: #0000ff;">="text/javascript"</span><span style="color: #0000ff;">&gt;</span><span style="background-color: #f5f5f5; color: #000000;"><br></span><span style="background-color: #f5f5f5; color: #0000ff;">var</span><span style="background-color: #f5f5f5; color: #000000;"> map </span><span style="background-color: #f5f5f5; color: #000000;">=</span> <span style="background-color: #f5f5f5; color: #0000ff;">new</span><span style="background-color: #f5f5f5; color: #000000;"> BMap.Map(</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">container</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">);                        </span><span style="background-color: #f5f5f5; color: #008000;">//</span><span style="background-color: #f5f5f5; color: #008000;"> 创建Map实例</span><span style="background-color: #f5f5f5; color: #008000;"><br></span><span style="background-color: #f5f5f5; color: #000000;">map.centerAndZoom(</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">北京</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">, </span><span style="background-color: #f5f5f5; color: #000000;">11</span><span style="background-color: #f5f5f5; color: #000000;">);     </span><span style="background-color: #f5f5f5; color: #008000;">//</span><span style="background-color: #f5f5f5; color: #008000;"> 初始化地图,设置中心点坐标和地图级别</span><span style="background-color: #f5f5f5; color: #008000;"><br></span><span style="background-color: #f5f5f5; color: #000000;"><br></span><span style="background-color: #f5f5f5; color: #0000ff;">var</span><span style="background-color: #f5f5f5; color: #000000;"> key </span><span style="background-color: #f5f5f5; color: #000000;">=</span> <span style="background-color: #f5f5f5; color: #000000;">1</span><span style="background-color: #f5f5f5; color: #000000;">;    </span><span style="background-color: #f5f5f5; color: #008000;">//</span><span style="background-color: #f5f5f5; color: #008000;">开关</span><span style="background-color: #f5f5f5; color: #008000;"><br></span><span style="background-color: #f5f5f5; color: #0000ff;">var</span><span style="background-color: #f5f5f5; color: #000000;"> newpoint;   </span><span style="background-color: #f5f5f5; color: #008000;">//</span><span style="background-color: #f5f5f5; color: #008000;">一个经纬度</span><span style="background-color: #f5f5f5; color: #008000;"><br></span><span style="background-color: #f5f5f5; color: #0000ff;">var</span><span style="background-color: #f5f5f5; color: #000000;"> points </span><span style="background-color: #f5f5f5; color: #000000;">=</span><span style="background-color: #f5f5f5; color: #000000;"> [];    </span><span style="background-color: #f5f5f5; color: #008000;">//</span><span style="background-color: #f5f5f5; color: #008000;">数组，放经纬度信息</span><span style="background-color: #f5f5f5; color: #008000;"><br></span><span style="background-color: #f5f5f5; color: #0000ff;">var</span><span style="background-color: #f5f5f5; color: #000000;"> polyline </span><span style="background-color: #f5f5f5; color: #000000;">=</span> <span style="background-color: #f5f5f5; color: #0000ff;">new</span><span style="background-color: #f5f5f5; color: #000000;"> BMap.Polyline(); </span><span style="background-color: #f5f5f5; color: #008000;">//</span><span style="background-color: #f5f5f5; color: #008000;">折线覆盖物</span><span style="background-color: #f5f5f5; color: #008000;"><br></span><span style="background-color: #f5f5f5; color: #000000;"><br></span><span style="background-color: #f5f5f5; color: #0000ff;">function</span><span style="background-color: #f5f5f5; color: #000000;"> startTool(){   </span><span style="background-color: #f5f5f5; color: #008000;">//</span><span style="background-color: #f5f5f5; color: #008000;">开关函数</span><span style="background-color: #f5f5f5; color: #008000;"><br></span><span style="background-color: #f5f5f5; color: #0000ff;">if</span><span style="background-color: #f5f5f5; color: #000000;">(key</span><span style="background-color: #f5f5f5; color: #000000;">==</span><span style="background-color: #f5f5f5; color: #000000;">1</span><span style="background-color: #f5f5f5; color: #000000;">){<br>        document.getElementById(</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">startBtn</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">).style.background </span><span style="background-color: #f5f5f5; color: #000000;">=</span> <span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">green</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">;<br>        document.getElementById(</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">startBtn</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">).style.color </span><span style="background-color: #f5f5f5; color: #000000;">=</span> <span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">white</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">;<br>        document.getElementById(</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">startBtn</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">).value </span><span style="background-color: #f5f5f5; color: #000000;">=</span> <span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">开启状态</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">;<br>        key</span><span style="background-color: #f5f5f5; color: #000000;">=</span><span style="background-color: #f5f5f5; color: #000000;">0</span><span style="background-color: #f5f5f5; color: #000000;">;<br>    }<br>    </span><span style="background-color: #f5f5f5; color: #0000ff;">else</span><span style="background-color: #f5f5f5; color: #000000;">{<br>        document.getElementById(</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">startBtn</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">).style.background </span><span style="background-color: #f5f5f5; color: #000000;">=</span> <span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">red</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">;<br>        document.getElementById(</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">startBtn</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">).value </span><span style="background-color: #f5f5f5; color: #000000;">=</span> <span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">关闭状态</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">;<br>        key</span><span style="background-color: #f5f5f5; color: #000000;">=</span><span style="background-color: #f5f5f5; color: #000000;">1</span><span style="background-color: #f5f5f5; color: #000000;">;<br>    }<br>}<br>map.addEventListener(</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">click</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">,</span><span style="background-color: #f5f5f5; color: #0000ff;">function</span><span style="background-color: #f5f5f5; color: #000000;">(e){   </span><span style="background-color: #f5f5f5; color: #008000;">//</span><span style="background-color: #f5f5f5; color: #008000;">单击地图，形成折线覆盖物</span><span style="background-color: #f5f5f5; color: #008000;"><br></span><span style="background-color: #f5f5f5; color: #000000;">    newpoint </span><span style="background-color: #f5f5f5; color: #000000;">=</span> <span style="background-color: #f5f5f5; color: #0000ff;">new</span><span style="background-color: #f5f5f5; color: #000000;"> BMap.Point(e.point.lng,e.point.lat);<br>    </span><span style="background-color: #f5f5f5; color: #0000ff;">if</span><span style="background-color: #f5f5f5; color: #000000;">(key</span><span style="background-color: #f5f5f5; color: #000000;">==</span><span style="background-color: #f5f5f5; color: #000000;">0</span><span style="background-color: #f5f5f5; color: #000000;">){<br>    </span><span style="background-color: #f5f5f5; color: #008000;">//</span><span style="background-color: #f5f5f5; color: #008000;">    if(points[points.length].lng==points[points.length-1].lng){alert(111);}</span><span style="background-color: #f5f5f5; color: #008000;"><br></span><span style="background-color: #f5f5f5; color: #000000;">        points.push(newpoint);  </span><span style="background-color: #f5f5f5; color: #008000;">//</span><span style="background-color: #f5f5f5; color: #008000;">将新增的点放到数组中</span><span style="background-color: #f5f5f5; color: #008000;"><br></span><span style="background-color: #f5f5f5; color: #000000;">        polyline.setPath(points);   </span><span style="background-color: #f5f5f5; color: #008000;">//</span><span style="background-color: #f5f5f5; color: #008000;">设置折线的点数组</span><span style="background-color: #f5f5f5; color: #008000;"><br></span><span style="background-color: #f5f5f5; color: #000000;">        map.addOverlay(polyline);   </span><span style="background-color: #f5f5f5; color: #008000;">//</span><span style="background-color: #f5f5f5; color: #008000;">将折线添加到地图上</span><span style="background-color: #f5f5f5; color: #008000;"><br></span><span style="background-color: #f5f5f5; color: #000000;">        document.getElementById(</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">info</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">).innerHTML </span><span style="background-color: #f5f5f5; color: #000000;">+=</span> <span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">new BMap.Point(</span><span style="background-color: #f5f5f5; color: #000000;">"</span> <span style="background-color: #f5f5f5; color: #000000;">+</span><span style="background-color: #f5f5f5; color: #000000;"> e.point.lng </span><span style="background-color: #f5f5f5; color: #000000;">+</span> <span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">,</span><span style="background-color: #f5f5f5; color: #000000;">"</span> <span style="background-color: #f5f5f5; color: #000000;">+</span><span style="background-color: #f5f5f5; color: #000000;"> e.point.lat </span><span style="background-color: #f5f5f5; color: #000000;">+</span> <span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">),&lt;/br&gt;</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">;    </span><span style="background-color: #f5f5f5; color: #008000;">//</span><span style="background-color: #f5f5f5; color: #008000;">输出数组里的经纬度</span><span style="background-color: #f5f5f5; color: #008000;"><br></span><span style="background-color: #f5f5f5; color: #000000;">    }<br>});<br>map.addEventListener(</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">dblclick</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">,</span><span style="background-color: #f5f5f5; color: #0000ff;">function</span><span style="background-color: #f5f5f5; color: #000000;">(e){   </span><span style="background-color: #f5f5f5; color: #008000;">//</span><span style="background-color: #f5f5f5; color: #008000;">双击地图，形成多边形覆盖物</span><span style="background-color: #f5f5f5; color: #008000;"><br></span><span style="background-color: #f5f5f5; color: #0000ff;">if</span><span style="background-color: #f5f5f5; color: #000000;">(key</span><span style="background-color: #f5f5f5; color: #000000;">==</span><span style="background-color: #f5f5f5; color: #000000;">0</span><span style="background-color: #f5f5f5; color: #000000;">){<br>        map.disableDoubleClickZoom();   </span><span style="background-color: #f5f5f5; color: #008000;">//</span><span style="background-color: #f5f5f5; color: #008000;">关闭双击放大</span><span style="background-color: #f5f5f5; color: #008000;"><br></span><span style="background-color: #f5f5f5; color: #0000ff;">var</span><span style="background-color: #f5f5f5; color: #000000;"> polygon </span><span style="background-color: #f5f5f5; color: #000000;">=</span> <span style="background-color: #f5f5f5; color: #0000ff;">new</span><span style="background-color: #f5f5f5; color: #000000;"> BMap.Polygon(points);<br>        map.addOverlay(polygon);   </span><span style="background-color: #f5f5f5; color: #008000;">//</span><span style="background-color: #f5f5f5; color: #008000;">将折线添加到地图上</span><span style="background-color: #f5f5f5; color: #008000;"><br></span><span style="background-color: #f5f5f5; color: #000000;">    }<br>});<br></span><span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">script</span><span style="color: #0000ff;">&gt;</span></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p><br><br></p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory"></div>
+<div id="EntryTag">标签: <a href="http://www.cnblogs.com/milkmap/tag/%E5%9C%B0%E5%9B%BEAPI/">地图API</a></div>
+<div id="blog_post_info"><div id="green_channel">
+<a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(2365064,cb_blogId,1);green_channel_success(this,'谢谢推荐！');">好文要顶</a>
+<a id="green_channel_follow" onclick="c_follow();" href="javascript:void(0);">关注我</a>
+<a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a><a id="green_channel_contact" href="http://msg.cnblogs.com/send/%E9%85%B8%E5%A5%B6%E5%B0%8F%E5%A6%B9" target="_blank">联系我</a>
+<a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/icon_weibo_24.png" alt=""></a>
+<a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+<div id="author_profile_info" class="author_profile_info">
+<a href="http://home.cnblogs.com/u/milkmap/" target="_blank"><img src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/20140618152720.jpg" class="author_avatar" alt=""></a>
+<div id="author_profile_detail" class="author_profile_info">
+<a href="http://home.cnblogs.com/u/milkmap/">酸奶小妹</a><br>
+<a href="http://home.cnblogs.com/u/milkmap/followees">关注 - 3</a><br>
+<a href="http://home.cnblogs.com/u/milkmap/followers">粉丝 - 1155</a>
+</div>
+</div>
+<div class="clear"></div>
+<div id="author_profile_honor"></div>
+<div id="author_profile_follow">
+    <a href="javascript:void(0);" onclick="c_follow();return false;">+加关注</a>
+</div>
+</div>
+<div id="div_digg">										
+    <div class="diggit" onclick="votePost(2365064,'Digg')">
+        <span class="diggnum" id="digg_count">9</span>
+    </div>
+	<div class="buryit" onclick="votePost(2365064,'Bury')"> 
+		<span class="burynum" id="bury_count">0</span>
+	</div>
+	<div class="clear"></div>	
+	<div class="diggword" id="digg_tips">
+    (请您对文章做出评价)
+    </div>	
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/milkmap/archive/2012/02/16/2353985.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/milkmap/archive/2012/02/16/2353985.html" title="发布于2012-02-16 12:26">【百度地图API】如何制作商圈地图？行政地图？</a><br><a href="http://www.cnblogs.com/milkmap/archive/2012/03/02/2377638.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/milkmap/archive/2012/03/02/2377638.html" title="发布于2012-03-02 18:34">【百度地图API】如何利用PhoneGap制作地图APP</a><br></div>
+</div>
+
+
+		</div>
+		<div class="postDesc">posted @ <span id="post-date">2012-02-23 16:08</span> <a href="http://www.cnblogs.com/milkmap/">酸奶小妹</a> 阅读(<span id="post_view_count">43763</span>) 评论(<span id="post_comment_count">8</span>)  <a href="http://i.cnblogs.com/EditPosts.aspx?postid=2365064" rel="nofollow">编辑</a> <a href="#" onclick="AddToWz(2365064);return false;">收藏</a></div>
+	</div>
+	<script type="text/javascript">var allowComments=true,isLogined=false,cb_blogId=81319,cb_entryId=2365064,cb_blogApp=currentBlogApp,cb_blogUserGuid='2d16ec83-af0c-e011-ac81-842b2b196315',cb_entryCreatedDate='2012/2/23 16:08:00';loadViewCount(cb_entryId);</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"><div id="comments_pager_top"></div>
+<!--done-->
+<br>
+<div class="feedback_area_title">评论</div>
+<div class="feedbackNoItems"></div>
+	
+
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#2419308" class="layer">#1楼</a><a name="2419308" id="comment_anchor_2419308"></a> <span class="comment_date">2012-07-05 18:09</span> | <a id="a_comment_author_2419308" href="http://home.cnblogs.com/u/313601/" target="_blank">ynymf</a> <a href="http://msg.cnblogs.com/send/ynymf" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2419308" class="blog_comment_body">var pointCenter = new BMap.Point(102.660846,25.004658);<br><br>请问得到一个中心点后，如何判断中心点是否在该区域内呢？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2419308,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2419308,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#2428289" class="layer">#2楼</a><a name="2428289" id="comment_anchor_2428289"></a> <span class="comment_date">2012-07-17 13:57</span> | <a id="a_comment_author_2428289" href="http://www.cnblogs.com/i-gps/" target="_blank">MaptileDownloader</a> <a href="http://msg.cnblogs.com/send/MaptileDownloader" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2428289" class="blog_comment_body"><a href="#2419308" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,2419308);">@</a>ynymf<br>百度地图有个GeoUtils类提供若干几何算法，用来帮助用户判断点与矩形、圆形、多边形线、多边形面的关系,并提供计算折线长度和多边形的面积的公式。<br><a href="http://dev.baidu.com/wiki/map/index.php?title" target="_blank">http://dev.baidu.com/wiki/map/index.php?title</a>=lib/GeoUtils</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2428289,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2428289,'Bury',this)">反对(0)</a></div><span id="comment_2428289_avatar" style="display:none;">http://pic.cnblogs.com/face/u245472.png?id=11140459</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#2448217" class="layer">#3楼</a><a name="2448217" id="comment_anchor_2448217"></a> <span class="comment_date">2012-08-14 13:37</span> | <a id="a_comment_author_2448217" href="http://home.cnblogs.com/u/383819/" target="_blank">poll</a> <a href="http://msg.cnblogs.com/send/poll" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2448217" class="blog_comment_body">为什么我用了  没什么反应？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2448217,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2448217,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#2718171" class="layer">#4楼</a><a name="2718171" id="comment_anchor_2718171"></a> <span class="comment_date">2013-07-02 14:34</span> | <a id="a_comment_author_2718171" href="http://www.cnblogs.com/jiangz/" target="_blank">juejiang</a> <a href="http://msg.cnblogs.com/send/juejiang" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2718171" class="blog_comment_body">双击可以获得经纬度信息。要是可以增加一个可以输入经纬度的功能，并且可以对地图放大的功能就好了。有时候需要在一个经纬度附近找一些其它位置的经纬度。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2718171,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2718171,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#2718564" class="layer">#5楼</a><a name="2718564" id="comment_anchor_2718564"></a> <span class="comment_date">2013-07-02 22:08</span> | <a id="a_comment_author_2718564" href="http://home.cnblogs.com/u/544333/" target="_blank">desexy</a> <a href="http://msg.cnblogs.com/send/desexy" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2718564" class="blog_comment_body">你好，请问下   如果点击一个坐标  可以修改拖拽  然后生成修改的图形  怎么做啊？？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2718564,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2718564,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#2793120" class="layer">#6楼</a><a name="2793120" id="comment_anchor_2793120"></a> <span class="comment_date">2013-10-14 23:06</span> | <a id="a_comment_author_2793120" href="http://www.cnblogs.com/defineconst/" target="_blank">咸鱼翻身</a> <a href="http://msg.cnblogs.com/send/%E5%92%B8%E9%B1%BC%E7%BF%BB%E8%BA%AB" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2793120" class="blog_comment_body">百度 密钥类别 是什么意思<br>申请了Key替代了默认的总是提示需要申请Key。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2793120,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2793120,'Bury',this)">反对(0)</a></div><span id="comment_2793120_avatar" style="display:none;">http://pic.cnblogs.com/face/u37018.jpg</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#2993267" class="layer">#7楼</a><a name="2993267" id="comment_anchor_2993267"></a> <span class="comment_date">2014-07-23 17:56</span> | <a id="a_comment_author_2993267" href="http://www.cnblogs.com/zhang271123288/" target="_blank">张旺</a> <a href="http://msg.cnblogs.com/send/%E5%BC%A0%E6%97%BA" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2993267" class="blog_comment_body">你好，我现在想做一个区域查询，在地图上画一个多边形，然后根据关键字查询多边形区域内我云端服务器库里的坐标，能不能给个思路。膜拜！！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2993267,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2993267,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3005985" class="layer">#8楼</a><a name="3005985" id="comment_anchor_3005985"></a>[<span class="louzhu">楼主</span>]<span id="comment-maxId" style="display:none;">3005985</span><span id="comment-maxDate" style="display:none;">2014/8/12 14:02:26</span> <span class="comment_date">2014-08-12 14:02</span> | <a id="a_comment_author_3005985" href="http://www.cnblogs.com/milkmap/" target="_blank">酸奶小妹</a> <a href="http://msg.cnblogs.com/send/%E9%85%B8%E5%A5%B6%E5%B0%8F%E5%A6%B9" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3005985" class="blog_comment_body"><a href="#2993267" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,2993267);">@</a>张旺<br>将自己数据存在云图里，然后使用云检索，有多边形检索。官方示例：<br><a href="http://lbs.amap.com/api/javascript-api/example/r/1803-2/" target="_blank">http://lbs.amap.com/api/javascript-api/example/r/1803-2/</a></div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3005985,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3005985,'Bury',this)">反对(0)</a></div><span id="comment_3005985_avatar" style="display:none;">http://pic.cnblogs.com/face/249635/20140618152720.png</span>
+			</div>
+		</div>
+	<div id="comments_pager_bottom"></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" id="lnk_RefreshComments" onclick="return RefreshCommentList();">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login('commentform');">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="site_nav_under"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】50万行VC++源码: 大型组态工控、电力仿真CAD与GIS源码库</a><br><a href="http://www.rongcloud.cn/" target="_blank">【推荐】融云即时通讯云－专注为 App 开发者提供IM云服务</a><br><a href="https://www.jpush.cn/" target="_blank">【福利】极光推送-富媒体+大数据驱动精准推送，完全免费开放啦</a><br></div>
+<div id="opt_under_post"></div>
+<script type="text/javascript">
+    fixPostBodyFormat();
+</script>
+<div id="google_ad_c1" class="c_ad_block"><a href="http://www.gcpowertools.com.cn/products/componentone.htm?utm_source=cnblogs&amp;utm_medium=blogpage&amp;utm_term=bottom&amp;utm_content=C1&amp;utm_campaign=community" target="_blank"><img src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/24442-20151030141701419-628671799.gif" alt="" title="" height="250" width="300"></a></div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="http://news.cnblogs.com/n/533933/" target="_blank">新专利：苹果版HoloLens可能长这样</a><br> ·  <a href="http://news.cnblogs.com/n/533932/" target="_blank">微软面向iOS开发者发布Project Islandwood应用移植指南</a><br> ·  <a href="http://news.cnblogs.com/n/533931/" target="_blank">Mozilla希望剥离Thunderbird邮件客户端并专注于Firefox的开发</a><br> ·  <a href="http://news.cnblogs.com/n/533930/" target="_blank">谷歌追踪圣诞老人网站又上线 学习编程寓教于乐</a><br> ·  <a href="http://news.cnblogs.com/n/533929/" target="_blank">唯品会市值蒸发370亿！京东补刀打脸</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="google_ad_c2" class="c_ad_block"><a href="http://e.jikexueyuan.com/java.html?hmsr=cnb_banner_java_11.20" target="_blank"><img src="%E3%80%90%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BEAPI%E3%80%91%E8%87%AA%E8%A1%8C%E8%8E%B7%E5%8F%96%E5%8C%BA%E5%9F%9F%E7%BB%8F%E7%BA%AC%E5%BA%A6%E7%9A%84%E5%B7%A5%E5%85%B7_files/24442-20151120154810296-978269479.jpg" alt="" title="" height="60" width="468"></a></div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/527814/" target="_blank">从涂鸦到发布——理解API的设计过程</a><br> ·  <a href="http://kb.cnblogs.com/page/531834/" target="_blank">好的架构是进化来的，不是设计来的</a><br> ·  <a href="http://kb.cnblogs.com/page/532236/" target="_blank">被误解的MVC和被神化的MVVM</a><br> ·  <a href="http://kb.cnblogs.com/page/530046/" target="_blank">再谈设计和编码</a><br> ·  <a href="http://kb.cnblogs.com/page/531270/" target="_blank">什么时候应该避免写代码注释？</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+$(function () {
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 200);
+});
+</script>
+</div>
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"><div id="profile_block">昵称：<a href="http://home.cnblogs.com/u/milkmap/">酸奶小妹</a><br>园龄：<a href="http://home.cnblogs.com/u/milkmap/" title="入园时间：2010-12-21">4年11个月</a><br>粉丝：<a href="http://home.cnblogs.com/u/milkmap/followers/">1155</a><br>关注：<a href="http://home.cnblogs.com/u/milkmap/followees/">3</a><div id="p_b_follow"><a href="javascript:void(0);" onclick="cnblogs.UserManager.FollowBlogger('2d16ec83-af0c-e011-ac81-842b2b196315')">+加关注</a></div></div></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="calendar"><div id="blog-calendar" style=""><table id="blogCalendar" class="Cal" title="Calendar" cellpadding="0" cellspacing="0">
+	<tbody><tr><td colspan="7"><table class="CalTitle" cellspacing="0">
+		<tbody><tr><td class="CalNextPrev"><a href="javascript:void(0);" onclick="loadBlogCalendar('2012/01/01');return false;">&lt;</a></td><td align="center">2012年2月</td><td class="CalNextPrev" align="right"><a href="javascript:void(0);" onclick="loadBlogCalendar('2012/03/01');return false;">&gt;</a></td></tr>
+	</tbody></table></td></tr><tr><th class="CalDayHeader" abbr="日" scope="col" align="center">日</th><th class="CalDayHeader" abbr="一" scope="col" align="center">一</th><th class="CalDayHeader" abbr="二" scope="col" align="center">二</th><th class="CalDayHeader" abbr="三" scope="col" align="center">三</th><th class="CalDayHeader" abbr="四" scope="col" align="center">四</th><th class="CalDayHeader" abbr="五" scope="col" align="center">五</th><th class="CalDayHeader" abbr="六" scope="col" align="center">六</th></tr><tr><td class="CalOtherMonthDay" align="center">29</td><td class="CalOtherMonthDay" align="center">30</td><td class="CalOtherMonthDay" align="center">31</td><td align="center">1</td><td align="center"><a href="http://www.cnblogs.com/milkmap/archive/2012/02/02.html"><u>2</u></a></td><td align="center">3</td><td class="CalWeekendDay" align="center">4</td></tr><tr><td class="CalWeekendDay" align="center">5</td><td align="center"><a href="http://www.cnblogs.com/milkmap/archive/2012/02/06.html"><u>6</u></a></td><td align="center">7</td><td align="center">8</td><td align="center"><a href="http://www.cnblogs.com/milkmap/archive/2012/02/09.html"><u>9</u></a></td><td align="center">10</td><td class="CalWeekendDay" align="center">11</td></tr><tr><td class="CalWeekendDay" align="center">12</td><td align="center">13</td><td align="center">14</td><td align="center">15</td><td align="center"><a href="http://www.cnblogs.com/milkmap/archive/2012/02/16.html"><u>16</u></a></td><td align="center">17</td><td class="CalWeekendDay" align="center">18</td></tr><tr><td class="CalWeekendDay" align="center">19</td><td align="center">20</td><td align="center">21</td><td align="center">22</td><td align="center"><a href="http://www.cnblogs.com/milkmap/archive/2012/02/23.html"><u>23</u></a></td><td align="center">24</td><td class="CalWeekendDay" align="center">25</td></tr><tr><td class="CalWeekendDay" align="center">26</td><td align="center">27</td><td align="center">28</td><td align="center">29</td><td class="CalOtherMonthDay" align="center">1</td><td class="CalOtherMonthDay" align="center">2</td><td class="CalOtherMonthDay" align="center">3</td></tr><tr><td class="CalOtherMonthDay" align="center">4</td><td class="CalOtherMonthDay" align="center">5</td><td class="CalOtherMonthDay" align="center">6</td><td class="CalOtherMonthDay" align="center">7</td><td class="CalOtherMonthDay" align="center">8</td><td class="CalOtherMonthDay" align="center">9</td><td class="CalOtherMonthDay" align="center">10</td></tr>
+</tbody></table></div><script type="text/javascript">loadBlogDefaultCalendar();</script></div>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+<div id="sidebar_search_box">
+<div id="widget_my_zzk" class="div_my_zzk"><input id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk" type="text">&nbsp;<input onclick="zzk_go()" value="找找看" id="btnZzk" class="btn_my_zzk" type="button"></div>
+<div id="widget_my_google" class="div_my_zzk"><input name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk" type="text">&nbsp;<input onclick="google_go()" value="谷歌搜索" class="btn_my_zzk" type="button"></div>
+</div>
+</div>
+
+</div><div id="sidebar_shortcut" class="sidebar-block">
+<div class="catListLink">
+<h3 class="catListTitle">常用链接</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/milkmap/p/" title="我的博客的随笔列表">我的随笔</a></li><li><a href="http://www.cnblogs.com/milkmap/MyComments.html" title="我发表过的评论列表">我的评论</a></li><li><a href="http://www.cnblogs.com/milkmap/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li><li><a href="http://www.cnblogs.com/milkmap/RecentComments.html" title="我的博客的评论列表">最新评论</a></li><li><a href="http://www.cnblogs.com/milkmap/tag/" title="我的博客的标签列表">我的标签</a></li>
+<li><a id="itemListLink" onclick="this.blur();WarpClass('itemListLink', 'itemListLin_con');return false;" href="#">更多链接</a></li>
+</ul>
+<div id="itemListLin_con" style="display:none;">
+<ul>
+
+</ul>
+</div>
+</div></div><div id="sidebar_toptags" class="sidebar-block">
+<div class="catListTag">
+<h3 class="catListTitle">我的标签</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/milkmap/tag/%E5%9C%B0%E5%9B%BEAPI/">地图API</a>(97)</li><li><a href="http://www.cnblogs.com/milkmap/tag/%E5%AE%89%E5%8D%93SDK/">安卓SDK</a>(12)</li><li><a href="http://www.cnblogs.com/milkmap/tag/%E4%BA%91%E5%9B%BE/">云图</a>(12)</li><li><a href="http://www.cnblogs.com/milkmap/tag/%E9%AB%98%E5%BE%B7/">高德</a>(5)</li><li><a href="http://www.cnblogs.com/milkmap/tag/javascript/">javascript</a>(5)</li><li><a href="http://www.cnblogs.com/milkmap/tag/ios/">ios</a>(3)</li><li><a href="http://www.cnblogs.com/milkmap/tag/%E5%B7%A5%E5%85%B7/">工具</a>(3)</li><li><a href="http://www.cnblogs.com/milkmap/tag/%E9%9F%B3%E4%B9%90/">音乐</a>(2)</li><li><a href="http://www.cnblogs.com/milkmap/tag/phonegap/">phonegap</a>(2)</li><li><a href="http://www.cnblogs.com/milkmap/tag/PHP/">PHP</a>(1)</li><li><a href="http://www.cnblogs.com/milkmap/tag/">更多</a></li>
+</ul>
+</div></div><div id="sidebar_categories">
+<div class="catListPostArchive">
+<h3 class="catListTitle">随笔档案</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_0_Link_0" href="http://www.cnblogs.com/milkmap/archive/2015/11.html">2015年11月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_1" href="http://www.cnblogs.com/milkmap/archive/2015/10.html">2015年10月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_2" href="http://www.cnblogs.com/milkmap/archive/2015/06.html">2015年6月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_3" href="http://www.cnblogs.com/milkmap/archive/2015/03.html">2015年3月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_4" href="http://www.cnblogs.com/milkmap/archive/2015/01.html">2015年1月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_5" href="http://www.cnblogs.com/milkmap/archive/2014/11.html">2014年11月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_6" href="http://www.cnblogs.com/milkmap/archive/2014/10.html">2014年10月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_7" href="http://www.cnblogs.com/milkmap/archive/2014/09.html">2014年9月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_8" href="http://www.cnblogs.com/milkmap/archive/2014/08.html">2014年8月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_9" href="http://www.cnblogs.com/milkmap/archive/2014/07.html">2014年7月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_10" href="http://www.cnblogs.com/milkmap/archive/2014/06.html">2014年6月 (7)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_11" href="http://www.cnblogs.com/milkmap/archive/2014/05.html">2014年5月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_12" href="http://www.cnblogs.com/milkmap/archive/2014/04.html">2014年4月 (7)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_13" href="http://www.cnblogs.com/milkmap/archive/2014/03.html">2014年3月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_14" href="http://www.cnblogs.com/milkmap/archive/2014/02.html">2014年2月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_15" href="http://www.cnblogs.com/milkmap/archive/2013/08.html">2013年8月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_16" href="http://www.cnblogs.com/milkmap/archive/2013/07.html">2013年7月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_17" href="http://www.cnblogs.com/milkmap/archive/2013/05.html">2013年5月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_18" href="http://www.cnblogs.com/milkmap/archive/2012/10.html">2012年10月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_19" href="http://www.cnblogs.com/milkmap/archive/2012/08.html">2012年8月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_20" href="http://www.cnblogs.com/milkmap/archive/2012/07.html">2012年7月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_21" href="http://www.cnblogs.com/milkmap/archive/2012/06.html">2012年6月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_22" href="http://www.cnblogs.com/milkmap/archive/2012/05.html">2012年5月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_23" href="http://www.cnblogs.com/milkmap/archive/2012/04.html">2012年4月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_24" href="http://www.cnblogs.com/milkmap/archive/2012/03.html">2012年3月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_25" href="http://www.cnblogs.com/milkmap/archive/2012/02.html">2012年2月 (5)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_26" href="http://www.cnblogs.com/milkmap/archive/2012/01.html">2012年1月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_27" href="http://www.cnblogs.com/milkmap/archive/2011/12.html">2011年12月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_28" href="http://www.cnblogs.com/milkmap/archive/2011/11.html">2011年11月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_29" href="http://www.cnblogs.com/milkmap/archive/2011/10.html">2011年10月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_30" href="http://www.cnblogs.com/milkmap/archive/2011/09.html">2011年9月 (8)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_31" href="http://www.cnblogs.com/milkmap/archive/2011/08.html">2011年8月 (8)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_32" href="http://www.cnblogs.com/milkmap/archive/2011/07.html">2011年7月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_33" href="http://www.cnblogs.com/milkmap/archive/2011/06.html">2011年6月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_34" href="http://www.cnblogs.com/milkmap/archive/2011/05.html">2011年5月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_35" href="http://www.cnblogs.com/milkmap/archive/2011/04.html">2011年4月 (6)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_36" href="http://www.cnblogs.com/milkmap/archive/2011/03.html">2011年3月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_37" href="http://www.cnblogs.com/milkmap/archive/2011/02.html">2011年2月 (5)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_38" href="http://www.cnblogs.com/milkmap/archive/2011/01.html">2011年1月 (5)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_39" href="http://www.cnblogs.com/milkmap/archive/2010/12.html">2010年12月 (7)</a> </li>
+
+</ul>
+
+</div>
+
+<div class="catListImageCategory">
+<h3 class="catListTitle">相册</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_1_Link_0" href="http://www.cnblogs.com/milkmap/gallery/280327.html" rel="nofollow">百度地图API(12)</a> </li>
+
+</ul>
+
+</div>
+
+</div><div id="sidebar_recentcomments" class="sidebar-block"><div id="recent_comments_wrap">
+<div class="catListComment">
+<h3 class="catListTitle">最新评论</h3>
+
+	<div id="RecentCommentsBlock"><ul>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/milkmap/archive/2011/08/16/2135323.html#3306053">1. Re:如何利用【百度地图API】，制作房产酒店地图？（下）——结合自己的数据库</a></li>
+    <li class="recent_comment_body">@幻影111怎么下载demo？...</li>
+    <li class="recent_comment_author">--山水中华</li>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/milkmap/archive/2011/08/16/2135323.html#3303346">2. Re:如何利用【百度地图API】，制作房产酒店地图？（下）——结合自己的数据库</a></li>
+    <li class="recent_comment_body">小妹颜值几何</li>
+    <li class="recent_comment_author">--57833413</li>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/milkmap/p/3778398.html#3297423">3. Re:【云图】如何制作官网上的实体店分布图？</a></li>
+    <li class="recent_comment_body">多边形检索（即searchInPolygon），查询不到数据。但是，不是多边形查询的话（即searchByDistrict查询），则可以查询到数据？这是啥情况？-----------------问题详......</li>
+    <li class="recent_comment_author">--B_yellow</li>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/milkmap/archive/2011/08/16/2135323.html#3295207">4. Re:如何利用【百度地图API】，制作房产酒店地图？（下）——结合自己的数据库</a></li>
+    <li class="recent_comment_body">这个例子比较完整<a href="" target="_blank"></a><br>还有数据库下载哦！</li>
+    <li class="recent_comment_author">--幻影111</li>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/milkmap/archive/2011/09/09/2172574.html#3295205">5. Re:【百度地图API】如何制作可拖拽的沿道路测距</a></li>
+    <li class="recent_comment_body">这个例子比较完整<a href="" target="_blank"></a></li>
+    <li class="recent_comment_author">--幻影111</li>
+</ul>
+</div>
+</div>
+</div></div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock"><ul><li><a href="http://www.cnblogs.com/milkmap/archive/2012/02/23/2365064.html">1. 【百度地图API】自行获取区域经纬度的工具(43763)</a></li><li><a href="http://www.cnblogs.com/milkmap/archive/2011/08/26/2154627.html">2. 【百度地图API】如何制作多途经点的线路导航——驾车篇(36002)</a></li><li><a href="http://www.cnblogs.com/milkmap/archive/2012/02/09/2343880.html">3. 用HTML5/CSS3/JS开发Android/IOS应用(31287)</a></li><li><a href="http://www.cnblogs.com/milkmap/archive/2012/05/21/2511928.html">4. 【“零起点”--百度地图手机SDK】如何使用离线地图？(30603)</a></li><li><a href="http://www.cnblogs.com/milkmap/archive/2011/08/04/2127663.html">5. 如何利用【百度地图API】，制作房产酒店地图？（上）——制作自定义标注和自定义信息窗口(27185)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topcommentedposts" class="sidebar-block"><div id="topfeedback_posts_wrap">
+<div class="catListFeedback">
+<h3 class="catListTitle">评论排行榜</h3>
+	<div id="TopFeedbackPostsBlock"><ul><li><a href="http://www.cnblogs.com/milkmap/archive/2011/08/16/2135323.html">1. 如何利用【百度地图API】，制作房产酒店地图？（下）——结合自己的数据库(37)</a></li><li><a href="http://www.cnblogs.com/milkmap/archive/2012/01/18/2325462.html">2. 如何下载防盗链的歌曲？(35)</a></li><li><a href="http://www.cnblogs.com/milkmap/archive/2011/08/04/2127663.html">3. 如何利用【百度地图API】，制作房产酒店地图？（上）——制作自定义标注和自定义信息窗口(34)</a></li><li><a href="http://www.cnblogs.com/milkmap/archive/2011/08/26/2154627.html">4. 【百度地图API】如何制作多途经点的线路导航——驾车篇(30)</a></li><li><a href="http://www.cnblogs.com/milkmap/archive/2012/10/24/2735923.html">5. 【百度地图API】如何制作班级地理通讯录？LBS通讯录(30)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div id="TopDiggPostsBlock"><ul><li><a href="http://www.cnblogs.com/milkmap/archive/2011/08/04/2127663.html">1. 如何利用【百度地图API】，制作房产酒店地图？（上）——制作自定义标注和自定义信息窗口(15)</a></li><li><a href="http://www.cnblogs.com/milkmap/archive/2011/08/10/2133425.html">2. 【百度地图API】建立全国银行位置查询系统（五）——如何更改百度地图的信息窗口内容？(12)</a></li><li><a href="http://www.cnblogs.com/milkmap/archive/2011/09/15/2177743.html">3. 【百度地图API】让用户选择起点和终点的驾车导航(11)</a></li><li><a href="http://www.cnblogs.com/milkmap/p/4584359.html">4. 如何制作京东自提点地图？(9)</a></li><li><a href="http://www.cnblogs.com/milkmap/archive/2012/02/23/2365064.html">5. 【百度地图API】自行获取区域经纬度的工具(9)</a></li></ul></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright ©2015 酸奶小妹
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+</body></html>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- 
+	1.写出xml文档的根元素
+	
+	2.导入xsd文件的命名空间.(理解起来按照java中的导包理解).在xsd文件头部寻找 类似后面的东西.代表xsd文件的包名.targetNamespace="http://www.itcast.cn/xml"
+	
+	3.如果引入多个xsd文件.那么 我们无法分辨后面的元素到底是哪个xsd中定义的.解决:为命名空间加前缀.例如:xmlns:aaa="http://www.itcast.cn/xml" 就是在给http://www.itcast.cn/xml命名空间加一个aaa前缀
+		xmlns="http://www.itcast.cn/xml"  ==>  不加前缀的元素和属性都属于http://www.itcast.cn/xml 命名空间.
+	
+	4.为schemaLocation属性导入命名空间. 是固定值,在所有的导入中都一样.xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ -->
+<students   xmlns="http://www.itcast.cn/xml" 
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+			xsi:schemaLocation="http://www.itcast.cn/xml student.xsd" >
+	<student number="ITCAST_0001">
+		<name>tom</name>
+		<age>50</age>
+		<sex>male</sex>
+	</student>
+</students>

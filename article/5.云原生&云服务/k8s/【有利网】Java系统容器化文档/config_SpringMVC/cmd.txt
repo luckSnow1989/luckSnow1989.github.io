@@ -1,0 +1,5 @@
+单模块构建镜像：
+mvn clean install -Pbeta -Dmaven.test.skip=true -Ddocker.image.repositories=harbor-master.yooli-me.com -Dharbor.account=deploy_test -Dharbor.passwd=LoFkO73THnV9byQC -Dlocal.docker.host=172.16.4.147:2377 -Dprofile.branch=beta docker:build docker:push
+
+多模块构建镜像：
+mvn clean install -Pbeta -Dmaven.test.skip=true && mvn package -Dmaven.test.skip=true -Ddocker.image.repositories=harbor-master.yooli-me.com -Dharbor.account=deploy_test -Dharbor.passwd=LoFkO73THnV9byQC -Dlocal.docker.host=172.16.4.147:2377 -Dprofile.branch=beta docker:build docker:push

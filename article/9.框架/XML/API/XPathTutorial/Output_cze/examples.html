@@ -1,0 +1,207 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" type="text/css" href="../CSS/tutorial.css">
+      <title>XPath Tutorial</title>
+   </head>
+   <body>
+      <table xmlns="http://www.w3.org/1999/xhtml" width="100%">
+         <tr>
+            <td><span class="mediumText"><a class="naviBlack" target="_self" href="../Output/examples.html">English</a> | <b>&gt;&gt;&nbsp;česky&nbsp;&lt;&lt;</b> | <a class="naviBlack" target="_self" href="../Output_dut/examples.html">Nederlands</a> | <a class="naviBlack" target="_self" href="../Output_fre/examples.html">Fran&ccedil;ais</a> | <a class="naviBlack" target="_self" href="../Output_spa/examples.html">Espa&ntilde;ol</a> | <a class="naviBlack" target="_self" href="../Output_rus/examples.html">По-русски</a> | <a class="naviBlack" target="_self" href="../Output_ger/examples.html">Deutsch</a> | <a class="naviBlack" target="_self" href="../Output_chi/examples.html">中文</a> | <a class="naviBlack" target="_self" href="../Output_ita/examples.html">Italiano</a></span></td>
+         </tr>
+      </table>
+      <table xmlns="http://www.w3.org/1999/xhtml" class="bar" width="750px" border="0" cellpadding="0" cellspacing="0">
+         <tr>
+            <td class="naviBlue"><a class="naviWhite" target="_top" href="../General_cze/examples.html">&Uacute;vod</a> 
+               	/
+               	  <a class="naviWhite" target="_top" href="http://zvon.org/search.php">Hledej</a> 
+               	/
+               	<a class="naviWhite" target="_top" href="http://www.zvon.org"> ZVON </a></td>
+         </tr>
+      </table>
+      <table xmlns="http://www.w3.org/1999/xhtml" width="100%">
+         <tr>
+            <td class="descriptionMenu">
+               <ul>
+                  <li>
+                     	 &gt;&gt;&nbsp;Př&iacute;klady&nbsp;&lt;&lt;
+                     
+                  </li>
+                  <li><a class="menu" href="./paths.html">XPath v&yacute;razy</a></li>
+               </ul>
+            </td>
+         </tr>
+      </table>
+      <hr xmlns="http://www.w3.org/1999/xhtml">
+      <table border="1" width="100%" cellpadding="1">
+         <tr>
+            <td><a class="example" href="example1.html" target="mainWindow">Př&iacute;klad 1</a><br>
+               Z&aacute;kladn&iacute; syntax jazyka XPath je podobn&yacute; adresov&aacute;n&iacute; v souborov&eacute;m
+               syst&eacute;mu (filesystem).
+               Pokud v&yacute;raz zač&iacute;n&aacute; lom&iacute;tkem (slash) / , 
+               pak reprezentuje absolutn&iacute; cestu k požadovan&eacute;mu elementu.
+               
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example2.html" target="mainWindow">Př&iacute;klad 2</a><br>
+               Pokud v&yacute;raz zač&iacute;n&aacute; // (dvěma lom&iacute;tky), pak jsou vybr&aacute;ny všechny
+               elementy kdekoli v dokumentu, kter&eacute; splňuj&iacute; n&aacute;sleduj&iacute;c&iacute; krit&eacute;ria
+               
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example3.html" target="mainWindow">Př&iacute;klad 3</a><br>
+               Hvězdička * vybere všechny elementy, kter&eacute; jsou určeny předch&aacute;zej&iacute;c&iacute;m v&yacute;razem
+               
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example4.html" target="mainWindow">Př&iacute;klad 4</a><br>
+               V&yacute;raz v hranat&yacute;ch z&aacute;vork&aacute;ch může specifikovat dalš&iacute; podm&iacute;nky.
+               Č&iacute;slo v hranat&yacute;ch z&aacute;vork&aacute;ch určuje pozici elementu ve vybran&eacute;m
+               souboru elementů.
+               Funkce "last()" ("posledn&iacute;") vyb&iacute;r&aacute; posledn&iacute; element ve v&yacute;běru.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example5.html" target="mainWindow">Př&iacute;klad 5</a><br>
+               Atributy jsou specifikov&aacute;ny pomoc&iacute; prefixu "@".
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example6.html" target="mainWindow">Př&iacute;klad 6</a><br>
+               Hodnoty atributů mohou b&yacute;t použity jako krit&eacute;rium pro v&yacute;běr.
+               Funkce "normalize-space" odstraňuje poč&aacute;tečn&iacute; a koncov&eacute; mezery
+               a nahrazuje sekvence "whitespace" znaků jedinou mezerou.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example7.html" target="mainWindow">Př&iacute;klad 7</a><br>
+               Funkce count() vr&aacute;t&iacute; počet vybran&yacute;ch elementů 
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example8.html" target="mainWindow">Př&iacute;klad 8</a><br>
+               Funkce name() vrac&iacute; jm&eacute;no elementu, funkce "starts-with"
+               vrac&iacute; hodnotu "true", pokud prvn&iacute; argument zač&iacute;n&aacute; řetězcem, kter&yacute; je uveden
+               jako druh&yacute; argument.
+               Funkce "contains" vrac&iacute; hodnotu "true", pokud 
+               prvn&iacute; argument obsahuje řetězec, kter&yacute; je uveden
+               jako druh&yacute; argument.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example9.html" target="mainWindow">Př&iacute;klad 9</a><br>
+               Funkce "string-length" vrac&iacute; počet znaků v řetězci.
+               Mus&iacute;te použ&iacute;t &amp;lt; jako n&aacute;hražku pro &lt; (menš&iacute; než)
+               a &amp;gt; jako n&aacute;hražku pro &gt; (větš&iacute; než).
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example10.html" target="mainWindow">Př&iacute;klad 10</a><br>Několik v&yacute;razů může b&yacute;t kombinov&aacute;no pomoc&iacute; 
+               separ&aacute;toru |
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example11.html" target="mainWindow">Př&iacute;klad 11</a><br>
+               Osa př&iacute;m&yacute;ch potomků (child axis) obsahuje všechny př&iacute;m&eacute; potomky
+               uzlu, kter&yacute; je v kontextu. Tato osa je implicitn&iacute; a může b&yacute;t
+               vynech&aacute;na.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example12.html" target="mainWindow">Př&iacute;klad 12</a><br>
+               Osa potomků (descendant axis) obsahuje potomky uzlu, kter&yacute;
+               je v kontextu; 
+               potomek je př&iacute;m&yacute; potomek (d&iacute;tě, "child") nebo př&iacute;m&yacute; potomek
+               př&iacute;m&eacute;ho potomka atd.
+               Proto osa potomků nikdy neobsahuje uzly typu atribut nebo jmenn&yacute; prostor.
+               
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example13.html" target="mainWindow">Př&iacute;klad 13</a><br>
+               Osa rodičů (parent axis) obsahuje rodiče uzlu, kter&yacute; je v kontextu - pokud ovšem existuj&iacute;.
+               
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example14.html" target="mainWindow">Př&iacute;klad 14</a><br>
+               Osa předků obsahuje předku uzlu, kter&yacute; je v kontextu;
+               předkov&eacute; tohoto uzlu jsou rodiče, rodiče rodičů atd.
+               Proto osa předků vždy obsahuje kořen dokumentu,
+               pokud ovšem uzlem v kontextu nen&iacute; s&aacute;m kořen dokumentu.
+               
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example15.html" target="mainWindow">Př&iacute;klad 15</a><br>
+               Osa "following-sibling" obsahuje všechny n&aacute;sleduj&iacute;c&iacute; sourozence
+               uzlu, kter&yacute; je v kontextu.
+               
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example16.html" target="mainWindow">Př&iacute;klad 16</a><br>
+               Osa "preceding-sibling" obsahuje všechny předch&aacute;zej&iacute;c&iacute; sourozence
+               uzlu, kter&yacute; je v kontextu.
+               
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example17.html" target="mainWindow">Př&iacute;klad 17</a><br>
+               Osa "following" ("n&aacute;sleduj&iacute;c&iacute;") obsahuje všechny uzly v tom sam&eacute;m
+               dokumentu, kter&eacute; se vyskytuj&iacute; po uzlu, kter&yacute; je v kontextu,
+               a to podle pořad&iacute; v dokumentu ("document order") a vyjma
+               jak&yacute;chkoli potomků, atributů a uzlů jmenn&yacute;ch prostorů.
+               
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example18.html" target="mainWindow">Př&iacute;klad 18</a><br>
+               Osa "preceding" (předch&aacute;zej&iacute;c&iacute;) obsahuje všechny uzly v tom sam&eacute;m
+               dokumentu, kter&eacute; se vyskytuj&iacute; po uzlu, kter&yacute; je v kontextu,
+               a to podle pořad&iacute; v dokumentu ("document order") a vyjma
+               jak&yacute;chkoli předků, atributů a uzlů jmenn&yacute;ch prostorů.
+               
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example19.html" target="mainWindow">Př&iacute;klad 19</a><br>
+               Osa "descendant-or-self" obsahuje kontextov&yacute; uzel
+               a všechny jeho potomky
+               
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example20.html" target="mainWindow">Př&iacute;klad 20</a><br>
+               Osa "ancestor-or-self" obsahuje kontextov&yacute; uzel a všechny jeho předky.
+               Proto bude vždy obsahovat kořen dokumentu.
+               
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example21.html" target="mainWindow">Př&iacute;klad 21</a><br>
+               Osy "ancestor", "descendant", "following", "preceding" a "self"
+               rozděluj&iacute; dokument
+               (ignoruj&iacute;c uzly typu atribut a jmenn&yacute; prostor):
+               nepřekr&yacute;vaj&iacute; se a dohromady obsahuj&iacute; všechny uzly dokumentu.
+               
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example22.html" target="mainWindow">Př&iacute;klad 22</a><br>
+               Oper&aacute;tor "div" prov&aacute;d&iacute; dělen&iacute; (neceloč&iacute;seln&eacute;), 
+               oper&aacute;tor "mod" vrac&iacute; zbytek po celoč&iacute;seln&eacute;m dělen&iacute;.
+               Funkce "floor" vrac&iacute; nejvyšš&iacute; (bližš&iacute; k plus nekonečnu)
+               cel&eacute; č&iacute;slo, kter&eacute; nen&iacute; vyšš&iacute; než argument.
+               Funkce "ceiling" nejmenš&iacute; (bližš&iacute; k minus nekonečnu)
+               cel&eacute; č&iacute;slo, kter&eacute; nen&iacute; menš&iacute; než argument.
+               
+            </td>
+         </tr>
+      </table>
+   </body>
+</html>

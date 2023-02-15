@@ -1,0 +1,326 @@
+<div class="post">
+     <h3 class="title"><span>[Google Guava] 2.2-新集合类型</span></h3>
+     <div class="post_content">
+      <p><a href="https://code.google.com/p/guava-libraries/wiki/NewCollectionTypesExplained" onclick="javascript:window.open('https://code.google.com/p/guava-libraries/wiki/NewCollectionTypesExplained'); return false;">原文链接</a>&nbsp;<a href="http://ifeve.com/google-guava-newcollectiontypes" onclick="javascript:window.open('http://ifeve.com/google-guava-newcollectiontypes'); return false;">译文链接</a>&nbsp;<strong>译者：</strong>沈义扬，校对：丁一</p>
+<p>Guava引入了很多JDK没有的、但我们发现明显有用的新集合类型。这些新类型是为了和JDK集合框架共存，而没有往JDK集合抽象中硬塞其他概念。作为一般规则，Guava集合非常精准地遵循了JDK接口契约。</p>
+<h2>Multiset</h2>
+<p>统计一个词在文档中出现了多少次，传统的做法是这样的：</p>
+<div id="highlighter_228879" class="syntaxhighlighter  "><div class="bar"><div class="toolbar"><a href="#viewSource" title="查看源代码" class="item viewSource" style="width: 16px; height: 16px;">查看源代码</a><div class="item copyToClipboard"><embed width="16" height="16" id="highlighter_228879_clipboard" type="application/x-shockwave-flash" title="复制到剪贴板" allowscriptaccess="always" wmode="transparent" flashvars="highlighterId=highlighter_228879" menu="false" src="http://ifeve.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter2/scripts/clipboard.swf"></div><a href="#printSource" title="打印" class="item printSource" style="width: 16px; height: 16px;">打印</a><a href="#about" title="帮助" class="item about" style="width: 16px; height: 16px;">帮助</a></div></div><div class="lines"><div class="line alt1"><table><tbody><tr><td class="number"><code>1</code></td><td class="content"><code class="plain">Map&lt;String, Integer&gt; counts = </code><code class="keyword">new</code> <code class="plain">HashMap&lt;String, Integer&gt;();</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>2</code></td><td class="content"><code class="keyword">for</code> <code class="plain">(String word : words) {</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>3</code></td><td class="content"><code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="plain">Integer count = counts.get(word);</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>4</code></td><td class="content"><code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="keyword">if</code> <code class="plain">(count == </code><code class="keyword">null</code><code class="plain">) {</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>5</code></td><td class="content"><code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="plain">counts.put(word, </code><code class="value">1</code><code class="plain">);</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>6</code></td><td class="content"><code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="plain">} </code><code class="keyword">else</code> <code class="plain">{</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>7</code></td><td class="content"><code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="plain">counts.put(word, count + </code><code class="value">1</code><code class="plain">);</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>8</code></td><td class="content"><code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="plain">}</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>9</code></td><td class="content"><code class="plain">}</code></td></tr></tbody></table></div></div></div>
+<p>这种写法很笨拙，也容易出错，并且不支持同时收集多种统计信息，如总词数。我们可以做的更好。<br>
+<span id="more-8854"></span><br>
+Guava提供了一个新集合类型&nbsp;<a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multiset.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multiset.html'); return false;">Multiset</a>，它可以多次添加相等的元素。维基百科从数学角度这样定义Multiset：”集合[set]概念的延伸，它的元素可以重复出现…与集合[set]相同而与元组[tuple]相反的是，Multiset元素的顺序是无关紧要的：Multiset {a, a, b}和{a, b, a}是相等的”。——<i>译者注：这里所说的集合</i><i>[set]是数学上的概念，Multiset继承自JDK中的Collection接口，而不是Set接口，所以包含重复元素并没有违反原有的接口契约。</i></p>
+<p>可以用两种方式看待Multiset：</p>
+<ul>
+<li>没有元素顺序限制的ArrayList&lt;E&gt;</li>
+<li>Map&lt;E, Integer&gt;，键为元素，值为计数</li>
+</ul>
+<p>Guava的Multiset API也结合考虑了这两种方式：<br>
+当把Multiset看成普通的Collection时，它表现得就像无序的ArrayList：</p>
+<ul>
+<li>add(E)添加单个给定元素</li>
+<li>iterator()返回一个迭代器，包含Multiset的所有元素（包括重复的元素）</li>
+<li>size()返回所有元素的总个数（包括重复的元素）</li>
+</ul>
+<p>当把Multiset看作Map&lt;E, Integer&gt;时，它也提供了符合性能期望的查询操作：</p>
+<ul>
+<li>count(Object)返回给定元素的计数。HashMultiset.count的复杂度为O(1)，TreeMultiset.count的复杂度为O(log n)。</li>
+<li>entrySet()返回Set&lt;Multiset.Entry&lt;E&gt;&gt;，和Map的entrySet类似。</li>
+<li>elementSet()返回所有不重复元素的Set&lt;E&gt;，和Map的keySet()类似。</li>
+<li>所有Multiset实现的内存消耗随着不重复元素的个数线性增长。</li>
+</ul>
+<p>值得注意的是，除了极少数情况，Multiset和JDK中原有的Collection接口契约完全一致——具体来说，TreeMultiset在判断元素是否相等时，与TreeSet一样用compare，而不是Object.equals。另外特别注意，Multiset.addAll(Collection)可以添加Collection中的所有元素并进行计数，这比用for循环往Map添加元素和计数方便多了。</p>
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="142"><b>方法</b><b></b></td>
+<td width="470"><b>描述</b><b></b></td>
+</tr>
+<tr>
+<td width="142"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multiset.html#count(java.lang.Object)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multiset.html#count(java.lang.Object)'); return false;">count(E)</a><b></b></td>
+<td width="470">给定元素在Multiset中的计数</td>
+</tr>
+<tr>
+<td width="142"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multiset.html#elementSet()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multiset.html#elementSet()'); return false;">elementSet()</a></td>
+<td width="470">Multiset中不重复元素的集合，类型为Set&lt;E&gt;</td>
+</tr>
+<tr>
+<td width="142"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multiset.html#entrySet()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multiset.html#entrySet()'); return false;">entrySet()</a></td>
+<td width="470">和Map的entrySet类似，返回Set&lt;Multiset.Entry&lt;E&gt;&gt;，其中包含的Entry支持getElement()和getCount()方法</td>
+</tr>
+<tr>
+<td width="142"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multiset.html#add(java.lang.Object,int)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multiset.html#add(java.lang.Object,int)'); return false;">add(E, int)</a></td>
+<td width="470">增加给定元素在Multiset中的计数</td>
+</tr>
+<tr>
+<td width="142"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Multiset.html#remove(java.lang.Object, int)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Multiset.html#remove(java.lang.Object, int)'); return false;">remove(E, int)</a></td>
+<td width="470">减少给定元素在Multiset中的计数</td>
+</tr>
+<tr>
+<td width="142"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Multiset.html#setCount(E, int)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Multiset.html#setCount(E, int)'); return false;">setCount(E, int)</a></td>
+<td width="470">设置给定元素在Multiset中的计数，不可以为负数</td>
+</tr>
+<tr>
+<td width="142">size()</td>
+<td width="470">返回集合元素的总个数（包括重复的元素）</td>
+</tr>
+</tbody>
+</table>
+<h3>Multiset不是Map</h3>
+<p>请注意，Multiset&lt;E&gt;不是Map&lt;E, Integer&gt;，虽然Map可能是某些Multiset实现的一部分。准确来说Multiset是一种Collection类型，并履行了Collection接口相关的契约。关于Multiset和Map的显著区别还包括：</p>
+<ul>
+<li>Multiset中的元素计数只能是正数。任何元素的计数都不能为负，也不能是0。elementSet()和entrySet()视图中也不会有这样的元素。</li>
+<li>multiset.size()返回集合的大小，等同于所有元素计数的总和。对于不重复元素的个数，应使用elementSet().size()方法。（因此，add(E)把multiset.size()增加1）</li>
+<li>multiset.iterator()会迭代重复元素，因此迭代长度等于multiset.size()。</li>
+<li>Multiset支持直接增加、减少或设置元素的计数。setCount(elem, 0)等同于移除所有elem。</li>
+<li>对multiset&nbsp;中没有的元素，multiset.count(elem)始终返回0。</li>
+</ul>
+<h3>Multiset的各种实现</h3>
+<p>Guava提供了多种Multiset的实现，大致对应JDK中Map的各种实现：</p>
+<table width="614" border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="161"><b>Map</b></td>
+<td width="198"><b>对应的</b><b>Multiset</b><b></b></td>
+<td valign="top" width="255"><b>是否支持</b><b>null</b><b>元素</b><b></b></td>
+</tr>
+<tr>
+<td width="161">HashMap</td>
+<td width="198"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/HashMultiset.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/HashMultiset.html'); return false;">HashMultiset</a></td>
+<td valign="top" width="255">是</td>
+</tr>
+<tr>
+<td width="161">TreeMap</td>
+<td width="198"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/TreeMultiset.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/TreeMultiset.html'); return false;">TreeMultiset</a></td>
+<td valign="top" width="255">是（如果comparator支持的话）</td>
+</tr>
+<tr>
+<td width="161">LinkedHashMap</td>
+<td width="198"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/LinkedHashMultiset.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/LinkedHashMultiset.html'); return false;">LinkedHashMultiset</a></td>
+<td valign="top" width="255">是</td>
+</tr>
+<tr>
+<td width="161">ConcurrentHashMap</td>
+<td width="198"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/ConcurrentHashMultiset.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/ConcurrentHashMultiset.html'); return false;">ConcurrentHashMultiset</a></td>
+<td valign="top" width="255">否</td>
+</tr>
+<tr>
+<td width="161">ImmutableMap</td>
+<td width="198"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/ImmutableMultiset.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/ImmutableMultiset.html'); return false;">ImmutableMultiset</a></td>
+<td valign="top" width="255">否</td>
+</tr>
+</tbody>
+</table>
+<h3>SortedMultiset</h3>
+<p><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/SortedMultiset.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/SortedMultiset.html'); return false;">SortedMultiset</a>是Multiset&nbsp;接口的变种，它支持高效地获取指定范围的子集。比方说，你可以用&nbsp;latencies.subMultiset(0,BoundType.CLOSED, 100, BoundType.OPEN).size()来统计你的站点中延迟在100毫秒以内的访问，然后把这个值和latencies.size()相比，以获取这个延迟水平在总体访问中的比例。</p>
+<p>TreeMultiset实现SortedMultiset接口。在撰写本文档时，ImmutableSortedMultiset还在测试和GWT的兼容性。</p>
+<h2>Multimap</h2>
+<p>每个有经验的Java程序员都在某处实现过Map&lt;K, List&lt;V&gt;&gt;或Map&lt;K, Set&lt;V&gt;&gt;，并且要忍受这个结构的笨拙。例如，Map&lt;K, Set&lt;V&gt;&gt;通常用来表示非标定有向图。Guava的&nbsp;<a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimap.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimap.html'); return false;">Multimap</a>可以很容易地把一个键映射到多个值。换句话说，Multimap是把键映射到任意多个值的一般方式。</p>
+<p>可以用两种方式思考Multimap的概念：”键-单个值映射”的集合：</p>
+<p>a -&gt; 1 a -&gt; 2 a -&gt;4 b -&gt; 3 c -&gt; 5</p>
+<p>或者”键-值集合映射”的映射：</p>
+<p>a -&gt; [1, 2, 4] b -&gt; 3 c -&gt; 5</p>
+<p>一般来说，Multimap接口应该用第一种方式看待，但asMap()视图返回Map&lt;K, Collection&lt;V&gt;&gt;，让你可以按另一种方式看待Multimap。重要的是，不会有任何键映射到空集合：一个键要么至少到一个值，要么根本就不在Multimap中。</p>
+<p>很少会直接使用Multimap接口，更多时候你会用ListMultimap或SetMultimap接口，它们分别把键映射到List或Set。</p>
+<h3>修改Multimap</h3>
+<p><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimap.html#get(K)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimap.html#get(K)'); return false;">Multimap.get(key)</a>以集合形式返回键所对应的值视图，即使没有任何对应的值，也会返回空集合。ListMultimap.get(key)返回List，SetMultimap.get(key)返回Set。</p>
+<p>对值视图集合进行的修改最终都会反映到底层的Multimap。例如：</p>
+<div id="highlighter_264573" class="syntaxhighlighter  "><div class="bar"><div class="toolbar"><a href="#viewSource" title="查看源代码" class="item viewSource" style="width: 16px; height: 16px;">查看源代码</a><div class="item copyToClipboard"><embed width="16" height="16" id="highlighter_264573_clipboard" type="application/x-shockwave-flash" title="复制到剪贴板" allowscriptaccess="always" wmode="transparent" flashvars="highlighterId=highlighter_264573" menu="false" src="http://ifeve.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter2/scripts/clipboard.swf"></div><a href="#printSource" title="打印" class="item printSource" style="width: 16px; height: 16px;">打印</a><a href="#about" title="帮助" class="item about" style="width: 16px; height: 16px;">帮助</a></div></div><div class="lines"><div class="line alt1"><table><tbody><tr><td class="number"><code>1</code></td><td class="content"><code class="plain">Set&lt;Person&gt; aliceChildren = childrenMultimap.get(alice);</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>2</code></td><td class="content"><code class="plain">aliceChildren.clear();</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>3</code></td><td class="content"><code class="plain">aliceChildren.add(bob);</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>4</code></td><td class="content"><code class="plain">aliceChildren.add(carol);</code></td></tr></tbody></table></div></div></div>
+<p>其他（更直接地）修改Multimap的方法有：</p>
+<table width="614" border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="132"><b>方法签名</b><b></b></td>
+<td width="246"><b>描述</b><b></b></td>
+<td valign="top" width="236"><b>等价于</b><b></b></td>
+</tr>
+<tr>
+<td width="132"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Multimap.html#put(K, V)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Multimap.html#put(K, V)'); return false;">put(K, V)</a></td>
+<td width="246">添加键到单个值的映射</td>
+<td valign="top" width="236">multimap.get(key).add(value)</td>
+</tr>
+<tr>
+<td width="132"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Multimap.html#putAll(K, java.lang.Iterable)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Multimap.html#putAll(K, java.lang.Iterable)'); return false;">putAll(K, Iterable&lt;V&gt;)</a></td>
+<td width="246">依次添加键到多个值的映射</td>
+<td valign="top" width="236">Iterables.addAll(multimap.get(key), values)</td>
+</tr>
+<tr>
+<td width="132"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Multimap.html#remove(java.lang.Object, java.lang.Object)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Multimap.html#remove(java.lang.Object, java.lang.Object)'); return false;">remove(K, V)</a></td>
+<td width="246">移除键到值的映射；如果有这样的键值并成功移除，返回true。</td>
+<td valign="top" width="236">multimap.get(key).remove(value)</td>
+</tr>
+<tr>
+<td width="132"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Multimap.html#removeAll(java.lang.Object)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Multimap.html#removeAll(java.lang.Object)'); return false;">removeAll(K)</a></td>
+<td width="246">清除键对应的所有值，返回的集合包含所有之前映射到K的值，但修改这个集合就不会影响Multimap了。</td>
+<td valign="top" width="236">multimap.get(key).clear()</td>
+</tr>
+<tr>
+<td width="132"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Multimap.html#replaceValues(K, java.lang.Iterable)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Multimap.html#replaceValues(K, java.lang.Iterable)'); return false;">replaceValues(K, Iterable&lt;V&gt;)</a></td>
+<td width="246">清除键对应的所有值，并重新把key关联到Iterable中的每个元素。返回的集合包含所有之前映射到K的值。</td>
+<td valign="top" width="236">multimap.get(key).clear(); Iterables.addAll(multimap.get(key), values)</td>
+</tr>
+</tbody>
+</table>
+<h3>Multimap的视图</h3>
+<p>Multimap还支持若干强大的视图：</p>
+<ul>
+<li><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimap.html#asMap()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimap.html#asMap()'); return false;"><tt>asMap</tt></a>为Multimap&lt;K, V&gt;提供Map&lt;K,Collection&lt;V&gt;&gt;形式的视图。返回的Map支持remove操作，并且会反映到底层的Multimap，但它不支持put或putAll操作。更重要的是，如果你想为Multimap中没有的键返回null，而不是一个新的、可写的空集合，你就可以使用asMap().get(key)。（你可以并且应当把asMap.get(key)返回的结果转化为适当的集合类型——如SetMultimap.asMap.get(key)的结果转为Set，ListMultimap.asMap.get(key)的结果转为List——Java类型系统不允许ListMultimap直接为asMap.get(key)返回List——<i>译者注：也可以用</i><i>Multimaps中的asMap静态方法帮你完成类型转换</i>）</li>
+<li><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimap.html#entries()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimap.html#entries()'); return false;"><tt>entries</tt></a>用Collection&lt;Map.Entry&lt;K, V&gt;&gt;返回Multimap中所有”键-单个值映射”——包括重复键。（对SetMultimap，返回的是Set）</li>
+<li><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimap.html#keySet()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimap.html#keySet()'); return false;"><tt>keySet</tt></a>用Set表示Multimap中所有不同的键。</li>
+<li><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimap.html#keys()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimap.html#keys()'); return false;"><tt>keys</tt></a>用Multiset表示Multimap中的所有键，每个键重复出现的次数等于它映射的值的个数。可以从这个Multiset中移除元素，但不能做添加操作；移除操作会反映到底层的Multimap。</li>
+<li><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Multimap.html#values()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Multimap.html#values()'); return false;"><tt>values()</tt></a>用一个”扁平”的Collection&lt;V&gt;包含Multimap中的所有值。这有一点类似于Iterables.concat(multimap.asMap().values())，但它直接返回了单个Collection，而不像multimap.asMap().values()那样是按键区分开的Collection。</li>
+</ul>
+<h3>Multimap不是Map</h3>
+<p>Multimap&lt;K, V&gt;不是Map&lt;K,Collection&lt;V&gt;&gt;，虽然某些Multimap实现中可能使用了map。它们之间的显著区别包括：</p>
+<ul>
+<li>Multimap.get(key)总是返回非null、但是可能空的集合。这并不意味着Multimap为相应的键花费内存创建了集合，而只是提供一个集合视图方便你为键增加映射值——<i>译者注：如果有这样的键，返回的集合只是包装了</i><i>Multimap中已有的集合；如果没有这样的键，返回的空集合也只是持有Multimap引用的栈对象，让你可以用来操作底层的Multimap。因此，返回的集合不会占据太多内存，数据实际上还是存放在Multimap中。</i></li>
+<li>如果你更喜欢像Map那样，为Multimap中没有的键返回null，请使用asMap()视图获取一个Map&lt;K, Collection&lt;V&gt;&gt;。（或者用静态方法<a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimaps.html#asMap%28com.google.common.collect.ListMultimap%29" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimaps.html#asMap%28com.google.common.collect.ListMultimap%29'); return false;">Multimaps.asMap()</a>为ListMultimap返回一个Map&lt;K, List&lt;V&gt;&gt;。对于SetMultimap和SortedSetMultimap，也有类似的静态方法存在）</li>
+<li>当且仅当有值映射到键时，Multimap.containsKey(key)才会返回true。尤其需要注意的是，如果键k之前映射过一个或多个值，但它们都被移除后，Multimap.containsKey(key)会返回false。</li>
+<li>Multimap.entries()返回Multimap中所有”键-单个值映射”——包括重复键。如果你想要得到所有”键-值集合映射”，请使用asMap().entrySet()。</li>
+<li>Multimap.size()返回所有”键-单个值映射”的个数，而非不同键的个数。要得到不同键的个数，请改用Multimap.keySet().size()。</li>
+</ul>
+<h3>Multimap的各种实现</h3>
+<p>Multimap提供了多种形式的实现。在大多数要使用Map&lt;K, Collection&lt;V&gt;&gt;的地方，你都可以使用它们：</p>
+<table width="614" border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="189"><b>实现</b><b></b></td>
+<td width="198"><b>键行为类似</b><b></b></td>
+<td valign="top" width="227"><b>值行为类似</b><b></b></td>
+</tr>
+<tr>
+<td width="189"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/ArrayListMultimap.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/ArrayListMultimap.html'); return false;">ArrayListMultimap</a><b></b></td>
+<td width="198">HashMap</td>
+<td width="227">ArrayList</td>
+</tr>
+<tr>
+<td width="189"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/HashMultimap.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/HashMultimap.html'); return false;">HashMultimap</a><b></b></td>
+<td width="198">HashMap</td>
+<td width="227">HashSet</td>
+</tr>
+<tr>
+<td width="189"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/LinkedListMultimap.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/LinkedListMultimap.html'); return false;">LinkedListMultimap</a>*<b></b></td>
+<td width="198">LinkedHashMap*</td>
+<td width="227">LinkedList*</td>
+</tr>
+<tr>
+<td width="189"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/LinkedHashMultimap.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/LinkedHashMultimap.html'); return false;">LinkedHashMultimap</a>**<b></b></td>
+<td width="198">LinkedHashMap</td>
+<td width="227">LinkedHashMap</td>
+</tr>
+<tr>
+<td width="189"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/TreeMultimap.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/TreeMultimap.html'); return false;">TreeMultimap</a><b></b></td>
+<td width="198">TreeMap</td>
+<td width="227">TreeSet</td>
+</tr>
+<tr>
+<td width="189"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/ImmutableListMultimap.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/ImmutableListMultimap.html'); return false;"><tt>ImmutableListMultimap</tt></a></td>
+<td width="198">ImmutableMap</td>
+<td width="227">ImmutableList</td>
+</tr>
+<tr>
+<td width="189"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/ImmutableSetMultimap.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/ImmutableSetMultimap.html'); return false;">ImmutableSetMultimap</a><b></b></td>
+<td width="198">ImmutableMap</td>
+<td width="227">ImmutableSet</td>
+</tr>
+</tbody>
+</table>
+<p>除了两个不可变形式的实现，其他所有实现都支持null键和null值</p>
+<p>*LinkedListMultimap.entries()保留了所有键和值的迭代顺序。详情见doc链接。</p>
+<p>**LinkedHashMultimap保留了映射项的插入顺序，包括键插入的顺序，以及键映射的所有值的插入顺序。</p>
+<p>请注意，并非所有的Multimap都和上面列出的一样，使用Map&lt;K, Collection&lt;V&gt;&gt;来实现（特别是，一些Multimap实现用了自定义的hashTable，以最小化开销）</p>
+<p>如果你想要更大的定制化，请用<a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimaps.html#newMultimap(java.util.Map,%20com.google.common.base.Supplier)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimaps.html#newMultimap(java.util.Map,%20com.google.common.base.Supplier)'); return false;">Multimaps.newMultimap(Map, Supplier&lt;Collection&gt;)</a>或<a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimaps.html#newListMultimap(java.util.Map, com.google.common.base.Supplier)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimaps.html#newListMultimap(java.util.Map, com.google.common.base.Supplier)'); return false;">list</a>和&nbsp;<a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimaps.html#newSetMultimap(java.util.Map, com.google.common.base.Supplier)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Multimaps.html#newSetMultimap(java.util.Map, com.google.common.base.Supplier)'); return false;">set</a>版本，使用自定义的Collection、List或Set实现Multimap。</p>
+<h2>BiMap</h2>
+<p>传统上，实现键值对的双向映射需要维护两个单独的map，并保持它们间的同步。但这种方式很容易出错，而且对于值已经在map中的情况，会变得非常混乱。例如：</p>
+<div id="highlighter_524015" class="syntaxhighlighter  "><div class="bar"><div class="toolbar"><a href="#viewSource" title="查看源代码" class="item viewSource" style="width: 16px; height: 16px;">查看源代码</a><div class="item copyToClipboard"><embed width="16" height="16" id="highlighter_524015_clipboard" type="application/x-shockwave-flash" title="复制到剪贴板" allowscriptaccess="always" wmode="transparent" flashvars="highlighterId=highlighter_524015" menu="false" src="http://ifeve.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter2/scripts/clipboard.swf"></div><a href="#printSource" title="打印" class="item printSource" style="width: 16px; height: 16px;">打印</a><a href="#about" title="帮助" class="item about" style="width: 16px; height: 16px;">帮助</a></div></div><div class="lines"><div class="line alt1"><table><tbody><tr><td class="number"><code>1</code></td><td class="content"><code class="plain">Map&lt;String, Integer&gt; nameToId = Maps.newHashMap();</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>2</code></td><td class="content"><code class="plain">Map&lt;Integer, String&gt; idToName = Maps.newHashMap();</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>3</code></td><td class="content">&nbsp;</td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>4</code></td><td class="content"><code class="plain">nameToId.put(</code><code class="string">"Bob"</code><code class="plain">, </code><code class="value">42</code><code class="plain">);</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>5</code></td><td class="content"><code class="plain">idToName.put(</code><code class="value">42</code><code class="plain">, </code><code class="string">"Bob"</code><code class="plain">);</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>6</code></td><td class="content"><code class="comments">//如果"Bob"和42已经在map中了，会发生什么?</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>7</code></td><td class="content"><code class="comments">//如果我们忘了同步两个map，会有诡异的bug发生...</code></td></tr></tbody></table></div></div></div>
+<p><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/BiMap.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/BiMap.html'); return false;">BiMap&lt;K, V&gt;</a>是特殊的Map：</p>
+<ul>
+<li>可以用&nbsp;<a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/BiMap.html#inverse()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/BiMap.html#inverse()'); return false;">inverse()</a>反转BiMap&lt;K, V&gt;的键值映射</li>
+<li>保证值是唯一的，因此&nbsp;<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/BiMap.html#values()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/BiMap.html#values()'); return false;">values()</a>返回Set而不是普通的Collection</li>
+</ul>
+<p>在BiMap中，如果你想把键映射到已经存在的值，会抛出IllegalArgumentException异常。如果对特定值，你想要强制替换它的键，请使用&nbsp;<a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/BiMap.html#forcePut(java.lang.Object,java.lang.Object)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/BiMap.html#forcePut(java.lang.Object,java.lang.Object)'); return false;">BiMap.forcePut(key, value)</a>。</p>
+<div id="highlighter_143772" class="syntaxhighlighter  "><div class="bar"><div class="toolbar"><a href="#viewSource" title="查看源代码" class="item viewSource" style="width: 16px; height: 16px;">查看源代码</a><div class="item copyToClipboard"><embed width="16" height="16" id="highlighter_143772_clipboard" type="application/x-shockwave-flash" title="复制到剪贴板" allowscriptaccess="always" wmode="transparent" flashvars="highlighterId=highlighter_143772" menu="false" src="http://ifeve.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter2/scripts/clipboard.swf"></div><a href="#printSource" title="打印" class="item printSource" style="width: 16px; height: 16px;">打印</a><a href="#about" title="帮助" class="item about" style="width: 16px; height: 16px;">帮助</a></div></div><div class="lines"><div class="line alt1"><table><tbody><tr><td class="number"><code>1</code></td><td class="content"><code class="plain">BiMap&lt;String, Integer&gt; userId = HashBiMap.create();</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>2</code></td><td class="content"><code class="plain">...</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>3</code></td><td class="content">&nbsp;</td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>4</code></td><td class="content"><code class="plain">String userForId = userId.inverse().get(id);</code></td></tr></tbody></table></div></div></div>
+<h3>BiMap的各种实现</h3>
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="170"><b>键</b><b>–</b><b>值实现</b><b></b></td>
+<td valign="top" width="180"><b>值</b><b>–</b><b>键实现</b><b></b></td>
+<td width="265"><b>对应的</b><b>BiMap</b><b>实现</b><b></b></td>
+</tr>
+<tr>
+<td width="170">HashMap</td>
+<td width="180">HashMap</td>
+<td width="265"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/HashBiMap.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/HashBiMap.html'); return false;">HashBiMap</a><b></b></td>
+</tr>
+<tr>
+<td width="170">ImmutableMap</td>
+<td width="180">ImmutableMap</td>
+<td width="265"><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/ImmutableBiMap.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/ImmutableBiMap.html'); return false;">ImmutableBiMap</a><b></b></td>
+</tr>
+<tr>
+<td width="170">EnumMap</td>
+<td width="180">EnumMap</td>
+<td width="265"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/EnumBiMap.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/EnumBiMap.html'); return false;">EnumBiMap</a></td>
+</tr>
+<tr>
+<td width="170">EnumMap</td>
+<td width="180">HashMap</td>
+<td width="265"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/EnumHashBiMap.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/EnumHashBiMap.html'); return false;">EnumHashBiMap</a></td>
+</tr>
+</tbody>
+</table>
+<p>注：<a href="https://code.google.com/p/guava-libraries/wiki/CollectionUtilitiesExplained#Maps" onclick="javascript:window.open('https://code.google.com/p/guava-libraries/wiki/CollectionUtilitiesExplained#Maps'); return false;">Maps</a>类中还有一些诸如synchronizedBiMap的BiMap工具方法.</p>
+<h2>Table</h2>
+<div id="highlighter_852106" class="syntaxhighlighter  "><div class="bar"><div class="toolbar"><a href="#viewSource" title="查看源代码" class="item viewSource" style="width: 16px; height: 16px;">查看源代码</a><div class="item copyToClipboard"><embed width="16" height="16" id="highlighter_852106_clipboard" type="application/x-shockwave-flash" title="复制到剪贴板" allowscriptaccess="always" wmode="transparent" flashvars="highlighterId=highlighter_852106" menu="false" src="http://ifeve.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter2/scripts/clipboard.swf"></div><a href="#printSource" title="打印" class="item printSource" style="width: 16px; height: 16px;">打印</a><a href="#about" title="帮助" class="item about" style="width: 16px; height: 16px;">帮助</a></div></div><div class="lines"><div class="line alt1"><table><tbody><tr><td class="number"><code>1</code></td><td class="content"><code class="plain">Table&lt;Vertex, Vertex, Double&gt; weightedGraph = HashBasedTable.create();</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>2</code></td><td class="content"><code class="plain">weightedGraph.put(v1, v2, </code><code class="value">4</code><code class="plain">);</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>3</code></td><td class="content"><code class="plain">weightedGraph.put(v1, v3, </code><code class="value">20</code><code class="plain">);</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>4</code></td><td class="content"><code class="plain">weightedGraph.put(v2, v3, </code><code class="value">5</code><code class="plain">);</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>5</code></td><td class="content">&nbsp;</td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>6</code></td><td class="content"><code class="plain">weightedGraph.row(v1); </code><code class="comments">// returns a Map mapping v2 to 4, v3 to 20</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>7</code></td><td class="content"><code class="plain">weightedGraph.column(v3); </code><code class="comments">// returns a Map mapping v1 to 20, v2 to 5</code></td></tr></tbody></table></div></div></div>
+<p>通常来说，当你想使用多个键做索引的时候，你可能会用类似Map&lt;FirstName, Map&lt;LastName, Person&gt;&gt;的实现，这种方式很丑陋，使用上也不友好。Guava为此提供了新集合类型<a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.html'); return false;">Table</a>，它有两个支持所有类型的键：”行”和”列”。Table提供多种视图，以便你从各种角度使用它：</p>
+<ul>
+<li><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.html#rowMap()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.html#rowMap()'); return false;">rowMap()</a>：用Map&lt;R, Map&lt;C, V&gt;&gt;表现Table&lt;R, C, V&gt;。同样的，&nbsp;<a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.html#rowKeySet()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.html#rowKeySet()'); return false;">rowKeySet()</a>返回”行”的集合Set&lt;R&gt;。</li>
+<li><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.html#row(R)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.html#row(R)'); return false;">row(r)</a> ：用Map&lt;C, V&gt;返回给定”行”的所有列，对这个map进行的写操作也将写入Table中。</li>
+<li>类似的列访问方法：<a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.html#columnMap()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.html#columnMap()'); return false;">columnMap()</a>、<a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.html#columnKeySet()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.html#columnKeySet()'); return false;">columnKeySet()</a>、<a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.html#column(C)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.html#column(C)'); return false;">column(c)</a>。（基于列的访问会比基于的行访问稍微低效点）</li>
+<li><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.html#cellSet()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.html#cellSet()'); return false;">cellSet()</a>：用元素类型为<a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.Cell.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/Table.Cell.html'); return false;">Table.Cell&lt;R, C, V&gt;</a>的Set表现Table&lt;R, C, V&gt;。Cell类似于Map.Entry，但它是用行和列两个键区分的。</li>
+</ul>
+<p>Table有如下几种实现：</p>
+<ul>
+<li><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/HashBasedTable.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/HashBasedTable.html'); return false;">HashBasedTable</a>：本质上用HashMap&lt;R, HashMap&lt;C, V&gt;&gt;实现；</li>
+<li><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/TreeBasedTable.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/TreeBasedTable.html'); return false;">TreeBasedTable</a>：本质上用TreeMap&lt;R, TreeMap&lt;C,V&gt;&gt;实现；</li>
+<li><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/ImmutableTable.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/ImmutableTable.html'); return false;">ImmutableTable</a>：本质上用ImmutableMap&lt;R, ImmutableMap&lt;C, V&gt;&gt;实现；注：ImmutableTable对稀疏或密集的数据集都有优化。</li>
+<li><a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/ArrayTable.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/collect/ArrayTable.html'); return false;">ArrayTable</a>：要求在构造时就指定行和列的大小，本质上由一个二维数组实现，以提升访问速度和密集Table的内存利用率。ArrayTable与其他Table的工作原理有点不同，请参见Javadoc了解详情。</li>
+</ul>
+<h2>ClassToInstanceMap</h2>
+<p><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/ClassToInstanceMap.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/ClassToInstanceMap.html'); return false;">ClassToInstanceMap</a>是一种特殊的Map：它的键是类型，而值是符合键所指类型的对象。</p>
+<p>为了扩展Map接口，ClassToInstanceMap额外声明了两个方法：<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/ClassToInstanceMap.html#getInstance(java.lang.Class)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/ClassToInstanceMap.html#getInstance(java.lang.Class)'); return false;">T getInstance(Class&lt;T&gt;)</a>&nbsp;和<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/ClassToInstanceMap.html#putInstance(java.lang.Class,java.lang.Object)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/ClassToInstanceMap.html#putInstance(java.lang.Class,java.lang.Object)'); return false;">T putInstance(Class&lt;T&gt;, T)</a>，从而避免强制类型转换，同时保证了类型安全。</p>
+<p>ClassToInstanceMap有唯一的泛型参数，通常称为B，代表Map支持的所有类型的上界。例如：</p>
+<div id="highlighter_500638" class="syntaxhighlighter  "><div class="bar"><div class="toolbar"><a href="#viewSource" title="查看源代码" class="item viewSource" style="width: 16px; height: 16px;">查看源代码</a><div class="item copyToClipboard"><embed width="16" height="16" id="highlighter_500638_clipboard" type="application/x-shockwave-flash" title="复制到剪贴板" allowscriptaccess="always" wmode="transparent" flashvars="highlighterId=highlighter_500638" menu="false" src="http://ifeve.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter2/scripts/clipboard.swf"></div><a href="#printSource" title="打印" class="item printSource" style="width: 16px; height: 16px;">打印</a><a href="#about" title="帮助" class="item about" style="width: 16px; height: 16px;">帮助</a></div></div><div class="lines"><div class="line alt1"><table><tbody><tr><td class="number"><code>1</code></td><td class="content"><code class="plain">ClassToInstanceMap&lt;Number&gt; numberDefaults=MutableClassToInstanceMap.create();</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>2</code></td><td class="content"><code class="plain">numberDefaults.putInstance(Integer.</code><code class="keyword">class</code><code class="plain">, Integer.valueOf(</code><code class="value">0</code><code class="plain">));</code></td></tr></tbody></table></div></div></div>
+<p>从技术上讲，ClassToInstanceMap&lt;B&gt;实现了Map&lt;Class&lt;? extends B&gt;, B&gt;——或者换句话说，是一个映射B的子类型到对应实例的Map。这让ClassToInstanceMap包含的泛型声明有点令人困惑，但请记住B始终是Map所支持类型的上界——通常B就是Object。</p>
+<p>对于ClassToInstanceMap，Guava提供了两种有用的实现：<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/MutableClassToInstanceMap.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/MutableClassToInstanceMap.html'); return false;">MutableClassToInstanceMap</a>和&nbsp;<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/ImmutableClassToInstanceMap.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/ImmutableClassToInstanceMap.html'); return false;">ImmutableClassToInstanceMap</a>。</p>
+<h2>RangeSet</h2>
+<p>RangeSet描述了一组不相连的、非空的区间。当把一个区间添加到可变的RangeSet时，所有相连的区间会被合并，空区间会被忽略。例如：</p>
+<div id="highlighter_4167" class="syntaxhighlighter  "><div class="bar"><div class="toolbar"><a href="#viewSource" title="查看源代码" class="item viewSource" style="width: 16px; height: 16px;">查看源代码</a><div class="item copyToClipboard"><embed width="16" height="16" id="highlighter_4167_clipboard" type="application/x-shockwave-flash" title="复制到剪贴板" allowscriptaccess="always" wmode="transparent" flashvars="highlighterId=highlighter_4167" menu="false" src="http://ifeve.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter2/scripts/clipboard.swf"></div><a href="#printSource" title="打印" class="item printSource" style="width: 16px; height: 16px;">打印</a><a href="#about" title="帮助" class="item about" style="width: 16px; height: 16px;">帮助</a></div></div><div class="lines"><div class="line alt1"><table><tbody><tr><td class="number"><code>1</code></td><td class="content"><code class="plain">RangeSet&lt;Integer&gt; rangeSet = TreeRangeSet.create();</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>2</code></td><td class="content"><code class="plain">rangeSet.add(Range.closed(</code><code class="value">1</code><code class="plain">, </code><code class="value">10</code><code class="plain">)); </code><code class="comments">// {[1,10]}</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>3</code></td><td class="content"><code class="plain">rangeSet.add(Range.closedOpen(</code><code class="value">11</code><code class="plain">, </code><code class="value">15</code><code class="plain">));</code><code class="comments">//不相连区间:{[1,10], [11,15)}</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>4</code></td><td class="content"><code class="plain">rangeSet.add(Range.closedOpen(</code><code class="value">15</code><code class="plain">, </code><code class="value">20</code><code class="plain">)); </code><code class="comments">//相连区间; {[1,10], [11,20)}</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>5</code></td><td class="content"><code class="plain">rangeSet.add(Range.openClosed(</code><code class="value">0</code><code class="plain">, </code><code class="value">0</code><code class="plain">)); </code><code class="comments">//空区间; {[1,10], [11,20)}</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>6</code></td><td class="content"><code class="plain">rangeSet.remove(Range.open(</code><code class="value">5</code><code class="plain">, </code><code class="value">10</code><code class="plain">)); </code><code class="comments">//分割[1, 10]; {[1,5], [10,10], [11,20)}</code></td></tr></tbody></table></div></div></div>
+<p>请注意，要合并Range.closed(1, 10)和Range.closedOpen(11, 15)这样的区间，你需要首先用<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Range.html#canonical(com.google.common.collect.DiscreteDomain)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Range.html#canonical(com.google.common.collect.DiscreteDomain)'); return false;">Range.canonical(DiscreteDomain)</a>对区间进行预处理，例如DiscreteDomain.integers()。</p>
+<p>注：RangeSet不支持GWT，也不支持JDK5和更早版本；因为，RangeSet需要充分利用JDK6中NavigableMap的特性。</p>
+<h3>RangeSet的视图</h3>
+<p>RangeSet的实现支持非常广泛的视图：</p>
+<ul>
+<li>complement()：返回RangeSet的补集视图。complement也是RangeSet类型,包含了不相连的、非空的区间。</li>
+<li>subRangeSet(Range&lt;C&gt;)：返回RangeSet与给定Range的交集视图。这扩展了传统排序集合中的headSet、subSet和tailSet操作。</li>
+<li>asRanges()：用Set&lt;Range&lt;C&gt;&gt;表现RangeSet，这样可以遍历其中的Range。</li>
+<li>asSet(DiscreteDomain&lt;C&gt;)（仅ImmutableRangeSet支持）：用ImmutableSortedSet&lt;C&gt;表现RangeSet，以区间中所有元素的形式而不是区间本身的形式查看。（这个操作不支持DiscreteDomain&nbsp;和RangeSet都没有上边界，或都没有下边界的情况）</li>
+</ul>
+<h3>RangeSet的查询方法</h3>
+<p>为了方便操作，RangeSet直接提供了若干查询方法，其中最突出的有:</p>
+<ul>
+<li>contains(C)：RangeSet最基本的操作，判断RangeSet中是否有任何区间包含给定元素。</li>
+<li>rangeContaining(C)：返回包含给定元素的区间；若没有这样的区间，则返回null。</li>
+<li>encloses(Range&lt;C&gt;)：简单明了，判断RangeSet中是否有任何区间包括给定区间。</li>
+<li>span()：返回包括RangeSet中所有区间的最小区间。</li>
+</ul>
+<h2>RangeMap</h2>
+<p>RangeMap描述了”不相交的、非空的区间”到特定值的映射。和RangeSet不同，RangeMap不会合并相邻的映射，即便相邻的区间映射到相同的值。例如：</p>
+<div id="highlighter_416057" class="syntaxhighlighter  "><div class="bar"><div class="toolbar"><a href="#viewSource" title="查看源代码" class="item viewSource" style="width: 16px; height: 16px;">查看源代码</a><div class="item copyToClipboard"><embed width="16" height="16" id="highlighter_416057_clipboard" type="application/x-shockwave-flash" title="复制到剪贴板" allowscriptaccess="always" wmode="transparent" flashvars="highlighterId=highlighter_416057" menu="false" src="http://ifeve.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter2/scripts/clipboard.swf"></div><a href="#printSource" title="打印" class="item printSource" style="width: 16px; height: 16px;">打印</a><a href="#about" title="帮助" class="item about" style="width: 16px; height: 16px;">帮助</a></div></div><div class="lines"><div class="line alt1"><table><tbody><tr><td class="number"><code>1</code></td><td class="content"><code class="plain">RangeMap&lt;Integer, String&gt; rangeMap = TreeRangeMap.create();</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>2</code></td><td class="content"><code class="plain">rangeMap.put(Range.closed(</code><code class="value">1</code><code class="plain">, </code><code class="value">10</code><code class="plain">), </code><code class="string">"foo"</code><code class="plain">); </code><code class="comments">//{[1,10] =&gt; "foo"}</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>3</code></td><td class="content"><code class="plain">rangeMap.put(Range.open(</code><code class="value">3</code><code class="plain">, </code><code class="value">6</code><code class="plain">), </code><code class="string">"bar"</code><code class="plain">); </code><code class="comments">//{[1,3] =&gt; "foo", (3,6) =&gt; "bar", [6,10] =&gt; "foo"}</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>4</code></td><td class="content"><code class="plain">rangeMap.put(Range.open(</code><code class="value">10</code><code class="plain">, </code><code class="value">20</code><code class="plain">), </code><code class="string">"foo"</code><code class="plain">); </code><code class="comments">//{[1,3] =&gt; "foo", (3,6) =&gt; "bar", [6,10] =&gt; "foo", (10,20) =&gt; "foo"}</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>5</code></td><td class="content"><code class="plain">rangeMap.remove(Range.closed(</code><code class="value">5</code><code class="plain">, </code><code class="value">11</code><code class="plain">)); </code><code class="comments">//{[1,3] =&gt; "foo", (3,5) =&gt; "bar", (11,20) =&gt; "foo"}</code></td></tr></tbody></table></div></div></div>
+<h3>RangeMap的视图</h3>
+<p>RangeMap提供两个视图：</p>
+<ul>
+<li>asMapOfRanges()：用Map&lt;Range&lt;K&gt;, V&gt;表现RangeMap。这可以用来遍历RangeMap。</li>
+<li>subRangeMap(Range&lt;K&gt;)：用RangeMap类型返回RangeMap与给定Range的交集视图。这扩展了传统的headMap、subMap和tailMap操作。</li>
+</ul>
+<div style="margin-top: 15px; font-style: italic">

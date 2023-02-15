@@ -1,0 +1,67 @@
+# 变量使用方式：{{ site.google.gtm }}
+title: 张雪的文档
+lang: zh
+description: 随意整理.
+author: zhangxue
+
+theme: null
+
+# debug:
+#   compress: true
+#   dist: false
+#   shortcodes: true
+
+repository: luckSnow1989/luckSnow1989.github.io
+
+# Google相关配置
+google:
+  ## 1. Google Tag Manager(谷歌分析新监测代码)
+  gtm: GTM-NB3BG4W
+  ## 2. https://analytics.google.com/analytics/web/provision
+  gtag: G-PVXEM7JHSD
+  ## 3. 谷歌广告：https://www.google.com/adsense/new/u/0/pub-4909941035939755/onboarding
+  adsense: ca-pub-4909941035939755
+  adunit:
+    ## 设置广告单元。分为上下2个单元
+    topslot: 7751404804
+    footerslot: 7583598437
+
+#markdown: kramdown
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  syntax_highlighter: rouge
+
+readme_index:
+  with_frontmatter: true
+
+# 开启 sass
+sass:
+  sass_dir: _sass
+  style: compressed
+
+fancybox: true
+
+plugins:
+  - jekyll-default-layout
+  - jekyll-readme-index
+  - jekyll-github-metadata
+  - jekyll-titles-from-headings
+  - jemoji
+  - jekyll-avatar
+  - jekyll-mentions
+  - jekyll-gist
+  - jekyll-sass-converter
+
+exclude:
+  - Makefile
+  - CNAME
+  - LICENSE
+  - update.sh
+  - Gemfile
+  - Gemfile.lock
+  - requirements.txt
+  - node_modules
+  - package.json
+  - package-lock.json
+  - webpack.config.js

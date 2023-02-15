@@ -1,0 +1,12 @@
+
+1、映射文件 TestTable.hbm.xml
+2、创建PO对象 javaBean
+3、建立DAO文件
+4、在beans.xml、hibernate.cfg.xml文件中申明
+5、创建struts2 action文件
+6、创建jsp文件
+7、声明result
+8、发布、测试
+
+
+

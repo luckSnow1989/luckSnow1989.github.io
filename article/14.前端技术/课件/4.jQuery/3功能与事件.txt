@@ -1,0 +1,140 @@
+***************************************************************************
+一、jQuery中一些杂乱的方法，以及需要注意的地方
+	1.jquery-1.9.1 这个版本需要注意的地方
+	
+		$(':checkbox').attr('checked',true) ---- 只能执行一次  已经不好用了
+		换成了  
+		$(':checkbox').prop('checked',true) 对于新版本的适应性更好；
+
+		例：复选框的全选、全不选、反选
+		function selectAll(){	   
+		   $('#uu').find(':checkbox').prop('checked',true);		
+		}
+		
+		function selectAllNot(){	   
+		   $('#uu').find(':checkbox').prop('checked',false);			
+		}
+
+	2.遍历集合、数组
+		默认参数的第一个是索引值，第二个是这个索引指向的内容值
+		(1)	例1：遍历集合对象
+			function reverseSelect(){	
+				//index默认是循环的索引值(0,1,2,3,...)
+				$('#uu').find(':checkbox').each(function(index){当前正在遍历的那个元素
+						$(this).prop('checked',!$(this).prop('checked'));
+				});			
+			}
+		(2)	例2：遍历数组
+			$.each([js数组],function(){})	 
+
+			var array = [1,6,4,10,22,43];			 
+			$.each(array,function(i,o){
+				alert(i+"     "+value);   //i是元素在数组中的索引位置，o 数组中的值	 
+			}); 
+			
+			如果获得的是页面选择到的元素，像很多个input标签，$(':input'),这就是一个页面元素的数组
+			$.each($(':input'),function(i,o){
+				alert(i+"     "+$(o).val());   //i是元素在数组中的索引位置，o 数组中第i个位置的html元素					 
+			});
+			
+
+		(3)$.grep   过滤数组中的元素
+			var array = [1,6,4,10,22,43];
+			array = $.grep(array, function(a) {
+				   return (a > 50);
+			}); 
+	 
+	3.得到数组中元素的个数
+		$('li').length    得到数组中元素的个数
+		$('li').size()    得到数组中元素的个数
+
+	4.数组排序
+		var array = [2,1,10,67,11,100];
+		有小到大排序
+		array.sort(function(a,b){
+			return a-b;
+		});
+	
+	5.连接若干个object(类似于Java中的map,重复的属性会被后面的属性覆盖)					  
+	$.extend
+		var object1={apple: 0,banana: 52,cherry: 97};
+		var object2={banana: 1,durian: 100,cherry: 197};
+
+		var object = $.extend(object1,object2);
+
+		/*  
+		alert(object.apple);
+		alert(object.banana);
+		alert(object.cherry);
+		alert(object.durian);
+		*/
+		for(key in object){
+			alert(key+"    "+object[key]);	
+		}	
+
+***************************************************************************
+二、jQuery事件：
+	1.绑定事件：$('').bind(事件名,function(){})
+		(0)事件绑定的两种方法(一般使用第二种方法方便)
+			.bind('事件名',function(){})
+			.事件名(function(){})
+			
+		(1)常见的几种事件
+			blur,change,click,dblclick(双击),error(错误),focus,keydown,keypress,keyup,load,mousedown,mousemove,
+			mouseout,mouseover,mouseup,resize(浏览器大小的改变),scroll(滚动条),select(),submit,unload(窗口卸载：关闭当前网页)
+			
+		(2)keydown与keypress去别
+			keydown     任意一个按键
+			keypress    必须是能够输入文字的按键	
+		
+	例1：获得发生事件在浏览器上的坐标
+		$(document).mousemove(function(e){
+			  $("span").html(e.pageX + ", " + e.pageY);
+		});
+		
+	例2：多个参数的导入
+		$('#d1').bind('click',{'name':'zhangsan'},function(event){
+				 alert(event.data.name);//这样就能获得name	 
+			});
+
+	2.解除绑定
+	.unbind()	
+	.unbind('事件名')   	
+
+	3.绑定事件，但这个事件只能执行一次
+	.one()  
+
+	4.触发事件
+	.trigger('事件名')  使用的很少
+
+
+	5. window加载完成（jquery提供的是document加载完成）
+	(1)	一般都使用第三个方法
+		$(document).ready(function(){})
+		$().ready(function(){})
+		$(function(){})
+
+	(2)	$('').load(function(){})某一个加载完成后执行，用于局部加载
+
+	(3).unload(function(){})//现在的浏览器都屏蔽了这个功能
+
+		$(window).unload(function(){  		
+		  alert('byebye');	
+		});
+
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+
+
+						 

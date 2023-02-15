@@ -1,0 +1,979 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0044)http://bbs.html5cn.org/thread-84084-1-1.html -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>你可能用到的百度地图效果（附源码）_JavaScript交流_HTML5论坛 -  Powered by Discuz!</title>
+<link href="./百度地图--地图聚合_files/百度地图--地图聚合.htm" rel="canonical">
+<meta name="keywords" content="你可能用到的百度地图效果（附源码）,HTML5中国,JavaScript交流,html5中国,html5中文">
+<meta name="description" content="你可能用到的百度地图效果（附源码）,JavaScript交流,HTML5中国 ">
+<meta name="generator" content="Discuz! X3.2">
+<meta name="author" content="Discuz! Team and Comsenz UI Team">
+<meta name="copyright" content="2001-2013 Comsenz Inc.">
+<meta name="MSSmartTagsPreventParsing" content="True">
+<meta http-equiv="MSThemeCompatible" content="Yes">
+<!--<base href="http://bbs.html5cn.org/">--><base href="."><link rel="stylesheet" type="text/css" href="./百度地图--地图聚合_files/style_8_common.css"><link rel="stylesheet" type="text/css" href="./百度地图--地图聚合_files/style_8_forum_viewthread.css"><script type="text/javascript" charset="utf-8" src="./百度地图--地图聚合_files/NzM4MTIzNg==.js"></script><script type="text/javascript">var STYLEID = '8', STATICURL = 'static/', IMGDIR = 'static/image/common', VERHASH = 'Tn7', charset = 'utf-8', discuz_uid = '0', cookiepre = 'jZvn_83e6_', cookiedomain = '.html5cn.org', cookiepath = '/', showusercard = '1', attackevasive = '0', disallowfloat = 'newthread|reply', creditnotice = '1|威望|,2|金钱|,3|贡献|', defaultstyle = '', REPORTURL = 'aHR0cDovL2Jicy5odG1sNWNuLm9yZy90aHJlYWQtODQwODQtMS0xLmh0bWw=', SITEURL = 'http://bbs.html5cn.org/', JSPATH = 'static/js/', CSSPATH = 'data/cache/style_', DYNAMICURL = '';</script>
+<script src="./百度地图--地图聚合_files/common.js" type="text/javascript"></script>
+<meta name="application-name" content="HTML5中国">
+<meta name="msapplication-tooltip" content="HTML5中国">
+<meta name="msapplication-task" content="name=首页;action-uri=http://www.html5cn.org;icon-uri=http://bbs.html5cn.org/static/image/common/portal.ico"><meta name="msapplication-task" content="name=HTML5论坛;action-uri=http://bbs.html5cn.org;icon-uri=http://bbs.html5cn.org/static/image/common/bbs.ico">
+<link rel="archives" title="HTML5中国" href="http://bbs.html5cn.org/archiver/">
+<script src="./百度地图--地图聚合_files/forum.js" type="text/javascript"></script>
+
+<script src="./百度地图--地图聚合_files/brush.js" type="text/javascript"></script>
+<link type="text/css" rel="stylesheet" href="./百度地图--地图聚合_files/shCore.css">
+<link type="text/css" rel="stylesheet" href="./百度地图--地图聚合_files/shThemeDefault.css">
+<script type="text/javascript">
+SyntaxHighlighter.config.clipboardSwf = 'static/js/code//scripts/clipboard.swf';
+SyntaxHighlighter.all();
+</script>
+<script type="text/javascript" id="jljdhYYFOYYKIIKJUanPNWXFOOpJGQJZ" charset="UTF-8" src="./百度地图--地图聚合_files/common_extra.js"></script></head>
+
+<body id="nv_forum" class="pg_viewthread" onkeydown="if(event.keyCode==27) return false;">
+<div id="append_parent"></div><div id="ajaxwaitid"></div>
+<div id="toptb" class="cl">
+<div class="wp">
+<div class="z"><a href="javascript:;" onclick="setHomepage(&#39;http://www.html5cn.org/&#39;);">设为首页</a><a href="http://www.html5cn.org/" onclick="addFavorite(this.href, &#39;HTML5中国&#39;);return false;">收藏本站</a><a href="http://bbs.html5cn.org/#">最大的HTML5中文门户：HTML5中国，领伍中国</a><script type="text/javascript">var _speedMark = new Date();</script></div>
+<div class="y">
+<a id="switchblind" href="javascript:;" onclick="toggleBlind(this)" title="开启辅助访问" class="switchblind">开启辅助访问</a>
+<a href="http://jq.qq.com/?_wv=1027&k=VfgBWI" target="_blank" style="font-weight: bold;color: blue">QQ群：424839972</a></div>
+</div>
+</div>
+
+<div id="qmenu_menu" class="p_pop blk" style="display: none;">
+<div class="ptm pbw hm">
+请 <a href="javascript:;" class="xi2" onclick="lsSubmit()"><strong>登录</strong></a> 后使用快捷导航<br>没有帐号？<a href="http://bbs.html5cn.org/member.php?mod=register" class="xi2 xw1">立即注册</a>
+</div>
+<div id="fjump_menu" class="btda"></div></div><div id="hd">
+<div class="wp">
+<div class="hdc cl"><h2><a href="http://html5cn.org/" title="HTML5中国"><img src="./百度地图--地图聚合_files/logo_b1.png" alt="HTML5中国" border="0"></a></h2><script src="./百度地图--地图聚合_files/logging.js" type="text/javascript"></script>
+<form method="post" autocomplete="off" id="lsform" action="http://bbs.html5cn.org/member.php?mod=logging&action=login&loginsubmit=yes&infloat=yes&lssubmit=yes" onsubmit="return lsSubmit();">
+<div class="fastlg cl">
+<span id="return_ls" style="display:none"></span>
+<div class="y pns">
+<table cellspacing="0" cellpadding="0">
+<tbody><tr>
+<td><label for="ls_username">帐号</label></td>
+<td><input type="text" name="username" id="ls_username" class="px vm xg1" value="用户名/Email" onfocus="if(this.value == &#39;用户名/Email&#39;){this.value = &#39;&#39;;this.className = &#39;px vm&#39;;}" onblur="if(this.value == &#39;&#39;){this.value = &#39;用户名/Email&#39;;this.className = &#39;px vm xg1&#39;;}" tabindex="901"></td>
+<td class="fastlg_l"><label for="ls_cookietime"><input type="checkbox" name="cookietime" id="ls_cookietime" class="pc" value="2592000" tabindex="903">自动登录</label></td>
+<td>&nbsp;<a href="javascript:;" onclick="showWindow(&#39;login&#39;, &#39;member.php?mod=logging&amp;action=login&amp;viewlostpw=1&#39;)">找回密码</a></td>
+</tr>
+<tr>
+<td><label for="ls_password">密码</label></td>
+<td><input type="password" name="password" id="ls_password" class="px vm" autocomplete="off" tabindex="902"></td>
+<td class="fastlg_l"><button type="submit" class="pn vm" tabindex="904" style="width: 75px;"><em>登录</em></button></td>
+<td>&nbsp;<a href="http://bbs.html5cn.org/member.php?mod=register" class="xi2 xw1">立即注册</a></td>
+</tr>
+</tbody></table>
+<input type="hidden" name="quickforward" value="yes">
+<input type="hidden" name="handlekey" value="ls">
+</div>
+
+<div class="fastlg_fm y" style="margin-right: 10px; padding-right: 10px">
+<p><a href="http://www.html5cn.org/connect.php?mod=login&op=init&referer=%3Fmod%3Dviewthread%26tid%3D84084%26extra%3Dpage%253D1%26page%3D1&statfrom=login_simple"><img src="./百度地图--地图聚合_files/qq_login.gif" class="vm" alt="QQ登录"></a></p>
+<p class="hm xg1" style="padding-top: 2px;">只需一步，快速开始</p>
+</div>
+</div>
+</form>
+
+</div>
+
+<div id="nv" style="top: 0px; left: 194.5px; z-index: 199; border-left-width: 0px; border-right-width: 0px; height: 33px; width: 960px; position: fixed; opacity: 0.85;">
+<a href="javascript:;" id="qmenu" onmouseover="delayShow(this, function () {showMenu({&#39;ctrlid&#39;:&#39;qmenu&#39;,&#39;pos&#39;:&#39;34!&#39;,&#39;ctrlclass&#39;:&#39;a&#39;,&#39;duration&#39;:2});showForummenu(52);})">快捷导航</a>
+<ul><li id="mn_portal"><a href="http://www.html5cn.org/" hidefocus="true" title="Portal">首页<span>Portal</span></a></li><li id="mn_P9"><a href="http://news.html5cn.org/" hidefocus="true" title="HTML5全球资讯一览无余">HTML5资讯<span>HTML5全球资讯一览无余</span></a></li><li id="mn_P25"><a href="http://mobile.html5cn.org/" hidefocus="true">移动互联网</a></li><li id="mn_P10" onmouseover="showMenu({&#39;ctrlid&#39;:this.id,&#39;ctrlclass&#39;:&#39;hover&#39;,&#39;duration&#39;:2})" initialized="true" class=""><a href="http://demo.html5cn.org/" hidefocus="true" title="HTML5游戏案例演示">应用推荐<span>HTML5游戏案例演示</span></a></li><li id="mn_P13" onmouseover="showMenu({&#39;ctrlid&#39;:this.id,&#39;ctrlclass&#39;:&#39;hover&#39;,&#39;duration&#39;:2})" initialized="true" class=""><a href="http://course.html5cn.org/" hidefocus="true" title="HTML5教程规范大全">教程视频<span>HTML5教程规范大全</span></a></li><li id="mn_P45"><a href="http://www.html5cn.org/portal.php?mod=list&catid=45" hidefocus="true">资源下载</a></li><li id="mn_N8182"><a href="http://www.html5cn.org/portal.php?mod=list&catid=62" hidefocus="true">开发工具</a></li><li class="a" id="mn_forum"><a href="http://bbs.html5cn.org/" hidefocus="true" title="BBS">HTML5论坛<span>BBS</span></a></li></ul>
+</div>
+<ul class="p_pop h_pop" id="mn_P10_menu" style="position: absolute; z-index: 301; left: 465.5px; top: 2813px; display: none;" initialized="true" ctrlid="mn_P10" ctrlclass="hover"><li><a href="http://www.html5cn.org/portal.php?mod=list&catid=20" hidefocus="true" class="">HTML5应用</a></li><li><a href="http://www.html5cn.org/portal.php?mod=list&catid=19" hidefocus="true">HTML5游戏</a></li></ul><ul class="p_pop h_pop" id="mn_P13_menu" style="position: absolute; z-index: 301; left: 552.5px; top: 3297px; display: none;" initialized="true" ctrlid="mn_P13" ctrlclass="hover"><li><a href="http://www.html5cn.org/portal.php?mod=list&catid=15" hidefocus="true" class="hidefocus">HTML5教程</a></li><li><a href="http://www.html5cn.org/portal.php?mod=list&catid=64" hidefocus="true">phonegap教程</a></li><li><a href="http://www.html5cn.org/portal.php?mod=list&catid=16" hidefocus="true">CSS3教程</a></li><li><a href="http://www.html5cn.org/portal.php?mod=list&catid=17" hidefocus="true">实例代码</a></li><li><a href="http://www.html5cn.org/portal.php?mod=list&catid=61" hidefocus="true">学习视频</a></li><li><a href="http://www.html5cn.org/portal.php?mod=list&catid=39" hidefocus="true">HTML5在线手册</a></li><li><a href="http://www.html5cn.org/portal.php?mod=list&catid=41" hidefocus="true">CSS3在线手册</a></li><li><a href="http://www.html5cn.org/portal.php?mod=list&catid=40" hidefocus="true">JavaScript手册</a></li></ul><div class="p_pop h_pop" id="mn_userapp_menu" style="display: none"></div><div id="mu" class="cl">
+<ul class="cl " id="snav_mn_userapp" style="display:none">
+</ul>
+</div><div id="scbar" class="scbar_narrow cl">
+<form id="scbar_form" method="post" autocomplete="off" onsubmit="searchFocus($(&#39;scbar_txt&#39;))" action="http://bbs.html5cn.org/search.php?searchsubmit=yes" target="_blank">
+<input type="hidden" name="mod" id="scbar_mod" value="forum">
+<input type="hidden" name="formhash" value="dd29088f">
+<input type="hidden" name="srchtype" value="title">
+<input type="hidden" name="srhfid" value="52">
+<input type="hidden" name="srhlocality" value="forum::viewthread">
+<table cellspacing="0" cellpadding="0">
+<tbody><tr>
+<td class="scbar_icon_td"></td>
+<td class="scbar_txt_td"><input type="text" name="srchtxt" id="scbar_txt" value="请输入搜索内容" autocomplete="off" x-webkit-speech="" speech="" class=" xg1" placeholder="请输入搜索内容"></td>
+<td class="scbar_type_td"><a href="javascript:;" id="scbar_type" class="xg1" onclick="showMenu(this.id)" hidefocus="true">帖子</a></td>
+<td class="scbar_btn_td"><button type="submit" name="searchsubmit" id="scbar_btn" sc="1" class="pn pnc" value="true"><strong class="xi2">搜索</strong></button></td>
+<td class="scbar_hot_td">
+<div id="scbar_hot">
+<strong class="xw1">热搜: </strong>
+
+<a href="http://bbs.html5cn.org/search.php?mod=forum&srchtxt=Canvas&formhash=dd29088f&searchsubmit=true&source=hotsearch" target="_blank" class="xi2" sc="1">Canvas</a>
+
+
+
+<a href="http://bbs.html5cn.org/search.php?mod=forum&srchtxt=WebGL&formhash=dd29088f&searchsubmit=true&source=hotsearch" target="_blank" class="xi2" sc="1">WebGL</a>
+
+
+
+<a href="http://bbs.html5cn.org/search.php?mod=forum&srchtxt=CSS3&formhash=dd29088f&searchsubmit=true&source=hotsearch" target="_blank" class="xi2" sc="1">CSS3</a>
+
+
+
+<a href="http://bbs.html5cn.org/search.php?mod=forum&srchtxt=WebSocket&formhash=dd29088f&searchsubmit=true&source=hotsearch" target="_blank" class="xi2" sc="1">WebSocket</a>
+
+
+
+<a href="http://bbs.html5cn.org/search.php?mod=forum&srchtxt=%E7%A6%BB%E7%BA%BF%E5%AD%98%E5%82%A8&formhash=dd29088f&searchsubmit=true&source=hotsearch" target="_blank" class="xi2" sc="1">离线存储</a>
+
+
+
+<a href="http://bbs.html5cn.org/search.php?mod=forum&srchtxt=%E5%B7%A5%E5%85%B7&formhash=dd29088f&searchsubmit=true&source=hotsearch" target="_blank" class="xi2" sc="1">工具</a>
+
+</div>
+</td>
+</tr>
+</tbody></table>
+</form>
+</div>
+<ul id="scbar_type_menu" class="p_pop" style="display: none;"><li><a href="javascript:;" rel="curforum" fid="52">本版</a></li><li><a href="javascript:;" rel="article">文章</a></li><li><a href="javascript:;" rel="forum" class="curtype">帖子</a></li><li><a href="javascript:;" rel="user">用户</a></li></ul>
+<script type="text/javascript">
+initSearchmenu('scbar', '');
+</script>
+</div>
+</div>
+
+
+<div id="wp" class="wp">
+<script type="text/javascript">var fid = parseInt('52'), tid = parseInt('84084');</script>
+
+<script src="./百度地图--地图聚合_files/forum_viewthread.js" type="text/javascript"></script>
+<script type="text/javascript">zoomstatus = parseInt(1);var imagemaxwidth = '600';var aimgcount = new Array();</script>
+
+<style id="diy_style" type="text/css"></style>
+<!--[diy=diynavtop]--><div id="diynavtop" class="area"></div><!--[/diy]-->
+<div id="pt" class="bm cl">
+<div class="z">
+<a href="http://bbs.html5cn.org/" class="nvhm" title="首页">HTML5中国</a><em>»</em><a href="http://bbs.html5cn.org/forum.php">HTML5论坛</a> <em>›</em> <a href="http://bbs.html5cn.org/forum.php?gid=1">HTML5论坛</a> <em>›</em> <a href="http://bbs.html5cn.org/forum-52-1.html">JavaScript交流</a> <em>›</em> <a href="./百度地图--地图聚合_files/百度地图--地图聚合.htm">你可能用到的百度地图效果（附源码）</a>
+</div>
+</div>
+
+<style id="diy_style" type="text/css"></style>
+<div class="wp">
+<!--[diy=diy1]--><div id="diy1" class="area"></div><!--[/diy]-->
+</div>
+
+<div id="ct" class="wp cl">
+<div id="pgt" class="pgs mbm cl ">
+<div class="pgt"></div>
+<span class="y pgb"><a href="http://bbs.html5cn.org/forum-52-1.html">返回列表</a></span>
+<a id="newspecial" onmouseover="$(&#39;newspecial&#39;).id = &#39;newspecialtmp&#39;;this.id = &#39;newspecial&#39;;showMenu({&#39;ctrlid&#39;:this.id})" onclick="showWindow(&#39;newthread&#39;, &#39;forum.php?mod=post&amp;action=newthread&amp;fid=52&#39;)" href="javascript:;" title="发新帖"><img src="./百度地图--地图聚合_files/pn_post.png" alt="发新帖"></a></div>
+
+
+
+<div id="postlist" class="pl bm">
+<table cellspacing="0" cellpadding="0">
+<tbody><tr>
+<td class="pls ptn pbn">
+<div class="hm ptn">
+<span class="xg1">查看:</span> <span class="xi1">5687</span><span class="pipe">|</span><span class="xg1">回复:</span> <span class="xi1">2</span>
+</div>
+</td>
+<td class="plc ptm pbn vwthd">
+<div class="y">
+<a href="http://bbs.html5cn.org/forum.php?mod=viewthread&action=printable&tid=84084" title="打印" target="_blank"><img src="./百度地图--地图聚合_files/print.png" alt="打印" class="vm"></a>
+<a href="http://bbs.html5cn.org/forum.php?mod=redirect&goto=nextoldset&tid=84084" title="上一主题"><img src="./百度地图--地图聚合_files/thread-prev.png" alt="上一主题" class="vm"></a>
+<a href="http://bbs.html5cn.org/forum.php?mod=redirect&goto=nextnewset&tid=84084" title="下一主题"><img src="./百度地图--地图聚合_files/thread-next.png" alt="下一主题" class="vm"></a>
+</div>
+<h1 class="ts">
+<span id="thread_subject">你可能用到的百度地图效果（附源码）</span>
+</h1>
+<span class="xg1">
+<a href="./百度地图--地图聚合_files/百度地图--地图聚合.htm" onclick="return copyThreadUrl(this, &#39;HTML5中国&#39;)">[复制链接]</a>
+</span>
+</td>
+</tr>
+</tbody></table>
+
+
+<table cellspacing="0" cellpadding="0" class="ad">
+<tbody><tr>
+<td class="pls">
+</td>
+<td class="plc">
+</td>
+</tr>
+</tbody></table><div id="post_754739"><table id="pid754739" class="plhin" summary="pid754739" cellspacing="0" cellpadding="0">
+<tbody><tr>
+<td class="pls" rowspan="2">
+<div id="favatar754739" class="pls favatar" style="top: 33px; position: fixed;">
+ <div class="pi">
+<div class="authi"><a href="http://home.html5cn.org/space-uid-1102761.html" target="_blank" class="xw1">cfx-nine瞳</a>
+</div>
+</div>
+<div class="p_pop blk bui card_gender_" id="userinfo754739" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo754739_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="http://home.html5cn.org/space-uid-1102761.html" target="_blank" class="xi2">cfx-nine瞳</a></strong>
+<em>当前离线</em>
+</div><dl class="cl">
+<dt>积分</dt><dd><a href="http://home.html5cn.org/home.php?mod=space&uid=1102761&do=profile" target="_blank" class="xi2">1478</a></dd>
+</dl><div class="imicn">
+<a href="http://home.html5cn.org/home.php?mod=space&uid=1102761&do=profile" target="_blank" title="查看详细资料"><img src="./百度地图--地图聚合_files/userinfo.gif" alt="查看详细资料"></a>
+<a href="http://home.html5cn.org/home.php?mod=magic&mid=showip&idtype=user&id=cfx-nine%E7%9E%B3" id="a_showip_li_754739" class="xi2" onclick="showWindow(this.id, this.href)"><img src="./百度地图--地图聚合_files/showip.small.gif" alt=""> 窥视卡</a>
+<a href="http://home.html5cn.org/home.php?mod=magic&mid=checkonline&idtype=user&id=cfx-nine%E7%9E%B3" id="a_repent_754739" class="xi2" onclick="showWindow(this.id, this.href)"><img src="./百度地图--地图聚合_files/checkonline.small.gif" alt=""> 雷达卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar"><a href="http://home.html5cn.org/space-uid-1102761.html" class="avtm" target="_blank"><img src="./百度地图--地图聚合_files/avatar.php"></a></div>
+</div>
+<div id="amu_sno" style="background:url( source/plugin/dsu_amupper/images/sno.png )  no-repeat;background-position: 18px 1px;height:25px;"><span style="position:relative;left:22px;top:4px;font-size: 10px;">已累计签到89次</span></div></div>
+</td>
+<td class="plc">
+<div class="pi">
+<div id="fj" class="y">
+<label class="z">电梯直达</label>
+<input type="text" class="px p_fre z" size="2" onkeyup="$(&#39;fj_btn&#39;).href=&#39;forum.php?mod=redirect&amp;ptid=84084&amp;authorid=0&amp;postno=&#39;+this.value" onkeydown="if(event.keyCode==13) {window.location=$(&#39;fj_btn&#39;).href;return false;}" title="跳转到指定楼层">
+<a href="javascript:;" id="fj_btn" class="z" title="跳转到指定楼层"><img src="./百度地图--地图聚合_files/fj_btn.png" alt="跳转到指定楼层" class="vm"></a>
+</div>
+<strong>
+<a href="./百度地图--地图聚合_files/百度地图--地图聚合.htm" id="postnum754739" onclick="setCopy(this.href, &#39;帖子地址复制成功&#39;);return false;">
+楼主</a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon754739" src="./百度地图--地图聚合_files/online_member.gif">
+<em id="authorposton754739">发表于 2014-8-27 10:14:38</em>
+<span class="pipe">|</span>
+<a href="http://bbs.html5cn.org/forum.php?mod=viewthread&tid=84084&page=1&authorid=1102761" rel="nofollow">只看该作者</a>
+<span class="pipe">|</span><a href="http://bbs.html5cn.org/forum.php?mod=viewthread&tid=84084&from=album">只看大图</a>
+<span class="none"><img src="./百度地图--地图聚合_files/arw_r.gif" class="vm" alt="回帖奖励"></span>
+<span class="pipe show">|</span><a href="http://bbs.html5cn.org/forum.php?mod=viewthread&tid=84084&extra=page%3D1&ordertype=1" class="show">倒序浏览</a>
+<span class="pipe show">|</span><a href="javascript:;" onclick="readmode($(&#39;thread_subject&#39;).innerHTML, 754739);" class="show">阅读模式</a>
+</div>
+</div>
+</div><div class="pct"><style type="text/css">.pcb{margin-right:0}</style><div class="pcb">
+ 
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tbody><tr><td class="t_f" id="postmessage_754739"><strong><font color="#FF0000"></font></strong>
+<i class="pstatus"> 本帖最后由 yetaoaiueo 于 2015-4-2 11:41 编辑 </i><br>
+<br>
+<font face="微软雅黑"><font size="3">&nbsp; &nbsp;&nbsp;&nbsp;需要实现百度地图的一些展示效果，虽然最终效果做出来了，可是这中间也走了很多的弯路，希望有用到的可以直接拿来用，少走一些弯路。百度地图为开发者提供了一系列的接口，点百度接口去百度接口。本文主要用到了以下几个效果：</font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">1、热力图显示</font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">2、自定义图标的聚合显示</font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">3、云麻点显示</font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">&nbsp; &nbsp;&nbsp; &nbsp;<strong>热力图显示</strong></font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">&nbsp; &nbsp;&nbsp; &nbsp;百度地图热力图是通过设置热力图半径、颜色、透明度等参数直观展示数据分布情况，而我这段时间所做的，就是通过一段时间内的订单数量，再结合经纬度，在地图上显示热力分布图。百度地图官方的API给的示例很Easy，创建地图<a href="http://www.html5cn.org/portal.php?mod=list&catid=17" target="_blank" class="relatedlink">实例</a>，初始化参数，生成点的数组，然后创建热力图对象，并将热力图对象添加到地图实例，设置数据源，这样这个热力图的效果就可以展示出来了。（当然申请AK和引入Js就不用说了），这部分源码比较简单，就不展示了，只需要看热力图API相信都是可以明白的。</font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">&nbsp; &nbsp;&nbsp; &nbsp;可是自己做的时候，效果却没这么容易出来。我在做的过程中，开始最大的一处疑问就是，其他代码部分代码都跟官方API示例一样，只是换了个数据源，热力图效果就是出不来。后来在试了无数遍之后，发现如果当前地图放大的级别过大，也就是有些点没有在当前地图可视区域内展示的话，热力图效果是不会出来的！当然了，关于这点没有百度地图官方的解释，也没有得到求证，只是我在开发过程中发现的一个解决方案。如果你也在做这部分，恰好遇到这个问题的话不妨试试。其次为了效果明显，最好是多添加几个点，这样效果会更好一些。以下是效果图：</font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<div align="center"><font face="微软雅黑"><font size="3">[attachimg]24**[/attachimg]</font></font></div><br>
+<div align="center"><font face="微软雅黑"><font size="3"><br>
+</font></font></div><br>
+<div align="left"><font face="微软雅黑"><font size="3">&nbsp; &nbsp; <strong>&nbsp;&nbsp;自定义图标聚合显示</strong></font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">&nbsp; &nbsp;&nbsp; &nbsp;说到这个聚合显示，哎，说多了都是泪啊。本来提出的需求只是需要将数据库中的店铺展示出来，然后点击的时候弹出详细信息的提示框。我一想，这还不简单？通过Handler从后台获取到数据，然后以Json的格式传给前台，然后来个for循环，依次添加到地图不就解决了？第一版我确实是这么干的。拿到数据之后再做foreach……以下是Js脚本。</font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<div class="blockcode"><div id="code_AZf"><ol><li>function LoadMakers(data) {<br>
+</li><li>&nbsp; &nbsp; var Maker = "[";<br>
+</li><li>&nbsp; &nbsp; $(data).each(function () {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;var sContent = "&lt;div&nbsp;&nbsp;style='text-align: left;'&gt;&lt;h4 style='margin:0 0 5px 0;padding:0.2em 0'&gt;" + this.pointerTitle + "&lt;/h4&gt;";<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;if (this.pointImg) {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;sContent = "&lt;div&nbsp;&nbsp;style='text-align: left;'&gt;&lt;h4 style='margin:0 0 5px 0;padding:0.2em 0; width:300px'&gt;" + this.pointerTitle + "&lt;/h4&gt;";<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;sContent += "&lt;img style='float:left;margin:4px;width:104px;height:69px' id='imgDemo' src='" + this.pointImg + "'&nbsp;&nbsp;title='" + this.pointerTitle + "'/&gt;";<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;}<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;if (this.address) {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;if (this.pointImg) {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; sContent += "&lt;p style='margin:0;line-height:1.5;font-size:13px;width:200px;margin-left:110px'&gt;" + this.address + "&lt;/p&gt;";<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;} else {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; sContent += "&lt;p style='margin:0;line-height:1.5;font-size:13px;width:200px;'&gt;" + this.address + "&lt;/p&gt;";<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;}<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;}<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;if (this.pointerContent) {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;if (this.pointImg) {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; sContent += "&lt;p style='margin:0;line-height:1.5;font-size:13px;width:200px;margin-left:110px'&gt;" + this.pointerContent + "&lt;/p&gt;";<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;} else {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; sContent += "&lt;p style='margin:0;line-height:1.5;font-size:13px;width:200px;'&gt;" + this.pointerContent + "&lt;/p&gt;";<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; <br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;}<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;}<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;sContent += "&lt;/div&gt;";<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;Maker += "{supId:"+this.spId+",Longitude:" + this.markersLongitude + ",Dimension:" + this.markersDimension + ",Window: { LoadEvent:'click',Content:\"" + sContent + "\"},enableMassClear:true},";<br>
+</li><li>&nbsp; &nbsp; });<br>
+</li><li>&nbsp; &nbsp; Maker += "]";<br>
+</li><li>&nbsp; &nbsp; return eval(Maker);<br>
+</li><li>}</li></ol></div><em onclick="copycode($(&#39;code_AZf&#39;));">复制代码</em></div><font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">&nbsp; &nbsp;&nbsp; &nbsp;我在本地添加了将近100个点的数据，测试没问题之后就提交到Svn了，然后跟项目经理说这个东东做完了。然后项目经理将数据切成正式数据，叫我给他<a href="http://www.html5cn.org/portal.php?mod=list&catid=10" target="_blank" class="relatedlink">演示</a>一下。这一演示不要紧啊，脸全没了。正式数据库中有5000多条数据，而我取数据时后台做了过滤，只提取有经纬度的点，即使这样也有1500多条记录。没错，1500多条，这意味着浏览器客户端这边要循环1500多次来做这个操作！然后奇迹就发生了，页面就假死了！无论怎么刷新都没有效果了，即使等了很长时间地图加载出来了，只要稍微一放大或者移动地图页面就会直接挂掉。然后项目经理就一顿巴拉巴拉巴拉，这就是你给我的结果么？</font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">&nbsp; &nbsp;&nbsp; &nbsp;谁让我确实这个东东没做好呢？也没脸跟别人争辩，拿回来重新研究吧。于是在网上搜了一下，发现很多人也都遇到了这个问题，就是当点大于一定的数量之后，浏览器都会出现假死的情况。然后上百度<a href="http://www.html5cn.org/forum.php" target="_blank" class="relatedlink">论坛</a>浏览了一下，确实有提到这个问题，当点的数量在150个以内时，这么做是没有问题的，但当点数量大于300个时，这么做就行不通了。百度给出了两种解决方案：</font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">No2：数据抽希：比如有10个marker，选择其中6个做为显示点。</font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">&nbsp; &nbsp;&nbsp; &nbsp;这里对比了一下需求，Marker聚合是将所有的点聚合起来，显示一个总数，然后点击的时候再分开；而数据抽希字面的意思是从中选取一部分来展示。而我所接到的任务是展示所有点，显然数据抽希这里是用不上了，那就来聚合吧。这是第二版。</font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">&nbsp; &nbsp;&nbsp; &nbsp;首先简单介绍一下，百度聚合展示提供了开源的类库，只需要在页面中引用即可。以下是Js脚本代码：</font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<div class="blockcode"><div id="code_XYL"><ol><li>var map = option.Map||new BMap.Map("MapContent");&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; // 创建地图实例<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;var point = new BMap.Point(116.418261, 39.921984);<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;map.centerAndZoom(point, 10);&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; // 初始化地图，设置中心点坐标和地图级别<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;map.enableScrollWheelZoom(); // 允许滚轮缩放<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;map.enableKeyboard = true;<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;map.addControl(new BMap.NavigationControl());<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;map.addControl(new BMap.ScaleControl()); // 启用比例尺。&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;map.addControl(new BMap.MapTypeControl()); // 是否启用卫星地图等等。<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;var markers = [];<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;var pt = null, mypt = null;<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;var i = 0;<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;var infoWindow;<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;var myIcon = new BMap.Icon("/Admin/Images/red.png", new BMap.Size(28, 37), {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;});<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;for (; i &lt; MAX; i++) {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;pt = new BMap.Point(resultData.data[i].Longitude, resultData.data[i].Dimension);<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;mypt = new BMap.Marker(pt);<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;mypt.addEventListener("click", function (no) {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; return function () {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;infoWindow = LoadMakerInfo(resultData.data[no]);<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;this.openInfoWindow(infoWindow);<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;//createInfoWin(resultData.data[no]).redraw();<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; };<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;} (i));<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;markers.push(mypt);<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;}<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;////最简单的用法，生成一个marker数组，然后调用markerClusterer类即可。<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;var markerClusterer = new BMapLib.MarkerClusterer(map, { markers: markers.reverse(), isAverangeCenter: true,girdSize:100,maxZoom:15 });<br>
+</li><li>[font=微软雅黑][size=3]<br>
+</li><li>[/size][/font]<br>
+</li><li>[align=center][font=微软雅黑][size=3]
+<ignore_js_op>
+
+<img id="aimg_24702" aid="24702" src="./百度地图--地图聚合_files/101201uen9ioe2pcleeubc.jpg" zoomfile="data/attachment/forum/201408/27/101201uen9ioe2pcleeubc.jpg" file="data/attachment/forum/201408/27/101201uen9ioe2pcleeubc.jpg" class="zoom" onclick="zoom(this, this.src, 0, 0, 0)" width="600" inpost="1" onmouseover="showMenu({&#39;ctrlid&#39;:this.id,&#39;pos&#39;:&#39;12&#39;})" initialized="true">
+
+<div class="tip tip_4 aimg_tip" id="aimg_24702_menu" style="position: absolute; z-index: 301; left: 431.5px; top: 3620px; display: none;" disautofocus="true" initialized="true">
+<div class="xs0">
+<p><strong>12.jpg</strong> <em class="xg1">(438.03 KB, 下载次数: 210)</em></p>
+<p>
+<a href="http://bbs.html5cn.org/forum.php?mod=attachment&aid=MjQ3MDJ8ZDcxMWU0MzF8MTQ0OTQ1Mzg1OHwwfDg0MDg0&nothumb=yes" target="_blank">下载附件</a>
+
+</p>
+
+<p class="xg1 y">2014-8-27 10:12 上传</p>
+
+</div>
+<div class="tip_horn"></div>
+</div>
+
+</ignore_js_op>
+[/size][/font][/align]<br>
+</li><li>[align=center][font=微软雅黑][size=3]<br>
+</li><li>[/size][/font][/align]<br>
+</li><li>[align=left][font=微软雅黑][size=3]&nbsp; &nbsp;&nbsp; &nbsp;与第一版相比，性能确实有了很大的改进，至少在本地加载个1500多条数据已经没问题了。可是通过聚合之后又引入了新的问题，就像上图中的绿色圆圈，有两个4，一个6，正常这些数据点击之后都会散开的，当一直点击的时候应该可以看到没有聚合的点。可是这里出现的问题是有些可以点开，有些居然点不开。开始我以为是数据的问题，以为相隔比较近的点是无法展开的，后来就对数据做了处理，如果有相同的数据则通过加减随机数，确保拿出来的数据没有相同的，可是这个问题还是没有解决。希望有了解的朋友可以告知一二。通过这样聚合，展示数据确实比第一版快很多，可是当在公网上的时候，页面缩放或者移动的时候还是会卡。所以还得重新找解决方案。[/size][/font]<br>
+</li><li>[font=微软雅黑][size=3]<br>
+</li><li>[/size][/font]<br>
+</li><li>[font=微软雅黑][size=3]&nbsp; &nbsp;&nbsp;&nbsp;这里值得一提的就是百度地图我们可以看到那种鼠标在左边搜索列表滑动，右边地图中搜到的结果跟着变化的那种效果，这里我们也是可以做的。监测左边列表的MoueEnter事件，然后根据当前Enter的点的经纬度创建一个点，然后Foreach右边搜索结果中的点，如果通过point的equals方法，判断是否是同一个点，如果是则改变当前的Icon即可。Js脚本：[/size][/font]<br>
+</li><li>[font=微软雅黑][size=3]<br>
+</li><li>[/size][/font]<br>
+</li><li>[code]function ReDrawMap(data) {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;if (data.markersLongitude &amp;&amp; data.markersDimension) {<br>
+</li><li>var tmpInfo = LoadMakerInfo(data);<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; var point = new BMap.Point(data.markersLongitude, data.markersDimension); // 创建点坐标<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; var mkrs = option.Map.getOverlays();<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; var position;<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; for (var i = 0; i &lt; mkrs.length; i++) {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;position = mkrs[i].point;<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;if (position&amp;&amp;position.equals(point)) {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;mkrs[i].openInfoWindow(tmpInfo);<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;}<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; }<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;}<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;}</li></ol></div><em onclick="copycode($(&#39;code_XYL&#39;));">复制代码</em></div><font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">&nbsp; &nbsp;&nbsp; &nbsp;<strong>云麻点效果展示</strong></font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">&nbsp; &nbsp;&nbsp; &nbsp;最初没有用这个云麻点展示效果是因为一些敏感数据，可是后来发现没有其他合适的解决方案的时候，就采用了这个方案。云麻点效果也就是LBS云存储，用户将数据存放在百度的云服务器，然后直接从百度云获取数据。这个流程是：先在LBS开放平台创建数据表，然后添加需要的字段，然后就可以在后台批量上传数据。数据上传至百度服务器后，会生产相应的云麻点图层，这些图层在加载的时候直接被展示出来，这样可以很大程度上提高性能。现在假设后台数据已经准备完毕了，前台所作的操作：</font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">&nbsp; &nbsp;&nbsp; &nbsp;<strong>首先，初始化地图的数据：</strong></font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<div class="blockcode"><div id="code_xHv"><ol><li>var map = new BMap.Map("MapContent"); //初始化数据<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; map.enableScrollWheelZoom();&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; // 启用滚轮放大缩小 map.enableContinuousZoom();&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;// 启用地图惯性拖拽，默认禁用 map.enableInertialDragging();&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;// 启用连续缩放效果，默认禁用。 map.addControl(new BMap.NavigationControl());&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;// 添加平移缩放控件<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; map.addControl(new BMap.ScaleControl());&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; // 添加比例尺控件<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; map.addControl(new BMap.OverviewMapControl());&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; // 添加缩略地图控件<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; map.addControl(new BMap.MapTypeControl());&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;// 添加地图类型控件<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; map.centerAndZoom(new BMap.Point(116.418261, 39.921984), 5); // 初始化地图,设置中心点坐标和地图级别<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; map.addControl(new BMap.NavigationControl()); // 启用鱼骨头。<br>
+</li><li>[/size][/font]<br>
+</li><li>[font=微软雅黑][size=3]&nbsp; &nbsp;&nbsp; &nbsp;[b]然后，设置筛选的条件：[/b][/size][/font]<br>
+</li><li>[font=微软雅黑][size=3]<br>
+</li><li>[/size][/font]<br>
+</li><li>[code]//检索模块相关代码<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; var keyword = "",&nbsp; &nbsp;//检索关键词<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;page = 0,&nbsp; &nbsp; //当前页码<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;points = [],&nbsp; &nbsp;//存储检索出来的结果的坐标数组<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;customLayer = null; //麻点图层<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; customLayer = new BMap.CustomLayer({<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;geotableId: 00000,//后台生成表的Id<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;q: '', //检索关键字<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;tags: '', //空格分隔的多字符串<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; }); //新建麻点图图层对象<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; map.addTileLayer(customLayer); //将麻点图添加到地图当中<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; customLayer.addEventListener('hotspotclick', hotspotclickCallback); //给麻点图添加点击麻点回调函数<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; /**<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; * 麻点图点击麻点的回调函数<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; * @param 麻点图点击事件返回的单条数据<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; */<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; function hotspotclickCallback(e) {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; }<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;var customPoi = e.customPoi,<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;str = [];<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;str.push("address = " + customPoi.address);<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;str.push("phoneNumber = " + customPoi.phoneNumber);<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;//创建检索信息窗口对象<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;var searchInfoWindow = new BMapLib.SearchInfoWindow(map, content, {<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;width: 290,&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;//宽度<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;height: 40,&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;//高度<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;enableAutoPan: true,&nbsp; &nbsp; //自动平移<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;enableSendToPhone: true, //是否显示发送到手机按钮<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;searchTypes: [<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; BMAPLIB_TAB_SEARCH,&nbsp; &nbsp;//周边检索<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; BMAPLIB_TAB_TO_HERE,&nbsp;&nbsp;//到这里去<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; BMAPLIB_TAB_FROM_HERE //从这里出发<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;]<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;});<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;searchInfoWindow.open(point); //打开信息窗口<br>
+</li><li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; }</li></ol></div><em onclick="copycode($(&#39;code_xHv&#39;));">复制代码</em></div><font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">&nbsp; &nbsp;&nbsp; &nbsp; 之后就是最关键的一步，请求数据：</font></font><br>
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;'q': '', //检索关键字<br>
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;'page_index': page,&nbsp;&nbsp;//页码<br>
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;// 'filter': filter.join('|'),&nbsp;&nbsp;//过滤条件<br>
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;'region': '131',&nbsp;&nbsp;//北京的城市id<br>
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;'scope': '2',&nbsp;&nbsp;//显示详细信息<br>
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;'geotable_id': 00000,<br>
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;'page_size': 12,<br>
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;'ak': '****'&nbsp;&nbsp;//用户ak<br>
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; }, function (e) {<br>
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;renderMap(e, page + 1);<br>
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; });[/code]<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<font face="微软雅黑"><font size="3">&nbsp; &nbsp;&nbsp; &nbsp; 完了之后再调整一下样式，结果如图：</font></font><br>
+<font face="微软雅黑"><font size="3"><br>
+</font></font><br>
+<div align="center"><font face="微软雅黑"><font size="3">
+<ignore_js_op>
+
+<img id="aimg_24703" aid="24703" src="./百度地图--地图聚合_files/101356firq86vnengisrc8.png" zoomfile="data/attachment/forum/201408/27/101356firq86vnengisrc8.png" file="data/attachment/forum/201408/27/101356firq86vnengisrc8.png" class="zoom" onclick="zoom(this, this.src, 0, 0, 0)" width="600" inpost="1" onmouseover="showMenu({&#39;ctrlid&#39;:this.id,&#39;pos&#39;:&#39;12&#39;})" initialized="true">
+
+<div class="tip tip_4 aimg_tip" id="aimg_24703_menu" style="position: absolute; z-index: 301; left: 455px; top: 6500px; display: none;" disautofocus="true" initialized="true">
+<div class="xs0">
+<p><strong>13.png</strong> <em class="xg1">(535.52 KB, 下载次数: 213)</em></p>
+<p>
+<a href="http://bbs.html5cn.org/forum.php?mod=attachment&aid=MjQ3MDN8ZDgyOGMwMWN8MTQ0OTQ1Mzg1OHwwfDg0MDg0&nothumb=yes" target="_blank">下载附件</a>
+
+</p>
+
+<p class="xg1 y">2014-8-27 10:13 上传</p>
+
+</div>
+<div class="tip_horn"></div>
+</div>
+
+</ignore_js_op>
+</font></font></div><br>
+<div align="center"><font face="微软雅黑"><font size="3"><br>
+</font></font></div><br>
+<div align="left"><font face="微软雅黑"><font size="3">&nbsp; &nbsp;&nbsp;&nbsp;通过LBS云存储，可以很好的解决海量数据加载缓慢的问题，但是这样做的缺点就是一方面数据必须上传到百度的云服务器，另一方面数据维护还是比较麻烦的，必须得通过接口来操作。以上是最近做百度接口总结的一些问题，希望对您能有所帮助。</font></font></div><br>
+<div align="left"><font face="微软雅黑"><font size="3"><br>
+</font></font></div><br>
+</div><br>
+<br>
+<br>
+<strong><a href="./百度地图--地图聚合_files/saved_resource" target="_blank"> <img id="aimg_yhSKA" onclick="zoom(this, this.src, 0, 0, 0)" class="zoom" src="./百度地图--地图聚合_files/saved_resource" onmouseover="img_onmouseoverfunc(this)" onload="thumbImg(this)" border="0" alt=""> <font size="6"><font color="Red">**|电子游戏|足球篮球|时时ㄦ彩| **投ㄦ注| </font><font color="Blue">网络赚钱去SO娱ㄦ乐ㄦ城:顶级信用ㄦ**百分百即时到账SO.CC</font></font> </a></strong></td></tr></tbody></table>
+
+<div class="pattl">
+
+
+<ignore_js_op>
+
+<dl class="tattl attm">
+<dt></dt>
+<dd>
+
+<p class="mbn">
+<a href="http://bbs.html5cn.org/forum.php?mod=attachment&aid=MjQ3MDF8YWZkYWY3OTh8MTQ0OTQ1Mzg1OHwwfDg0MDg0&nothumb=yes" onmouseover="showMenu({&#39;ctrlid&#39;:this.id,&#39;pos&#39;:&#39;12&#39;})" id="aid24701" class="xw1" target="_blank">11.jpg</a>
+<em class="xg1">(711.96 KB, 下载次数: 28)</em>
+</p>
+<div class="tip tip_4" id="aid24701_menu" style="display: none" disautofocus="true">
+<div>
+<p>
+<a href="http://bbs.html5cn.org/forum.php?mod=attachment&aid=MjQ3MDF8YWZkYWY3OTh8MTQ0OTQ1Mzg1OHwwfDg0MDg0&nothumb=yes" target="_blank">下载附件</a>
+
+</p>
+<p>
+<span class="y">2014-8-27 10:10 上传</span>
+<a href="javascript:;" onclick="imageRotate(&#39;aimg_24701&#39;, 1)"><img src="./百度地图--地图聚合_files/rleft.gif" class="vm"></a>
+<a href="javascript:;" onclick="imageRotate(&#39;aimg_24701&#39;, 2)"><img src="./百度地图--地图聚合_files/rright.gif" class="vm"></a>
+</p>
+</div>
+<div class="tip_horn"></div>
+</div>
+<p class="mbn">
+
+</p>
+
+
+
+<div class="mbn savephotop">
+
+<img id="aimg_24701" aid="24701" src="./百度地图--地图聚合_files/101012ff8yfrr0ffdffy4f.jpg" zoomfile="data/attachment/forum/201408/27/101012ff8yfrr0ffdffy4f.jpg" file="data/attachment/forum/201408/27/101012ff8yfrr0ffdffy4f.jpg" class="zoom" onclick="zoom(this, this.src, 0, 0, 0)" width="600" alt="11.jpg" title="11.jpg" w="1114">
+
+</div>
+
+</dd>
+</dl>
+
+</ignore_js_op>
+
+</div>
+
+</div>
+<div id="comment_754739" class="cm">
+</div>
+
+<div id="post_rate_div_754739"></div>
+</div>
+</div>
+
+</td></tr>
+<tr><td class="plc plm">
+<div id="p_btn" class="mtw mbm hm cl">
+<div class="tshare cl">
+<b>分享到:&nbsp;</b>
+
+
+<a href="http://bbs.html5cn.org/home.php?mod=spacecp&ac=plugin&id=qqconnect:spacecp&pluginop=share&sh_type=4&thread_id=84084" id="k_share_to_qq" title="QQ好友和群" target="_blank"><i><img src="./百度地图--地图聚合_files/qq_share.png" alt="QQ好友和群">QQ好友和群</i></a>
+<a href="javascript:void(0);" id="k_qqshare" onclick="postToQzone();" title="QQ空间"><i><img src="./百度地图--地图聚合_files/qzone.gif" alt="QQ空间">QQ空间</i></a>
+<a href="javascript:void(0)" onclick="postToWb();" id="k_weiboshare" title="腾讯微博"><i><img src="./百度地图--地图聚合_files/weibo.png" alt="腾讯微博">腾讯微博</i></a>
+<a href="javascript:void(0);" onclick="postToPengyou();" id="k_pengyoushare" title="腾讯朋友"><i><img src="./百度地图--地图聚合_files/pengyou.png" alt="腾讯朋友">腾讯朋友</i></a>
+<script type="text/javascript">
+function postToWb(){
+var _t = encodeURI(document.title);
+var _url = encodeURIComponent(document.location);
+var _appkey = encodeURI("ce7fb946290e4109bdc9175108b6db3a");
+var _pic = "http%3A%2F%2Fbbs.html5cn.org%2Fforum.php%3Fmod%3Dimage%26aid%3D24703%26size%3D400x400%26key%3D44c258403c3472ad%26nocache%3Dyes%26type%3Dfixnone|http%3A%2F%2Fbbs.html5cn.org%2Fforum.php%3Fmod%3Dimage%26aid%3D24702%26size%3D400x400%26key%3Dbda30983b8a3f36d%26nocache%3Dyes%26type%3Dfixnone|http%3A%2F%2Fbbs.html5cn.org%2Fforum.php%3Fmod%3Dimage%26aid%3D24701%26size%3D400x400%26key%3Dbd27615c010b8b8b%26nocache%3Dyes%26type%3Dfixnone";
+var _site = encodeURIComponent("HTML5中国");
+var _from = 'discuz';
+var _u = 'http://v.t.qq.com/share/share.php?url='+_url+'&appkey='+_appkey+'&site='+_site+'&pic='+_pic+'&title='+_t+'&from='+_from;
+window.open( _u,'', 'width=700, height=680, top=0, left=0, toolbar=no, menubar=no, scrollbars=no, location=yes, resizable=no, status=no' );
+}
+function postToPengyou(){
+var _url = encodeURIComponent(document.location.href);
+var _site = encodeURIComponent("HTML5中国");
+var _title = encodeURIComponent("你可能用到的百度地图效果（附源码）");
+var _pics = "http%3A%2F%2Fbbs.html5cn.org%2Fforum.php%3Fmod%3Dimage%26aid%3D24703%26size%3D400x400%26key%3D44c258403c3472ad%26nocache%3Dyes%26type%3Dfixnone|http%3A%2F%2Fbbs.html5cn.org%2Fforum.php%3Fmod%3Dimage%26aid%3D24702%26size%3D400x400%26key%3Dbda30983b8a3f36d%26nocache%3Dyes%26type%3Dfixnone|http%3A%2F%2Fbbs.html5cn.org%2Fforum.php%3Fmod%3Dimage%26aid%3D24701%26size%3D400x400%26key%3Dbd27615c010b8b8b%26nocache%3Dyes%26type%3Dfixnone";
+var _from = 'discuz';
+var _u = 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?to=pengyou&url='+_url+'&site='+_site+'&title='+_title+'&pics='+_pics+'&from='+_from;
+window.open(_u);
+}
+</script>
+	
+
+</div>
+
+<a href="http://home.html5cn.org/home.php?mod=spacecp&ac=favorite&type=thread&id=84084&formhash=dd29088f" id="k_favorite" onclick="showWindow(this.id, this.href, &#39;get&#39;, 0);" onmouseover="this.title = $(&#39;favoritenumber&#39;).innerHTML + &#39; 人收藏&#39;" title="收藏本帖"><i><img src="./百度地图--地图聚合_files/fav.gif" alt="收藏">收藏<span id="favoritenumber" style="display:none">0</span></i></a>
+</div>
+</td>
+</tr>
+<tr id="_postposition754739"></tr>
+<tr>
+<td class="pls"></td>
+<td class="plc" style="overflow:visible;">
+<div class="po hin">
+<div class="pob cl">
+<em>
+<a class="fastre" href="http://bbs.html5cn.org/forum.php?mod=post&action=reply&fid=52&tid=84084&reppost=754739&extra=page%3D1&page=1" onclick="showWindow(&#39;reply&#39;, this.href)">回复</a>
+</em>
+
+<p>
+<a href="javascript:;" id="mgc_post_754739" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow(&#39;miscreport754739&#39;, &#39;misc.php?mod=report&amp;rtype=post&amp;rid=754739&amp;tid=84084&amp;fid=52&#39;, &#39;get&#39;, -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_754739_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="http://home.html5cn.org/home.php?mod=magic&mid=bump&idtype=tid&id=84084" id="a_bump" onclick="showWindow(this.id, this.href)"><img src="./百度地图--地图聚合_files/bump.small.gif">提升卡</a></li>
+<li><a href="http://home.html5cn.org/home.php?mod=magic&mid=stick&idtype=tid&id=84084" id="a_stick" onclick="showWindow(this.id, this.href)"><img src="./百度地图--地图聚合_files/stick.small.gif">置顶卡</a></li>
+<li><a href="http://home.html5cn.org/home.php?mod=magic&mid=close&idtype=tid&id=84084" id="a_stick" onclick="showWindow(this.id, this.href)"><img src="./百度地图--地图聚合_files/close.small.gif">沉默卡</a></li>
+<li><a href="http://home.html5cn.org/home.php?mod=magic&mid=open&idtype=tid&id=84084" id="a_stick" onclick="showWindow(this.id, this.href)"><img src="./百度地图--地图聚合_files/open.small.gif">喧嚣卡</a></li>
+<li><a href="http://home.html5cn.org/home.php?mod=magic&mid=highlight&idtype=tid&id=84084" id="a_stick" onclick="showWindow(this.id, this.href)"><img src="./百度地图--地图聚合_files/highlight.small.gif">变色卡</a></li>
+<li><a href="http://home.html5cn.org/home.php?mod=magic&mid=sofa&idtype=tid&id=84084" id="a_stick" onclick="showWindow(this.id, this.href)"><img src="./百度地图--地图聚合_files/sofa.small.gif">抢沙发</a></li>
+<li><a href="http://home.html5cn.org/home.php?mod=magic&mid=jack&idtype=tid&id=84084" id="a_jack" onclick="showWindow(this.id, this.href)"><img src="./百度地图--地图聚合_files/jack.small.gif">千斤顶</a></li>
+<li><a href="http://home.html5cn.org/home.php?mod=magic&mid=namepost&idtype=pid&id=754739:84084" id="a_namepost_754739" onclick="showWindow(this.id, this.href)"><img src="./百度地图--地图聚合_files/namepost.small.gif">显身卡</a></li><li>
+</li></ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_754739')</script>
+</div>
+</div>
+</td>
+</tr>
+<tr class="ad">
+<td class="pls">
+</td>
+<td class="plc">
+</td>
+</tr>
+</tbody></table>
+<script type="text/javascript" reload="1">
+aimgcount[754739] = ['yhSKA','24703','24702','24701'];
+attachimggroup(754739);
+attachimgshow(754739);
+var aimgfid = 0;
+</script>
+</div><div id="post_754887"><table id="pid754887" class="plhin" summary="pid754887" cellspacing="0" cellpadding="0">
+<tbody><tr>
+<td class="pls" rowspan="2">
+<div id="favatar754887" class="pls favatar">
+ <div class="pi">
+<div class="authi"><a href="http://home.html5cn.org/space-uid-1077156.html" target="_blank" class="xw1" style="color: #FF0000">rpgforever</a>
+</div>
+</div>
+<div class="p_pop blk bui card_gender_" id="userinfo754887" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo754887_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="http://home.html5cn.org/space-uid-1077156.html" target="_blank" class="xi2" style="color: #FF0000">rpgforever</a></strong>
+<em>当前离线</em>
+</div><dl class="cl">
+<dt>积分</dt><dd><a href="http://home.html5cn.org/home.php?mod=space&uid=1077156&do=profile" target="_blank" class="xi2">4488</a></dd>
+</dl><div class="imicn">
+<a href="http://home.html5cn.org/home.php?mod=space&uid=1077156&do=profile" target="_blank" title="查看详细资料"><img src="./百度地图--地图聚合_files/userinfo.gif" alt="查看详细资料"></a>
+<a href="http://home.html5cn.org/home.php?mod=magic&mid=showip&idtype=user&id=rpgforever" id="a_showip_li_754887" class="xi2" onclick="showWindow(this.id, this.href)"><img src="./百度地图--地图聚合_files/showip.small.gif" alt=""> 窥视卡</a>
+<a href="http://home.html5cn.org/home.php?mod=magic&mid=checkonline&idtype=user&id=rpgforever" id="a_repent_754887" class="xi2" onclick="showWindow(this.id, this.href)"><img src="./百度地图--地图聚合_files/checkonline.small.gif" alt=""> 雷达卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar"><a href="http://home.html5cn.org/space-uid-1077156.html" class="avtm" target="_blank"><img src="./百度地图--地图聚合_files/avatar(1).php"></a></div>
+</div>
+</div>
+</td>
+<td class="plc">
+<div class="pi">
+<strong>
+<a href="http://bbs.html5cn.org/forum.php?mod=redirect&goto=findpost&ptid=84084&pid=754887" id="postnum754887" onclick="setCopy(this.href, &#39;帖子地址复制成功&#39;);return false;">
+沙发</a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon754887" src="./百度地图--地图聚合_files/online_member.gif">
+<em id="authorposton754887">发表于 2014-8-28 14:15:54</em>
+<span class="pipe">|</span>
+<a href="http://bbs.html5cn.org/forum.php?mod=viewthread&tid=84084&page=1&authorid=1077156" rel="nofollow">只看该作者</a>
+</div>
+</div>
+</div><div class="pct"><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tbody><tr><td class="t_f" id="postmessage_754887">
+<i class="pstatus"> 本帖最后由 yetaoaiueo 于 2015-4-2 11:41 编辑 </i><br>
+<br>
+厉害！能不能分享下源码啊？<br>
+<br>
+<strong><a href="./百度地图--地图聚合_files/saved_resource(1)" target="_blank"> <img id="aimg_Q136Y" onclick="zoom(this, this.src, 0, 0, 0)" class="zoom" src="./百度地图--地图聚合_files/saved_resource(1)" onmouseover="img_onmouseoverfunc(this)" onload="thumbImg(this)" border="0" alt=""> <font size="6"><font color="Red">**|电子游戏|足球篮球|时时У彩| **投У注| </font><font color="Blue">网络赚钱去SO娱У乐У城:顶级信用У**百分百即时到账SO.CC</font></font> </a></strong></td></tr></tbody></table>
+
+
+</div>
+<div id="comment_754887" class="cm">
+</div>
+
+<div id="post_rate_div_754887"></div>
+</div>
+</div>
+
+</td></tr>
+<tr><td class="plc plm">
+</td>
+</tr>
+<tr id="_postposition754887"></tr>
+<tr>
+<td class="pls"></td>
+<td class="plc" style="overflow:visible;">
+<div class="po hin">
+<div class="pob cl">
+<em>
+<a class="fastre" href="http://bbs.html5cn.org/forum.php?mod=post&action=reply&fid=52&tid=84084&repquote=754887&extra=page%3D1&page=1" onclick="showWindow(&#39;reply&#39;, this.href)">回复</a>
+<a class="replyadd" href="http://bbs.html5cn.org/forum.php?mod=misc&action=postreview&do=support&tid=84084&pid=754887&hash=dd29088f" onclick="showWindow(&#39;login&#39;, this.href)" onmouseover="this.title = ($(&#39;review_support_754887&#39;).innerHTML ? $(&#39;review_support_754887&#39;).innerHTML : 0) + &#39; 人 支持&#39;">支持 <span id="review_support_754887"></span></a>
+<a class="replysubtract" href="http://bbs.html5cn.org/forum.php?mod=misc&action=postreview&do=against&tid=84084&pid=754887&hash=dd29088f" onclick="showWindow(&#39;login&#39;, this.href)" onmouseover="this.title = ($(&#39;review_against_754887&#39;).innerHTML ? $(&#39;review_against_754887&#39;).innerHTML : 0) + &#39; 人 反对&#39;">反对 <span id="review_against_754887"></span></a>
+</em>
+
+<p>
+<a href="javascript:;" id="mgc_post_754887" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow(&#39;miscreport754887&#39;, &#39;misc.php?mod=report&amp;rtype=post&amp;rid=754887&amp;tid=84084&amp;fid=52&#39;, &#39;get&#39;, -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_754887_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="http://home.html5cn.org/home.php?mod=magic&mid=namepost&idtype=pid&id=754887:84084" id="a_namepost_754887" onclick="showWindow(this.id, this.href)"><img src="./百度地图--地图聚合_files/namepost.small.gif">显身卡</a></li><li>
+</li></ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_754887')</script>
+</div>
+</div>
+</td>
+</tr>
+<tr class="ad">
+<td class="pls">
+</td>
+<td class="plc">
+</td>
+</tr>
+</tbody></table>
+<script type="text/javascript" reload="1">
+aimgcount[754887] = ['Q136Y'];
+attachimggroup(754887);
+attachimgshow(754887);
+var aimgfid = 0;
+</script>
+</div><div id="post_755735"><table id="pid755735" class="plhin" summary="pid755735" cellspacing="0" cellpadding="0">
+<tbody><tr>
+<td class="pls" rowspan="2">
+<div id="favatar755735" class="pls favatar">
+ <a name="lastpost"></a><div class="pi">
+<div class="authi"><a href="http://home.html5cn.org/space-uid-1111778.html" target="_blank" class="xw1">1234567</a>
+</div>
+</div>
+<div class="p_pop blk bui card_gender_" id="userinfo755735" style="display: none; margin-top: -11px;">
+<div class="m z">
+<div id="userinfo755735_ma"></div>
+</div>
+<div class="i y">
+<div>
+<strong><a href="http://home.html5cn.org/space-uid-1111778.html" target="_blank" class="xi2">1234567</a></strong>
+<em>当前离线</em>
+</div><dl class="cl">
+<dt>积分</dt><dd><a href="http://home.html5cn.org/home.php?mod=space&uid=1111778&do=profile" target="_blank" class="xi2">115</a></dd>
+</dl><div class="imicn">
+<a href="http://home.html5cn.org/home.php?mod=space&uid=1111778&do=profile" target="_blank" title="查看详细资料"><img src="./百度地图--地图聚合_files/userinfo.gif" alt="查看详细资料"></a>
+<a href="http://home.html5cn.org/home.php?mod=magic&mid=showip&idtype=user&id=1234567" id="a_showip_li_755735" class="xi2" onclick="showWindow(this.id, this.href)"><img src="./百度地图--地图聚合_files/showip.small.gif" alt=""> 窥视卡</a>
+<a href="http://home.html5cn.org/home.php?mod=magic&mid=checkonline&idtype=user&id=1234567" id="a_repent_755735" class="xi2" onclick="showWindow(this.id, this.href)"><img src="./百度地图--地图聚合_files/checkonline.small.gif" alt=""> 雷达卡</a>
+</div>
+<div id="avatarfeed"><span id="threadsortswait"></span></div>
+</div>
+</div>
+<div>
+<div class="avatar"><a href="http://home.html5cn.org/space-uid-1111778.html" class="avtm" target="_blank"><img src="./百度地图--地图聚合_files/avatar(2).php"></a></div>
+</div>
+</div>
+</td>
+<td class="plc">
+<div class="pi">
+<strong>
+<a href="http://bbs.html5cn.org/forum.php?mod=redirect&goto=findpost&ptid=84084&pid=755735" id="postnum755735" onclick="setCopy(this.href, &#39;帖子地址复制成功&#39;);return false;">
+板凳</a>
+</strong>
+<div class="pti">
+<div class="pdbt">
+</div>
+<div class="authi">
+<img class="authicn vm" id="authicon755735" src="./百度地图--地图聚合_files/online_member.gif">
+<em id="authorposton755735">发表于 2014-9-7 10:28:19</em>
+<span class="pipe">|</span>
+<a href="http://bbs.html5cn.org/forum.php?mod=viewthread&tid=84084&page=1&authorid=1111778" rel="nofollow">只看该作者</a>
+</div>
+</div>
+</div><div class="pct"><div class="pcb">
+<div class="t_fsz">
+<table cellspacing="0" cellpadding="0"><tbody><tr><td class="t_f" id="postmessage_755735">
+<i class="pstatus"> 本帖最后由 yetaoaiueo 于 2015-4-2 11:41 编辑 </i><br>
+<br>
+今天才知道有这个东西，之前都不知道啊。<br>
+<br>
+<strong><a href="./百度地图--地图聚合_files/saved_resource(2)" target="_blank"> <img id="aimg_PsSEV" onclick="zoom(this, this.src, 0, 0, 0)" class="zoom" src="./百度地图--地图聚合_files/saved_resource(2)" onmouseover="img_onmouseoverfunc(this)" onload="thumbImg(this)" border="0" alt=""> <font size="6"><font color="Red">**|电子游戏|足球篮球|时时ㄡ彩| **投ㄡ注| </font><font color="Blue">网络赚钱去SO娱ㄡ乐ㄡ城:顶级信用ㄡ**百分百即时到账SO.CC</font></font> </a></strong></td></tr></tbody></table>
+
+
+</div>
+<div id="comment_755735" class="cm">
+</div>
+
+<div id="post_rate_div_755735"></div>
+</div>
+</div>
+
+</td></tr>
+<tr><td class="plc plm">
+</td>
+</tr>
+<tr id="_postposition755735"></tr>
+<tr>
+<td class="pls"></td>
+<td class="plc" style="overflow:visible;">
+<div class="po hin">
+<div class="pob cl">
+<em>
+<a class="fastre" href="http://bbs.html5cn.org/forum.php?mod=post&action=reply&fid=52&tid=84084&repquote=755735&extra=page%3D1&page=1" onclick="showWindow(&#39;reply&#39;, this.href)">回复</a>
+<a class="replyadd" href="http://bbs.html5cn.org/forum.php?mod=misc&action=postreview&do=support&tid=84084&pid=755735&hash=dd29088f" onclick="showWindow(&#39;login&#39;, this.href)" onmouseover="this.title = ($(&#39;review_support_755735&#39;).innerHTML ? $(&#39;review_support_755735&#39;).innerHTML : 0) + &#39; 人 支持&#39;">支持 <span id="review_support_755735"></span></a>
+<a class="replysubtract" href="http://bbs.html5cn.org/forum.php?mod=misc&action=postreview&do=against&tid=84084&pid=755735&hash=dd29088f" onclick="showWindow(&#39;login&#39;, this.href)" onmouseover="this.title = ($(&#39;review_against_755735&#39;).innerHTML ? $(&#39;review_against_755735&#39;).innerHTML : 0) + &#39; 人 反对&#39;">反对 <span id="review_against_755735"></span></a>
+</em>
+
+<p>
+<a href="javascript:;" id="mgc_post_755735" onmouseover="showMenu(this.id)" class="showmenu">使用道具</a>
+<a href="javascript:;" onclick="showWindow(&#39;miscreport755735&#39;, &#39;misc.php?mod=report&amp;rtype=post&amp;rid=755735&amp;tid=84084&amp;fid=52&#39;, &#39;get&#39;, -1);return false;">举报</a>
+</p>
+
+<ul id="mgc_post_755735_menu" class="p_pop mgcmn" style="display: none;">
+<li><a href="http://home.html5cn.org/home.php?mod=magic&mid=namepost&idtype=pid&id=755735:84084" id="a_namepost_755735" onclick="showWindow(this.id, this.href)"><img src="./百度地图--地图聚合_files/namepost.small.gif">显身卡</a></li><li>
+</li></ul>
+<script type="text/javascript" reload="1">checkmgcmn('post_755735')</script>
+</div>
+</div>
+</td>
+</tr>
+<tr class="ad">
+<td class="pls">
+</td>
+<td class="plc">
+</td>
+</tr>
+</tbody></table>
+<script type="text/javascript" reload="1">
+aimgcount[755735] = ['PsSEV'];
+attachimggroup(755735);
+attachimgshow(755735);
+var aimgfid = 0;
+</script>
+</div><div id="postlistreply" class="pl"><div id="post_new" class="viewthread_table" style="display: none"></div></div>
+</div>
+
+
+<form method="post" autocomplete="off" name="modactions" id="modactions">
+<input type="hidden" name="formhash" value="dd29088f">
+<input type="hidden" name="optgroup">
+<input type="hidden" name="operation">
+<input type="hidden" name="listextra" value="page%3D1">
+<input type="hidden" name="page" value="1">
+</form>
+
+
+
+<div class="pgs mtm mbm cl">
+<span class="pgb y"><a href="http://bbs.html5cn.org/forum-52-1.html">返回列表</a></span>
+<a id="newspecialtmp" onmouseover="$(&#39;newspecial&#39;).id = &#39;newspecialtmp&#39;;this.id = &#39;newspecial&#39;;showMenu({&#39;ctrlid&#39;:this.id})" onclick="showWindow(&#39;newthread&#39;, &#39;forum.php?mod=post&amp;action=newthread&amp;fid=52&#39;)" href="javascript:;" title="发新帖"><img src="./百度地图--地图聚合_files/pn_post.png" alt="发新帖"></a>
+</div>
+
+<!--[diy=diyfastposttop]--><div id="diyfastposttop" class="area"></div><!--[/diy]-->
+
+
+<script type="text/javascript">
+var connect_qzone_share_url = 'http://bbs.html5cn.org/home.php?mod=spacecp&ac=plugin&id=qqconnect:spacecp&pluginop=share&sh_type=1&thread_id=84084';
+var connect_weibo_share_url = 'http://bbs.html5cn.org/home.php?mod=spacecp&ac=plugin&id=qqconnect:spacecp&pluginop=share&sh_type=2&thread_id=84084';
+var connect_thread_info = {
+thread_url: 'http://bbs.html5cn.org/thread-84084-1-1.html',
+thread_id: '84084',
+post_id: '754739',
+forum_id: '52',
+author_id: '1102761',
+author: 'cfx-nine瞳'
+};
+
+connect_autoshare = '0';
+connect_isbind = '';
+if(connect_autoshare == 1 && connect_isbind) {
+_attachEvent(window, 'load', function(){
+connect_share(connect_weibo_share_url, connect_openid);
+});
+}
+</script>
+
+
+<script type="text/javascript">document.onkeyup = function(e){keyPageScroll(e, 0, 0, 'forum.php?mod=viewthread&tid=84084', 1);}</script>
+</div>
+
+<div class="wp mtn">
+<!--[diy=diy3]--><div id="diy3" class="area"></div><!--[/diy]-->
+</div>
+<script type="text/javascript">
+var relatedlink = [];relatedlink[0] = {'sname':'网站', 'surl':'http://www.html5cn.org'};
+relatedlink[1] = {'sname':'HTML5中国', 'surl':'http://www.html5cn.org'};
+relatedlink[2] = {'sname':'学习', 'surl':'http://www.html5cn.org/portal.php?mod=list&catid=13'};
+relatedlink[3] = {'sname':'演示', 'surl':'http://www.html5cn.org/portal.php?mod=list&catid=10'};
+relatedlink[4] = {'sname':'新闻', 'surl':'http://www.html5cn.org/portal.php?mod=list&catid=9'};
+relatedlink[5] = {'sname':'资讯', 'surl':'http://www.html5cn.org/portal.php?mod=list&catid=9'};
+relatedlink[6] = {'sname':'实例', 'surl':'http://www.html5cn.org/portal.php?mod=list&catid=17'};
+relatedlink[7] = {'sname':'论坛', 'surl':'http://www.html5cn.org/forum.php'};
+relatedlink[8] = {'sname':'教程', 'surl':'http://www.html5cn.org/portal.php?mod=list&catid=13'};
+relatedlink[9] = {'sname':'应用', 'surl':'http://www.html5cn.org/portal.php?mod=list&catid=20'};
+relatedlink[10] = {'sname':'游戏', 'surl':'http://www.html5cn.org/portal.php?mod=list&catid=19'};
+relatedlink[11] = {'sname':'CANVAS', 'surl':'http://www.html5cn.org'};
+relatedlink[12] = {'sname':'CSS3', 'surl':'http://www.html5cn.org/portal.php?mod=list&catid=16'};
+relatedlink[13] = {'sname':'HTML5', 'surl':'http://www.html5cn.org'};
+relatedlink[14] = {'sname':'', 'surl':''};
+relatedlinks('postmessage_754739');
+</script>
+
+<script type="text/javascript">
+function succeedhandle_followmod(url, msg, values) {
+var fObj = $('followmod_'+values['fuid']);
+if(values['type'] == 'add') {
+fObj.innerHTML = '不收听';
+fObj.href = 'home.php?mod=spacecp&ac=follow&op=del&fuid='+values['fuid'];
+} else if(values['type'] == 'del') {
+fObj.innerHTML = '收听TA';
+fObj.href = 'home.php?mod=spacecp&ac=follow&op=add&hash=dd29088f&fuid='+values['fuid'];
+}
+}
+fixed_avatar([754739,754887,755735], 1);
+</script>	</div>
+<div class="a_cn" style="line-height:180px;height:180px"><p class="close" id="ad_corner_close" onclick="setcookie(&#39;adclose_14&#39;, 1, 86400);this.parentNode.style.display=&#39;none&#39;"><a href="javascript:;"><img src="./百度地图--地图聚合_files/ad_close.gif"></a></p><a href="http://bbs.html5cn.org/html5cn.org" target="_blank"><img src="./百度地图--地图聚合_files/094853xlpmamfmfxkzx0cz.jpg" height="180" width="180" alt="HTML5中国微信" border="0"></a></div>
+
+<div id="ft" class="wp cl">
+<div id="flk" class="y">
+<p>
+<a href="http://bbs.html5cn.org/forum.php?mod=misc&action=showdarkroom">小黑屋</a><span class="pipe">|</span><a href="http://www.html5cn.org/portal.php?mod=topic&topicid=1">关于我们</a><span class="pipe">|</span><a href="http://bbs.html5cn.org/forum.php">HTML5论坛</a><span class="pipe">|</span><a href="http://www.html5cn.org/portal.php?mod=topic&topicid=3">友情链接</a><span class="pipe">|</span><a href="http://bbs.html5cn.org/forum.php?mobile=yes">手机版</a><span class="pipe">|</span><strong><a href="http://www.html5cn.org/" target="_blank">HTML5中国</a></strong>
+( <a href="http://www.miitbeian.gov.cn/" target="_blank">京ICP备11006447号-7 京公网安备：11010802010583号</a> )&nbsp;<a href="http://discuz.qq.com/service/security" target="_blank" title="防水墙保卫网站远离侵害"><img src="./百度地图--地图聚合_files/security.png"></a>&nbsp;&nbsp;<span id="tcss"></span><script type="text/javascript" src="./百度地图--地图聚合_files/ping.js" charset="utf-8"></script><script type="text/javascript" reload="1">pgvMain({"discuzParams":{"r2":"7381236","ui":0,"rt":"forum","md":"viewthread","fi":"52","ti":"84084","pn":1,"qq":"000"},"extraParams":""});</script><script src="./百度地图--地图聚合_files/stat.php" language="JavaScript"></script><script src="./百度地图--地图聚合_files/core.php" charset="utf-8" type="text/javascript"></script><a href="http://www.cnzz.com/stat/website.php?web_id=3478158" target="_blank" title="站长统计">站长统计</a></p>
+<p class="xs0">
+GMT+8, 2015-12-7 10:04<span id="debuginfo">
+</span>
+</p>
+</div>
+<div id="frt">
+<p>Powered by <strong><a href="http://www.discuz.net/" target="_blank">Discuz!</a></strong> <em>X3.2</em></p>
+<p class="xs0">© 2001-2013 <a href="http://www.comsenz.com/" target="_blank">Comsenz Inc.</a></p>
+</div></div>
+<div id="scrolltop" style="left: 1154px; visibility: visible;">
+<span><a href="http://bbs.html5cn.org/forum.php?mod=post&action=reply&fid=52&tid=84084&extra=page%3D1&page=1" onclick="showWindow(&#39;reply&#39;, this.href)" class="replyfast" title="快速回复"><b>快速回复</b></a></span>
+<span hidefocus="true"><a title="返回顶部" onclick="window.scrollTo(&#39;0&#39;,&#39;0&#39;)" class="scrolltopa"><b>返回顶部</b></a></span>
+<span>
+<a href="http://bbs.html5cn.org/forum-52-1.html" hidefocus="true" class="returnlist" title="返回列表"><b>返回列表</b></a>
+</span>
+</div>
+<script type="text/javascript">_attachEvent(window, 'scroll', function () { showTopLink(); });checkBlind();</script>
+			<div id="discuz_tips" style="display:none;"></div>
+			<script type="text/javascript">
+				var tipsinfo = '7381236|X3.2|0.6||0||0|7|1449453858|67833f49923407a58cc47c3267cf0c4e|2';
+			</script>
+			<script src="./百度地图--地图聚合_files/discuz_tips.js" type="text/javascript" charset="UTF-8"></script>
+
+</body></html>

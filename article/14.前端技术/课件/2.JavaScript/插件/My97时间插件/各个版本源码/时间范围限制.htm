@@ -1,0 +1,15 @@
+<script language="javascript" type="text/javascript" src="./My97DatePicker/WdatePicker.js"></script>
+<link href="./My97DatePicker/skin/WdatePicker.css" rel="stylesheet" type="text/css" />
+
+
+<input type='text' id="beginDate" class="Wdate" maxlength="8" value="2017-12-01" 
+	onFocus="WdatePicker({minDate:'#F{$dp.$D(\'endDate\',{M:-3})}',maxDate:'#F{$dp.$D(\'endDate\')}'})"
+/>
+ 
+<input type='text' id="endDate" class="Wdate" maxlength="8" value="2017-12-20"
+	onFocus="WdatePicker({minDate:'#F{$dp.$D(\'beginDate\')}',maxDate:'2017-12-20'})"
+/>
+
+<p>结束时间不能小于开始时间，且不能大于某个时间</p>
+
+<p>开始时间不能大于结束时间，且时间范围控制在3个月以内</p>

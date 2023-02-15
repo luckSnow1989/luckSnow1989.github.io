@@ -1,0 +1,13 @@
+<mapping resource="cn/itcast/entity/Finance.hbm.xml" />
+
+<bean id="daoFinance" class="cn.itcast.entity.dao.FinanceDAO" autowire="byName"/>
+
+
+<package name="finance" namespace="/finance" extends="struts-default">
+	<action name="financeAction_*" method="{1}" class="cn.itcast.web.struts2.cargo.finance.FinanceAction">
+		<result name="pedit">/cargo/finance/jFinanceEdit.jsp</result>
+	</action>
+</package> 
+
+
+<li id="stat"><a href="#" onclick="formSubmit('/finance/financeAction_toedit','_self');this.blur();">²ÆÎñ</a></li>

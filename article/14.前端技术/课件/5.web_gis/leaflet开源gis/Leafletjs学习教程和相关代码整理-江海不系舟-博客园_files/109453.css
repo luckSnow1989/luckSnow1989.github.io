@@ -1,0 +1,94 @@
+/*博客头部*/
+body{
+	font-family: Microsoft YaHei;
+}
+#header{
+	display: none;
+}
+.header {
+	height: 0px;
+	background-color: #fff;
+	background-image: url('http://common.cnblogs.com/Skins/sea/images/bg_header.jpg');
+	background-repeat: no-repeat;
+	border-bottom: 1px dotted #8b8d72;
+	padding-left: 450px;
+	padding-top: 10px;
+}
+/*博客左边*/
+#leftcontent {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 300px;
+	background-color: #fff;
+	border: 1px dotted #8b8d72;
+	border-top: 1px dotted #8b8d72;
+	border-bottom: 8px solid #8b8d72;
+	font-family: Microsoft YaHei;
+	font-size: 15px;
+}
+/*导航菜单栏*/
+#mytopmenu {
+	border: 1px dotted #8b8d72;
+	border-top: 0;
+	background-color: #fff;
+	padding: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-top: 0;
+	margin-right: 0px;
+	margin-left: 300px;
+	text-align: left;
+	font-size: 12px;
+}
+#centercontent {
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-left: 300px;
+}
+/*底部*/
+.footer {
+	background-image: url(images/bg_footer.gif);
+	color: #8b8d72;
+	padding: 12px;
+	padding-left: 10px;
+	margin-top: 0;
+	margin-right: 19px;
+	margin-left: 300px;
+	text-align: center;
+	line-height: 20px;
+}
+/*导航栏*/
+#mylinks {
+	display: inline;
+	font-size: 20px;
+	padding: 0;
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-left: 12px;
+	padding-right: 12px;
+	text-align: left;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+/*我的状态*/
+#mystats {
+	display: inline;
+	font-size: 12px;
+	text-align: right;
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+/*每一天的文章*/
+.day {
+	border: 1px dotted #8b8d72;
+	background-color: #fff;
+	padding: 20px;
+	color: #4b4b4b;
+	margin-bottom: 0px;
+}
+#blog-calender{
+display:none;
+}

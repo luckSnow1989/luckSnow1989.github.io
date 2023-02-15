@@ -1,0 +1,6 @@
+maven¹¹½¨ÍÆËÍ¾µÏñ£º
+mvn clean install -P${profile,Àý:dev} -Dmaven.test.skip=true && mvn package -Dmaven.test.skip=true -Dserver.saturn.namespace=${saturn.namespace,Àý:www.yooli.ddp} -Dserver.saturn.console.url=${console.url,Àý:http://172.16.2.100:9088} -Dlocal.docker.host=${docker.host,Àý:localhost:2375} -Dprofile.branch=${profile} docker:build docker:push
+
+
+dockerÔËÐÐÈÝÆ÷£º
+docker run --name ${contain.name} --rm -it -P -e SATURN_EXECUTORNAME=$(hostname) ${image.name}

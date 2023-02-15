@@ -1,0 +1,47 @@
+	var xmlHttp = null;
+	// 1、添加兼容性
+	function getAjax(){
+		try{
+			xmlHttp = new XMLHttpRequest;//IE7.0、chrome以及ff,等上兼容
+		} catch(e){
+			try{			
+				xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");//IE6.0兼容
+			}catch(e){
+				try{
+					xmlHttp=new ActiveXObect("Microsoft.XMLHTTP");//更早以前的版本
+				}catch(e){
+					return false;//这就不是兼容性的问题了
+				}
+			}
+		}
+	};
+	// 2、创建核心方法  地址 发送内容 回调函数
+	function sendRequest(url,poster,callback){
+		getXMLRequest();//获得核心对象
+		//在实际开发中，大多采用get请求，提交的信息都以？的形式放在URL后面
+		//这样获得跟快的响应速度，减小服务器的压力，也是符合开发Ajax技术的
+		//初衷。
+		if(poster==null){
+			xmlHttp.onreadystatechange=callback;
+			xmlHttp.open("GET",url,true);
+			xmlHttp.send(null);
+		}else{
+			xmlHttp.onreadystatechange=callback;
+			xmlHttp.open("POST",url,true);
+			xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded;");
+			xmlHttp.send(poster);
+		}
+	};
+	// 3、设置回调函数	
+	function callback() {
+		if(xmlhttp.readyState==4) {/*状态：	0.XMLHttpRequest对象未完成初始化
+											1.XMLHttpRequest对象开始发送请求 
+											2.XMLHttpRequest对象请求发送完成
+											3.XMLHttpRequest对象开始接收响应，但未结束 
+											4.XMLHttpRequest对象接收响应完毕*/
+			if(xmlhttp.status==200) {//200是服务器响应正常
+				var msg = xmlhttp.responseText;//获得响应的文本信息
+				document.getElementById("importance_div").innerHTML=msg;//将获得的文本信息输出
+			}
+		}
+	}

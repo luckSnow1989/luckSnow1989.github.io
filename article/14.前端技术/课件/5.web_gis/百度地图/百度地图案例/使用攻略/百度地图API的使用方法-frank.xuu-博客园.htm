@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8"/>
+<title>百度地图API的使用方法 - frank.xuu - 博客园</title>
+<link type="text/css" rel="stylesheet" href="/bundles/blog-common.css?v=h5zdoMvpyotxl1gAlbby_o3-POeMRbgsgFRLO8kI-xk1"/>
+<link id="MainCss" type="text/css" rel="stylesheet" href="/skins/darkgreentrip/bundle-darkgreentrip.css?v=xPXJVC4GCITs1yYYgSeLkcicCxapqseaPVQLFGMO1wc1"/>
+<link type="text/css" rel="stylesheet" href="/blog/customcss/136570.css?v=nk6AUY%2bgKHZOdFZGpNxUt0ybORk%3d"/>
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/xuhongfei/rss"/>
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/xuhongfei/rsd.xml"/>
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/xuhongfei/wlwmanifest.xml"/>
+<script src="http://common.cnblogs.com/script/jquery.js" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'xuhongfei', cb_enable_mathjax=false;</script>
+<script src="/bundles/blog-common.js?v=CLLiFNNgL6CohO3Olq2i7r9tPyHtCoryr0KngxdwUm41" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="http://www.cnblogs.com/xuhongfei/"><img id="blogLogo" src="/Skins/custom/images/logo.gif" alt="返回主页" /></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/xuhongfei/">frank.xuu</a></h1>
+<h2>It always seems impossible until it's done.</h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="MyLinks1_HomeLink" class="menu" href="http://www.cnblogs.com/">博客园</a></li>
+<li><a id="MyLinks1_MyHomeLink" class="menu" href="http://www.cnblogs.com/xuhongfei/">首页</a></li>
+<li><a id="MyLinks1_NewPostLink" class="menu" rel="nofollow" href="http://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+<li></li>
+<li><a id="MyLinks1_Syndication" class="menu" href="http://www.cnblogs.com/xuhongfei/rss">订阅</a>
+<!--<a id="MyLinks1_XMLLink" class="aHeaderXML" href="http://www.cnblogs.com/xuhongfei/rss"><img src="http://www.cnblogs.com/images/xml.gif" alt="订阅" /></a>--></li>
+<li><a id="MyLinks1_Admin" class="menu" rel="nofollow" href="http://i.cnblogs.com/">管理</a></li>
+</ul>
+		<div class="blogStats">
+			
+			
+<!--done-->
+随笔- 135&nbsp;
+文章- 0&nbsp;
+评论- 22&nbsp;
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class = "post">
+		<h1 class = "postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="http://www.cnblogs.com/xuhongfei/archive/2013/04/10/3011964.html">百度地图API的使用方法</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body"><div class="Section0">
+<p class="p0">百度地图<span style="font-family: Times New Roman;">API</span></p>
+<p class="p0">开始学习百度地图<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">最简单的方式是看一个简单的示例。以下代码创建了一个</span><span style="font-family: Arial;">520x340</span><span style="font-family: 宋体;">大小的地图区域并以天安门作为地图的中心</span><span style="font-family: Arial;">:&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">1.&nbsp;&lt;html&gt;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;&lt;head&gt;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;&lt;meta&nbsp;http-equiv="Content-Type"&nbsp;content="text/html;&nbsp;charset=utf-8"&nbsp;/&gt;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&lt;title&gt;Hello,&nbsp;World&lt;/title&gt;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;&lt;script&nbsp;type="text/javascript"&nbsp;src="http://api.map.baidu.com/api?key=46ce9d0614bf7aefe0ba562f8cf87194&amp;v=1.0&amp;services=false"&gt;&lt;/script&gt;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;&lt;/head&gt;&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;&lt;body&gt;&nbsp;&nbsp;</p>
+<p class="p0">8.&nbsp;&lt;div&nbsp;style="width:520px;height:340px;border:1px&nbsp;solid&nbsp;gray"&nbsp;id="container"&gt;&lt;/div&gt;&nbsp;&nbsp;</p>
+<p class="p0">9.&nbsp;&lt;/body&gt;&nbsp;&nbsp;</p>
+<p class="p0">10.&nbsp;&lt;/html&gt;&nbsp;&nbsp;</p>
+<p class="p0">11.&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">12.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">&nbsp;</p>
+<p class="p0">&lt;html&gt;</p>
+<p class="p0">&lt;head&gt;</p>
+<p class="p0">&lt;meta&nbsp;http-equiv="Content-Type"&nbsp;content="text/html;&nbsp;charset=utf-8"&nbsp;/&gt;</p>
+<p class="p0">&lt;title&gt;Hello,&nbsp;World&lt;/title&gt;</p>
+<p class="p0">&lt;script&nbsp;type="text/javascript"&nbsp;src="http://api.map.baidu.com/api?key=46ce9d0614bf7aefe0ba562f8cf87194&amp;v=1.0&amp;services=false"&gt;&lt;/script&gt;</p>
+<p class="p0">&lt;/head&gt;</p>
+<p class="p0">&lt;body&gt;</p>
+<p class="p0">&lt;div&nbsp;style="width:520px;height:340px;border:1px&nbsp;solid&nbsp;gray"&nbsp;id="container"&gt;&lt;/div&gt;</p>
+<p class="p0">&lt;/body&gt;</p>
+<p class="p0">&lt;/html&gt;</p>
+<p class="p0">&nbsp;</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">1.&nbsp;&lt;script&nbsp;type="text/javascript"&gt;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">创建地图实例&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;var&nbsp;point&nbsp;=&nbsp;new&nbsp;BMap.Point(116.404,&nbsp;39.915);&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">创建点坐标&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;map.centerAndZoom(point,&nbsp;15);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">初始化地图，设置中心点坐标和地图级别&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;&lt;/script&gt;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">&lt;script&nbsp;type="text/javascript"&gt;</p>
+<p class="p0">var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;创建地图实例</p>
+<p class="p0">var&nbsp;point&nbsp;=&nbsp;new&nbsp;BMap.Point(116.404,&nbsp;39.915);&nbsp;&nbsp;//&nbsp;创建点坐标</p>
+<p class="p0">map.centerAndZoom(point,&nbsp;15);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;初始化地图，设置中心点坐标和地图级别</p>
+<p class="p0">&lt;/script&gt;</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">引用百度地图<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">文件</span></p>
+<p class="p0">当您引用地图<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">文件时，需要使用自己申请的</span><span style="font-family: Arial;">API</span><span style="font-family: 宋体;">密钥。</span></p>
+<p class="p0">1.&nbsp;&lt;script&nbsp;type="text/javascript"&nbsp;src="http://api.map.baidu.com/api?key=46ce9d0614bf7aefe0ba562f8cf87194&amp;v=1.0&amp;services=false"&gt;&lt;/script&gt;&nbsp;&nbsp;</p>
+<p class="p0">&lt;script&nbsp;type="text/javascript"&nbsp;src="http://api.map.baidu.com/api?key=46ce9d0614bf7aefe0ba562f8cf87194&amp;v=1.0&amp;services=false"&gt;&lt;/script&gt;</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">创建地图容器元素</p>
+<p class="p0">1.&nbsp;&lt;div&nbsp;style="width:520px;height:340px;border:1px&nbsp;solid&nbsp;#000"&nbsp;id="container"&gt;&lt;/div&gt;&nbsp;&nbsp;</p>
+<p class="p0">&lt;div&nbsp;style="width:520px;height:340px;border:1px&nbsp;solid&nbsp;#000"&nbsp;id="container"&gt;&lt;/div&gt;</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">地图需要一个<span style="font-family: Arial;">HTML</span><span style="font-family: 宋体;">元素作为容器，这样才能展现到页面上。这里我们创建了一个</span><span style="font-family: Arial;">div</span><span style="font-family: 宋体;">元素并制定它的大小。地图会根据容器大小调整自身尺寸。</span></p>
+<p class="p0">命名空间&nbsp;</p>
+<p class="p0">API<span style="font-family: 宋体;">使用</span>BMap作为命名空间，所有类均在该命名空间之下，比如：BMap.Map、BMap.Control、BMap.Overlay。</p>
+<p class="p0">创建地图实例</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;</p>
+<p class="p0">var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">位于<span style="font-family: Arial;">BMap</span><span style="font-family: 宋体;">命名空间下的</span>Map类表示地图，通过<span style="font-family: Arial;">new</span><span style="font-family: 宋体;">操作符可以创建一个地图实例。其参数可以是元素</span><span style="font-family: Arial;">id</span><span style="font-family: 宋体;">也可以是元素对象。</span><br />注意在调用此构造函数时应确保容器元素已经添加到地图上。&nbsp;</p>
+<p class="p0">创建点坐标</p>
+<p class="p0">1.&nbsp;var&nbsp;point&nbsp;=&nbsp;new&nbsp;BMap.Point(116.404,&nbsp;39.915);&nbsp;</p>
+<p class="p0">var&nbsp;point&nbsp;=&nbsp;new&nbsp;BMap.Point(116.404,&nbsp;39.915);</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">这里我们使用BMap命名空间下的Point类来创建一个坐标点。Point类描述了一个地理坐标点，其中<span style="font-family: Arial;">116.404</span><span style="font-family: 宋体;">表示经度，</span><span style="font-family: Arial;">39.915</span><span style="font-family: 宋体;">表示纬度。</span></p>
+<p class="p0">地图初始化</p>
+<p class="p0">1.&nbsp;map.centerAndZoom(point,15);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">map.centerAndZoom(point,15);</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">在创建地图实例后，我们需要对其进行初始化，BMap.Map.centerAndZoom()方法要求设置中心点坐标和地图级别。<br />地图必须经过初始化才可以执行其他操作。</p>
+<p class="p0">地图操作&nbsp;</p>
+<p class="p0">地图被实例化并完成初始化以后，就可以与其进行交互了。<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">中的地图对象的外观与行为与百度地图网站上交互的地图非常相似。它支持鼠标拖拽、滚轮缩放、双击放大等交互功能。您也可以修改配置来改变这些功能。&nbsp;</span></p>
+<p class="p0">您还可以通过编程的方式与地图交互。Map类提供了若干修改地图状态的方法。例如：setCenter()、panTo()、zoomTo()等等。&nbsp;</p>
+<p class="p0">下面示例显示一个地图，等待两秒钟后，它会移动到新中心点。panTo()方法将让地图平滑移动至新中心点，如果移动距离超过了当前地图区域大小，则地图会直跳到该点。&nbsp;</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;var&nbsp;point&nbsp;=&nbsp;new&nbsp;BMap.Point(116.404,&nbsp;39.915);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;map.centerAndZoom(point,&nbsp;15);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;window.setTimeout(function(){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;&nbsp;map.panTo(new&nbsp;BMap.Point(116.409,&nbsp;39.918));&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;},&nbsp;2000);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");</p>
+<p class="p0">var&nbsp;point&nbsp;=&nbsp;new&nbsp;BMap.Point(116.404,&nbsp;39.915);</p>
+<p class="p0">map.centerAndZoom(point,&nbsp;15);</p>
+<p class="p0">window.setTimeout(function(){</p>
+<p class="p0">&nbsp;map.panTo(new&nbsp;BMap.Point(116.409,&nbsp;39.918));</p>
+<p class="p0">},&nbsp;2000);</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">地图控件概述&nbsp;</p>
+<p class="p0">百度地图上负责与地图交互的<span style="font-family: Arial;">UI</span><span style="font-family: 宋体;">元素称为</span>控件。百度地图<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">中提供了丰富的控件，您还可以通过</span><span style="font-family: Arial;">BMap.Control</span><span style="font-family: 宋体;">来实现自定义控件。&nbsp;</span></p>
+<p class="p0">地图<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">中提供的控件有：</span></p>
+<p class="p0">&middot;&nbsp;Control<span style="font-family: 宋体;">：控件的</span>抽象基类，所有控件均继承此类的方法、属性。通过此类您可实现自定义控件。&nbsp;</p>
+<p class="p0">&middot;&nbsp;NavigationControl<span style="font-family: 宋体;">：地图</span>平移缩放控件，默认位于地图左上方，它包含控制地图的平移和缩放的功能。&nbsp;</p>
+<p class="p0">&middot;&nbsp;OverviewMapControl<span style="font-family: 宋体;">：</span>缩略地图控件，默认位于地图右下方，是一个可折叠的缩略地图。&nbsp;</p>
+<p class="p0">&middot;&nbsp;ScaleControl<span style="font-family: 宋体;">：</span>比例尺控件，默认位于地图左下方，显示地图的比例关系。&nbsp;</p>
+<p class="p0">&middot;&nbsp;CopyrightControl<span style="font-family: 宋体;">：</span>版权控件，默认位于地图左下方。&nbsp;</p>
+<p class="p0">所有这些控件都基于<span style="font-family: Arial;">BMap.Control</span><span style="font-family: 宋体;">类。</span></p>
+<p class="p0">向地图添加控件</p>
+<p class="p0">可以使用<span style="font-family: Arial;">BMap.Map.addControl()</span><span style="font-family: 宋体;">方法向地图添加控件。在此之前地图需要进行初始化。例如，要将标准地图控件添加到地图中，可在代码中添加如下内容：&nbsp;</span></p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;map.addControl(new&nbsp;BMap.NavigationControl());&nbsp;&nbsp;</p>
+<p class="p0">var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");</p>
+<p class="p0">map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);</p>
+<p class="p0">map.addControl(new&nbsp;BMap.NavigationControl());</p>
+<p class="p0">可以向地图添加多个控件。在本例中我们向地图添加一个平移缩放控件、一个比例尺控件和一个缩略图控件。在地图中添加控件后，它们即刻生效。</p>
+<p class="p0">1.&nbsp;map.addControl(new&nbsp;BMap.NavigationControl());&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.addControl(new&nbsp;BMap.ScaleControl());&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;map.addControl(new&nbsp;BMap.OverviewMapControl());&nbsp;&nbsp;</p>
+<p class="p0">map.addControl(new&nbsp;BMap.NavigationControl());</p>
+<p class="p0">map.addControl(new&nbsp;BMap.ScaleControl());</p>
+<p class="p0">map.addControl(new&nbsp;BMap.OverviewMapControl());</p>
+<p class="p0">控制控件的位置&nbsp;</p>
+<p class="p0">初始化控件时，可提供一个可选参数，参数类型为一个<span style="font-family: Arial;">JavaScript</span><span style="font-family: 宋体;">对象。其中</span><span style="font-family: Arial;">anchor</span><span style="font-family: 宋体;">和</span><span style="font-family: Arial;">offsetX</span><span style="font-family: 宋体;">、</span><span style="font-family: Arial;">offsetY</span><span style="font-family: 宋体;">共同控制控件在地图上的位置。</span><span style="font-family: Arial;">anchor</span><span style="font-family: 宋体;">表示控件停靠在地图的哪个角，允许的值为：&nbsp;</span></p>
+<p class="p0">&middot;&nbsp;BMAP_ANCHOR_TOP_LEFT&nbsp;</p>
+<p class="p0">&middot;&nbsp;BMAP_ANCHOR_TOP_RIGHT&nbsp;</p>
+<p class="p0">&middot;&nbsp;BMAP_ANCHOR_BOTTOM_LEFT&nbsp;</p>
+<p class="p0">&middot;&nbsp;BMAP_ANCHOR_BOTTOM_RIGHT&nbsp;</p>
+<p class="p0">除了指定停靠位置外，还可以提供偏移量，用来指示控件距离地图边界相隔多少像素。&nbsp;</p>
+<p class="p0">本示例将标准地图控件放置在地图的右上角，间隔<span style="font-family: Arial;">10</span><span style="font-family: 宋体;">个像素。&nbsp;</span></p>
+<p class="p0">1.&nbsp;var&nbsp;opts&nbsp;=&nbsp;{anchor:&nbsp;BMAP_ANCHOR_TOP_RIGHT,&nbsp;offset:&nbsp;new&nbsp;BMap.Size(10,&nbsp;10)}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.addControl(new&nbsp;BMap.NavigationControl(opts));&nbsp;&nbsp;</p>
+<p class="p0">var&nbsp;opts&nbsp;=&nbsp;{anchor:&nbsp;BMAP_ANCHOR_TOP_RIGHT,&nbsp;offset:&nbsp;new&nbsp;BMap.Size(10,&nbsp;10)}</p>
+<p class="p0">map.addControl(new&nbsp;BMap.NavigationControl(opts));</p>
+<p class="p0">修改控件的配置</p>
+<p class="p0">地图<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">的控件提供了丰富的配置参数，您可参考</span><span style="font-family: Arial;">API</span><span style="font-family: 宋体;">文档来修改它们以便得到符合要求的控件外观。&nbsp;</span></p>
+<p class="p0">本示例将调整平移缩放地图控件的外观。&nbsp;</p>
+<p class="p0">1.&nbsp;var&nbsp;opts&nbsp;=&nbsp;{type:&nbsp;BMAP_NAVIGATION_CONTROL_SMALL}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.addControl(new&nbsp;BMap.NavigationControl(opts));&nbsp;&nbsp;</p>
+<p class="p0">var&nbsp;opts&nbsp;=&nbsp;{type:&nbsp;BMAP_NAVIGATION_CONTROL_SMALL}</p>
+<p class="p0">map.addControl(new&nbsp;BMap.NavigationControl(opts));</p>
+<p class="p0">自定义控件</p>
+<p class="p0">百度地图<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">允许您通过继承</span><span style="font-family: Arial;">BMap.Control</span><span style="font-family: 宋体;">来创建自定义地图控件。（注意</span><span style="font-family: Arial;">JavaScript</span><span style="font-family: 宋体;">是通过</span><span style="font-family: Arial;">prototype</span><span style="font-family: 宋体;">属性进行继承的）&nbsp;</span></p>
+<p class="p0">要创建可用的自定义控件，您需要实现类定义中的一个抽象方法并给两个属性赋值，它们是：<span style="font-family: Arial;">initialize()</span><span style="font-family: 宋体;">和</span><span style="font-family: Arial;">defaultAnchor</span><span style="font-family: 宋体;">、</span><span style="font-family: Arial;">defaultOffset</span><span style="font-family: 宋体;">。</span><span style="font-family: Arial;">initialize()</span><span style="font-family: 宋体;">方法必须返回控件容器的</span><span style="font-family: Arial;">DOM</span><span style="font-family: 宋体;">元素，</span><span style="font-family: Arial;">defaultAnchor</span><span style="font-family: 宋体;">为控件默认的停靠位置，</span><span style="font-family: Arial;">defaultOffset</span><span style="font-family: 宋体;">为控件默认的间隔距离。&nbsp;</span></p>
+<p class="p0">所有自定义的地图控件中的<span style="font-family: Arial;">DOM</span><span style="font-family: 宋体;">元素最终都应该添加到地图容器（即地图所在的</span><span style="font-family: Arial;">DOM</span><span style="font-family: 宋体;">元素）中去，这个地图容器可以通过</span><span style="font-family: Arial;">BMap.Map.getContainer()</span><span style="font-family: 宋体;">方法获得。</span></p>
+<p class="p0">在此示例中，创建一个简单的放大控件，每一次点击将地图放大两个级别。它具有文本标识，而不是平移缩放控件中使用的图形图标。</p>
+<p class="p0">1.&nbsp;//&nbsp;<span style="font-family: 宋体;">定义一个控件类，即</span><span style="font-family: Consolas;">function&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;function&nbsp;ZoomControl(){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">设置默认停靠位置和偏移量&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&nbsp;&nbsp;this.defaultAnchor&nbsp;=&nbsp;BMAP_ANCHOR_TOP_LEFT;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;&nbsp;&nbsp;this.defaultOffset&nbsp;=&nbsp;new&nbsp;BMap.Size(10,&nbsp;10);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;//&nbsp;<span style="font-family: 宋体;">通过</span><span style="font-family: Consolas;">JavaScript</span><span style="font-family: 宋体;">的</span><span style="font-family: Consolas;">prototype</span><span style="font-family: 宋体;">属性继承于</span><span style="font-family: Consolas;">BMap.Control&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">8.&nbsp;ZoomControl.prototype&nbsp;=&nbsp;new&nbsp;BMap.Control();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">9.&nbsp;//&nbsp;<span style="font-family: 宋体;">自定义控件必须实现自己的</span><span style="font-family: Consolas;">initialize</span><span style="font-family: 宋体;">方法，并且将控件的</span><span style="font-family: Consolas;">DOM</span><span style="font-family: 宋体;">元素返回&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">10.&nbsp;//&nbsp;<span style="font-family: 宋体;">在本方法中创建个</span><span style="font-family: Consolas;">div</span><span style="font-family: 宋体;">元素作为控件的容器，并将其添加到地图容器中&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">11.&nbsp;ZoomControl.prototype.initialize&nbsp;=&nbsp;function(map){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">12.&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">创建一个</span><span style="font-family: Consolas;">DOM</span><span style="font-family: 宋体;">元素&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">13.&nbsp;&nbsp;&nbsp;var&nbsp;div&nbsp;=&nbsp;document.createElement("div");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">14.&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">添加文字说明&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">15.&nbsp;&nbsp;&nbsp;div.appendChild(document.createTextNode("<span style="font-family: 宋体;">放大</span><span style="font-family: Consolas;">2</span><span style="font-family: 宋体;">级</span><span style="font-family: Consolas;">"</span>));&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">16.&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">设置样式&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">17.&nbsp;&nbsp;&nbsp;div.style.cursor&nbsp;=&nbsp;"pointer";&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">18.&nbsp;&nbsp;&nbsp;div.style.border&nbsp;=&nbsp;"1px&nbsp;solid&nbsp;gray";&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">19.&nbsp;&nbsp;&nbsp;div.style.backgroundColor&nbsp;=&nbsp;"white";&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">20.&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">绑定事件，点击一次放大两级&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">21.&nbsp;&nbsp;&nbsp;div.onclick&nbsp;=&nbsp;function(e){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">22.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map.zoomTo(map.getZoom()&nbsp;+&nbsp;2);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">23.&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">24.&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">添加</span><span style="font-family: Consolas;">DOM</span><span style="font-family: 宋体;">元素到地图中&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">25.&nbsp;&nbsp;&nbsp;map.getContainer().appendChild(div);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">26.&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">将</span><span style="font-family: Consolas;">DOM</span><span style="font-family: 宋体;">元素返回&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">27.&nbsp;&nbsp;&nbsp;return&nbsp;div;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">28.&nbsp;}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">29.&nbsp;//&nbsp;<span style="font-family: 宋体;">创建控件&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">30.&nbsp;var&nbsp;myZoomCtrl&nbsp;=&nbsp;new&nbsp;ZoomControl();&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">31.&nbsp;//&nbsp;<span style="font-family: 宋体;">添加到地图当中&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">32.&nbsp;map.addControl(myZoomCtrl);&nbsp;&nbsp;</p>
+<p class="p0">地图覆盖物概述</p>
+<p class="p0">所有叠加或覆盖到地图的内容，我们统称为地图覆盖物。如标注、矢量图形元素<span style="font-family: Arial;">(</span><span style="font-family: 宋体;">包括：折线和多边形</span><span style="font-family: Arial;">)</span><span style="font-family: 宋体;">、信息窗口等。覆盖物拥有自己的地理坐标，当您拖动或缩放地图时，它们会相应的移动。&nbsp;</span></p>
+<p class="p0">地图<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">提供了如下几种覆盖物：&nbsp;</span></p>
+<p class="p0">&middot;&nbsp;Overlay<span style="font-family: 宋体;">：覆盖物的</span>抽象基类，此类不可实例化，所有的覆盖物均继承此类的方法。&nbsp;</p>
+<p class="p0">&middot;&nbsp;Marker<span style="font-family: 宋体;">：</span>标注表示地图上的点，可自定义标注的图标。&nbsp;</p>
+<p class="p0">&middot;&nbsp;Label<span style="font-family: 宋体;">：表示地图上的</span>文本标注，您可以自定义标注的文本内容。&nbsp;</p>
+<p class="p0">&middot;&nbsp;Polyline<span style="font-family: 宋体;">：表示地图上的</span>折线。&nbsp;</p>
+<p class="p0">&middot;&nbsp;Polygon<span style="font-family: 宋体;">：表示地图上的</span>多边形。多边形类似于闭合的折线，另外您也可以为其添加填充颜色。&nbsp;</p>
+<p class="p0">&middot;&nbsp;InfoWindow<span style="font-family: 宋体;">：</span>信息窗口也是一种特殊的覆盖物。注意：同一时刻只能有一个信息窗口在地图上打开。&nbsp;</p>
+<p class="p0">可以使用<span style="font-family: Arial;">BMap.Map.addOverlay()</span><span style="font-family: 宋体;">方法向地图添加覆盖物，使用</span><span style="font-family: Arial;">BMap.Map.removeOverlay()</span><span style="font-family: 宋体;">方法移除覆盖物，注意此方法不适用于</span><span style="font-family: Arial;">InfoWindow</span><span style="font-family: 宋体;">。&nbsp;</span></p>
+<p class="p0">标注</p>
+<p class="p0">标注表示地图上的点。<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">提供了默认图标样式，您也可以通过</span><span style="font-family: Arial;">Icon</span><span style="font-family: 宋体;">类来指定自定义图标。</span><span style="font-family: Arial;">BMap.Marker</span><span style="font-family: 宋体;">的构造函数的参数为</span><span style="font-family: Arial;">BMap.Point</span><span style="font-family: 宋体;">和</span><span style="font-family: Arial;">BMap.MarkerOptions</span><span style="font-family: 宋体;">（可选）。&nbsp;注意：当您使用自定义图标时，标注的地理坐标点将位于标注所用图标的中心位置，您可通过</span><span style="font-family: Arial;">Icon</span><span style="font-family: 宋体;">的</span><span style="font-family: Arial;">offset</span><span style="font-family: 宋体;">属性修改标定位置。</span></p>
+<p class="p0">下面的示例向地图中心点添加了一个标注，并使用默认的标注样式。</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;var&nbsp;point&nbsp;=&nbsp;new&nbsp;BMap.Point(116.404,&nbsp;39.915);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;map.centerAndZoom(point,&nbsp;15);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;var&nbsp;marker&nbsp;=&nbsp;new&nbsp;BMap.Marker(point);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">创建标注&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;map.addOverlay(marker);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">将标注添加到地图中</span>&nbsp;&nbsp;</p>
+<p class="p0">var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");</p>
+<p class="p0">var&nbsp;point&nbsp;=&nbsp;new&nbsp;BMap.Point(116.404,&nbsp;39.915);</p>
+<p class="p0">map.centerAndZoom(point,&nbsp;15);</p>
+<p class="p0">var&nbsp;marker&nbsp;=&nbsp;new&nbsp;BMap.Marker(point);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;创建标注</p>
+<p class="p0">map.addOverlay(marker);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;将标注添加到地图中</p>
+<p class="p0">定义标注图标</p>
+<p class="p0">通过<span style="font-family: Arial;">BMap.Icon</span><span style="font-family: 宋体;">类可实现自定义标注的图标，下面示例通过参数</span><span style="font-family: Arial;">BMap.MarkerOptions</span><span style="font-family: 宋体;">的</span><span style="font-family: Arial;">icon</span><span style="font-family: 宋体;">属性进行设置，您也可以使用</span><span style="font-family: Arial;">BMap.Marker.setIcon()</span><span style="font-family: 宋体;">方法。</span></p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;var&nbsp;point&nbsp;=&nbsp;new&nbsp;BMap.Point(116.404,&nbsp;39.915);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;map.centerAndZoom(point,&nbsp;15);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;//&nbsp;<span style="font-family: 宋体;">编写自定义函数，创建标注&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;function&nbsp;addMarker(point,&nbsp;index){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">创建图标对象&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;&nbsp;&nbsp;var&nbsp;myIcon&nbsp;=&nbsp;new&nbsp;BMap.Icon("http://api.map.baidu.com/img/markers.png",&nbsp;new&nbsp;BMap.Size(23,&nbsp;25),&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">8.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;offset:&nbsp;new&nbsp;BMap.Size(10,&nbsp;25),&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">指定定位位置&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">9.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;imageOffset:&nbsp;new&nbsp;BMap.Size(0,&nbsp;0&nbsp;-&nbsp;index&nbsp;*&nbsp;25)&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">设置图片偏移&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">10.&nbsp;&nbsp;&nbsp;});&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">11.&nbsp;&nbsp;&nbsp;var&nbsp;marker&nbsp;=&nbsp;new&nbsp;BMap.Marker(point,&nbsp;{icon:&nbsp;myIcon});&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">12.&nbsp;&nbsp;&nbsp;map.addOverlay(marker);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">13.&nbsp;}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">14.&nbsp;//&nbsp;<span style="font-family: 宋体;">随机向地图添加</span><span style="font-family: Consolas;">10</span><span style="font-family: 宋体;">个标注&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">15.&nbsp;var&nbsp;bounds&nbsp;=&nbsp;map.getBounds();&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">16.&nbsp;var&nbsp;lngSpan&nbsp;=&nbsp;bounds.maxX&nbsp;-&nbsp;bounds.minX;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">17.&nbsp;var&nbsp;latSpan&nbsp;=&nbsp;bounds.maxY&nbsp;-&nbsp;bounds.minY;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">18.&nbsp;for&nbsp;(var&nbsp;i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;10;&nbsp;i&nbsp;++)&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">19.&nbsp;&nbsp;&nbsp;var&nbsp;point&nbsp;=&nbsp;new&nbsp;BMap.Point(bounds.minX&nbsp;+&nbsp;lngSpan&nbsp;*&nbsp;(Math.random()&nbsp;*&nbsp;0.7&nbsp;+&nbsp;0.15),&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">20.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bounds.minY&nbsp;+&nbsp;latSpan&nbsp;*&nbsp;(Math.random()&nbsp;*&nbsp;0.7&nbsp;+&nbsp;0.15));&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">21.&nbsp;&nbsp;&nbsp;addMarker(point,&nbsp;i);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">22.&nbsp;}&nbsp;&nbsp;</p>
+<p class="p0">var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");</p>
+<p class="p0">var&nbsp;point&nbsp;=&nbsp;new&nbsp;BMap.Point(116.404,&nbsp;39.915);</p>
+<p class="p0">map.centerAndZoom(point,&nbsp;15);</p>
+<p class="p0">&nbsp;</p>
+<p class="p0">//&nbsp;编写自定义函数，创建标注</p>
+<p class="p0">function&nbsp;addMarker(point,&nbsp;index){</p>
+<p class="p0">&nbsp;&nbsp;//&nbsp;创建图标对象</p>
+<p class="p0">&nbsp;&nbsp;var&nbsp;myIcon&nbsp;=&nbsp;new&nbsp;BMap.Icon("http://api.map.baidu.com/img/markers.png",&nbsp;new&nbsp;BMap.Size(23,&nbsp;25),&nbsp;{</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;offset:&nbsp;new&nbsp;BMap.Size(10,&nbsp;25),&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;指定定位位置</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;imageOffset:&nbsp;new&nbsp;BMap.Size(0,&nbsp;0&nbsp;-&nbsp;index&nbsp;*&nbsp;25)&nbsp;&nbsp;&nbsp;//&nbsp;设置图片偏移</p>
+<p class="p0">&nbsp;&nbsp;});</p>
+<p class="p0">&nbsp;&nbsp;var&nbsp;marker&nbsp;=&nbsp;new&nbsp;BMap.Marker(point,&nbsp;{icon:&nbsp;myIcon});</p>
+<p class="p0">&nbsp;&nbsp;map.addOverlay(marker);</p>
+<p class="p0">}</p>
+<p class="p0">&nbsp;</p>
+<p class="p0">//&nbsp;随机向地图添加10个标注</p>
+<p class="p0">var&nbsp;bounds&nbsp;=&nbsp;map.getBounds();</p>
+<p class="p0">var&nbsp;lngSpan&nbsp;=&nbsp;bounds.maxX&nbsp;-&nbsp;bounds.minX;</p>
+<p class="p0">var&nbsp;latSpan&nbsp;=&nbsp;bounds.maxY&nbsp;-&nbsp;bounds.minY;</p>
+<p class="p0">for&nbsp;(var&nbsp;i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;10;&nbsp;i&nbsp;++)&nbsp;{</p>
+<p class="p0">&nbsp;&nbsp;var&nbsp;point&nbsp;=&nbsp;new&nbsp;BMap.Point(bounds.minX&nbsp;+&nbsp;lngSpan&nbsp;*&nbsp;(Math.random()&nbsp;*&nbsp;0.7&nbsp;+&nbsp;0.15),</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bounds.minY&nbsp;+&nbsp;latSpan&nbsp;*&nbsp;(Math.random()&nbsp;*&nbsp;0.7&nbsp;+&nbsp;0.15));</p>
+<p class="p0">&nbsp;&nbsp;addMarker(point,&nbsp;i);</p>
+<p class="p0">}</p>
+<p class="p0">监听标注的事件</p>
+<p class="p0">事件方法与<span style="font-family: Arial;">Map</span><span style="font-family: 宋体;">事件机制相同。可参考</span><a href="http://openapi.baidu.com/map/event.html">事件</a>部分。&nbsp;</p>
+<p class="p0">1.&nbsp;marker.addEventListener("click",&nbsp;function(){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;&nbsp;&nbsp;alert("<span style="font-family: 宋体;">您点击了标注</span><span style="font-family: Consolas;">"</span>);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;});&nbsp;&nbsp;</p>
+<p class="p0">marker.addEventListener("click",&nbsp;function(){</p>
+<p class="p0">&nbsp;&nbsp;alert("您点击了标注");</p>
+<p class="p0">});</p>
+<p class="p0">内存释放</p>
+<p class="p0">如果您在地图中需要反复添加大量的标注，这可能会占用较多的内存资源。如果您的标注在被移除后不再使用，可调用<span style="font-family: Arial;">Overlay.dispose()</span><span style="font-family: 宋体;">方法来释放内存。注意在调用此方法后标注将不能再次添加到地图上。关于</span><span style="font-family: Arial;">Overlay.dispose()</span><span style="font-family: 宋体;">的详细信息可参考</span><a href="http://www.cnblogs.com/xuhongfei/admin/EditPosts.aspx?opt=1#Overlay">API<span style="font-family: 宋体;">文档</span></a>部分内容。</p>
+<p class="p0">例如，您可以在标注被移除后调用此方法：</p>
+<p class="p0">1.&nbsp;map.removeOverlay(marker);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;marker.dispose();&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">map.removeOverlay(marker);</p>
+<p class="p0">marker.dispose();</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">信息窗口</p>
+<p class="p0">信息窗口在地图上方的浮动显示<span style="font-family: Arial;">HTML</span><span style="font-family: 宋体;">内容。信息窗口可直接在地图上的任意位置打开，也可以在标注对象上打开（此时信息窗口的坐标与标注的坐标一致）。&nbsp;可以使用</span><span style="font-family: Arial;">BMap.InfoWindow</span><span style="font-family: 宋体;">来创建一个信息窗实例，注意同一时刻地图上只能有一个信息窗口处于打开状态。&nbsp;</span></p>
+<p class="p0">1.&nbsp;var&nbsp;opts&nbsp;=&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;&nbsp;&nbsp;width&nbsp;:&nbsp;250,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">信息窗口宽度&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;&nbsp;&nbsp;height:&nbsp;100,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">信息窗口高度&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&nbsp;&nbsp;title&nbsp;:&nbsp;"Hello"&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">信息窗口标题&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;var&nbsp;infoWindow&nbsp;=&nbsp;new&nbsp;BMap.InfoWindow("World",&nbsp;opts);&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">创建信息窗口对象&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;map.openInfoWindow(infoWindow,&nbsp;map.getCenter());&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">打开信息窗口</span>&nbsp;&nbsp;</p>
+<p class="p0">var&nbsp;opts&nbsp;=&nbsp;{</p>
+<p class="p0">&nbsp;&nbsp;width&nbsp;:&nbsp;250,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;信息窗口宽度</p>
+<p class="p0">&nbsp;&nbsp;height:&nbsp;100,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;信息窗口高度</p>
+<p class="p0">&nbsp;&nbsp;title&nbsp;:&nbsp;"Hello"&nbsp;&nbsp;//&nbsp;信息窗口标题</p>
+<p class="p0">}</p>
+<p class="p0">var&nbsp;infoWindow&nbsp;=&nbsp;new&nbsp;BMap.InfoWindow("World",&nbsp;opts);&nbsp;&nbsp;//&nbsp;创建信息窗口对象</p>
+<p class="p0">map.openInfoWindow(infoWindow,&nbsp;map.getCenter());&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;打开信息窗口</p>
+<p class="p0">折线&nbsp;</p>
+<p class="p0">BMap.Polyline<span style="font-family: 宋体;">对象表示地图上的折线覆盖物。它包含一组点，并将这些点连接起来形成折线。&nbsp;</span></p>
+<p class="p0">添加折线&nbsp;</p>
+<p class="p0">折线在地图上绘制为一系列直线段。可以自定义这些线段的颜色、粗细和透明度。颜色可以是十六进制数字形式（比如：<span style="font-family: Arial;">#ff0000</span><span style="font-family: 宋体;">）或者是颜色关键字（比如：</span><span style="font-family: Arial;">red</span><span style="font-family: 宋体;">）。&nbsp;</span></p>
+<p class="p0">BMap.Polyline<span style="font-family: 宋体;">对象需要浏览器支持矢量绘制功能。在</span><span style="font-family: Arial;">Internet&nbsp;Explorer</span><span style="font-family: 宋体;">中，地图使用</span><span style="font-family: Arial;">VML</span><span style="font-family: 宋体;">（请参阅</span><span style="font-family: Arial;">VML</span><span style="font-family: 宋体;">）绘制折线；在其他浏览器中使用</span><span style="font-family: Arial;">SVG</span><span style="font-family: 宋体;">（如果可用）。&nbsp;</span></p>
+<p class="p0">以下代码段会在两点之间创建<span style="font-family: Arial;">6</span><span style="font-family: 宋体;">像素宽的蓝色折线：&nbsp;</span></p>
+<p class="p0">1.&nbsp;var&nbsp;polyline&nbsp;=&nbsp;new&nbsp;BMap.Polyline([&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new&nbsp;BMap.Point(116.399,&nbsp;39.910),&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new&nbsp;BMap.Point(116.405,&nbsp;39.920)&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&nbsp;&nbsp;],&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;&nbsp;&nbsp;{strokeColor:"blue",&nbsp;strokeWeight:6,&nbsp;strokeOpacity:0.5}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;map.addOverlay(polyline);&nbsp;&nbsp;</p>
+<p class="p0">地图事件概述&nbsp;</p>
+<p class="p0">浏览器中的<span style="font-family: Arial;">JavaScript</span><span style="font-family: 宋体;">是</span><span style="font-family: Arial;">&ldquo;</span><span style="font-family: 宋体;">事件驱动的</span><span style="font-family: Arial;">&rdquo;</span><span style="font-family: 宋体;">，这表示</span><span style="font-family: Arial;">JavaScript</span><span style="font-family: 宋体;">通过生成事件来响应交互，并期望程序能够</span><span style="font-family: Arial;">&ldquo;</span><span style="font-family: 宋体;">监听</span><span style="font-family: Arial;">&rdquo;</span><span style="font-family: 宋体;">感兴趣的活动。例如，在浏览器中，用户的鼠标和键盘交互可以创建在</span><span style="font-family: Arial;">DOM</span><span style="font-family: 宋体;">内传播的事件。对某些事件感兴趣的程序会为这些事件注册</span><span style="font-family: Arial;">JavaScript</span><span style="font-family: 宋体;">事件监听器，并在接收这些事件时执行代码。&nbsp;</span></p>
+<p class="p0">百度地图<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">拥有一个自己的事件模型，程序员可监听地图</span><span style="font-family: Arial;">API</span><span style="font-family: 宋体;">对象的自定义事件，使用方法和</span><span style="font-family: Arial;">DOM</span><span style="font-family: 宋体;">事件类似。但请注意，地图</span><span style="font-family: Arial;">API</span><span style="font-family: 宋体;">事件是独立的，与标准</span><span style="font-family: Arial;">DOM</span><span style="font-family: 宋体;">事件不同。&nbsp;</span></p>
+<p class="p0">事件的监听&nbsp;</p>
+<p class="p0">百度地图<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">中的每一个对象都含有</span><span style="font-family: Arial;">addEventListener</span><span style="font-family: 宋体;">方法，您可以通过该方法来监听对象事件。例如，</span><span style="font-family: Arial;">BMap.Map</span><span style="font-family: 宋体;">包含</span><span style="font-family: Arial;">click</span><span style="font-family: 宋体;">、</span><span style="font-family: Arial;">dblclick</span><span style="font-family: 宋体;">等事件。在特定环境下这些事件会被触发，同时监听函数会得到相应的事件参数</span><span style="font-family: Arial;">e</span><span style="font-family: 宋体;">，比如当用户点击地图时，</span><span style="font-family: Arial;">e</span><span style="font-family: 宋体;">参数会包含鼠标所对应的地理位置</span><span style="font-family: Arial;">point</span><span style="font-family: 宋体;">。</span></p>
+<p class="p0">有关地图<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">对象的事件，请参考完整的</span><span style="font-family: Arial;">API</span><span style="font-family: 宋体;">参考文档。&nbsp;</span></p>
+<p class="p0">addEventListener<span style="font-family: 宋体;">方法有两个参数：监听的事件名称和事件触发时调用的函数。下面示例中，每当用户点击地图时，会弹出一个警告框。&nbsp;</span></p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;map.addEventListener("click",&nbsp;function(){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&nbsp;&nbsp;alert("<span style="font-family: 宋体;">您点击了地图。</span><span style="font-family: Consolas;">"</span>);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;});&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");</p>
+<p class="p0">map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);</p>
+<p class="p0">map.addEventListener("click",&nbsp;function(){</p>
+<p class="p0">&nbsp;&nbsp;alert("您点击了地图。");</p>
+<p class="p0">});</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">通过监听事件还可以捕获事件触发后的状态。下面示例显示用户拖动地图后地图中心的经纬度信息。</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;map.addEventListener("dragend",&nbsp;function(){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&nbsp;&nbsp;var&nbsp;center&nbsp;=&nbsp;map.getCenter();&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;&nbsp;&nbsp;document.getElementById("info").innerHTML&nbsp;=&nbsp;center.lng&nbsp;+&nbsp;",&nbsp;"&nbsp;+&nbsp;center.lat;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;});&nbsp;&nbsp;</p>
+<p class="p0">var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");</p>
+<p class="p0">map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);</p>
+<p class="p0">map.addEventListener("dragend",&nbsp;function(){</p>
+<p class="p0">&nbsp;&nbsp;var&nbsp;center&nbsp;=&nbsp;map.getCenter();</p>
+<p class="p0">&nbsp;&nbsp;document.getElementById("info").innerHTML&nbsp;=&nbsp;center.lng&nbsp;+&nbsp;",&nbsp;"&nbsp;+&nbsp;center.lat;</p>
+<p class="p0">});</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">事件参数和<span style="font-family: Arial;">this</span></p>
+<p class="p0">在标准的<span style="font-family: Arial;">DOM</span><span style="font-family: 宋体;">事件模型中（</span><span style="font-family: Arial;">DOM&nbsp;Level&nbsp;2&nbsp;Events</span><span style="font-family: 宋体;">），监听函数会得到一个事件对象</span><span style="font-family: Arial;">e</span><span style="font-family: 宋体;">，在</span><span style="font-family: Arial;">e</span><span style="font-family: 宋体;">中可以获取有关该事件的信息。同时在监听函数中</span><span style="font-family: Arial;">this</span><span style="font-family: 宋体;">会指向触发该事件的</span><span style="font-family: Arial;">DOM</span><span style="font-family: 宋体;">元素。&nbsp;百度地图</span><span style="font-family: Arial;">API</span><span style="font-family: 宋体;">的事件模型与此类似，在事件监听函数中传递事件对象</span><span style="font-family: Arial;">e</span><span style="font-family: 宋体;">，每个</span><span style="font-family: Arial;">e</span><span style="font-family: 宋体;">参数至少包含事件类型（</span><span style="font-family: Arial;">type</span><span style="font-family: 宋体;">）和触发该事件的对象（</span><span style="font-family: Arial;">target</span><span style="font-family: 宋体;">）。&nbsp;</span><span style="font-family: Arial;">API</span><span style="font-family: 宋体;">还保证函数内的</span><span style="font-family: Arial;">this</span><span style="font-family: 宋体;">指向触发（同时也是绑定）事件的</span><span style="font-family: Arial;">API</span><span style="font-family: 宋体;">对象。&nbsp;</span></p>
+<p class="p0">例如，通过参数<span style="font-family: Arial;">e</span><span style="font-family: 宋体;">得到点击的经纬度坐标。&nbsp;</span></p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;map.addEventListener("click",&nbsp;function(e){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&nbsp;&nbsp;document.getElementById("info").innerHTML&nbsp;=&nbsp;e.point.lng&nbsp;+&nbsp;",&nbsp;"&nbsp;+&nbsp;e.point.lat;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;});&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");</p>
+<p class="p0">map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);</p>
+<p class="p0">map.addEventListener("click",&nbsp;function(e){</p>
+<p class="p0">&nbsp;&nbsp;document.getElementById("info").innerHTML&nbsp;=&nbsp;e.point.lng&nbsp;+&nbsp;",&nbsp;"&nbsp;+&nbsp;e.point.lat;</p>
+<p class="p0">});</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">或者通过<span style="font-family: Arial;">this</span><span style="font-family: 宋体;">得到地图缩放后的级别。&nbsp;</span></p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;map.addEventListener("zoomend",&nbsp;function(){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&nbsp;&nbsp;document.getElementById("info").innerHTML&nbsp;=&nbsp;"<span style="font-family: 宋体;">地图缩放至：</span><span style="font-family: Consolas;">"</span>&nbsp;+&nbsp;this.getZoom()&nbsp;+&nbsp;"<span style="font-family: 宋体;">级</span><span style="font-family: Consolas;">"</span>;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;});&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">移除监听事件</p>
+<p class="p0">当您不再希望监听事件时，可以将事件监听进行移除。每个<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">对象提供了</span><span style="font-family: Arial;">removeEventListener</span><span style="font-family: 宋体;">用来移除事件监听函数。&nbsp;</span></p>
+<p class="p0">下面示例中，用户第一次点击地图会触发事件监听函数，在函数内部对事件监听进行了移除，因此后续的点击操作则不会触发监听函数。&nbsp;</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;function&nbsp;showInfo(e){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&nbsp;&nbsp;document.getElementById("info").innerHTML&nbsp;=&nbsp;e.point.lng&nbsp;+&nbsp;",&nbsp;"&nbsp;+&nbsp;e.point.lat;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;&nbsp;&nbsp;map.removeEventListener("click",&nbsp;showInfo);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;map.addEventListener("click",&nbsp;showInfo);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">地图图层概念</p>
+<p class="p0">地图可以包含一个或多个图层，每个图层在每个级别都是由若干张图块组成的，它们覆盖了地球的整个表面。</p>
+<p class="p0">在最低的缩放级别（级别&nbsp;<span style="font-family: Arial;">1</span><span style="font-family: 宋体;">）中，整个地球由&nbsp;</span><span style="font-family: Arial;">4&nbsp;</span><span style="font-family: 宋体;">张图块组成。随着级别的增长，地图所使用的图块个数也随之增多。</span></p>
+<p class="p0">自定义图层&nbsp;</p>
+<p class="p0">百度地图中提供一个<span style="font-family: Arial;">BMap.TileLayer</span><span style="font-family: 宋体;">类，可以实现用户自定义图层功能。可以在百度地图上叠加一层自定义的图块。</span></p>
+<p class="p0">有关<span style="font-family: Arial;">TileLayer</span><span style="font-family: 宋体;">类的详细接口，请参考</span><span style="font-family: Arial;">TileLayer</span><span style="font-family: 宋体;">的</span><a href="http://www.cnblogs.com/xuhongfei/admin/EditPosts.aspx?opt=1#TileLayer">API<span style="font-family: 宋体;">参考文档</span></a>。&nbsp;</p>
+<p class="p0">以下代码在每个图块的所有缩放级别上显示一个简单的透明叠加层，使用浮动红色小水滴表示图块的轮廓。</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">创建地图实例&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;var&nbsp;point&nbsp;=&nbsp;new&nbsp;BMap.Point(116.404,&nbsp;39.915);&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">创建点坐标&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;map.centerAndZoom(point,15);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">初始化地图，设置中心点坐标和地图级别&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;var&nbsp;tilelayer&nbsp;=&nbsp;new&nbsp;BMap.TileLayer();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">创建地图层实例&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;tilelayer.getTilesUrl=function(){&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">设置图块路径&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;&nbsp;&nbsp;return&nbsp;"layer.gif";&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;};&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">8.&nbsp;map.addTileLayer(tilelayer);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">将图层添加到地图上&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">地图工具概述&nbsp;</p>
+<p class="p0">百度地图提供了交互功能更为复杂的<span style="font-family: Arial;">&ldquo;</span><span style="font-family: 宋体;">工具</span><span style="font-family: Arial;">&rdquo;</span><span style="font-family: 宋体;">，它包括：</span></p>
+<p class="p0">&middot;&nbsp;PushpinTool<span style="font-family: 宋体;">：</span>标注工具。通过此工具用户可在地图任意区域添加标注。&nbsp;</p>
+<p class="p0">&middot;&nbsp;DistanceTool<span style="font-family: 宋体;">：</span>测距工具。通过此工具用户可测量地图上任意位置之间的距离。&nbsp;</p>
+<p class="p0">&middot;&nbsp;DragAndZoomTool<span style="font-family: 宋体;">：</span>区域缩放工具。此工具将根据用户拖拽绘制的矩形区域大小对地图进行放大或缩小操作。&nbsp;</p>
+<p class="p0">工具类在初始化时需要提供地图实例参数，以便使工具在该地图上生效。您可以在地图上添加多个工具，但同一时刻只能有一个工具处于开启状态。标注工具和测距工具在完成一次操作后将自动退出开启状态，而区域缩放工具可以自行配置是否自动关闭。</p>
+<p class="p0">向地图添加工具</p>
+<p class="p0">在地图正确初始化后，您可以创建工具实例。下面示例展示了如何向地图添加一个标注工具。</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;15);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;var&nbsp;myPushpin&nbsp;=&nbsp;new&nbsp;BMap.PushpinTool(map);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">创建标注工具实例&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;myPushpin.addEventListener("markend",&nbsp;function(e){&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">监听事件，提示标注点坐标信息&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;&nbsp;&nbsp;alert("<span style="font-family: 宋体;">您标注的位置：</span><span style="font-family: Consolas;">"</span>&nbsp;+&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.marker.getPoint().lng&nbsp;+&nbsp;",&nbsp;"&nbsp;+&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.marker.getPoint().lat);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">8.&nbsp;});&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">9.&nbsp;myPushpin.open();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">开启标注工具&nbsp;</span></p>
+<p class="p0">var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");</p>
+<p class="p0">map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;15);</p>
+<p class="p0">var&nbsp;myPushpin&nbsp;=&nbsp;new&nbsp;BMap.PushpinTool(map);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;创建标注工具实例</p>
+<p class="p0">myPushpin.addEventListener("markend",&nbsp;function(e){&nbsp;&nbsp;//&nbsp;监听事件，提示标注点坐标信息</p>
+<p class="p0">&nbsp;&nbsp;alert("您标注的位置："&nbsp;+&nbsp;</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.marker.getPoint().lng&nbsp;+&nbsp;",&nbsp;"&nbsp;+&nbsp;</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.marker.getPoint().lat);</p>
+<p class="p0">});</p>
+<p class="p0">myPushpin.open();&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;开启标注工具</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">通过按钮控制工具的开启和关闭</p>
+<p class="p0">工具类没有提供控制其开启和关闭的<span style="font-family: Arial;">UI</span><span style="font-family: 宋体;">元素。您可以根据需要自己创建这些元素，把它们放置在地图区域内或者区域外均可。调用工具类的</span><span style="font-family: Arial;">open</span><span style="font-family: 宋体;">和</span><span style="font-family: Arial;">close</span><span style="font-family: 宋体;">可控制工具的开启和关闭。</span></p>
+<p class="p0">首先初始化地图并创建一个测距工具实例：</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;15);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;var&nbsp;myDis&nbsp;=&nbsp;new&nbsp;BMap.DistanceTool(map);&nbsp;&nbsp;</p>
+<p class="p0">var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");</p>
+<p class="p0">map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;15);</p>
+<p class="p0">var&nbsp;myDis&nbsp;=&nbsp;new&nbsp;BMap.DistanceTool(map);</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">接着我们创建两个按钮元素并为其添加点击事件。</p>
+<p class="p0">1.&nbsp;&lt;input&nbsp;type="button"&nbsp;value="<span style="font-family: 宋体;">开启</span><span style="font-family: Consolas;">"</span>&nbsp;onclick="myDis.open()"&nbsp;/&gt;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;&lt;input&nbsp;type="button"&nbsp;value="<span style="font-family: 宋体;">关闭</span><span style="font-family: Consolas;">"</span>&nbsp;onclick="myDis.close()"&nbsp;/&gt;&nbsp;&nbsp;</p>
+<p class="p0">修改工具的配置</p>
+<p class="p0">一些工具类提供了可修改的配置参数，您可参考<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">文档来修改它们以便符合您的要求。</span></p>
+<p class="p0">本示例为区域缩放工具添加提示文字。</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;15);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;var&nbsp;myDrag&nbsp;=&nbsp;new&nbsp;BMap.DragAndZoomTool(map,&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&nbsp;&nbsp;followText&nbsp;:&nbsp;"<span style="font-family: 宋体;">拖拽鼠标进行操作</span><span style="font-family: Consolas;">"</span>&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;});&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">&nbsp;</p>
+<p class="p0">&nbsp;</p>
+<p class="p0">地图服务概述</p>
+<p class="p0">地图服务是指那些提供数据信息的接口，比如本地搜索、路线规划等等。百度地图<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">提供的服务有：&nbsp;</span></p>
+<p class="p0">&middot;&nbsp;LocalSearch<span style="font-family: 宋体;">：</span>本地搜索，提供某一特定地区的位置搜索服务，比如在北京市搜索<span style="font-family: Arial;">&ldquo;</span><span style="font-family: 宋体;">公园</span><span style="font-family: Arial;">&rdquo;</span><span style="font-family: 宋体;">。&nbsp;</span></p>
+<p class="p0">&middot;&nbsp;TransitRoute<span style="font-family: 宋体;">：</span>公交导航，提供某一特定地区的公交出行方案的搜索服务。&nbsp;</p>
+<p class="p0">&middot;&nbsp;DrivingRoute<span style="font-family: 宋体;">：</span>驾车导航，提供驾车出行方案的搜索服务。&nbsp;</p>
+<p class="p0">&middot;&nbsp;WalkingRoute<span style="font-family: 宋体;">：</span>步行导航，提供步行出行方案的搜索服务。&nbsp;</p>
+<p class="p0">&middot;&nbsp;Geocoder<span style="font-family: 宋体;">：</span>地址解析，提供将地址信息转换为坐标点信息的服务。&nbsp;</p>
+<p class="p0">&middot;&nbsp;LocalCity<span style="font-family: 宋体;">：</span>本地城市，提供自动判断您所在城市的服务。&nbsp;</p>
+<p class="p0">&middot;&nbsp;TrafficControl<span style="font-family: 宋体;">：</span>实时路况控件，提供实时和历史路况信息服务。&nbsp;</p>
+<p class="p0">搜索类的服务接口需要指定一个搜索范围，否则接口将不能工作。</p>
+<p class="p0">本地搜索</p>
+<p class="p0">BMap.LocalSearch<span style="font-family: 宋体;">提供本地搜索服务，在使用本地搜索时需要为其设置一个检索区域，检索区域可以是</span><span style="font-family: Arial;">BMap.Map</span><span style="font-family: 宋体;">对象、</span><span style="font-family: Arial;">BMap.Point</span><span style="font-family: 宋体;">对象或者是省市名称（比如：</span>"<span style="font-family: 宋体;">北京市</span><span style="font-family: Consolas;">"</span>）的字符串。<span style="font-family: Arial;">BMap.LocalSearch</span><span style="font-family: 宋体;">构造函数的第二个参数是可选的，您可以在其中指定结果的呈现。</span><span style="font-family: Arial;">BMap.RenderOptions</span><span style="font-family: 宋体;">类提供了若干控制呈现的属性，其中</span><span style="font-family: Arial;">map</span><span style="font-family: 宋体;">指定了结果所展现的地图实例，</span><span style="font-family: Arial;">panel</span><span style="font-family: 宋体;">指定了结果列表的容器元素。&nbsp;</span></p>
+<p class="p0">下面这个示例展示了在北京市检索天安门。搜索区域设置为地图实例，并告知结果需要展现在地图实例上。</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;var&nbsp;local&nbsp;=&nbsp;new&nbsp;BMap.LocalSearch(map,&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&nbsp;&nbsp;renderOptions:{map:&nbsp;map}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;});&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;local.search("<span style="font-family: 宋体;">天安门</span><span style="font-family: Consolas;">"</span>);&nbsp;</p>
+<p class="p0">var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");</p>
+<p class="p0">map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);</p>
+<p class="p0">var&nbsp;local&nbsp;=&nbsp;new&nbsp;BMap.LocalSearch(map,&nbsp;{</p>
+<p class="p0">&nbsp;&nbsp;renderOptions:{map:&nbsp;map}</p>
+<p class="p0">});</p>
+<p class="p0">local.search("天安门");</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">另外，<span style="font-family: Arial;">BMap.LocalSearch</span><span style="font-family: 宋体;">还提包含</span><span style="font-family: Arial;">searchNearby</span><span style="font-family: 宋体;">和</span><span style="font-family: Arial;">searchInBounds</span><span style="font-family: 宋体;">方法，为您提供周边搜索和范围搜索服务。&nbsp;</span></p>
+<p class="p0">配置搜索&nbsp;</p>
+<p class="p0">BMap.LocalSearch<span style="font-family: 宋体;">提供了若干配置方法，通过它们可以自定义搜索服务的行为以满足您的需求。&nbsp;</span></p>
+<p class="p0">在下面的示例中，我们调整每页显示<span style="font-family: Arial;">8</span><span style="font-family: 宋体;">个结果，并且根据结果点位置自动调整地图视野，不显示第一条结果的信息窗口：</span></p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;var&nbsp;local&nbsp;=&nbsp;new&nbsp;BMap.LocalSearch("<span style="font-family: 宋体;">北京市</span><span style="font-family: Consolas;">"</span>,&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&nbsp;&nbsp;renderOptions:&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map:&nbsp;map,&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pageCapacity:&nbsp;8,&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autoViewport:&nbsp;true,&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">8.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;selectFirstResult:&nbsp;false&nbsp;&nbsp;</p>
+<p class="p0">9.&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">10.&nbsp;});&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">11.&nbsp;local.search("<span style="font-family: 宋体;">中关村</span><span style="font-family: Consolas;">"</span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");</p>
+<p class="p0">map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);</p>
+<p class="p0">&nbsp;</p>
+<p class="p0">var&nbsp;local&nbsp;=&nbsp;new&nbsp;BMap.LocalSearch("北京市",&nbsp;{</p>
+<p class="p0">&nbsp;&nbsp;renderOptions:&nbsp;{</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;map:&nbsp;map,</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;pageCapacity:&nbsp;8,</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;autoViewport:&nbsp;true,</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;selectFirstResult:&nbsp;false</p>
+<p class="p0">&nbsp;&nbsp;}</p>
+<p class="p0">});</p>
+<p class="p0">local.search("中关村");</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">结果面板&nbsp;</p>
+<p class="p0">通过设置<span style="font-family: Arial;">BMap.LocalSearchOptions.renderOptions.panel</span><span style="font-family: 宋体;">属性，可以为本地搜索对象提供一个结果列表容器，搜索结果会自动添加到容器元素中。请看下面示例：</span></p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;var&nbsp;local&nbsp;=&nbsp;new&nbsp;BMap.LocalSearch(map,&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&nbsp;&nbsp;renderOptions:&nbsp;{map:&nbsp;map,&nbsp;panel:&nbsp;"results"}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;});&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;local.search("<span style="font-family: 宋体;">天安门</span><span style="font-family: Consolas;">"</span>);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">数据接口&nbsp;</p>
+<p class="p0">除了搜索结果会自动添加到地图和列表外，您还可以通过数据接口获得详细的数据信息，结合地图<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">您可以自行向地图添加标注和信息窗口。</span><span style="font-family: Arial;">BMap.LocalSearch</span><span style="font-family: 宋体;">和</span><span style="font-family: Arial;">BMap.LocalSearchOptions</span><span style="font-family: 宋体;">类提供了若干设置回调函数的接口，通过它们可得到搜索结果的数据信息。&nbsp;例如，通过</span><span style="font-family: Arial;">onSearchComplete</span><span style="font-family: 宋体;">回调函数参数可以获得</span><span style="font-family: Arial;">BMap.LocalResult</span><span style="font-family: 宋体;">对象实例，它包含了每一次搜索结果的数据信息。&nbsp;当回调函数被执行时，您可以使用</span><span style="font-family: Arial;">BMap.LocalSearch.getStatus()</span><span style="font-family: 宋体;">方法来确认搜索是否成功或者得到错误的详细信息。&nbsp;</span></p>
+<p class="p0">在下面这个示例中，通过<span style="font-family: Arial;">onSearchComplete</span><span style="font-family: 宋体;">回调函数得到第一页每条结果的标题和地址信息，并输出到页面上：&nbsp;</span></p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;var&nbsp;options&nbsp;=&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&nbsp;&nbsp;onSearchComplete:&nbsp;function(results){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(local.getStatus()&nbsp;==&nbsp;BMAP_STATUS_SUCCESS){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">判断状态是否正确&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;s&nbsp;=&nbsp;[];&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">8.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;(var&nbsp;i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;results.getCurrentNumPois();&nbsp;i&nbsp;++){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">9.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s.push(results.getPoi(i).title&nbsp;+&nbsp;",&nbsp;"&nbsp;+&nbsp;results.getPoi(i).address);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">10.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">11.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.getElementById("log").innerHTML&nbsp;=&nbsp;s.join("&lt;BR&gt;");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">12.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">13.&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">14.&nbsp;};&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">15.&nbsp;var&nbsp;local&nbsp;=&nbsp;new&nbsp;BMap.LocalSearch(map,&nbsp;options);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">16.&nbsp;local.search("<span style="font-family: 宋体;">公园</span><span style="font-family: Consolas;">"</span>);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">周边搜索&nbsp;</p>
+<p class="p0">通过周边搜索服务，您可以在某个地点附近进行搜索，也可以在某一个特定结果点周围进行搜索。&nbsp;</p>
+<p class="p0">下面示例展示如何在前门附近搜索小吃：&nbsp;</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;var&nbsp;local&nbsp;=&nbsp;new&nbsp;BMap.LocalSearch(map,&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&nbsp;&nbsp;renderOptions:{map:&nbsp;map,&nbsp;autoViewport:&nbsp;true}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;});&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;local.searchNearby("<span style="font-family: 宋体;">小吃</span><span style="font-family: Consolas;">"</span>,&nbsp;"<span style="font-family: 宋体;">前门</span><span style="font-family: Consolas;">"</span>);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">范围搜索&nbsp;</p>
+<p class="p0">范围搜索将根据您提供的视野范围提供搜索结果。注意：当搜索范围过大时可能会出现无结果的情况。</p>
+<p class="p0">下面示例展示在当前地图视野范围内搜索银行：</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;14);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;var&nbsp;local&nbsp;=&nbsp;new&nbsp;BMap.LocalSearch(map,&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;&nbsp;&nbsp;renderOptions:{map:&nbsp;map}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;});&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;local.searchInBounds("<span style="font-family: 宋体;">银行</span><span style="font-family: Consolas;">"</span>,&nbsp;map.getBounds());&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">公交导航</p>
+<p class="p0">BMap.TransitRoute<span style="font-family: 宋体;">类提供公交导航搜索服务。和本地搜索类似，在搜索之前需要指定搜索区域，注意公交导航的区域范围只能是市，而不能是省。如果搜索区域为</span><span style="font-family: Arial;">BMap.Map</span><span style="font-family: 宋体;">对象，路线结果会自动添加到地图上。如果您提供了结果容器，相应的路线描述也会展示在页面上。&nbsp;</span></p>
+<p class="p0">下面示例展示了如何使用公交导航服务：&nbsp;</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;14);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;var&nbsp;transit&nbsp;=&nbsp;new&nbsp;BMap.TransitRoute(map,&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&nbsp;&nbsp;renderOptions:&nbsp;{map:&nbsp;map}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;});&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;transit.search("<span style="font-family: 宋体;">王府井</span><span style="font-family: Consolas;">"</span>,&nbsp;"<span style="font-family: 宋体;">西单</span><span style="font-family: Consolas;">"</span>);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">结果面板</p>
+<p class="p0">您可以提供用于展示文字结果的容器元素，方案结果会自动在页面中展现：</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;14);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;var&nbsp;transit&nbsp;=&nbsp;new&nbsp;BMap.TransitRoute(map,&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;&nbsp;&nbsp;renderOptions:&nbsp;{map:&nbsp;map,&nbsp;panel:&nbsp;"results"}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;});&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;transit.search("<span style="font-family: 宋体;">王府井</span><span style="font-family: Consolas;">"</span>,&nbsp;"<span style="font-family: 宋体;">西单</span><span style="font-family: Consolas;">"</span>);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">数据接口&nbsp;</p>
+<p class="p0">您可通过数据接口获取详细的公交方案信息。公交导航搜索结果用<span style="font-family: Arial;">BMap.TransitRouteResult</span><span style="font-family: 宋体;">来表示，其中包含了若干公交出行方案（</span><span style="font-family: Arial;">BMap.TransitRoutePlan</span><span style="font-family: 宋体;">）。每条出行方案由步行线路和公交线路组成。&nbsp;在起点到上车点之间、下车点到终点之间以及每个换乘站之间都会存在步行线路，如果上述的某两点位置重合，那么其间的步行路线长度为</span><span style="font-family: Arial;">0</span><span style="font-family: 宋体;">。&nbsp;</span></p>
+<p class="p0">在下面示例中，通过数据接口将第一条方案的路线添加到地图上，并将所有方案的描述信息输出到页面上&nbsp;</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;12);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;var&nbsp;transit&nbsp;=&nbsp;new&nbsp;BMap.TransitRoute("<span style="font-family: 宋体;">北京市</span><span style="font-family: Consolas;">"</span>);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;transit.setSearchCompleteCallback(function(results){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;&nbsp;&nbsp;if&nbsp;(transit.getStatus()&nbsp;==&nbsp;BMAP_STATUS_SUCCESS){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;firstPlan&nbsp;=&nbsp;results.getPlan(0);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">8.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">绘制步行线路&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">9.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;(var&nbsp;i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;firstPlan.getNumRoutes();&nbsp;i&nbsp;++){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">10.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;walk&nbsp;=&nbsp;firstPlan.getRoute(i);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">11.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(walk.getDistance(false)&nbsp;&gt;&nbsp;0){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">12.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">步行线路有可能为</span><span style="font-family: Consolas;">0&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">13.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map.addOverlay(new&nbsp;BMap.Polyline(walk.getPoints(),&nbsp;{lineColor:&nbsp;"green"}));&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">14.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">15.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">16.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">绘制公交线路&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">17.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;firstPlan.getNumLines();&nbsp;i&nbsp;++){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">18.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;line&nbsp;=&nbsp;firstPlan.getLine(i);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">19.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map.addOverlay(new&nbsp;BMap.Polyline(line.getPoints()));&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">20.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">21.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">输出方案信息&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">22.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;s&nbsp;=&nbsp;[];&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">23.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;results.getNumPlans();&nbsp;i&nbsp;++){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">24.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s.push((i&nbsp;+&nbsp;1)&nbsp;+&nbsp;".&nbsp;"&nbsp;+&nbsp;results.getPlan(i).getDescription());&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">25.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">26.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.getElementById("log").innerHTML&nbsp;=&nbsp;s.join("&lt;BR&gt;");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">27.&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">28.&nbsp;})&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">29.&nbsp;transit.search("<span style="font-family: 宋体;">中关村</span><span style="font-family: Consolas;">"</span>,&nbsp;"<span style="font-family: 宋体;">国贸桥</span><span style="font-family: Consolas;">"</span>);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">驾车导航</p>
+<p class="p0">BMap.DrivingRoute<span style="font-family: 宋体;">提供驾车导航服务。与公交导航不同的是，驾车导航的搜索范围可以设置为省。&nbsp;</span></p>
+<p class="p0">下面示例展示了如何使用驾车导航接口：&nbsp;</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;14);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;var&nbsp;driving&nbsp;=&nbsp;new&nbsp;BMap.DrivingRoute(map,&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;&nbsp;&nbsp;renderOptions:&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map:&nbsp;map,&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autoViewport:&nbsp;true&nbsp;&nbsp;</p>
+<p class="p0">8.&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">9.&nbsp;});&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">10.&nbsp;driving.search("<span style="font-family: 宋体;">中关村</span><span style="font-family: Consolas;">"</span>,&nbsp;"<span style="font-family: 宋体;">天安门</span><span style="font-family: Consolas;">"</span>);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">&nbsp;结果面板&nbsp;</p>
+<p class="p0">下面示例中，我们提供了结果面板参数，方案描述会自动展示到页面上。&nbsp;</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;14);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;var&nbsp;driving&nbsp;=&nbsp;new&nbsp;BMap.DrivingRoute(map,&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;&nbsp;&nbsp;renderOptions:&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map&nbsp;&nbsp;&nbsp;:&nbsp;map,&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;panel&nbsp;:&nbsp;"results",&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">8.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autoViewport:&nbsp;true&nbsp;&nbsp;</p>
+<p class="p0">9.&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">10.&nbsp;});&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">11.&nbsp;driving.search("<span style="font-family: 宋体;">中关村</span><span style="font-family: Consolas;">"</span>,&nbsp;"<span style="font-family: 宋体;">天安门</span><span style="font-family: Consolas;">"</span>);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">数据接口</p>
+<p class="p0">驾车导航服务提供了丰富的数据接口，通过<span style="font-family: Arial;">onSearchComplete</span><span style="font-family: 宋体;">回调函数得到</span><span style="font-family: Arial;">BMap.DrivingRouteResult</span><span style="font-family: 宋体;">对象，它包含了驾车导航结果数据信息。&nbsp;结果会包含若干驾车方案（目前仅一条方案），每条方案中包含了若干驾车线路（如果导航方案只包含一个目的地，那么驾车线路的个数就为</span><span style="font-family: Arial;">1</span><span style="font-family: 宋体;">，如果方案包含若干个目的地，则驾车线路的个数会大于</span><span style="font-family: Arial;">1</span><span style="font-family: 宋体;">。目前</span><span style="font-family: Arial;">API</span><span style="font-family: 宋体;">尚不支持多个目的地的驾车导航）。&nbsp;每条驾车线路又会包含一系列的关键步骤（</span><span style="font-family: Arial;">BMap.Step</span><span style="font-family: 宋体;">），关键步骤描述了具体驾车行驶方案，可通过</span><span style="font-family: Arial;">BMap.Step.getDescription()</span><span style="font-family: 宋体;">方法获得。&nbsp;</span></p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;14);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;var&nbsp;options&nbsp;=&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;&nbsp;&nbsp;onSearchComplete:&nbsp;function(results){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(driving.getStatus()&nbsp;==&nbsp;BMAP_STATUS_SUCCESS){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">获取第一条方案&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;plan&nbsp;=&nbsp;results.getPlan(0);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">8.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">获取方案的驾车线路&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">9.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;route&nbsp;=&nbsp;plan.getRoute(0);&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">10.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<span style="font-family: 宋体;">获取每个关键步骤，并输出到页面&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">11.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;s&nbsp;=&nbsp;[];&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">12.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;(var&nbsp;i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;route.getNumSteps();&nbsp;i&nbsp;++){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">13.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;step&nbsp;=&nbsp;route.getStep(i);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">14.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s.push((i&nbsp;+&nbsp;1)&nbsp;+&nbsp;".&nbsp;"&nbsp;+&nbsp;step.getDescription());&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">15.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">16.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.getElementById("log").innerHTML&nbsp;=&nbsp;s.join("&lt;BR&gt;");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">17.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">18.&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">19.&nbsp;};&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">20.&nbsp;var&nbsp;driving&nbsp;=&nbsp;new&nbsp;BMap.DrivingRoute(map,&nbsp;options);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">21.&nbsp;driving.search("<span style="font-family: 宋体;">中关村</span><span style="font-family: Consolas;">"</span>,&nbsp;"<span style="font-family: 宋体;">天安门</span><span style="font-family: Consolas;">"</span>);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">步行导航接口在使用上与驾车导航一致，具体请参考<span style="font-family: Arial;">API</span><span style="font-family: 宋体;">文档。&nbsp;</span></p>
+<p class="p0">地址解析</p>
+<p class="p0">地址解析能够将地址信息转换为地理坐标点信息。</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;//&nbsp;<span style="font-family: 宋体;">创建地址解析器实例&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;var&nbsp;myGeo&nbsp;=&nbsp;new&nbsp;BMap.Geocoder();&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">5.&nbsp;//&nbsp;<span style="font-family: 宋体;">将地址解析结果显示在地图上，并调整地图视野&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">6.&nbsp;myGeo.getPoint("<span style="font-family: 宋体;">北京市海淀区上地</span><span style="font-family: Consolas;">10</span><span style="font-family: 宋体;">街</span><span style="font-family: Consolas;">10</span><span style="font-family: 宋体;">号</span><span style="font-family: Consolas;">"</span>,&nbsp;function(point){&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">7.&nbsp;&nbsp;&nbsp;if&nbsp;(point)&nbsp;{&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">8.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map.centerAndZoom(point,&nbsp;16);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">9.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map.addOverlay(new&nbsp;BMap.Marker(point));&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">10.&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">11.&nbsp;},&nbsp;"<span style="font-family: 宋体;">北京市</span><span style="font-family: Consolas;">"</span>);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">&nbsp;实时路况&nbsp;</p>
+<p class="p0">实时路况以控件的形式供调用者使用，您仅需要实例化一个控件实例并添加到地图上即可。&nbsp;</p>
+<p class="p0">1.&nbsp;var&nbsp;map&nbsp;=&nbsp;new&nbsp;BMap.Map("container");&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">2.&nbsp;map.centerAndZoom(new&nbsp;BMap.Point(116.404,&nbsp;39.915),&nbsp;11);&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">3.&nbsp;//&nbsp;<span style="font-family: 宋体;">添加实时路况控件&nbsp;</span>&nbsp;&nbsp;</p>
+<p class="p0">4.&nbsp;map.addControl(new&nbsp;BMap.TrafficControl());&nbsp;&nbsp;&nbsp;</p>
+<p class="p0">&nbsp;</p>
+<p class="p0">//&nbsp;定义一个控件类，即function</p>
+<p class="p0">function&nbsp;ZoomControl(){</p>
+<p class="p0">&nbsp;&nbsp;//&nbsp;设置默认停靠位置和偏移量</p>
+<p class="p0">&nbsp;&nbsp;this.defaultAnchor&nbsp;=&nbsp;BMAP_ANCHOR_TOP_LEFT;</p>
+<p class="p0">&nbsp;&nbsp;this.defaultOffset&nbsp;=&nbsp;new&nbsp;BMap.Size(10,&nbsp;10);</p>
+<p class="p0">}</p>
+<p class="p0">&nbsp;</p>
+<p class="p0">//&nbsp;通过JavaScript的prototype属性继承于BMap.Control</p>
+<p class="p0">ZoomControl.prototype&nbsp;=&nbsp;new&nbsp;BMap.Control();</p>
+<p class="p0">&nbsp;</p>
+<p class="p0">//&nbsp;自定义控件必须实现自己的initialize方法，并且将控件的DOM元素返回</p>
+<p class="p0">//&nbsp;在本方法中创建个div元素作为控件的容器，并将其添加到地图容器中</p>
+<p class="p0">ZoomControl.prototype.initialize&nbsp;=&nbsp;function(map){</p>
+<p class="p0">&nbsp;&nbsp;//&nbsp;创建一个DOM元素</p>
+<p class="p0">&nbsp;&nbsp;var&nbsp;div&nbsp;=&nbsp;document.createElement("div");</p>
+<p class="p0">&nbsp;&nbsp;//&nbsp;添加文字说明</p>
+<p class="p0">&nbsp;&nbsp;div.appendChild(document.createTextNode("放大2级"));</p>
+<p class="p0">&nbsp;&nbsp;//&nbsp;设置样式</p>
+<p class="p0">&nbsp;&nbsp;div.style.cursor&nbsp;=&nbsp;"pointer";</p>
+<p class="p0">&nbsp;&nbsp;div.style.border&nbsp;=&nbsp;"1px&nbsp;solid&nbsp;gray";</p>
+<p class="p0">&nbsp;&nbsp;div.style.backgroundColor&nbsp;=&nbsp;"white";</p>
+<p class="p0">&nbsp;&nbsp;//&nbsp;绑定事件，点击一次放大两级</p>
+<p class="p0">&nbsp;&nbsp;div.onclick&nbsp;=&nbsp;function(e){</p>
+<p class="p0">&nbsp;&nbsp;&nbsp;&nbsp;map.zoomTo(map.getZoom()&nbsp;+&nbsp;2);</p>
+<p class="p0">&nbsp;&nbsp;}</p>
+<p class="p0">&nbsp;&nbsp;//&nbsp;添加DOM元素到地图中</p>
+<p class="p0">&nbsp;&nbsp;map.getContainer().appendChild(div);</p>
+<p class="p0">&nbsp;&nbsp;//&nbsp;将DOM元素返回</p>
+<p class="p0">&nbsp;&nbsp;return&nbsp;div;</p>
+<p class="p0">}</p>
+<p class="p0">&nbsp;</p>
+<p class="p0">//&nbsp;创建控件</p>
+<p class="p0">var&nbsp;myZoomCtrl&nbsp;=&nbsp;new&nbsp;ZoomControl();</p>
+<p class="p0">//&nbsp;添加到地图当中</p>
+<p class="p0">map.addControl(myZoomCtrl);</p>
+</div></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory"></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info">
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"></div>
+</div>
+
+
+		</div>
+		<div class = "postDesc">posted @ <span id="post-date">2013-04-10 11:18</span> <a href='http://www.cnblogs.com/xuhongfei/'>frank.xuu</a> 阅读(<span id="post_view_count">...</span>) 评论(<span id="post_comment_count">...</span>)  <a href ="http://i.cnblogs.com/EditPosts.aspx?postid=3011964" rel="nofollow">编辑</a> <a href="#" onclick="AddToWz(3011964);return false;">收藏</a></div>
+	</div>
+	<script type="text/javascript">var allowComments=true,isLogined=false,cb_blogId=136570,cb_entryId=3011964,cb_blogApp=currentBlogApp,cb_blogUserGuid='ce2481c5-6835-e211-aa8f-842b2b196315',cb_entryCreatedDate='2013/4/10 11:18:00';loadViewCount(cb_entryId);</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" id="lnk_RefreshComments" onclick="return RefreshCommentList();">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+<div id="comment_form_container"></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="site_nav_under"><a href="http://www.cnblogs.com/" target="_blank" title="开发者的网上家园">博客园首页</a><a href="http://q.cnblogs.com/" target="_blank" title="程序员问答社区">博问</a><a href="http://news.cnblogs.com/" target="_blank" title="IT新闻">新闻</a><a href="http://home.cnblogs.com/ing/" target="_blank">闪存</a><a href="http://job.cnblogs.com/" target="_blank">程序员招聘</a><a href="http://kb.cnblogs.com/" target="_blank">知识库</a></div>
+<div id="opt_under_post"></div>
+<script type="text/javascript">
+    fixPostBodyFormat();
+</script>
+<div id="google_ad_c1" class="c_ad_block"></div>
+<div id="under_post_news"></div>
+<div id="google_ad_c2" class="c_ad_block"></div>
+<div id="under_post_kb"></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+$(function () {
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 200);
+});
+</script>
+</div>
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="blog-calendar" style="display:none"></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright &copy;2015 frank.xuu
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+</body>
+</html>

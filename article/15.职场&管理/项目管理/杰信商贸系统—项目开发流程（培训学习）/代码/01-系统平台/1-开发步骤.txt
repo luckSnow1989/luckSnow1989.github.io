@@ -1,0 +1,309 @@
+1、新建web工程，UTF-8编码
+
+Context root URL发布路径	设置为/
+
+
+2、新建数据库itcastjkdb		utf-8编码
+
+3、建表
+DROP TABLE IF EXISTS test_table_c;
+
+CREATE TABLE test_table_c(
+	id INT auto_increment,
+	NAME VARCHAR(30),
+	create_time DATE,
+	remark TEXT,
+	PRIMARY KEY(id)
+);
+
+PowerDesigner 建模，拷贝表脚本，在sqlyog中执行
+
+
+4、建立PO对象 TestTable.java
+
+public class TestTable {
+	private Integer id;
+	private String name;
+	private Date createTime;
+	private String remark;
+}
+
+生成get、set方法
+
+5、映射文件 TestTable.hbm.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="cn.itcast.entity">
+	<class name="TestTable" table="test_table_c">
+		<id name="id" type="integer" column="id">
+			<generator class="identity"/>
+		</id>
+		<property name="name" type="string" column="name"/>
+		<property name="createTime" type="timestamp" column="create_time"/>
+		<property name="remark" type="string" column="remark"/>
+	</class>
+</hibernate-mapping>
+
+
+引入hibernate3 jar包
+
+6、创建hibernate.cfg.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<!-- 1.数据库链接信息 -->
+		<property name="hibernate.connection.class_driver">com.mysql.jdbc.Driver</property>
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/itcastjkdb</property>
+		<property name="hibernate.connection.username">root</property>
+		<property name="hibernate.connection.password">root</property>
+		
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
+		
+		<!-- 2.基础配置信息 -->
+		<property name="hibernate.hbm2ddl.auto">update</property>
+		<property name="show_sql">true</property>
+		
+		<!-- 3.映射信息 -->
+		<mapping resource="cn/itcast/entity/TestTable.hbm.xml"/>
+		
+	</session-factory>
+</hibernate-configuration>
+
+
+7、创建测试类，测试hibernate环境是否搭建成功
+
+建立包路径 src/test
+TestHibernate.java
+
+public class TestHibernate {
+	
+	@Test
+	public void save(){
+		Configuration config = new Configuration();
+		config.configure();
+		
+		SessionFactory sf = config.buildSessionFactory();
+		Session s = sf.openSession();
+		Transaction tr = s.beginTransaction();
+		
+		TestTable tt = new TestTable();
+		tt.setName("测试hibernate");
+		tt.setCreateTime(new Date());
+		tt.setRemark("备注hibernate");
+		
+		s.save(tt);
+		
+		tx.commit();
+		s.close();
+		sf.close();
+	}
+}
+
+
+引入jar包	junit-4.8.2.jar,	mysql-connector-java-5.1.10-bin.jar，	log4j.jar
+
+8、执行junit Test
+
+如果我们要合并两个子公司的数据库，自增主键的方式设计有无问题？
+
+1）修改数据库字段类型；
+2）修改主键类型和生成策略 数值为uuid
+
+数据库插入了，看看ID字段的UUID值是多长？ 32位
+
+SELECT LENGTH(t.test_table_id),t.* FROM test_table_c t
+
+
+
+==整合spring3环境：
+
+1、建立DAO文件
+建立dao包路径
+拷贝 _RootDAO.java 和 _BaseRootDAO.java
+
+引入spring3 jar包
+
+TestTableDAO.java
+
+package cn.itcast.entity.dao;
+
+public class TestTableDAO extends _RootDAO {
+
+}
+
+
+
+2、建立beans.xml文件
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                           http://www.springframework.org/schema/aop 
+                           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+                           http://www.springframework.org/schema/context 
+                           http://www.springframework.org/schema/context/spring-context-3.0.xsd
+                           http://www.springframework.org/schema/tx 
+                           http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+	<!-- 1:创建SessionFactory对象，这是spring整合Hibernate的核心 -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="configLocation">
+			<value>classpath:hibernate.cfg.xml</value>
+		</property>
+	</bean>
+	
+	<!-- 2:创建事务管理器 -->
+	<bean id="trManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<!-- 3:使用注解的方式来管理事务 -->
+	<tx:annotation-driven transaction-manager="trManager"/>
+	
+	<!-- 4:加载DAO对象 -->
+	<bean id="daoTestTable" class="cn.itcast.entity.dao.TestTableDAO" autowire="byName"/>
+	
+	
+</beans>        
+
+3、junit/TestSpring.java
+
+public class TestSpring {
+
+	@Test
+	public void save(){
+		ApplicationContext ac = new ClassPathXmlApplicationContext("beans.xml");
+		TestTableDAO oDao = (TestTableDAO)ac.getBean("daoTestTable");
+		
+		TestTable tt = new TestTable();
+		tt.setName("测试Spring");
+		tt.setCreateTime(new Date());
+		tt.setRemark("备注spring");
+		
+		oDao.save(tt);
+	}
+}
+
+
+
+==整合struts2环境:
+
+引入struts2 jar包
+
+1、编写action	cn.itcast.web.struts2.junit.TestTableAction extends _BaseStruts2Action	
+
+public class TestTableAction extends _BaseStruts2Action implements ModelDriven<TestTable> {
+	private TestTable model = new TestTable();
+	public TestTable getModel() {
+		return model;
+	}
+	public String save(){
+		TestTableDAO oDao = (TestTableDAO)this.getDao("daoTestTable");
+		oDao.save(model);
+		
+		return null;
+	}
+
+}
+
+2、struts.xml 
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<constant name="struts.ui.theme" value="simple"/>
+	<constant name="struts.devMode" value="true" />
+	<constant name="struts.objectFactory" value="spring" />
+	
+	<include file="struts2/struts-testtable.xml" />
+</struts>
+
+3、struts-testtable.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<package name="testtable" namespace="/testtable" extends="struts-default">
+		<action name="testTableAction_*" method="{1}" class="cn.itcast.web.struts.junit.TestTableAction" />
+	</package>
+</struts>
+
+
+4、web.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" 
+	xmlns="http://java.sun.com/xml/ns/javaee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+  <!-- 当web容器启动的时候，加载spring容器（beans.xml） -->
+  <context-param>
+  	<param-name>contextConfigLocation</param-name>
+  	<param-value>classpath:beans.xml</param-value>
+  </context-param>
+  <listener>
+  	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  
+ 	
+  <!-- 配置struts2的过滤器，这是struts2运行的核心 -->
+  <filter>
+  	<filter-name>struts2</filter-name>
+  	<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+  </filter>
+  <filter-mapping>
+  	<filter-name>struts2</filter-name>
+  	<url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+   
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+</web-app>
+
+
+
+5、编写jsp	WebRoot/junit/jTestTableCreate.jsp
+
+
+    <script type="text/javascript" language="javascript">
+    	function formSubmit( url ){
+    		document.forms[0].action = url;
+    		document.forms[0].submit();
+    	}
+    </script>
+
+  </head>
+  
+  <body>
+<form>
+
+	名称：<input type="text" name="name"/> <br/>
+	日期：<input type="text" name="createTime"/> <br/>
+	备注：<input type="text" name="remark"/> <br/> <br/>
+
+	<input type="button" name="btnOK" value="确定" onclick="formSubmit('/testtable/testTableAction_save');" />
+</form>    
+
+

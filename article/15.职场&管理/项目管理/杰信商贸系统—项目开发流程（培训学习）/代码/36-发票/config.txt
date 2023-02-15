@@ -1,0 +1,13 @@
+<mapping resource="cn/itcast/entity/Invoice.hbm.xml" />
+
+<bean id="daoInvoice" class="cn.itcast.entity.dao.InvoiceDAO" autowire="byName"/>
+
+  	
+<package name="invoice" namespace="/invoice" extends="struts-default">
+	<action name="invoiceAction_*" method="{1}" class="cn.itcast.web.struts2.cargo.invoice.InvoiceAction">
+		<result name="pedit">/cargo/invoice/jInvoiceEdit.jsp</result>
+	</action>
+</package>
+
+
+<li id="new"><a href="#" onclick="formSubmit('/invoice/invoiceAction_toedit','_self');this.blur();">·¢Æ±</a></li>

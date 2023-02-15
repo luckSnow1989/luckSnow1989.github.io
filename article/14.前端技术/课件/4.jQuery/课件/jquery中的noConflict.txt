@@ -1,0 +1,77 @@
+使用 noConflict() 方法为 jQuery 变量规定新的名称：
+var jq=$.noConflict();
+亲自试一试
+定义和用法
+noConflict() 方法让渡变量 $ 的 jQuery 控制权。
+该方法释放 jQuery 对 $ 变量的控制。
+该方法也可用于为 jQuery 变量规定新的自定义名称。
+提示：在其他 JavaScript 库为其函数使用 $ 时，该方法很有用。
+语法
+jQuery.noConflict(removeAll)
+参数	描述
+removeAll	布尔值。指示是否允许彻底将 jQuery 变量还原。
+说明
+许多 JavaScript 库使用 $ 作为函数或变量名，jQuery 也一样。在 jQuery 中，$ 仅仅是 jQuery 的别名，因此即使不使用 $ 也能保证所有功能性。假如我们需要使用 jQuery 之外的另一 JavaScript 库，我们可以通过调用 $.noConflict() 向该库返回控制权：
+<script type="text/javascript" src="other_lib.js"></script>
+<script type="text/javascript" src="jquery.js"></script>
+
+<script type="text/javascript">
+  $.noConflict();
+  // 使用另一个库的 $ 的代码
+</script>
+可以与 .ready() 方法结合起来使用，来为 jQuery 对象起别名，这项技术非常有效：
+<script type="text/javascript" src="other_lib.js"></script>
+<script type="text/javascript" src="jquery.js"></script>
+
+<script type="text/javascript">
+  $.noConflict();
+  jQuery(document).ready(function($) {
+    // 使用 jQuery $ 的代码
+  });
+  // 使用其他库的 $ 的代码
+</script>
+此外，通过向该方法传递参数 true，我们可以将 $ 和 jQuery 的控制权都交还给原来的库。用之前请考虑清楚！
+这是相对于简单的 noConflict 方法更极端的版本，因为这将完全重新定义 jQuery。这通常用于一种极端的情况，比如你想要将 jQuery 嵌入一个高度冲突的环境。注意：调用此方法后极有可能导致插件失效。
+实例
+例子 1
+将 $ 引用的对象映射回原始的对象：
+jQuery.noConflict();
+
+jQuery("div p").hide();	// 使用 jQuery
+
+$("content").style.display = "none";	// 使用其他库的 $()
+例子 2
+恢复使用别名 $，然后创建并执行一个函数，在这个函数的作用域中仍然将 $ 作为 jQuery 的别名来使用。在这个函数中，原来的 $ 对象是无效的。这个函数对于大多数不依赖于其他库的插件都十分有效：
+jQuery.noConflict();
+
+(function($) { 
+  $(function() {
+    // 使用 $ 作为 jQuery 别名的代码
+  });
+})(jQuery);
+
+... // 其他用 $ 作为别名的库的代码
+例子 3
+可以将 jQuery.noConflict() 与简写的 ready 结合，使代码更紧凑：
+jQuery.noConflict()(function(){
+    // 使用 jQuery 的代码
+});
+
+... // 其他库使用 $ 做别名的代码
+例子 4
+创建一个新的别名用以在接下来的库中使用 jQuery 对象：
+var j = jQuery.noConflict();
+
+j("div p").hide();	// 基于 jQuery 的代码
+
+$("content").style.display = "none";	// 基于其他库的 $() 代码
+例子 5
+完全将 jQuery 移到一个新的命名空间：
+var dom = {};
+dom.query = jQuery.noConflict(true);
+结果:
+dom.query("div p").hide();	// 新 jQuery 的代码
+
+$("content").style.display = "none";	// 另一个库 $() 的代码
+
+jQuery("div > p").hide();	// 另一个版本 jQuery 的代码

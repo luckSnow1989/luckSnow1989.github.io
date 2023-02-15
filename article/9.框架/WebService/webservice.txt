@@ -1,0 +1,232 @@
+webservice,就是应用程序之间跨语言的调用,
+	不同的语言平台对WebService都有实现，Java的WebService实现，比较流行的有Axis2、Jaxws，本文介绍的是Axis2
+	
+	一、重要的组成
+		1.xml
+		2.wsdl:web service description language----web服务描述语言。
+			也是一种xml文件，声明了调用的服务的name,URL,method以及如何调用。
+		3.soap:simple object access protoacl-----简单对象访问协议
+			限定了xml的格式，是在http的基础上传输xml数据。因为有请求体，所以必须是post请求。
+			请求和响应的xml的格式：
+				<envelop>
+					<body>
+						................
+					</body>
+				</envelop>
+		4.operation name：服务提供的方法
+		5.targetNamespace: 默认为倒置的包名，例如服务类在com.zx.service中，那就是service.zx.com
+		6.JAX-WS：java api for xml - WebService
+		
+	二、需要注意
+		1.发布的外部服务不能包含静态方法，静态变量等，这些成员是在初始化的时候，存在到内容中的，是无法被序列化，
+		进而数据传输的。
+		
+		2.使用自动生成的webservice服务端，需要/WEB-INF/conf/axis2.xml，配置其内两个属性，以便调试
+		<parameter name="hotdeployment">true</parameter><!-- 开启热部署，不需要重启即可部署服务 -->  
+		<parameter name="hotupdate">true</parameter><!-- 开启热更新，不需要重启即可更新服务 --> 
+		
+		
+		
+	三、客户端调用WebService的方式
+		1.通过插件生成代码
+		2.通过客户端编程方式
+		3.通过ajax调用方式
+		4.通过 URL Connection 方式调用
+		
+		*请求过程分析：
+			1.使用get方法获得wsdl文件，称之为握手
+			2.使用post发送请求
+			3.服务器响应成功
+					    1.get请求-握手wsdl
+	*************<=================================>*************
+	*			*                                   *			*
+	*  客服端	*									*  ws服务器	*	
+	*			*		2.post请求-soap数据			*			*
+    *************<=================================>*************
+	
+	服务端代码
+	package com.webservcie;
+
+	import javax.jws.WebMethod;
+	import javax.jws.WebParam;
+	import javax.jws.WebResult;
+	import javax.jws.WebService;
+	import javax.xml.ws.Endpoint;
+
+	/**
+	 * WebService
+	 * 将 Java 类标记为实现 Web Service，或者将 Java 接口标记为定义 Web Service 接口
+	 */
+	@WebService(serviceName="MyService",targetNamespace="http://www.baidu.com")
+	public class HelloService {
+		
+		@WebMethod(operationName="AliassayHello")
+		@WebResult(name="myReturn")
+		public String sayHello(@WebParam(name="name") String name){
+			return  "hello: " + name;
+		}
+		
+		public String sayGoodbye(String name){
+		
+			return  "goodbye: " + name;
+		}
+		
+		@WebMethod(exclude=true)//当前方法不被发布出去
+		public String sayHello2(String name){
+			return "hello " + name;
+		}
+
+		public static void main(String[] args) {
+			/**
+			 * 参数1：服务的发布地址
+			 * 参数2：服务的实现者
+			 *  Endpoint  会再开启一个线程
+			 */
+			Endpoint.publish("http://test.cm/", new HelloService());
+			System.out.println("Server ready...");
+		}
+
+	}
+	1.客户端调用（插件自动生成代码 【推荐】）
+		package com.wsclient;
+
+		public class App {
+
+			/**
+			 * 通过wsimport 解析wsdl生成客户端代码调用WebService服务
+			 * 
+			 * @param args
+			 * 
+			 */
+			public static void main(String[] args) {
+				// TODO Auto-generated method stub				
+				/**
+				 * <service name="MyService">
+				 * 获得服务名称
+				 */
+				MyService mywebService = new MyService();
+				
+				/**
+				 * <port name="HelloServicePort" binding="tns:HelloServicePortBinding">
+				 */
+				HelloService hs = mywebService.getHelloServicePort();
+				
+				/**
+				 * 调用方法
+				 */
+				System.out.println(hs.sayGoodbye("sjk"));
+				
+				System.out.println(hs.aliassayHello("sjk"));				
+			}
+		}
+	2.通过ajax+js+xml调用	
+    <html>
+		<head>
+			<title>通过ajax调用WebService服务</title>
+			<script>
+				
+				var xhr = new ActiveXObject("Microsoft.XMLHTTP");
+				function sendMsg(){
+					var name = document.getElementById('name').value;
+					//服务的地址
+					var wsUrl = 'http://192.168.1.100:6789/hello';
+					
+					//请求体
+					var soap = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:q0="http://ws.itcast.cn/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' + 
+										 ' <soapenv:Body> <q0:sayHello><arg0>'+name+'</arg0>  </q0:sayHello> </soapenv:Body> </soapenv:Envelope>';
+										 
+					//打开连接
+					xhr.open('POST',wsUrl,true);
+					
+					//重新设置请求头
+					xhr.setRequestHeader("Content-Type","text/xml;charset=UTF-8");
+					
+					//设置回调函数
+					xhr.onreadystatechange = _back;
+					
+					//发送请求
+					xhr.send(soap);
+				}
+				
+				function _back(){
+					if(xhr.readyState == 4){
+						if(xhr.status == 200){
+								//alert('调用Webservice成功了');
+								var ret = xhr.responseXML;
+								var msg = ret.getElementsByTagName('return')[0];
+								document.getElementById('showInfo').innerHTML = msg.text;
+								//alert(msg.text);
+							}
+					}
+				}
+			</script>
+		</head>
+		<body>
+				<input type="button" value="发送SOAP请求" onclick="sendMsg();">
+				<input type="text" id="name">
+				<div id="showInfo">
+				</div>
+		</body>
+	</html>
+    
+    3.URL Connection方式
+	import java.io.InputStream;
+	import java.io.OutputStream;
+	import java.net.HttpURLConnection;
+	import java.net.URL;
+	/**
+	 * 通过UrlConnection调用Webservice服务
+	 *
+	 */
+	public class App {
+
+		public static void main(String[] args) throws Exception {
+			//服务的地址
+			URL wsUrl = new URL("http://192.168.1.100:6789/hello");
+			
+			HttpURLConnection conn = (HttpURLConnection) wsUrl.openConnection();
+			
+			conn.setDoInput(true);
+			conn.setDoOutput(true);
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Content-Type", "text/xml;charset=UTF-8");
+			
+			OutputStream os = conn.getOutputStream();
+			
+			//请求体
+			String soap = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:q0=\"http://ws.itcast.cn/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + 
+						  "<soapenv:Body> <q0:sayHello><arg0>aaa</arg0>  </q0:sayHello> </soapenv:Body> </soapenv:Envelope>";
+			
+			os.write(soap.getBytes());
+			
+			InputStream is = conn.getInputStream();
+			
+			byte[] b = new byte[1024];
+			int len = 0;
+			String s = "";
+			while((len = is.read(b)) != -1){
+				String ss = new String(b,0,len,"UTF-8");
+				s += ss;
+			}
+			System.out.println(s);
+			
+			is.close();
+			os.close();
+			conn.disconnect();
+		}
+	}	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

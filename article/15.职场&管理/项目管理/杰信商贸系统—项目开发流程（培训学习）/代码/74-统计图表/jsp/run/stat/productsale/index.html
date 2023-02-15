@@ -1,0 +1,32 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Histogram chart</title>
+</head>
+
+<body style="margin:0;padding:0;">
+
+<!-- ampie script-->
+<script type="text/javascript" src="/components/chart/amcolumn/swfobject.js"></script>
+  <!-- this id must be unique! -->
+	<div id="flashcontent" style="margin-top:-15px;margin-left:-12px;">
+		<strong>您需要升级您的Flash播放器</strong>
+	</div>
+	<div style="margin-top:-15px;margin-left:-12px;">
+		产品销售排行
+	</div>
+
+	<script type="text/javascript">
+		// <![CDATA[		
+		var so = new SWFObject("/components/chart/amcolumn/amcolumn.swf", "amcolumn", "570", "300", "0", "#FFFFFF");
+		so.addVariable("path", "/components/chart/amcolumn/");
+		so.addVariable("settings_file", encodeURIComponent("amcolumn_settings1.xml"));
+		so.addVariable("data_file", encodeURIComponent("amcolumn_data1.xml"));
+		so.addVariable("preloader_color", "#000000");
+		so.write("flashcontent");   // this id must match the div id above
+		// ]]>
+	</script>
+<!-- end of ampie script -->
+
+</body>
+</html>

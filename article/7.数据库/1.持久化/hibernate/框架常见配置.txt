@@ -1,0 +1,117 @@
+一、struts2
+1.核心控制器     2.1之后的使用
+  <filter>
+  	<filter-name>struts2</filter-name>
+  	<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+  	<filter-name>struts2</filter-name>
+  	<url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  
+
+  
+2.struts.xml中配置  
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<constant name="struts.devMode" value="true"></constant>
+	
+	<constant name="struts.custom.i18n.resources" value="com.zrgk.config.message"></constant>
+	
+	<include file="com/zrgk/project/struts-project.xml"></include>
+	 
+	<package name="demo" extends="struts-default">
+		<action name="" class="">
+			<result name="" type=""></result>
+		</action>
+	</package>	
+</struts>
+
+二、hibernate
+1.总配置
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<property name="hibernate.dialect">
+			org.hibernate.dialect.MySQLDialect
+		</property>
+		
+		<property name="hibernate.connection.driver_class">
+			com.mysql.jdbc.Driver
+		</property>
+		
+		<property name="hibernate.connection.url">
+			jdbc:mysql://localhost:3306/user?useUnicode=true&amp;characterEncoding=UTF-8
+		</property>
+			
+		<property name="hibernate.connection.username">root</property>
+		
+		<property name="hibernate.connection.password">4100107223</property>
+		
+		<property name="show_sql">true</property>
+		<property name="format_sql">true</property>
+		
+		<mapping resource="com/project/entity/User.hbm.xml" />
+	</session-factory>
+
+</hibernate-configuration>
+
+
+
+
+2.对象配置
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+	
+<hibernate-mapping>
+	<class name="com.project.entity.User" table="user">
+		<id name="id" column="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="name" column="name" type="java.lang.String"></property>
+		<property name="age" column="age" type="java.lang.Integer"></property>
+		<property name="birthday" column="birthday" type="java.util.Date"></property>
+		<property name="photo" column="photo" type="java.sql.Blob"></property>	
+	</class>
+</hibernate-mapping>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

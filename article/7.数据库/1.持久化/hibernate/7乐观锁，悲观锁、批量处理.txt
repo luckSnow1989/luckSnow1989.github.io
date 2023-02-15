@@ -1,0 +1,115 @@
+一、丢失更新：
+    1.排它锁	
+		(1)	数据库在执行,update语句时,开启事务时，会自动开启排它锁;
+		-->start transaction;
+		-->update user set name='张三' where id=1;/*自动开启排它锁，这时其他人修改后无法提交*/
+		-->commit;/*提交数据，关闭事务，关闭排它锁*/
+		
+		(2)查询时添加排它锁,开启事务时,在句末添加for update
+		-->start transaction;
+		-->select * from user where id=1 for update;/*自动开启排它锁，这时其他人是无法使用这条语句查询的*/
+		-->commit;/*提交数据，关闭事务，关闭排它锁*/
+	 
+	2.悲观锁  pessimistic 原理是:每次操作时都开启事务锁,类似于一种悲观的情绪，担心每次都会出现更新丢失，于是频繁的操作数据库，开启事务。
+								 同样这也是一种低效的，浪费资源的方式。
+								 
+	MySQL等数据库的事务锁
+		(1)执行update时，开启事务
+			Configuration conf = new Configuration().configure();
+			SessionFactory sf = conf.buildSessionFactory();
+			Session se = sf.openSession();
+			Transaction tr = se.beginTransaction();//开启数据库的事务，这时数据库端自动开启排它锁
+			se.update(user);
+			tr.commit;//提交数据
+			se.close();//关闭事务，关闭排它锁
+		
+		(2.1)执行select时，也需要开启事务-------->发送的sql语句末尾添加了for update
+			Configuration conf = new Configuration().configure();
+			SessionFactory sf = conf.buildSessionFactory();
+			Session se = sf.openSession();
+			Transaction tr = se.beginTransaction();//开启数据库的事务，这时数据库端自动开启排它锁
+			se.get(user.class,1,LockMode.UPGRADE);//开启事务锁的模式，
+			tr.commit;//提交数据
+			se.close();//关闭事务，关闭排它锁
+	
+			注意:oracle数据库的事务锁是:  LockMode.UPGRADE_NOWAIT,其他的数据库使用上面的即可。
+		
+		(2.2)执行select时，也需要开启事务-------->发送的sql语句末尾添加了for update
+			Configuration conf = new Configuration().configure();
+			SessionFactory sf = conf.buildSessionFactory();
+			Session se = sf.openSession();
+			Transaction tr = se.beginTransaction();//开启数据库的事务，这时数据库端自动开启排它锁
+			Query query = se.createQuery(HQL);
+			query.lock("",LockMode.UPGRADE);//指定开启事务锁的模式
+			tr.commit;//提交数据
+			se.close();//关闭事务，关闭排它锁	
+
+	3.乐观锁	pessimistic，原理：是增加数据库表的列，version版本号，每次update时，版本号会自动修改，每次提交时，必须是大于这个版本号的
+								   数据才可以提交到数据库中。小于或等于的会抛出RuntimeException。
+	也需要开启事务，这是hibernate内的使用方法
+    要使用乐观锁步骤：
+			(1) 数据库中要添加一个新列表示版本号---->version
+	        (2) 实体类中加属性表示版本号----->version
+			(3) 配置文件，必须在<id>后添加<version name="version" column="version"></version>
+
+二、批量处理;
+	1. 批量插入（Batch inserts）
+	如果要将很多对象持久化，你必须通过经常的调用 flush() 以及稍后调用 clear() 来控制第一级缓存的大小。 
+
+	Session session = sessionFactory.openSession();
+	Transaction tx = session.beginTransaction();
+	   
+	for ( int i=0; i<100000; i++ ) {
+		Customer customer = new Customer(.....);
+		session.save(customer);
+		if ( i % 20 == 0 ) { //20, same as the JDBC batch size //20,与JDBC批量设置相同
+			//flush a batch of inserts and release memory:
+			//将本批插入的对象立即写入数据库并释放内存
+			session.flush();
+			session.clear();
+		}
+	}
+	   
+	tx.commit();
+	session.close();
+
+	2. 批量更新（Batch updates）
+	此方法同样适用于检索和更新数据。此外，在进行会返回很多行数据的查询时， 你需要使用 scroll() 方法以便充分利用服务器端游标所带来的好处。 
+
+	Session session = sessionFactory.openSession();
+	Transaction tx = session.beginTransaction();
+	   
+	ScrollableResults customers = session.getNamedQuery("GetCustomers")
+		.setCacheMode(CacheMode.IGNORE)
+		.scroll(ScrollMode.FORWARD_ONLY);
+	int count=0;
+	while ( customers.next() ) {
+		Customer customer = (Customer) customers.get(0);
+		customer.updateStuff(...);
+		if ( ++count % 20 == 0 ) {
+			//flush a batch of updates and release memory:
+			session.flush();
+			session.clear();
+		}
+	}
+	   
+	tx.commit();
+	session.close();
+
+
+
+
+
+
+
+
+
+
+			
+
+
+
+
+
+	  
+	  

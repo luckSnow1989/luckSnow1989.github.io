@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		
+		<script type="text/javascript">
+			/**
+			 * 闭包(禁止外界访问内部,私有匿名方法)
+			 * 	1.范式:(function(window){})(window);
+			 * 		第一个括号内的参数是一个函数，函数内的参数为形参
+			 * 		第二个括号内的参数是实参
+			 * 	2.好处
+			 * 		可以选择性的让函数私有还和公开化；
+			 * 		在匿名函数中声明的函数，在外部访问不到。
+			 */
+			var util = new Object();
+			(function(util){
+				function a(){//私有方法
+					//b();
+					return {//全部是想要公开的方法
+						c:c,
+						d:d
+					};
+				}
+				function b(){//私有方法
+					alert('b');
+				}
+				function c(){//公开方法
+					alert('c');
+				}
+				function d(){//公开方法
+					alert('d');
+				}
+				util.a = a;//通过该方法可以让一个函数成为一个公开的方法
+			})(util);
+			
+			//获得闭包里面的函数
+			var methods = util.a();
+			methods.c();
+			methods.d();
+
+
+
+		</script>
+	</body>
+</html>

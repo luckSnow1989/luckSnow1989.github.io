@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE validators PUBLIC
+        "-//OpenSymphony Group//XWork Validator Config 1.0//EN"
+        "http://www.opensymphony.com/xwork/xwork-validator-config-1.0.dtd">
+<validators>
+	<!-- <field name="username"> -->
+	<!-- 内置验证器都是定义好的，在xwork-core.jar com.opensymphony.xwork2.validator.validators包中的default.xml文件中 -->
+	<!-- <field-validator type="requiredstring"> 不能为null或者""字符串，默认会去掉前后的空格 -->
+	<!-- <param name="trim">true</param> -->
+	<!-- <message>用户名不能为空</message> -->
+	<!-- </field-validator> -->
+	<!-- </field> -->
+
+	<validator type="requiredstring">
+		<param name="fieldName">username</param>
+		<message>用户名不能为空</message>
+	</validator>
+	
+	<!-- 自定义验证器  -->
+	<field name="password">
+		<field-validator type="requiredstring">
+			<message>密码不能为空</message>
+		</field-validator>
+		<field-validator type="strongpassword">
+			<message>密码必须至少包含一个大写、小写字母或数字</message>
+		</field-validator>
+	</field>
+
+	<validator type="expression">
+		<param name="expression"><!--  -->
+			maxNum>minNum
+		</param>
+		<message>最大值不能小于最小值</message>
+	</validator>
+
+	<field name="username"><!-- 属性=======这个属性名称要和action中的成员相同 -->
+		<!-- 第一条验证内容 -->
+		<field-validator type="requiredstring">	<!-- 验证规则 -->
+			<param name="trim">true</param>
+			<message>用户名必填</message>   		<!-- 验证不通过时，提示的信息 -->
+		</field-validator>
+
+		<!-- 第二条验证内容 -->
+		<field-validator type="stringlength">
+			<param name="maxLength">12</param><!-- 给验证规则中的属性设置值 -->
+			<param name="minLength">6</param>
+			<message>用户名必须在${minLength}到${maxLength}个字符之间</message>
+		</field-validator>
+
+		<!-- 第三条验证内容 -->
+		<field-validator type="regex"><!-- 表达式验证，正则验证 -->
+			<param name="expression"><![CDATA[^[^0-9]{6,9}$]]></param>
+			<message>格式不正确</message>
+		</field-validator>
+	</field>
+</validators>

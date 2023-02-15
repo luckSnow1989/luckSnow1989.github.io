@@ -1,0 +1,73 @@
+纵观jBPM：从jBPM3到jBPM5以及Activiti5：http://www.infoq.com/cn/articles/rh-jbpm5-activiti5#
+
+工作流引擎选择（为何使用activiti而不是jbpm）：http://blog.csdn.net/classfoo/article/details/20645779
+
+Java工作流引擎：jBPM、Activiti以及SWF：http://blog.csdn.net/liangyixin19800304/article/details/12761573
+
+用OSWorkFlow和JBPM开发工作流异同：http://blog.csdn.net/victor16345/article/details/5614676
+JBPM（Java Business Process Management）：JAVA业务流程管理，是一个可扩展、灵活、开源的流程引擎， 它可以运行在独立的服务器上或者嵌入任何Java应用中。
+
+
+
+几种工作流引擎对比：
+
+1、jBPM3是一个完整的工作流系统实现，面向开发人员，目的在于简化对组织核心流程进行支撑的软件创建，不支持标准。
+
+2、jBPM4引入PVM，使其拥有更强大的扩展性，同时增加BPMS特性，这些特性包括了对BPMN的支持、面向业务人员的Web建模器和简单统计分析功能的加入。
+
+3、jBPM5基于原先的Drools Flow，支持BPMN，通过与Drools的合并支持BAM，通过内容仓库增加对流程可视化的支持。由于放弃了jBPM4的PVM，引擎的可扩展性受到损害，并且不再支持jPDL。
+
+4、Activiti5基于jBPM4的开源工作流系统，与Alfresco的集成增加了其流程可视化与管理能力，同时通过创新的Activiti Cycle协作组件支持流程相关人员之间的协调，最后，它加强了集成能力。
+
+5、SWF与其说是工作流引擎，不如说是分布式计算调度框架，SWF中只包括Task和History两部分，甚至是每个Task之间如果要传递一些数据的话，都只能通过第三方存储（比如Message Queue或者Redis），不过这也给了编程更大的灵活性，问题是这种灵活性是不是非常需要。
+
+一个SWF由Worker和Decider组成，Worker执行实际的任务，而Decider进行流程控制，两者严格上来讲没有区别，只是所执行的任务不同罢了。每个Worker和Decider会定期的去SWF的一个Task List取下一个任务。可以看出来这更像是一个“多线程”的结构，而SWF官方网站的Use Case是NASA的火星探索计划中需要处理图片的系统，这其实也是一个更多侧重于计算的系统，流程反而非常简单。
+
+另外，SWF（Simple Workflow）的一个Workflow不能太复杂，因为所有的流程控制都集中于Decider，如果太复杂的话Decider将无比庞大，给维护和扩展带来一定的困扰。
+
+Activiti的优势：
+
+1、与jBPM4相比，Activiti5最令人瞩目的特性就在于它的协作工具组件。
+
+Activiti Modeler—建模器
+基于开源Signavio Web流程编辑器的一个定制版本，提供了对BPMN2.0图形化规范的支持，建模后的流程以文件格式进行存储。
+
+Activiti probe—管理及监控组件
+对流程引擎运行期实例提供管理及监控的Web控制台。包含部署的管理、流程定义的管理、数据库表的检视、日志查看、事务的平均执行时间、失败多次的工作等功能。
+
+
+2、Activiti拥有更简洁健壮的接口
+
+Activiti中提供TaskQuery接口，可以设置各种查询过滤，排序方式，最终通过list方法执行查询，相比jbpm，它还提供了分页查询功能，双方高下立判。
+
+3、Activiti拥有更友好的用户体验
+
+JBPM核心引擎完全没有关于表单的任何抽象，它的工作机制是通过全局常量，流程变量，任务变量，这些概念十分技术化。
+
+相比之下Activiti则更贴近实际的应用场景，它将为开始节点，以及人工任务提供了表单设置，用户可以设置字段名称，字段类型。通过Activiti的平台可以根据这些设置去生成表单，但如果不使用其平台只使用引擎的话，也支持通过它来表达与第三方表单的关系。这些表单设置的元数据信息也可以通过接口去获取。
+
+4、Activiti支持启动引擎后随时热部署
+JBPM存在一个软肋，一个RuntimeService只能在启动的时候指定bpmn资源，一旦启动后便不再能够去更新或者增加bpmn了，这会导致我们系统集成的困难，因为我们自然希望整个系统只有一个工作流引擎实例运行。Activiti则提供了Deploy机制，将bpmn资源的热部署，热更新都做了很好的支持
+
+5、Activiti拥有更友好易用的Eclipse编辑插件和在线插件
+
+6、Activiti依赖更少的jar包
+
+Activiti依赖的第三方jar包较少，主要就是mybatics，而JBPM则依赖了一大堆的jar，从drools到繁杂的hibernate，再到自身拆分的零零散散的jar包，让人不由觉得它是一个庞大的怪物。
+
+
+工作流有版本的概念，jBPM和Activiti上传一个新的版本后，版本号会增加1，旧版本还没执行完的流程实例还会继续执行。SWF的版本是个字符串，随意指定好了，这样也很好，字符串名称更明确。
+
+
+
+嵌入式部署即将流程引擎嵌入部署于Web应用中
+
+
+
+最后，总结一下：
+
+shark：系统和功能都比较复杂
+
+Osworkflow：比较灵活的轻量级的框架，但是在流程建模方面不太友好，需要手动编写xml文件去定义流程文件。
+
+SWF：还有不能支持太复杂的流程

@@ -1,0 +1,258 @@
+一、Action获取客户端提交数据的三种方式：	 
+1.属性驱动
+	格式验证： 		  
+	1 客户端验证-----js验证，可以被浏览器屏蔽
+    2服务器端验证：常用的验证方法有两个
+		(1)validate方法验证(Action中的validate方法)
+			步骤：
+			a、动作类继承ActionSupport
+			b、覆盖调用public void validate()方法，validate会在execute方法之前调用
+				@Override
+				public void validate() {
+					if(this.name == null || this.name.equals(this.name.trim()))
+						addFieldError("msg", "用户不能为空");
+					if(this.password == null || this.password.matches("\\d{3,6}"))
+						addFieldError("msg", "密码必须是3~6位数字");
+				}
+				
+			c、在validate方法中，编写不符合要求的代码判断，并调用父类的addFieldError(String fieldName,String errorMessage)
+				如果fieldError（存放错误信息的Map）有任何的元素，就是验证不通过，动作方法不会执行。
+				
+				Struts2框架会返回到name=input的result，validate()方法，是针对所有方法验证的。
+				而验证某一个方法，如add(),则规定要做validateAdd()中经行，这个验证方法，
+				只会对add()方法中出现的有set/get方法的成员变量经行验证
+				
+			d、在name=input指定的页面上使用struts2的标签显示错误信息。<s:fielderror/>
+			
+		
+        	注意：struts默认了一些提示信息：例如，当对 int 类型 赋 非数字(例如 abc) 时 ，
+			struts会有一个提示	 Invalid field value for field "age"，这个结果会返回到页面上
+			
+			
+			如需替换这个提示信息：要用覆盖的方式(内容来自于 xwork-messages.properties) 
+			一般是要自己的资源文件，将其指定为项目的资源文件：例如创建一个属性文件message.properties
+				在属性文件中写xwork.default.invalid.fieldvalue=请输入正确的数字格式
+						
+			在struts.xml中增加一条，注意这个不要加格式的后缀
+			<constant name="struts.custom.i18n.resources" value="com.zrgk.config.message"></constant>
+				   			 
+		(2)validator验证框架 (通用验证框架) struts2中validator是对 action的验证
+			指定action中哪些属性 采用什么验证规则
+			要求:Action中不能有validate方法
+			要验证哪个Action 就要在和 Action同一个包下
+			创建一个  action的名字-validation.xml，struts2默认的验证属性的头文件是default.xml
+			
+			<!DOCTYPE validators PUBLIC
+	        "-//OpenSymphony Group//XWork Validator Config 1.0//EN"
+	        "http://www.opensymphony.com/xwork/xwork-validator-config-1.0.dtd">
+			<validators>
+				<validator type="expression">
+					<param name="expression"><!--  -->
+						maxNum>minNum
+					</param>
+					<message>最大值不能小于最小值</message>
+				</validator>
+			
+				<field name="username"><!-- 属性=======这个属性名称要和action中的成员相同 -->
+					<!-- 第一条验证内容 -->
+					<field-validator type="requiredstring">	<!-- 验证规则 -->
+						<param name="trim">true</param>
+						<message>用户名必填</message>   		<!-- 验证不通过时，提示的信息 -->
+					</field-validator>
+			
+					<!-- 第二条验证内容 -->
+					<field-validator type="stringlength">
+						<param name="maxLength">12</param><!-- 给验证规则中的属性设置值 -->
+						<param name="minLength">6</param>
+						<message>用户名必须在${minLength}到${maxLength}个字符之间</message>
+					</field-validator>
+			
+					<!-- 第三条验证内容 -->
+					<field-validator type="regex"><!-- 表达式验证，正则验证 -->
+						<param name="expression"><![CDATA[^[^0-9]{6,9}$]]></param>
+						<message>格式不正确</message>
+					</field-validator>
+				</field>
+			</validators>
+
+		注意：提示信息可以直接写在<message>中，
+			  也可以写在资源文件中<message key="资源文件中的key">
+			  这个key一般格式是user.register.username.length.error	
+			  
+		 内置验证器都是定义好的，在xwork-core.jar com.opensymphony.xwork2.validator.validators包中的default.xml文件中
+		<validators>
+		    <validator name="required" class="com.opensymphony.xwork2.validator.validators.RequiredFieldValidator"/>
+		    <validator name="requiredstring" class="com.opensymphony.xwork2.validator.validators.RequiredStringValidator"/>
+		    <validator name="int" class="com.opensymphony.xwork2.validator.validators.IntRangeFieldValidator"/>
+		    <validator name="long" class="com.opensymphony.xwork2.validator.validators.LongRangeFieldValidator"/>
+		    <validator name="short" class="com.opensymphony.xwork2.validator.validators.ShortRangeFieldValidator"/>
+		    <validator name="double" class="com.opensymphony.xwork2.validator.validators.DoubleRangeFieldValidator"/>
+		    <validator name="date" class="com.opensymphony.xwork2.validator.validators.DateRangeFieldValidator"/>
+		    <validator name="expression" class="com.opensymphony.xwork2.validator.validators.ExpressionValidator"/>
+		    <validator name="fieldexpression" class="com.opensymphony.xwork2.validator.validators.FieldExpressionValidator"/>
+		    <validator name="email" class="com.opensymphony.xwork2.validator.validators.EmailValidator"/>
+		    <validator name="url" class="com.opensymphony.xwork2.validator.validators.URLValidator"/>
+		    <validator name="visitor" class="com.opensymphony.xwork2.validator.validators.VisitorFieldValidator"/>
+		    <validator name="conversion" class="com.opensymphony.xwork2.validator.validators.ConversionErrorFieldValidator"/>
+		    <validator name="stringlength" class="com.opensymphony.xwork2.validator.validators.StringLengthFieldValidator"/>
+		    <validator name="regex" class="com.opensymphony.xwork2.validator.validators.RegexFieldValidator"/>
+		    <validator name="conditionalvisitor" class="com.opensymphony.xwork2.validator.validators.ConditionalVisitorFieldValidator"/>
+		</validators>	
+		
+		(3).自定义验证器
+		步骤1：自定义验证器类
+		public class StrongPasswordValidator extends FieldValidatorSupport {
+			public void validate(Object object) throws ValidationException {
+				String fieldName = getFieldName();//取得字段名
+				String filedValue = (String)getFieldValue(fieldName, object);//取得用户输入的当前字段的值
+				if(!isPasswordStrong(filedValue)){
+					addFieldError(fieldName, object);
+				}
+			}
+			private static final String GROUP1 = "abcdefghijklmnopqrstuvwxyz";
+			private static final String GROUP2 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			private static final String GROUP3 = "0123456789";
+			protected boolean isPasswordStrong(String password) {
+				boolean ok1 = false;
+				boolean ok2 = false;
+				boolean ok3 = false;
+				int length = password.length();
+				for(int i=0;i<length;i++){
+					if(ok1&&ok2&&ok3)
+						break;
+					String character = password.substring(i,i+1);
+					if(GROUP1.contains(character)){
+						ok1 = true;
+						continue;
+					}
+					if(GROUP2.contains(character)){
+						ok2 = true;
+						continue;
+					}
+					if(GROUP3.contains(character)){
+						ok3 = true;
+						continue;
+					}
+				}
+				return ok1&&ok2&&ok3;
+			}
+		}  
+		步骤2：注册自定义的验证器，在WEB-INF/classes目录下建立一个名称为validators.xml的配置文件，内容如下：
+		<?xml version="1.0" encoding="UTF-8"?>
+		<!DOCTYPE validators PUBLIC
+		        "-//OpenSymphony Group//XWork Validator Config 1.0//EN"
+		        "http://www.opensymphony.com/xwork/xwork-validator-config-1.0.dtd">
+		<validators>
+		    <validator name="strongpassword" class="cn.itcast.validators.StrongPasswordValidator"/>
+		</validators>
+		步骤3：
+		<!-- 配置这个自定义验证器  -->
+		<field name="password">
+			<field-validator type="requiredstring">
+				<message>密码不能为空</message>
+			</field-validator>
+			<field-validator type="strongpassword">
+				<message>密码必须至少包含一个大写、小写字母或数字</message>
+			</field-validator>
+		</field>
+2 模型驱动：ModelDriven，直接获得页面上的属性值
+
+    public class Action extends ActionSupport implements ModelDriven<User>{
+	
+	User user = new User();
+	
+	public User getModel() {		
+		return user;
+	}
+	客户端提交的数据装到了user对象中
+	}
+ 
+	要求：页面上input 的 name 要和 User中的属性名一致
+
+	不一致的就不会赋值  (***** 严格来说是set方法 不是属性名)
+
+
+3.在Action中，创建User user; 对其封装set/get方法；可获得同模型驱动相同的user
+   	这时页面上的input 的name，必须是user.username，原理和模型驱动相同
+	
+	//*封装页面的值 ,必须有setter/getter*/
+	//复合对象
+	User user = new User();
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
+	}
+	//数组，如：checkbox..
+	String[] habby;
+	public String[] getHabby() {
+		return habby;
+	}
+	public void setHabby(String[] habby) {
+		this.habby = habby;
+	}
+	/**
+	 * 封装页面的值
+	 * @return
+	 */
+	public String pack(){
+		System.out.println(user);
+		return SUCCESS;
+	}
+	
+二、 关于   namespace 
+    <package name=""  extends=""  namespace="">
+	namespace默认是/，默认的情况下，action的读取路径是任意的，只要知道action在struts.xml配置的
+	name就可以，而添加了namespace后，如/error，则读取这个action时必须是/error/action;
+	
+	
+	
+三、多个struts配置文件：在开发中struts.xml文件中的配置内容可能非常的多，所以可能每个模块都有一个
+	配置文件：
+		如：struts-project.xml,struts-user.xml
+		这时要在根目录下的struts.xml中添加一条
+		<include file="com/zrgk/project/struts-project.xml"></include>
+	
+四、耦合Servlet
+	1.方法一，使用ServletActionContext，最常用
+		ServletContext application = ServletActionContext.getServletContext();
+		HttpServletRequest request = ServletActionContext.getRequest();
+		HttpServletResponse response = ServletActionContext.getResponse();
+		HttpSession session = request.getSession();
+
+	2.方法二，使用ActionContext
+		ActionContext ac = ActionContext.getContext();
+		Map<String, Object> application = ac.getApplication();//相当于ServletContext
+		Map<String, Object> session = ac.getSession();//相当于HttpSession
+		ac.put("aa", "");//ActionContext相当于HttpServletRequest
+
+	3.方法三，使用实现ServletContextAware，ServletRequestAware，ServletResponseAware接口，
+		创建action的时候，自动setServletContext();
+		ServletContext application;
+		HttpServletRequest request;
+		HttpServletResponse response;
+		@Override
+		public void setServletContext(ServletContext arg0) {
+			this.application = arg0;
+		}
+		@Override
+		public void setServletRequest(ServletContext arg0) {
+			this.request = arg0;
+		}
+		@Override
+		public void setServletResponse(ServletContext arg0) {
+			this.response = arg0;
+		}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+				  
+			 

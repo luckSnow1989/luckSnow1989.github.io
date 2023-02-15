@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<properties>
+        <!--docker插件定义参数start-->
+        <docker.image.repositories>harbor-master.yooli-me.com</docker.image.repositories>
+        <harbor.account>deploy_test</harbor.account>
+        <harbor.passwd>LoFkO73THnV9byQC</harbor.passwd>
+        <local.docker.host>172.16.4.147:2377</local.docker.host>
+        <project.group>daizhong</project.group>
+		<bind.server.port>9088</bind.server.port>
+        <serverModuleRootPath>.</serverModuleRootPath>
+        <serverModuleName>data-transfer</serverModuleName>
+        <server.publish.name>data-transfer</server.publish.name>
+        <log.root.volume>/data/home/www/yooli/logs</log.root.volume>
+        <local.dockerfile.dir>${project.basedir}/docker</local.dockerfile.dir>
+        <assembly.file>${project.basedir}/docker/assembly.xml</assembly.file>
+        <serverJar>maven/${serverModuleRootPath}/target/${serverModuleName}.jar</serverJar>
+        <profile.branch>none</profile.branch>
+        <commons.codec.version>1.11</commons.codec.version>
+        <docker.maven.plugin.version>0.30.0</docker.maven.plugin.version>
+        <buildnumber.maven.plugin.version>1.4</buildnumber.maven.plugin.version>
+        <!--docker插件定义参数end-->
+    </properties>
+	
+	<build>
+		<pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>${docker.maven.plugin.version}</version>
+                    <inherited>true</inherited>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+	
+        <plugins>
+            <!--获取时间戳-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>${buildnumber.maven.plugin.version}</version>
+                <configuration>
+                    <timestampFormat>yyyyMMdd_HHmmss</timestampFormat>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>create-timestamp</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <inherited>true</inherited>
+            </plugin>
+            <!--获取时间戳-->
+            <!--Docker maven plugin S-->
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <dockerHost>tcp://${local.docker.host}</dockerHost>
+                    <registry>${docker.image.repositories}</registry>
+                    <keepContainer>false</keepContainer>
+                    <verbose>true</verbose>
+                    <authConfig>
+                        <push>
+                            <username>${harbor.account}</username>
+                            <password>${harbor.passwd}</password>
+                        </push>
+                    </authConfig>
+                    <images>
+                        <image>
+                            <alias>${server.publish.name}-v${project.version}-${timestamp}</alias>
+                            <name>${docker.image.repositories}/${project.group}/${server.publish.name}-${profile.branch}:v${project.version}-${timestamp}</name>
+                            <build>
+                                <noCache>true</noCache>
+                                <dockerFileDir>${local.dockerfile.dir}</dockerFileDir>
+                                <assembly>
+                                    <descriptor>${assembly.file}</descriptor>
+                                </assembly>
+                                <tags><tag>latest</tag></tags>
+                                <args>
+                                    <JAR_FILE>${serverJar}</JAR_FILE>
+                                    <EXPOSE_PORT>${bind.server.port}</EXPOSE_PORT>
+                                    <LOG_ROOT_VOLUME>${log.root.volume}</LOG_ROOT_VOLUME>
+                                    <PROJECT_ARTIFACTID>${server.publish.name}</PROJECT_ARTIFACTID>
+                                </args>
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>commons-codec</groupId>
+                        <artifactId>commons-codec</artifactId>
+                        <version>${commons.codec.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <!--Docker maven plugin E-->
+        </plugins>
+    </build>
+	
+	<!--多模块项目务必在每个子模块pom中添加以下内容，单模块无视-->
+	<build>
+        <plugins>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                    <skipBuild>true</skipBuild>
+                    <skipPush>true</skipPush>
+                    <skipSave>true</skipSave>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+	
+
+</project>

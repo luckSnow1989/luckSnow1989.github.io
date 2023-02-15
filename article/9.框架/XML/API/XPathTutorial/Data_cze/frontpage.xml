@@ -1,0 +1,119 @@
+<!DOCTYPE frontPage
+ [
+  <!ENTITY languageMenu SYSTEM "../Data/languageLabels.inc">
+ ]
+>
+
+<frontPage lang='cze' xmlns:html="http://www.w3.org/TR/REC-html40"
+  idref="z19991208">
+
+  <menu>
+    <items>
+      <a id="index" target="_top" class="naviBlack" href="../Output_cze/example1.html">Start</a>
+      <a id="index" target="_top" class="naviBlack" href="../General_cze/examples.html">Index</a>
+    </items>
+  </menu>
+
+
+  <languageMenu>
+     &languageMenu;
+  </languageMenu>
+
+ <head>
+  <author id="nicmila"/>
+  <author id="jiratj"/>
+  <translator id="jiratj"/>
+  <title>XPath Tutorial</title>
+ </head>
+ <body>
+
+  <section>
+   <title>Úvod</title>
+   <para>
+XPath je popsán v <html:a href="http://www.w3.org/TR/xpath">XPath 1.0 standardu</html:a>. Tento tutoriál vás na mnoha příkladech seznámí 
+s vybranými rysy jazyku XPath.
+</para>
+  </section>
+
+<section>
+<para>Můžete začít od:</para>
+<list>
+<item><html:a href="../Output_cze/example1.html">Příkladu 1</html:a></item>
+</list>
+
+<para>nebo z panelu na levé straně.</para>
+</section>
+
+  <section>
+   <title>Související materiály</title>
+   <list>
+    <item>
+     <html:a href="http://www.zvon.org:9001/saxon/cgi-bin/XLab/XML/xlabIndex.html?stylesheetFile=XSLT/xlabIndex.xslt&amp;lang=cze">XLab</html:a> - interaktivní experimenty s XPath
+    </item>
+    <item>
+     <link idref="z19991207">XML tutorial</link>
+    </item>
+    <item>
+     <link idref="z19991203">DTD tutorial</link>
+    </item>
+    <item>
+     <link idref="z20000810d">XML Namespace tutorial</link>
+    </item>
+    <item>
+      <link idref="z20001220">XHTML 1.0 reference</link>
+    </item>
+    <item>
+     <link idref="z20001221">XHTML Basic reference</link>
+    </item>
+   </list>
+  </section>
+  <zvonXSLT/>
+
+  <section>
+   <title>Kredit</title>
+   <list>
+    <item>Miloslav Nič - programování a příklady</item>
+    <item>Jiří Jirát - zobrazení příkladů jako stromy</item> 
+   </list>
+  </section>
+
+
+  <keywords/>
+  <zvon/>
+  <downloads/>
+ </body>
+
+ <appendix>
+  <referrer id="XPath+Tutorial"/>
+  <copyright id="systinet" year="2000"/>
+  <zvonLink id="zvonLink1"/>
+  <licence id="FDL"/>
+  <licence id="GPL"/>
+  <program id="saxon"/>
+  <program id="python"/>
+  <program id="batik"/>
+ </appendix>
+
+<indexFrame upbarlink="../Output/_upbar.html" file="Output_cze/index.html">
+ <links/>
+ <frameset cols="250,*">
+   <frame name="mainIndex" src="../Output_cze/examples.html"/>
+   <frame name="mainWindow" src="../Output_cze/introduction.html"/>
+ </frameset>
+</indexFrame>
+
+
+</frontPage>
+
+
+
+
+
+
+
+
+
+
+
+
+

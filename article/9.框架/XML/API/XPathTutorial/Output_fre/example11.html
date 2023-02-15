@@ -1,0 +1,164 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" type="text/css" href="../CSS/tutorial.css">
+      <title>XPath Tutorial</title>
+      <link rel="index" href="index.html">
+      <link rel="previous" href="example10.html">
+      <link rel="next" href="example12.html">
+   </head>
+   <body>
+      <table xmlns="http://www.w3.org/1999/xhtml" width="100%">
+         <tr>
+            <td><span class="mediumText"><a class="naviBlack" target="_self" href="../Output/example11.html">English</a> | <a class="naviBlack" target="_self" href="../Output_cze/example11.html">česky</a> | <a class="naviBlack" target="_self" href="../Output_dut/example11.html">Nederlands</a> | <b>&gt;&gt;&nbsp;Fran&ccedil;ais&nbsp;&lt;&lt;</b> | <a class="naviBlack" target="_self" href="../Output_spa/example11.html">Espa&ntilde;ol</a> | <a class="naviBlack" target="_self" href="../Output_rus/example11.html">По-русски</a> | <a class="naviBlack" target="_self" href="../Output_ger/example11.html">Deutsch</a> | <a class="naviBlack" target="_self" href="../Output_chi/example11.html">中文</a> | <a class="naviBlack" target="_self" href="../Output_ita/example11.html">Italiano</a></span></td>
+            <td style="text-align:right"><span class="mediumText"><a class="naviBlack" target="_top" href="http://www.zvon.org">ZVON</a>
+                  		&gt;
+                  		<a class="naviBlack" target="_top" href="http://www.zvon.org/index.php?nav_id=tutorials">Tutorials</a>
+                  		&gt;
+                  		<b>XPath Tutorial</b></span></td>
+         </tr>
+      </table>
+      <table xmlns="http://www.w3.org/1999/xhtml" class="bar" width="750px" border="0" cellpadding="0" cellspacing="0">
+         <tr>
+            <td class="naviBlue"><a class="naviWhite" target="_top" href="../General_fre/examples.html">Intro</a> 
+               	/
+               	  <a class="naviWhite" target="_top" href="http://zvon.org/search.php">Chercher</a> 
+               	/
+               	<a class="naviWhite" target="_top" href="http://www.zvon.org"> ZVON </a></td>
+         </tr>
+      </table>
+      <table class="hangingMenu" border="0" cellpadding="1" cellspacing="0" width="100%">
+         <tr>
+            <td><b>&gt;&gt; Exemple 11 &lt;&lt;</b>
+               		|
+               <a class="naviBlack" href="example10.html">Pr&eacute;c&eacute;dent</a>
+               		|
+               <a class="naviBlack" href="example12.html">Suivant</a></td>
+         </tr>
+      </table><br><div class="description">
+         L'axe enfant contient les enfants du noeud contextuel. L'axe enfant est celui par d&eacute;faut et il peut &ecirc;tre omis
+         
+      </div>
+      <div><a name="b9b1b5c25"></a>&nbsp;
+      </div>
+      <table border="1" cellpadding="5" width="85%">
+         <tr>
+            <th>/AAA</th>
+         </tr>
+         <tr>
+            <td>Equivalent &agrave; /child::AAA</td>
+         </tr>
+         <tr>
+            <td class="code">
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">AAA</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">BBB</span>/&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">CCC</span>/&gt;
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="elementOn">AAA</span>&gt;
+               	
+            </td>
+         </tr>
+         <tr>
+            <td><a target="_top" href="http://www.zvon.org:9001/saxon/cgi-bin/XLab/XML/xpatut_11.html?stylesheetFile=XSLT/xpath.xslt&amp;value=/AAA">Ouvrez l'exemple dans XLab</a> | <a href="example11_0_png.html">vue d'arbre (JPG)</a></td>
+         </tr>
+      </table>
+      <div><a name="b9b1b5c27"></a>&nbsp;
+      </div>
+      <table border="1" cellpadding="5" width="85%">
+         <tr>
+            <th>/child::AAA</th>
+         </tr>
+         <tr>
+            <td>Equivalent &agrave; /AAA</td>
+         </tr>
+         <tr>
+            <td class="code">
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">AAA</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">BBB</span>/&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">CCC</span>/&gt;
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="elementOn">AAA</span>&gt;
+               	
+            </td>
+         </tr>
+         <tr>
+            <td><a target="_top" href="http://www.zvon.org:9001/saxon/cgi-bin/XLab/XML/xpatut_11.html?stylesheetFile=XSLT/xpath.xslt&amp;value=/child::AAA">Ouvrez l'exemple dans XLab</a> | <a href="example11_1_png.html">vue d'arbre (JPG)</a></td>
+         </tr>
+      </table>
+      <div><a name="b9b1b5c29"></a>&nbsp;
+      </div>
+      <table border="1" cellpadding="5" width="85%">
+         <tr>
+            <th>/AAA/BBB</th>
+         </tr>
+         <tr>
+            <td>Equivalent &agrave; /child::AAA/child::BBB</td>
+         </tr>
+         <tr>
+            <td class="code">
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">AAA</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BBB</span>/&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">CCC</span>/&gt;
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">AAA</span>&gt;
+               	
+            </td>
+         </tr>
+         <tr>
+            <td><a target="_top" href="http://www.zvon.org:9001/saxon/cgi-bin/XLab/XML/xpatut_11.html?stylesheetFile=XSLT/xpath.xslt&amp;value=/AAA/BBB">Ouvrez l'exemple dans XLab</a> | <a href="example11_2_png.html">vue d'arbre (JPG)</a></td>
+         </tr>
+      </table>
+      <div><a name="b9b1b5c31"></a>&nbsp;
+      </div>
+      <table border="1" cellpadding="5" width="85%">
+         <tr>
+            <th>/child::AAA/child::BBB</th>
+         </tr>
+         <tr>
+            <td>Equivalent &agrave; /AAA/BBB</td>
+         </tr>
+         <tr>
+            <td class="code">
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">AAA</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BBB</span>/&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">CCC</span>/&gt;
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">AAA</span>&gt;
+               	
+            </td>
+         </tr>
+         <tr>
+            <td><a target="_top" href="http://www.zvon.org:9001/saxon/cgi-bin/XLab/XML/xpatut_11.html?stylesheetFile=XSLT/xpath.xslt&amp;value=/child::AAA/child::BBB">Ouvrez l'exemple dans XLab</a> | <a href="example11_3_png.html">vue d'arbre (JPG)</a></td>
+         </tr>
+      </table>
+      <div><a name="b9b1b5c33"></a>&nbsp;
+      </div>
+      <table border="1" cellpadding="5" width="85%">
+         <tr>
+            <th>/child::AAA/BBB</th>
+         </tr>
+         <tr>
+            <td>Les deux possiblilit&eacute;s peuvent &ecirc;tre combin&eacute;es</td>
+         </tr>
+         <tr>
+            <td class="code">
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">AAA</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BBB</span>/&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">CCC</span>/&gt;
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">AAA</span>&gt;
+               	
+            </td>
+         </tr>
+         <tr>
+            <td><a target="_top" href="http://www.zvon.org:9001/saxon/cgi-bin/XLab/XML/xpatut_11.html?stylesheetFile=XSLT/xpath.xslt&amp;value=/child::AAA/BBB">Ouvrez l'exemple dans XLab</a> | <a href="example11_4_png.html">vue d'arbre (JPG)</a></td>
+         </tr>
+      </table>
+      <div><br><br><br><div>_____________________________________________</div>
+         <div><a class="smallBlackLink" target="_top" href="http://zvon.org/php/Search/codes.php">Reference Search</a> |
+            <a class="smallBlackLink" target="_top" href="http://zvon.org/index.php?nav_id=zvonindex">Sitemap</a> |
+            <a class="smallBlackLink" target="_top" href="http://zvon.org/index.php?nav_id=173">XML Glossary</a>
+            &nbsp;&nbsp; &nbsp;&nbsp;
+            <a class="smallBlackLink" target="_top" href="http://www.zvon.org">ZVON</a> |
+            	<a class="smallBlackLink" target="_top" href="http://www.systinet.com">Systinet</a></div>
+      </div>
+      <!--partners-->
+      <!--advertisement-->
+   </body>
+</html>

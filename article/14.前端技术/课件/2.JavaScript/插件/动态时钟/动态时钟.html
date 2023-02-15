@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>动态时钟</title>
+<style type="text/css">
+	#show_div{ width:150px; height:50px; margin:0 auto; background-color:#9F0; text-align:center; line-height:50px;}
+	
+</style>
+</head>
+<body>
+<script type="text/javascript">
+//*********************************定时器一***************************************
+//页面加载完成后自动开始显示时间
+window.onload=nowtime;//如果不加这句话，则动态时钟会在1000毫秒的固定时间是出现在页面上
+var jishi = setInterval("nowtime()",1000);
+//手动开始显示时间
+function gotime(){
+	jishi = setInterval("nowtime()",1000);
+}
+//停止循环定时器做动态时钟
+function shoptime() {
+	clearInterval(jishi);
+	document.getElementById("go").disabled = false;		
+}
+//循环定时器做动态时钟
+function nowtime(){
+	document.getElementById("go").disabled = true;	
+	var mytime = new Date();
+	var hh = mytime.getHours();
+	var mm = mytime.getMinutes();
+	var ss = mytime.getSeconds();
+	var show_time = document.getElementById("show_div");
+	show_time.innerHTML=hh+":"+mm+":"+ss;
+}
+
+</script>
+<div id="show_div"></div>
+<input type="button" value="时间静止" id="go" onclick="shoptime()"/>
+<input type="button" value="时间开始" onclick="gotime()"/>
+
+</body>
+</html>

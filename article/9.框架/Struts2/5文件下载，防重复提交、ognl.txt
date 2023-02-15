@@ -1,0 +1,205 @@
+一、文件的下载(文件的上传与下载要分别写在不同的action中，两者的原理上有冲突的地方)
+	1。<a href="指向被下载的文件"> 缺点是有些浏览器可以解析某些文件，导致直接打开文件。
+	
+	2。servlet下载。
+		根据浏览器的不同，文件名中文乱码。浏览器区别，整体的代码如下
+===========================================================================================================		
+		request.setCharacterEncoding("utf-8");
+		response.setContentType("text/html;charset=utf=8");
+		// 获得文件的名称
+		String fileName = new String(request.getParameter("fileName").getBytes("ISO-8859-1"),"utf-8");
+		// 获得下载文件所在的绝对路径
+		String filePaht = this.getServletContext().getRealPath("/load");
+		// 创建file对象
+		File file = new File(filePaht, fileName);
+		// 读入输入流
+		InputStream is = new FileInputStream(file);
+		// 设置两个头
+		String mimeType = this.getServletContext().getMimeType(fileName);
+		// 设置文件的类型
+		response.setContentType(mimeType);
+		// 设置以附件的形式打开
+		/*===========处理中文乱码===========*/
+		// 1.获得浏览器信息
+		String agent = request.getHeader("User-Agent");
+		// 2. 判断浏览器
+		if(agent.contains("Firefox")){//   火狐
+			fileName = "=?UTF-8?B?"+new BASE64Encoder().encode(fileName.getBytes("utf-8"))+"?=";
+			response.setHeader("Content-Disposition", "attachment;filename="+fileName);
+		} else {//IE等其他浏览器	
+			response.setHeader("Content-Disposition", "attachment;filename="+URLEncoder.encode(fileName,"UTF-8"));
+		}		
+		// 创建输出流
+		OutputStream os = response.getOutputStream();
+		// 开始输出
+		int a = 0;
+		byte[] b = new byte[1024];
+		while((a = is.read(b))>0){
+			os.write(b);
+		}
+		os.close();
+		is.close();
+===========================================================================================================			
+	3。struts2下载。
+		是对servlet的高层封装。结构类型是stream，向浏览器发送InputSream对象，通常用来处理文件下载		
+		注意：在action中基础actionsuppot;2.必写execute(),且是空返回success
+	步骤一：通过InputStream 把 服务器上被下载的文件读入，这个方法默认使用 getInputStream这个名字，我们可以去修改	
+			配置文件中多加配置   <param name="inputName" >downloadFile</param>
+================================================Java代码==================================================			
+		private String fileName;
+		// 封装器
+		public String getFileName() throws Exception {
+			// 根据浏览器不同，经行中文处理，因为fileName在程序中传递时编码会改变,所有，需要在获得这个文件名的时候，对其经行处理
+			HttpServletRequest request = ServletActionContext.getRequest();
+
+			String agent = request.getHeader("User-Agent");
+
+			if (agent.contains("Firefox")) {
+				fileName = "=?UTF-8?B?"
+						+ new BASE64Encoder().encode(fileName.getBytes("utf-8"))
+						+ "?=";
+			} else {
+				fileName = URLEncoder.encode(fileName, "UTF-8");
+			}
+			return fileName;
+		}
+
+		public void setFileName(String fileName) {
+			this.fileName = fileName;
+		}
+
+		// 获得文件的格式
+		public String getContentType() {
+
+			ServletContext sc = ServletActionContext.getServletContext();
+
+			String mimeType = sc.getMimeType(fileName);
+
+			return mimeType;
+		}
+
+		@Override
+		public String execute() throws Exception {// 虽然这个方法中什么都没做，但一定要有
+			return SUCCESS;
+		}
+		//文件下载
+		public InputStream getDownLoad() throws Exception {
+			// String path =
+			// ServletActionContext.getServletContext().getRealPath("/upload");
+			// InputStream is = new FileInputStream(path+"/"+this.fileName);
+			// return is;
+
+			return ServletActionContext.getServletContext().getResourceAsStream(
+					"/upload/" + this.fileName);
+		}
+===========================================================================================================			
+	步骤二、向客户端写数据      ----- 不需要在Action中进行编程， 要在配置文件中配置
+		<action name="DownLoadAction" class="com.web.action.DownLoadAction">
+			<result type="stream">
+				<param name="contentType">${contentType}</param>
+				<param name="contentDisposition">attmchment;fileName=${fileName}</param>
+				<param name="inputName">downLoad</param>
+			</result>			
+		</action>
+	步骤三、解决 中文文件乱码  在getFileName()方法中处理
+------------------------------------------
+二、防止表单重复提交：
+	原理：一个页面在进入的时候，这个令牌会生成一个唯一的ID，当提交的时候，拦截器会参看这个ID，第一次提交的时候，服务器中没有这个ID，就可以
+	提交，而之后的提交，拦截器会检测到服务器段已经有这个ID了，就拦截信息，并返回提示信息.
+	使用token   令牌
+	步骤：
+	1,在表单内部添加struts的标签	
+		<form>
+			<s:token></s:token>
+		</form>
+	2,struts.xml的配置
+		<action>
+			<result name="success">/index.jsp</result>
+			<interceptor-ref name="token"></interceptor-ref>  
+			<interceptor-ref name="defaultStack"></interceptor-ref> 
+			<result name="invalid.token">/index.jsp</result>  发生重复提交时，跳转的路径
+		</action>
+	
+	3,提示语，定义新的属性文件覆盖,<s:actionerror/>
+		struts.messages.invalid.token=已经提交成功，无需重复提交
+		
+	注意：在struts中有两个领令牌，token，tokenSession,单一般都只使用token，即可
+
+-------------------------------------------------------------------------------------
+三、OGNL
+	OGNL是从ActionContext中获取数据的。
+	
+	1.ActionContext的结构：
+		(1).ValueStack：
+			List：动作类放在此处。取存放在ValueStack中的root的对象的属性，直接写即可
+			访问以下内容中的对象要使用#+(范围)session
+		(2).application：ServletContext中的那个Map
+		(3).session：HttpSession中的那个Map
+		(4).request：ServletRequest中的那个Map
+		(5).parameters：请求参数的那个Map。（如同EL表达式的paramValues内置对象）
+		(6).attr：相当于PageContext的findAttribute方法。${username}
+	
+	小技巧：在页面中使用<s:debug/>查看上下文中的对象
+
+    2.ValueStack(值栈)：  struts2提供的数据结构(存值和取值)
+	 
+	3.如何去访问ValueStack中的值---- 要使用OGNL表达式和Struts2的标签结合来访问 valuestack中的值
+		每一个Action对象都会对应一个ValueStack对象   
+		在这个和Action对象相关的ValueStack对象中保存了 这个Action对象以及和这个Action对象相关的其他对象	  
+		Struts2 把Action对象对应的ValueStack对象保存在了request中  "struts.valueStack"	 
+	 
+    4.ValueStack的存储结构:
+	    root
+		context
+	/*
+	 * ValueStack 是接口       OgnlValueStack
+	 * 
+	 * 每个Action对象都会对应一个ValueStack对象
+	 * 
+	 * struts2 把 这个ValueStack对象 存入了 request中  "struts.valueStack"
+	 * 
+	 * ValueStack的存储结构：
+	 * 
+	 *          ValueStack 主要分为两个部分
+	 *          
+	 *          
+	 *                     1 root    ：是一个ArrayList结构 （实现了栈的特点）
+	 *                     
+	 *                                把当前Action对象存入这个栈中
+	 *                     
+	 *                     
+	 *                     2 context ：是一个Map结构  
+	 *                     
+	 *                                存储和当前Action相关的其他对象
+	 *                                
+	 *                                request
+	 *                                session
+	 *                                application
+	 *                                parameters
+	 *                                attr             （从 request session application 中查找 找到为止）
+	 *                                _root   指向了上面的root
+	 * 
+	 * OGNL访问  ValueStack中的数据
+	 * 
+	 * root中的数据            直接使用ognl访问
+	 * 
+	 * context中的数据     #key.
+	 * 
+	 * OGNL在运行时需要一个根对象，而在struts2中 把ValueStack中的root部分作为OGNL的根对象
+	 * 
+	 * OGNL访问根对象时，可以直接访问，而访问非根对象时，需要使用#
+	 * 
+	 * */
+
+
+
+
+
+
+
+
+
+
+
+
+		 

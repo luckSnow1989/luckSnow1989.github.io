@@ -1,0 +1,153 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" type="text/css" href="../CSS/tutorial.css">
+      <title>XPath Tutorial</title>
+      <link rel="index" href="index.html">
+      <link rel="previous" href="example7.html">
+      <link rel="next" href="example9.html">
+   </head>
+   <body>
+      <table xmlns="http://www.w3.org/1999/xhtml" width="100%">
+         <tr>
+            <td><span class="mediumText"><a class="naviBlack" target="_self" href="../Output/example8.html">English</a> | <a class="naviBlack" target="_self" href="../Output_cze/example8.html">česky</a> | <a class="naviBlack" target="_self" href="../Output_dut/example8.html">Nederlands</a> | <a class="naviBlack" target="_self" href="../Output_fre/example8.html">Fran&ccedil;ais</a> | <a class="naviBlack" target="_self" href="../Output_spa/example8.html">Espa&ntilde;ol</a> | <a class="naviBlack" target="_self" href="../Output_rus/example8.html">По-русски</a> | <b>&gt;&gt;&nbsp;Deutsch&nbsp;&lt;&lt;</b> | <a class="naviBlack" target="_self" href="../Output_chi/example8.html">中文</a> | <a class="naviBlack" target="_self" href="../Output_ita/example8.html">Italiano</a></span></td>
+            <td style="text-align:right"><span class="mediumText"><a class="naviBlack" target="_top" href="http://www.zvon.org">ZVON</a>
+                  		&gt;
+                  		<a class="naviBlack" target="_top" href="http://www.zvon.org/index.php?nav_id=tutorials">Tutorials</a>
+                  		&gt;
+                  		<b>XPath Tutorial</b></span></td>
+         </tr>
+      </table>
+      <table xmlns="http://www.w3.org/1999/xhtml" class="bar" width="750px" border="0" cellpadding="0" cellspacing="0">
+         <tr>
+            <td class="naviBlue"><a class="naviWhite" target="_top" href="../General_ger/examples.html">Intro</a> 
+               	/
+               	  <a class="naviWhite" target="_top" href="http://zvon.org/search.php">Suchen</a> 
+               	/
+               	<a class="naviWhite" target="_top" href="http://www.zvon.org"> ZVON </a></td>
+         </tr>
+      </table>
+      <table class="hangingMenu" border="0" cellpadding="1" cellspacing="0" width="100%">
+         <tr>
+            <td><b>&gt;&gt; Beispiel 8 &lt;&lt;</b>
+               		|
+               <a class="naviBlack" href="example7.html">Vorheriges</a>
+               		|
+               <a class="naviBlack" href="example9.html">N&auml;chstes</a></td>
+         </tr>
+      </table><br><div class="description">Die Funktion "name()" gibt den Namen des Elements zur&uuml;ck. Die Funktion "starts-with()" gibt "true" zur&uuml;ck falls der String
+         des ersten Arguments mit dem String des zweiten Arguments startet. Die Funktion "contains()" gibt "true" zur&uuml;ck falls der
+         String des ersten Arguments den String des zweiten Arguments beinhaltet.
+      </div>
+      <div><a name="b9b1c41c27"></a>&nbsp;
+      </div>
+      <table border="1" cellpadding="5" width="85%">
+         <tr>
+            <th>//*[name()='BBB']</th>
+         </tr>
+         <tr>
+            <td>W&auml;hle alle Elemente mit dem Namen BBB aus. Entspricht //BBB</td>
+         </tr>
+         <tr>
+            <td class="code">
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">AAA</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">BCC</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BBB</span>/&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BBB</span>/&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BBB</span>/&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">BCC</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">DDB</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BBB</span>/&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BBB</span>/&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">DDB</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">BEC</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">CCC</span>/&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">DBD</span>/&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">BEC</span>&gt;
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">AAA</span>&gt;
+               	
+            </td>
+         </tr>
+         <tr>
+            <td><a target="_top" href="http://www.zvon.org:9001/saxon/cgi-bin/XLab/XML/xpatut_8.html?stylesheetFile=XSLT/xpath.xslt&amp;value=//*[name()='BBB']">&Ouml;ffne das Beispiel in XLab.</a> | <a href="example8_0_png.html">Baumansicht (JPG)</a></td>
+         </tr>
+      </table>
+      <div><a name="b9b1c41c29"></a>&nbsp;
+      </div>
+      <table border="1" cellpadding="5" width="85%">
+         <tr>
+            <th>//*[starts-with(name(),'B')]</th>
+         </tr>
+         <tr>
+            <td>W&auml;hle alle Elemente aus, deren Name mit dem Buchstaben B beginnt</td>
+         </tr>
+         <tr>
+            <td class="code">
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">AAA</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BCC</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BBB</span>/&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BBB</span>/&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BBB</span>/&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="elementOn">BCC</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">DDB</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BBB</span>/&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BBB</span>/&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">DDB</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BEC</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">CCC</span>/&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">DBD</span>/&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="elementOn">BEC</span>&gt;
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">AAA</span>&gt;
+               	
+            </td>
+         </tr>
+         <tr>
+            <td><a target="_top" href="http://www.zvon.org:9001/saxon/cgi-bin/XLab/XML/xpatut_8.html?stylesheetFile=XSLT/xpath.xslt&amp;value=//*[starts-with(name(),'B')]">&Ouml;ffne das Beispiel in XLab.</a> | <a href="example8_1_png.html">Baumansicht (JPG)</a></td>
+         </tr>
+      </table>
+      <div><a name="b9b1c41c31"></a>&nbsp;
+      </div>
+      <table border="1" cellpadding="5" width="85%">
+         <tr>
+            <th>//*[contains(name(),'C')]</th>
+         </tr>
+         <tr>
+            <td>W&auml;hle alle Elemente aus, deren Namen den Buchstaben C enth&auml;lt</td>
+         </tr>
+         <tr>
+            <td class="code">
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">AAA</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BCC</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">BBB</span>/&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">BBB</span>/&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">BBB</span>/&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="elementOn">BCC</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">DDB</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">BBB</span>/&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">BBB</span>/&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">DDB</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BEC</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">CCC</span>/&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">DBD</span>/&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="elementOn">BEC</span>&gt;
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">AAA</span>&gt;
+               	
+            </td>
+         </tr>
+         <tr>
+            <td><a target="_top" href="http://www.zvon.org:9001/saxon/cgi-bin/XLab/XML/xpatut_8.html?stylesheetFile=XSLT/xpath.xslt&amp;value=//*[contains(name(),'C')]">&Ouml;ffne das Beispiel in XLab.</a> | <a href="example8_2_png.html">Baumansicht (JPG)</a></td>
+         </tr>
+      </table>
+      <div><br><br><br><div>_____________________________________________</div>
+         <div><a class="smallBlackLink" target="_top" href="http://zvon.org/php/Search/codes.php">Reference Search</a> |
+            <a class="smallBlackLink" target="_top" href="http://zvon.org/index.php?nav_id=zvonindex">Sitemap</a> |
+            <a class="smallBlackLink" target="_top" href="http://zvon.org/index.php?nav_id=173">XML Glossary</a>
+            &nbsp;&nbsp; &nbsp;&nbsp;
+            <a class="smallBlackLink" target="_top" href="http://www.zvon.org">ZVON</a> |
+            	<a class="smallBlackLink" target="_top" href="http://www.systinet.com">Systinet</a></div>
+      </div>
+      <!--partners-->
+      <!--advertisement-->
+   </body>
+</html>

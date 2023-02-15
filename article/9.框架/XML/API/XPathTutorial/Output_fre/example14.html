@@ -1,0 +1,129 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" type="text/css" href="../CSS/tutorial.css">
+      <title>XPath Tutorial</title>
+      <link rel="index" href="index.html">
+      <link rel="previous" href="example13.html">
+      <link rel="next" href="example15.html">
+   </head>
+   <body>
+      <table xmlns="http://www.w3.org/1999/xhtml" width="100%">
+         <tr>
+            <td><span class="mediumText"><a class="naviBlack" target="_self" href="../Output/example14.html">English</a> | <a class="naviBlack" target="_self" href="../Output_cze/example14.html">česky</a> | <a class="naviBlack" target="_self" href="../Output_dut/example14.html">Nederlands</a> | <b>&gt;&gt;&nbsp;Fran&ccedil;ais&nbsp;&lt;&lt;</b> | <a class="naviBlack" target="_self" href="../Output_spa/example14.html">Espa&ntilde;ol</a> | <a class="naviBlack" target="_self" href="../Output_rus/example14.html">По-русски</a> | <a class="naviBlack" target="_self" href="../Output_ger/example14.html">Deutsch</a> | <a class="naviBlack" target="_self" href="../Output_chi/example14.html">中文</a> | <a class="naviBlack" target="_self" href="../Output_ita/example14.html">Italiano</a></span></td>
+            <td style="text-align:right"><span class="mediumText"><a class="naviBlack" target="_top" href="http://www.zvon.org">ZVON</a>
+                  		&gt;
+                  		<a class="naviBlack" target="_top" href="http://www.zvon.org/index.php?nav_id=tutorials">Tutorials</a>
+                  		&gt;
+                  		<b>XPath Tutorial</b></span></td>
+         </tr>
+      </table>
+      <table xmlns="http://www.w3.org/1999/xhtml" class="bar" width="750px" border="0" cellpadding="0" cellspacing="0">
+         <tr>
+            <td class="naviBlue"><a class="naviWhite" target="_top" href="../General_fre/examples.html">Intro</a> 
+               	/
+               	  <a class="naviWhite" target="_top" href="http://zvon.org/search.php">Chercher</a> 
+               	/
+               	<a class="naviWhite" target="_top" href="http://www.zvon.org"> ZVON </a></td>
+         </tr>
+      </table>
+      <table class="hangingMenu" border="0" cellpadding="1" cellspacing="0" width="100%">
+         <tr>
+            <td><b>&gt;&gt; Exemple 14 &lt;&lt;</b>
+               		|
+               <a class="naviBlack" href="example13.html">Pr&eacute;c&eacute;dent</a>
+               		|
+               <a class="naviBlack" href="example15.html">Suivant</a></td>
+         </tr>
+      </table><br><div class="description">
+         l'axe anc&ecirc;tre (ancestor) contient les anc&ecirc;tres du noeud contextuel; cela comprend son parent et les parents des parents etc...
+         Aussi, cet axe contient toujours le noeud racine, sauf si le noeud contextuel est lui-m&ecirc;me la racine.
+         
+      </div>
+      <div><a name="b9b1c11c25"></a>&nbsp;
+      </div>
+      <table border="1" cellpadding="5" width="85%">
+         <tr>
+            <th>/AAA/BBB/DDD/CCC/EEE/ancestor::*</th>
+         </tr>
+         <tr>
+            <td>S&eacute;l&eacute;ctionne tous les &eacute;l&eacute;ments donn&eacute;s dans ce chemin absolu</td>
+         </tr>
+         <tr>
+            <td class="code">
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">AAA</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">BBB</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">DDD</span>&gt;
+               					<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">CCC</span>&gt;
+               						<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">DDD</span>/&gt;
+               						<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">EEE</span>/&gt;
+               					<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="elementOn">CCC</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="elementOn">DDD</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="elementOn">BBB</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">CCC</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">DDD</span>&gt;
+               					<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">EEE</span>&gt;
+               						<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">DDD</span>&gt;
+               							<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">FFF</span>/&gt;
+               						<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">DDD</span>&gt;
+               					<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">EEE</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">DDD</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">CCC</span>&gt;
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="elementOn">AAA</span>&gt;
+               	
+            </td>
+         </tr>
+         <tr>
+            <td><a target="_top" href="http://www.zvon.org:9001/saxon/cgi-bin/XLab/XML/xpatut_14.html?stylesheetFile=XSLT/xpath.xslt&amp;value=/AAA/BBB/DDD/CCC/EEE/ancestor::*">Ouvrez l'exemple dans XLab</a> | <a href="example14_0_png.html">vue d'arbre (JPG)</a></td>
+         </tr>
+      </table>
+      <div><a name="b9b1c11c27"></a>&nbsp;
+      </div>
+      <table border="1" cellpadding="5" width="85%">
+         <tr>
+            <th>//FFF/ancestor::*</th>
+         </tr>
+         <tr>
+            <td>S&eacute;l&eacute;ctionne tous les anc&ecirc;tres de l'&eacute;l&eacute;ment FFF</td>
+         </tr>
+         <tr>
+            <td class="code">
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">AAA</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">BBB</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">DDD</span>&gt;
+               					<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">CCC</span>&gt;
+               						<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">DDD</span>/&gt;
+               						<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">EEE</span>/&gt;
+               					<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">CCC</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">DDD</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="element">BBB</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">CCC</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">DDD</span>&gt;
+               					<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">EEE</span>&gt;
+               						<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="elementOn">DDD</span>&gt;
+               							<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="element">FFF</span>/&gt;
+               						<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="elementOn">DDD</span>&gt;
+               					<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="elementOn">EEE</span>&gt;
+               				<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="elementOn">DDD</span>&gt;
+               			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="elementOn">CCC</span>&gt;
+               		<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="elementOn">AAA</span>&gt;
+               	
+            </td>
+         </tr>
+         <tr>
+            <td><a target="_top" href="http://www.zvon.org:9001/saxon/cgi-bin/XLab/XML/xpatut_14.html?stylesheetFile=XSLT/xpath.xslt&amp;value=//FFF/ancestor::*">Ouvrez l'exemple dans XLab</a> | <a href="example14_1_png.html">vue d'arbre (JPG)</a></td>
+         </tr>
+      </table>
+      <div><br><br><br><div>_____________________________________________</div>
+         <div><a class="smallBlackLink" target="_top" href="http://zvon.org/php/Search/codes.php">Reference Search</a> |
+            <a class="smallBlackLink" target="_top" href="http://zvon.org/index.php?nav_id=zvonindex">Sitemap</a> |
+            <a class="smallBlackLink" target="_top" href="http://zvon.org/index.php?nav_id=173">XML Glossary</a>
+            &nbsp;&nbsp; &nbsp;&nbsp;
+            <a class="smallBlackLink" target="_top" href="http://www.zvon.org">ZVON</a> |
+            	<a class="smallBlackLink" target="_top" href="http://www.systinet.com">Systinet</a></div>
+      </div>
+      <!--partners-->
+      <!--advertisement-->
+   </body>
+</html>

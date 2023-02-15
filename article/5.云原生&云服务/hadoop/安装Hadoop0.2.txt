@@ -1,0 +1,270 @@
+第一步：安装linux系统
+
+第二步：创建root用户
+	1 sudo passwd root
+	2 输入密码和确认
+	3 注销系统并用ROOT重新登录即可
+	
+第三步：安装ssh
+	一、Ubuntu安装使用SSH
+		ubuntu默认并没有安装ssh服务，如果通过ssh链接ubuntu，需要自己手动安装ssh-server。判断是否安装ssh服务，可以通过如下命令进行：
+
+		1. 	命令：ssh localhost   
+			结果：ssh: connect to host localhost port 22: Connection refused   
+			如上所示，表示没有还没有安装，可以通过apt安装
+
+		2. 	命令：sudo apt-get install openssh-server  
+			系统将自动进行安装，安装完成以后。
+
+		3. 	命令：sudo /etc/init.d/ssh start  
+			启动服务。
+
+		4. 	命令： ps -e|grep ssh   
+			6212 ?        00:00:00 sshd  
+			可以通过如下命令查看服务是否正确启动
+
+		5.	如上表示启动ok。注意，ssh默认的端口是22，可以更改端口，更改后先stop，
+			然后start就可以了。改配置在/etc/ssh/sshd_config下，如下所示。
+			
+			命令： vi /etc/ssh/sshd_config   
+			# Package generated configuration file   
+			# See the sshd(8) manpage for details   
+			# What ports, IPs and protocols we listen for  
+			Port 22  
+
+		6.最后，应该是连接的时候了。请看如下命令：
+			命令： ssh zhanguxe@192.168.158.129  
+
+	二、Red Hat Linux上安装使用SSH 
+		在Red Hat Linux上的发行版本中大多已经包含了与OpenSSH相关的软件包，如果没有，则可以OpenSSH的主页下载RPM包自行安装，
+		OpenSSH的主页是地址是: www.openssh.com。主要安装如下几个包:
+
+		openssh-3.5p1-6、openssh-server-3.5p1-6
+		openssh-askpass-gnome-3.5p1-6
+		openssh-clients-3.5p1-6
+		openssh-askpass-3.5p1-6
+
+		使用如下命令进行安装: 
+		1.	首先查询系统是否安装了上述软件包。
+			# pm －qa |grep openssh   
+
+		2.	如果没有安装则执行如下命令。
+			# rpm －ivh openssh-3.5p1-6   
+			# rpm －ivh openssh-server-3.5p1-6   
+			# rpm －ivh openssh-askpass-gnome-3.5p1-6   
+			# rpm －ivh openssh-clients-3.5p1-6   
+			# rpm －ivh openssh-askpass-3.5p1-6  
+
+		3.	安装完成之后，可以使用下述两个命令中的任一个进行启动。
+			# service sshd start   
+			# /etc/rc.d/init.d/sshd start   
+
+		4.	另外，如果想在系统启动时就自动运行该服务，那么需要使用setup命令，在system service的选项中，选中sshd守护进程即可。 
+			安装启动完OpenSSH之后，用下面命令测试一下。
+			# ssh -l [username] [address of the remote host]  
+
+			说明:
+			[username]　为远程主机的用户名
+			[address of the remote host]　为远程主机的地址
+
+		5.	如果OpenSSH工作正常，将会看到下面的提示信息: 
+			The authenticity of host [hostname] can't be established. 
+			Key fingerprint is 1024 5f:a0:0b:65:d3:82:df:ab:44:62:6d:98:9c:fe:e9:52. 
+			Are you sure you want to continue connecting (yes/no)? 
+			
+			在第一次登录的时候，OpenSSH将会提示用户它不知道这台登录的主机，只要键入“yes”，就会把这台登录主机的“识别标记”加到“~/.ssh/know_hosts”文件中。
+			第二次访问这台主机的时候就不会再显示这条提示信息了。然后，SSH提示用户输入远程主机上用户账号的口令。这样，就建立了SSH连接，
+			这之后就可以象使用telnet那样方便地使用SSH了。 
+			
+第四步：安装JDK
+	1.下载jdk.tar.gz
+	2.传输压缩包到/usr/local目录下
+	3.解压缩：tar.gz文件	tar -zxvf /usr/local/jdk1.7.40.tar.gz
+	4.修改文件夹名称：mv jdk1.7.40  jdk
+	5.设置环境变量，执行vi  /etc/profile
+		关于文本编辑软件：
+			字符界面下使用vi或vim进行编辑，命令形式：vi /etc/profile
+			图形界面下可用gedit进行编辑，命令形式：gedit /etc/profile
+				
+				export JAVA_HOME=/usr/local/jdk
+				export JAVA_BIN=/usr/local/jdk/bin
+				export PATH=$PATH:$JAVA_HOME/bin
+				export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+				export JAVA_HOME JAVA_BIN PATH CLASSPATH
+			
+			保存退出
+				
+	6.立即生效 source  /etc/profile
+	7.验证成功：执行java -version	
+
+第五步：下载Hadoop-0.20.2.tar.gz
+
+第六步：解压到/home/zhangxue/下
+	tar -zxvf Hadoop-0.20.2.tar.gz
+
+第七步：修改Hadoop配置文件/Hadoop-0.20.2/conf/
+	1. hadoop-env.sh
+		在最上边添加一行或是修改
+		export JAVA_HOME=/usr/local/jdk
+	
+	2.core-site.xml		ip为主机,9000是经常使用的端口
+		<configuration>
+			<property>
+				<name>fs.default.name</name>
+				<value>hdfs://192.168.159.128:9000</value>
+			</property>
+		</configuration>
+			
+			
+	3.hdfs-site.xml		hdfs文件存储的位置，和节点的个数		
+			
+		<configuration>
+			<property>
+				<name>dfs.data.dir</name>
+				<value>/home/zhangxue/hadoop-0.20.2/data/</value>
+			</property>
+			<property>
+				<name>dfs.replication</name>
+				<value>3</value>
+			</property>			
+		</configuration>	
+			
+	4.mapred-site.xml		
+		<configuration>
+			<property>
+				<name>mapred.job.tracker</name>
+				<value>192.168.159.128:9001</value>
+			</property>
+		</configuration>
+	
+	5.master文件
+	master
+	
+	6.slaves文件
+	node1
+	node2
+	node3
+
+第八步：配置hosts文件
+	/etc/hosts
+	192.168.159.128 master
+	192.168.159.129 node1
+	192.168.159.130 node2
+	192.168.159.131 node3
+
+		
+第九步：生成ssh密钥对（在使用Hadoop用户登录，在这个用户的主目录下，例如：/home/zhangxue）
+	每个服务器节点都进行以下操作。
+	1.ssh-keygen -t rsa			
+	2.cd .ssh
+	3.cp id_rsa.pub authorized_keys
+	4.将authorized_keys的内容相互复制到其他的的authorized_keys中
+
+第十步：将配置好的Hadoop-0.20.2复制到其他的服务器节点上
+	scp -r Hadoop-0.20.2	zhangxue@node1:/home/zhangxue
+	scp -r Hadoop-0.20.2	zhangxue@node2:/home/zhangxue		
+	scp -r Hadoop-0.20.2	zhangxue@node3:/home/zhangxue
+
+第十一步：格式分布式文件系统（产生的文件在/tmp/下，每次启动系统的时候都需要生成格式化文件）
+	Hadoop-0.20.2/bin/hadoop namenode -format
+	
+第十二步：启动
+	1.启动守护线程:Hadoop-0.20.2/bin/start-all.sh
+	
+	2.查看守护线程进程的启动情况：/usr/local/jdk/bin/jps
+	masert:出现4个
+	5722 	JobTracker
+	5503 	NameNode
+	5657	SecondaryNameNode
+	5821	Jps
+	node:出现3个
+	5437 	DataNode
+	5503 	TaskTracker
+	5821	Jps
+	3.关闭线程：Hadoop-0.20.2/bin/stop-all.sh
+	
+	
+第十三步：测试功能
+	1.创建两个txt文件，用来测试
+		
+		mkdir input;
+		cd input;
+		echo "hellow world" > test1.txt;
+		echo "hellow hadoop" > test2.txt;
+		
+	2.将文件放入待作业的文件夹下	
+		hadoop-0.20.2/bin/hadoop dfs -put ./input in;	
+	
+	3.使用Hadoop的案例，操作文件。
+		bin/hadoop jar hadoop-0.20.2-examples.jar wordcount in out	
+			
+	4.查看dfs的文件目录
+		bin/hadoop dfs -ls		
+		结果：	
+		drwxr-xr-x   - zhangxue supergroup          0 2016-10-23 20:15 /user/zhangxue/in
+		drwxr-xr-x   - zhangxue supergroup          0 2016-10-23 20:22 /user/zhangxue/out	
+			
+	5.查看输出文件
+		bin/hadoop dfs -ls out
+		结果：	
+		drwxr-xr-x   - zhangxue supergroup          0 2016-10-23 20:22 /user/zhangxue/out/_logs
+		-rw-r--r--   3 zhangxue supergroup         26 2016-10-23 20:22 /user/zhangxue/out/part-r-00000	
+			
+	6.查看执行结果		
+		bin/hadoop dfs -cat out/part-r-00000
+		结果：
+		hadoop	1
+		hellow	2
+		world	1	
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			

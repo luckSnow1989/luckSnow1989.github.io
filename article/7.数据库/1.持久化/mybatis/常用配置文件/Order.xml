@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itcast.mybatis.domain.Order">
+
+	<resultMap type="cn.itcast.mybatis.domain.Order" id="orderMap">
+		<id column="orderId" property="oid"/>
+		<result column="orderNo" property="oNO"/>
+		<result column="orderPrice" property="oPrice"/>
+		
+		<!-- 多对一 -->
+		<association property="p" javaType="cn.itcast.mybatis.domain.Person">
+			<id column="personId" property="id"/>
+			<result column="personName" property="name"/>
+			<result column="personAddress" property="address"/>
+		</association>
+	</resultMap>
+	
+	<select id="selectOrderById" parameterType="string" resultMap="orderMap">
+		select o.*,p.* from orders o,person p where o.pid = p.personId and o.orderId = #{oid}
+	</select>
+</mapper>

@@ -1,0 +1,89 @@
+<!DOCTYPE frontPage [
+	<!ENTITY languageMenu SYSTEM "../Data/languageLabels.inc">
+]>
+<frontPage lang="ger" xmlns:html="http://www.w3.org/TR/REC-html40" idref="z19991208">
+	<menu>
+		<items>
+			<a id="index" target="_top" class="naviBlack" href="../Output_ger/example1.html">Start</a>
+			<a id="index" target="_top" class="naviBlack" href="../General_ger/examples.html">Index</a>
+		</items>
+	</menu>
+	<languageMenu>
+     &languageMenu;
+  </languageMenu>
+	<head>
+		<author id="nicmila"/>
+		<author id="jiratj"/>
+		<translator id="samar"/>
+		<title>XPath Tutorial</title>
+	</head>
+	<body>
+		<section>
+			<title>Einleitung</title>
+			<para>
+XPath wird in <html:a href="http://www.w3.org/TR/xpath">XPath 1.0 standard</html:a> beschrieben. In diesem Tutorial werden ausgewählte XPath Eigenschaften anhand vieler Beispiele erklärt.
+</para>
+		</section>
+		<section>
+			<para>Sie können mit folgendem beginnen:</para>
+			<list>
+				<item>
+					<html:a href="../Output_ger/example1.html">Beispiel 1</html:a>
+				</item>
+			</list>
+			<para>oder aber von der linken Seitenleiste.</para>
+		</section>
+		<section>
+			<title>Siehe auch</title>
+			<list>
+				<item>
+					<html:a href="http://www.zvon.org:9001/saxon/cgi-bin/XLab/XML/xlabIndex.html?stylesheetFile=XSLT/xlabIndex.xslt">XLab</html:a> - interactive XPath experiments
+    </item>
+				<item>
+					<link idref="z19991207">XML tutorial</link>
+				</item>
+				<item>
+					<link idref="z19991203">DTD tutorial</link>
+				</item>
+				<item>
+					<link idref="z20000810d">XML namespace tutorial</link>
+				</item>
+				<item>
+					<link idref="z20001220">XHTML 1.0 reference</link>
+				</item>
+				<item>
+					<link idref="z20001221">XHTML Basic reference</link>
+				</item>
+			</list>
+		</section>
+		<zvonXSLT/>
+		<section>
+			<title>Credits</title>
+			<list>
+				<item>Miloslav Nic - Programmierung und Beispiele</item>
+				<item>Jiri Jirat - Baumansicht der Beispiele</item>
+			</list>
+		</section>
+		<keywords/>
+		<zvon/>
+		<downloads/>
+	</body>
+	<appendix>
+		<referrer id="XPath+Tutorial"/>
+		<copyright id="systinet" year="2000"/>
+		<zvonLink id="zvonLink1"/>
+		<licence id="FDL"/>
+		<licence id="GPL"/>
+		<program id="saxon"/>
+		<program id="python"/>
+		<program id="batik"/>
+	</appendix>
+
+	<indexFrame upbarlink="../Output/_upbar.html" file="Output_ger/index.html">
+		<links/>
+		<frameset cols="250,*">
+			<frame name="mainIndex" src="../Output_ger/examples.html"/>
+			<frame name="mainWindow" src="../Output_ger/introduction.html"/>
+		</frameset>
+	</indexFrame>
+</frontPage>

@@ -1,0 +1,171 @@
+==数据库规范
+
+表：
+1、数据库建表的时候，表名为业务名+业务后缀，业务后缀有： 权限_P 基础_B 业务_C
+
+	新建项目，权限_P 基础_B 可以复用。
+2、字段
+
+1）主键
+	int
+	long
+	varchar
+主键推荐使用varchar(40) uuid
+整合时，可以直接合并数据，而不会担心冲突。
+
+2）表的主键 表名+ID，注意表名去掉业务后缀
+3）感觉和关键字重复，就加C 例如：CNOTE 
+
+3、少用约束、少用默认值、少用触发器、少用存储过程。
+4、开发阶段创建表时，不加关联；系统上线稳定运行后，再加入表之间的关联。方便变更和维护。
+5、权限字段，过滤数据
+
+创建人		CREATE_BY		varchar(40)
+创建部门	CREATE_DEPT		varchar(40)
+创建日期	CREATE_TIME		datetime
+
+
+==映射文件
+
+转换一个字段值，对象未关联
+
+		<property name="typeName" type="string"
+			 formula="(SELECT t.NAME FROM text_code_c t WHERE t.text_code_id=ctype and t.class_code_id='402881e43f3ba2ab013f3ba3b4c40002')"
+			 insert="false" update="false"/>
+
+映射类型：
+		<property name="offeror" type="string" column="OFFEROR"/>
+		<property name="signingDate" type="timestamp" column="SIGNING_DATE"/>
+		<property name="totalAmount" type="big_decimal" column="TOTAL_AMOUNT"/>
+		<property name="importNum" type="integer" column="IMPORT_NUM"/>
+
+timestamp、big_decimal 为数据库迁移
+
+== action
+
+目录规则：二级目录，先大模块名，在本身模块名，都放在struts2目录下，目录都小写。
+
+1、实现 implements ModelDriven
+
+	private TextCode model = new TextCode();
+	public TextCode getModel() {
+		return this.model;
+	}
+
+2、action、方法的名字
+
+Action名称：业务名称+Action
+声明实例名	oList obj 这样新业务时，直接替换。少写代码，快速完成。
+
+方法的名字，分两类
+1）转向 to+动作
+2）做什么 list、save、delete
+
+3、新建保存时，初始化默认字段
+		//初始化
+		model.setState(1);
+
+4、批量删除
+
+	public String delete(){
+		String ids[] = model.getId().split(", ");		//分隔符是逗号加空格
+		FactoryDAO oDao = (FactoryDAO) this.getDao("daoFactory");
+		oDao.deleteAllById(ids, Factory.class);
+		
+		return list();
+	}
+
+
+5、批量改变状态
+	private void state(int stateValue){
+		String ids[] = model.getId().split(", ");
+		FactoryDAO oDao = (FactoryDAO) this.getDao("daoFactory");
+		
+		UtilFuns uf = new UtilFuns();
+		List<Factory> oList = oDao.find("from Factory o where o.id in("+uf.joinStr(ids, "'", "'", ",")+")");
+		
+		Set oSet = new HashSet();
+		Factory factory;
+		for(int i=0;i<oList.size();i++){
+			factory = oList.get(i);
+			
+			factory.setState(stateValue);
+			oSet.add(factory);
+		}
+		oDao.saveOrUpdateAll(oSet);
+	}
+
+== jsp
+
+目录规则：二级目录，先大模块名，在本身模块名，都放在webRoot目录下，目录都小写。
+命名规则：j+业务名称+动作名称，如：jFactoryList.jsp
+
+1、全局样式表
+
+../../skin/default/css/default.css
+
+2、全局的js
+
+<script type="text/javascript" src="../../js/common.js"></script>
+
+3、form采用post提交	<form name="icform" method="post">
+
+4、按钮
+
+<a href="#" onclick="formSubmit('/baseinfo/textCodeAction_toview','_self');this.blur();">查看</a>
+
+查看快速链接：
+<td><a href="factoryAction_toview?id=${id}">${factoryName}</a></td>
+
+
+5、关联对象的值
+
+${classCode.name}
+
+
+6、列表页面选字段
+
+1）重要
+2）系统级重要
+3）大字段，截取  xxx...
+
+7、列表页面实现记录多选，js实现
+
+<td class="tableHeader"><input type="checkbox"  id="id_selector"  name="id_selector"  title="(Un)Select All"  onclick="for(i = 0; i < document.getElementsByName('id').length; i++)document.getElementsByName('id').item(i).checked=document.getElementById('id_selector').checked;" ></td>
+
+8、列表页面实现记录加序号
+
+		<s:iterator value="#dataList" var="dl" status="line">
+
+
+			<td><s:property value="#line.index+1"/><br></td>
+
+
+		</s:iterator>
+
+9、显示值转换
+
+<s:if test="state==1">启用</s:if>
+<s:if test="state==0"><font color='red'>停止</font></s:if>
+
+
+10、下拉列表
+
+action中准备数据
+	
+	private void initData(){
+		//准备数据
+		FactoryDAO oDao = (FactoryDAO) this.getDao("daoFactory");
+		List classCodeList = oDao.find("from ClassCode o");
+		ActionContext.getContext().put("classCodeList", classCodeList);
+	}
+
+jsp中struts2标签
+<%@ taglib prefix="s" uri="/struts-tags" %>
+
+
+	            	<s:select list="classCodeList" name="classCode.id"
+	            		listKey="id" listValue="name"
+	            		headerKey="" headerValue="--请选择--"
+	            	></s:select>
+

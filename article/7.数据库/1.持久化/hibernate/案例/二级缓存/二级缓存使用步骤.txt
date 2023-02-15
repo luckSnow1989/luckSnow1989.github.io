@@ -1,0 +1,41 @@
+		
+		
+		1 手动开启		 
+		hibernate.cfg.xml 中开启
+				<property name="hibernate.cache.use_second_level_cache">true</property>
+
+        2  hibernate中二级缓存都是依赖第三方缓存工具
+			一般的缓存工具是：EHCache,OSCache,JBoss TreeCache;使用最多的是EHCache---可以存到内存和硬盘中;					  
+		    hibernate.cfg.xml指定缓存提供商
+			<property name="hibernate.cache.provider_class">
+				org.hibernate.cache.EhCacheProvider
+			</property>
+
+		3 导入 ehcache.jar 
+		       commons-logging.jar
+			   注意版本号：有些版本之间的兼容性不是很好，兼容性比较好的是：ehcache-1.2.3.jar和commons-logging-1.1.3.jar
+				
+		4 在src下创建 ehcache.xml  
+
+                 这个文件中定义就是缓存规则		 
+
+        <defaultCache
+			maxElementsInMemory="10000"   //内存中缓存对象的最大个数
+			eternal="false"                // 是否是永久的
+			timeToIdleSeconds="120"       // 最大空闲时间
+			timeToLiveSeconds="120"        //最大存活时间
+			overflowToDisk="true"         // 当缓存对象的个数超过  maxElementsInMemory 是否存到磁盘上
+        />
+		
+		
+		
+		5 指定哪些类的对象会被放入二级缓存
+		 
+		    两种指定方式：
+			
+			            1 在hibernate.cfg.xml中指定----usage包括：read-only;read-write;transtraction
+						region是缓存规则，为空的时候使用默认规则	
+							<class-cache usage="read-write" class="com.project.entity.User" region="sampleCache1"/>
+						
+						2 在 映射配置文件中指定，同上：
+							<cache usage="read-only" region=""/>

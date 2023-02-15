@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.project.entity">
+	<class name="Wife" table="wife">		
+		<id name="id" column="id">
+			<generator class="foreign">
+				<param name="property">husband</param>
+			</generator>
+		</id>		
+		<property name="name" column="name"></property>
+		<!-- 1:1 -->
+		<one-to-one name="husband" class="Husband" constrained="true" ></one-to-one>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,14 @@
+一、导入导出数据库：
+	1.sql文件：
+		方法一：创建一个command Window。执行语句，如：@E:\account.sql；
+		方法二：File——>open——>SQL Script，选择要导入的sql文件；
+		方法三：tool——>import,选择sql，再导入。
+		
+		
+二、创建临时表空间
+	create temporary tablespace test_table
+	tempfile 'E:\tablespace\test_table.dbf'
+	Size 100M
+	Autoextend on
+	Next 100M maxsize 200M
+	Extent management local

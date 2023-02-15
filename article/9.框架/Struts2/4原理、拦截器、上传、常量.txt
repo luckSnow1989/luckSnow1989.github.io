@@ -1,0 +1,228 @@
+一、struts2的运行原理
+
+	 客户端请求-->前端控制器(前端控制器完成两个工作, 1 .初始化加载配置文件; 2. 为要访问的Action创建一个代理对象)
+	 
+	 ActionProxy-->调用ActionInvocation的invoke方法 递归调用所有拦截当前Action的拦截器
+	 
+	 当拦截器执行完成后，进入到目标Action的执行----> 拦截器---> 给客户端产生相应
+ 	struts2与struts1不同，struts2对用户的每一次请求都会创建一个action，所以struts2是线程安全的。
+ 	注意：在整合spring的时候，这个特性会被spring改变。
+----------------------------------------------------------------------------------
+
+二、拦截器
+1.	Filter 与 interceptor 的区别
+	Filter         可以过滤所有请求
+	Interceptor	只能拦截请求Action(不能拦截请求JSP等其他资源)  粒度可以更细
+	是struts2的核心内容  是AOP编程  是可插拔式的
+
+2.	自定义拦截器：自定义的拦截器要放在action的最后面			
+		<interceptor-ref name="defaultStack"></interceptor-ref>放前面	
+	
+	步骤一、创建拦截器	可以使用的是三种方法
+		(1)	implements Interceptor(实现拦截器的基类)...com.opensymphony.xwork2.interceptor.Interceptor
+		(2)	extends AbstractInterceptor
+		(3)	extends MethodFilterInterceptor(可以拦截方法)
+	
+	步骤二、配置拦截器，在struts.xml定义
+		(1)在struts下定义interceptor
+		
+		<interceptors>
+			<interceptor name="myInterceptor1" class="com.zrgk.web.interceptor.MyInterceptor1"></interceptor>
+			<interceptor name="myInterceptor2" class="com.zrgk.web.interceptor.MyInterceptor2"></interceptor>
+		</interceptors>
+					
+		(2)指定某一个action使用那些自定义的interceptor，
+		<action name="" class="">
+			 <interceptor-ref name="myInterceptor1">
+				
+				<param name="includeMethods">execute,add</param>=======配置拦截哪些方法                           
+					(注意这两种param方法不能同时使用)
+				<param name="excludeMethods">add,modify</param>========配置不拦截哪些方法
+			
+			</interceptor-ref>
+			
+			<interceptor-ref name="myInterceptor2"></interceptor-ref>
+			
+			<result name="">/index.jsp</result>
+		</action>
+		
+		
+			
+			
+	步骤三、引入拦截器栈： 把一些拦截器放在一起形成一个栈结构	   
+		注意：当在Action的配置中手动引入任何一个拦截器(包括自定义拦截器和struts2提供的拦截器)
+		struts2提供的哪些默认拦截器将不会再去拦截这个Action了
+		所以需要手动引入struts默认的拦截器栈，
+		一般引入 <interceptor-ref name="defaultStack"></interceptor-ref>
+		
+		(1)可以自定义拦截器栈：
+			在 interceptors 中创建
+			<interceptor-stack name="myStack">
+               <interceptor-ref name="myInterceptor1"/>
+               <interceptor-ref name="myInterceptor2"/>
+            </interceptor-stack>
+			接下来在action中引入即可使用
+	
+	
+	
+	案例：设置全局拦截器，必须将struts2原有的拦截器加上，才能继续使用struts2框架。
+		<package name="global" extends="struts-default">
+			<interceptors>
+				<interceptor name="myInterceptor1" class="com.zrgk.web.interceptor.MyInterceptor1"></interceptor>
+			</interceptors>
+			<interceptors>
+				<interceptor-stack name="myStack"><----定义一个拦截器栈
+					<interceptor-ref name="defaultStack"></interceptor-ref>  <----引入struts2原有的拦截器
+					<interceptor-ref name="myInterceptor1"></interceptor-ref><----引入自定义的拦截器
+				</interceptor-stack>
+			</interceptors>
+			
+			<global-results>
+				<result name="globalException">/error.jsp</result>
+			</global-results>
+			<global-exception-mappings>
+				<exception-mapping result="globalException" exception="java.lang.Exception"></exception-mapping>
+			</global-exception-mappings>
+		</package>
+	
+		1 模拟一个struts2中的赋值拦截器  params
+		 
+			在拦截器中获得 目标Action    arg0.getAction
+			
+		2 不登录不能访问某个Action	
+	
+-------------------------------------------------------------------------------------
+
+三、文件上传：
+	注意页面上的上传类型<form action="UploadAction" method="post" enctype="multipart/form-data">	
+    commons-fileupload.jar	
+
+1.	需要成员变量
+		(1)单个文件
+		private File myFile;
+		private String myFileFileName;------这个名称是必须这么写的
+		
+		(2)多个文件
+		private List<File> myFile;
+		private List<String> myFileFileName; 
+		
+2.	常见的方法：
+	
+	(1)直接采用文件流上传
+		InputStream is = new FileInputStream(myFile);
+		String folderPath = ServletActionContext.getServletContext().getRealPath("/upload");
+		OutputStream os = new FileOutputStream(folderPath+"/"+myFileFileName);
+		byte[] b = new byte[1024];
+		int len = 0;
+		while((len = is.read(b))!= -1) {
+			os.write(b.o.len);
+		}
+		os.close();
+		is.close();
+	(2)复制法上传，不适合大流量上传
+		String folderPath = ServletActionContext.getServletContext().getRealPath("/upload");
+		File destFile = new File(folderPath,myFileFileName);
+		FileUtils.copyFile(myFile, destFile);
+		 
+3.上传的校验
+	(1)上传格式的校验，在struts.xml中定义
+		<action name="UploadAction" class="com.zrgk.web.action.UploadAction">
+			
+			<interceptor-ref name="fileUpload">
+				<!--  MIME类型  -->
+				<param name="allowedTypes">text/plain,image/jpeg</param>                  
+                              
+				<!-- 根据文件扩展名验证 -->
+				<param name="fileUpload.allowedExtensions">doc,txt,</param>  
+                
+				<!-- 文件大小的验证 -->           
+				<param name="maximumSize">2000000000000</param>
+           </interceptor-ref>
+           		   
+           <interceptor-ref name="defaultStack"></interceptor-ref>
+		   
+           <result name="success">/index.jsp</result>
+           <result name="input">/upload.jsp</result>
+		</action>
+	   
+		关于MIME类型的写法，可参考tomcat中的web.xml有具体的说明，下面是其中的一个样例：
+		
+		<mime-mapping>
+			<extension>avi</extension>
+			<mime-type>video/x-msvideo</mime-type>
+		</mime-mapping>
+	
+	(2)上传大小的校验(同上)
+		但是struts的default.properties中，默认上传struts.multipart.maxSize=12345
+		这是整个框架允许的最大文件，修改这一个初始值的方法：
+			创建属性文件、在struts.xml中定义它为资源文件
+		或：直接在struts.xml中<constant name="struts.multipart.maxSize" value="2097152000000"></constant>	
+	
+	(3)校验不合格的提示语
+		如果在页面上有struts的提示信息标签，就可能出现框架原有的英文提示；
+		提示信息在struts-messages.properties中，采用覆盖方法就可以实现修改
+		struts.messages.error.content.type.not.allowe
+
+	注意：关于修改属性文件，实际开发中，不会真的去修改框架中的属性文件，因为这些文件都在jar包中，修改需要先解压再修改
+		，最后在压缩成jar包，这就导致了，这个jar包的通用性被限制了，后期的维护的难度也加大了，所以在我们需要修改这些
+		属性的时候，就出现了两种情况
+		
+		1.关于配置常量的设置
+		xwork-messages.properties，struts-messages.properties等提示信息的属性文件，修改时，只能新建属性文件，用相同的
+		key值覆盖框架中的提示信息。(这只是建议，现在已经是约定熟成，且只能这种方式最稳定)
+		
+		2.关于提示语的设置(这只是建议，现在已经是约定熟成，且只能这种方式最稳定)
+		default.properties，这里的都是一些配置属性，只能通过在Struts.xml中，修改。
+			如：<constant name="struts.multipart.maxSize" value="2097152000000"></constant>
+
+
+四、常量的设置
+	<!-- 开发模式，打印出更详细的日志 -->
+	<constant name="struts.devMode" value="true"></constant>
+	
+	<!-- 相当于HttpServletRequest.setCharacterEncoding("UTF-8") -->
+	<constant name="struts.i18n.encoding" value="UTF-8"></constant>
+	
+	<!-- Struts2框架实际要处理的后缀 -->
+	<constant name="struts.action.extension" value="action,,do"></constant>
+	
+	<!-- 静态资源是否需要缓存，开发阶段最好改成false -->
+	<constant name="struts.serve.static.browserCache" value="false"></constant>
+	
+	<!--禁用动态方法调用 -->
+	<constant name="struts.enable.DynamicMethodInvocation" value="false"></constant>
+	
+	<!-- 上传文件最大值 -->
+	<constant name="struts.multipart.maxSize" value="52428800"></constant>
+	
+	<!-- struts.xml被修改后，系统是否自动加载文件，开发模式使用 -->
+	<constant name="struts.configuration.xml.reload" value="true"></constant>
+	
+	<!-- 默认使用的视图主题 -->
+	<constant name="struts.ui.theme" value="simple"></constant>
+	
+	<!-- 与spring整合的时候，指定由spring负责action对象的创建 -->
+	<constant name="struts.objectFactory" value="spring"></constant>
+	
+	<!-- 是否支持动态方法调用，默认是true -->
+	<constant name="struts.enable.DynamicMethodInvocation" value="true"></constant>
+
+
+
+
+
+
+
+
+
+
+
+
+			
+	
+	
+	
+	
+	
+	
+	

@@ -1,0 +1,181 @@
+一、关于大数据的存储。
+		blob的默认存储大小事65536，longblob默认是2^32-1大概是4GB，但是一般不会存在longblob，它会预留存储空间，
+	所以一般都是设置blob的默认大小即可。
+		com.mysql.jdbc.PacketTooBigException: Packet for query is too large (9802817 > 1048576). 
+	You can change this value on the server by setting the max_allowed_packet' variable.
+	在my.ini中设置，在[mysqld]下添加max_allowed_packet=10M，例如：[mysqld] max_allowed_packet=64M
+	1.解决MySQL存储数据时，中文乱码问题	
+		<property name="hibernate.connection.url">
+			jdbc:mysql://localhost:3306/user?useUnicode=true&amp;characterEncoding=UTF-8
+		</property>
+
+二、主键生成策略：
+
+    1.increment  主键必须是整数	 取最大值+1   值是由hibernate维护的
+		用于为long, short或者int类型生成 唯一标识。只有在没有其他进程往同一张表中插入数据时才能使用。 在集群下不要使用。实际开发中不使用。		
+		<id name="id" column="id">
+			<generator class="increment"></generator>
+		</id>
+	
+	2.identity  必须支持自增字段的数据库      值是由数据库维护
+		对DB2,MySQL, MS SQL Server, Sybase和HypersonicSQL的内置标识字段提供支持。 返回的标识符是long, short 或者int类型的。
+		<id name="id" column="id">
+			<generator class="identity"></generator>
+		</id>
+		
+		
+	3.sequence  必须支持序列的数据库    主键hibernate维护   默认使用hibernate_unique_key 
+		在DB2,PostgreSQL, Oracle, SAP DB, McKoi中使用序列（sequence)， 而在Interbase中使用生成器(generator)。返回的标识符是long, short或者 int类型的。
+	    <id name="id" column="id">
+			<generator class="sequence">
+				<param name="sequence">users_seq</param>
+			</generator>
+		</id>
+	
+	
+	4.uuid  主键必须是字符串
+		<id name="id" column="id">
+			<generator class="uuid"></generator>
+		</id>
+		底层实现是:String uuid = UUID.randomUUID().toString();
+		
+	5.guid 	与uuid相同的作用
+	 
+	6.native  	主键必须是整数      根据底层数据库 选择
+	 
+				支持自增的数据库   选择  identity
+				支持序列的数据库   选择  sequence
+				都不支持的         hilo
+
+				
+	7.assigned   主键手动分配		
+	让应用程序在save()之前为对象分配一个标示符。这是 <generator>元素没有指定时的默认生成策略。
+		<id name="id" column="id">
+			<generator class="assigned"></generator>
+		</id>
+		可以自行输入，如：user.setId(100);
+		
+	总结：主键是整数时：MySQL用identity，native，Oracle用sequence和native。
+		  主键是字符串：用uuid
+	
+三、联合主键---------必须implements Serializable
+	1.firstName和lastName是实体类中的成员变量
+		<composite-id name="name">
+			<key-property name="firstName" column="first_name"></key-property>
+			<key-property name="lastName" column="last_name"></key-property>
+		</composite-id>
+	1.类中携带了一个Name的实体类，Name类中，包含了firstName和lastName
+		<composite-id>
+			<key-property name="firstName" column="first_name"></key-property>
+			<key-property name="lastName" column="last_name"></key-property>
+		</composite-id>
+	 
+=======================================================	 
+四、自定义主键生成策略：  identifierGenerator   Configurable
+	1.配置文件
+	<id name="id" column="id">
+		<generator class="com.project.util.MyGenerator">
+			<param name="seqName">users_seq</param>
+		</generator>
+	</id>
+	2.自定义类
+	public class MyGenerator implements IdentifierGenerator,Configurable {
+	
+		String seqName = "users_seq";//这个可以是一个静态方法块，用来读取属性文件中的配置
+		
+		@Override
+		public Serializable generate(SessionImplementor arg0, Object arg1)
+				throws HibernateException {
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssms");
+			
+			String str = sdf.format(new Date());			
+			
+			Connection conn = arg0.connection();
+			
+			try {
+				
+				String sql = "select "+seqName+".nextval from dual";
+				
+				PreparedStatement ps = conn.prepareStatement(sql);
+				
+				ResultSet rs = ps.executeQuery();
+				
+				int num = 0;
+				
+				while (rs.next()) {
+					
+					num = rs.getInt(1);
+					System.out.println(num);
+				}
+								
+				str = str+num;
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			return str;
+		}
+
+		@Override
+		public void configure(Type arg0, Properties arg1, Dialect arg2)
+				throws MappingException {
+			
+			seqName = arg1.getProperty("seqName");
+		}
+	}     
+==============================================================
+五、一级缓存：
+	特点：Session级别的缓存   自动开启，不能关闭，是将持久化状态的对象，放入session的缓存中
+	
+	1.一级缓存的产生与消除
+		(1)执行：save(user),update(user),delete(user),get(User.class,id);时，session将其持久化
+		   hibernate会产生一级缓存。这时数据保存在数据库中的缓存中，没有被持久化到数据库中；
+		(2)执行：transaction.commit()；底层执行session.flush(),将数据同步到数据库中，用时清空这次
+		   操作产生的一级缓存，而数据库中的数据被持久化到数据库中，这也是所有数据库都具有的一种事务
+		   ，极大地提高了数据的安全性，在出现异常时，可以采用transaction.rollback()，回滚到事务上一个
+		   存储点，使数据库回到执行本次操作之前的状态中。
+		   
+	2.比较session.flush(),session.clear()，session.evict();
+		(1)在持久层操作数据库时，在没有transaction.commit()这条语句时，执行session.flush(),同样可以将数据
+		   持久化到数据库中，执行后清空一级缓存；
+		(2)而session.clear(),是清空一级缓存，但不会同步数据到数据库，导致Sava()的数据在数据库中不会被持久化，
+		   而被当做数据库的缓存垃圾被系统销毁。在这句话之后再执行commit()，也是不行的
+		(3)session.evict(user);是将指定的对象，从缓存中清空，数据不同呗同步到数据库。
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+
+
+
+
+
+
+
+	

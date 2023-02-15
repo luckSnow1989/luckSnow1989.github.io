@@ -1,0 +1,24 @@
+# 1. 安装ruby
+
+[https://rubyinstaller.org/](https://rubyinstaller.org/)
+
+# 2. 安装 jekyll 和 bundler
+
+```shell
+gem install --user-install bundler jekyll
+```
+
+# 3. 安装插件webrick
+
+```shell
+bundle add webrick
+```
+
+# 4. 启动项目
+
+```shell
+bundle exec jekyll serve --trace
+
+# -V 查看过程
+bundle exec jekyll serve -V --trace
+```

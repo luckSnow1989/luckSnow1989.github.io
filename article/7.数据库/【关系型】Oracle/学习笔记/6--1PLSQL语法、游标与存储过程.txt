@@ -1,0 +1,412 @@
+PL/SQL语法
+
+    由于pl/sql是编译后执行的，而sql语句是未经编译的，因此pl/sql语句在执行速度上更快，同时也减少了客户机和服务器的传输。
+
+一、基本结构
+	DECLARE
+	   声明变量、常量、用户定义的数据类型以及游标等
+	   可选
+
+	BEGIN
+	   主程序体
+
+	EXCEPTION
+		异常处理程序，当程序出现错误时，执行这一部分。
+
+	END;
+
+	声明部分、执行部分、异常处理部分。执行部分是必须的，其他俩部分可选。
+
+
+
+二、Pl/sql符号
+
+	+     加
+	-     减
+	*     乘
+	/     除
+	=    等于
+	:=赋值
+	>    大于
+	<    小于
+	(
+	)
+	;     语句结束
+	%    属性指示符
+	，    项目分隔符
+	@    数据库连接指示符
+	/     字符串分界符
+	：    绑定变量指示符
+	**    指数操作符
+	<>    不等于
+	！=     不等于
+	~=      不等于
+	^=      不等于
+	<=       小于等于
+	>=       大于等于
+	：=    赋值
+	=>     链接操作符
+	..      范围操作符
+	||      串连接
+	--      单行注释
+	/* */    多行注释
+
+
+三、常量和变量
+	1、定义常量
+			<常量名> constant <数据类型> ：= <值>
+			pass_Score constant INTEGER ：= 60
+
+	2、定义变量
+		  <变量><数据类型>
+		  Address VARCHAR2（20）;-------------------初始值为NULL
+
+四、数据类型
+   
+    1 数字类型： number  、 pls_integer、  binary integer
+
+    2 字符类型： varchar2、char 、long、nchar  nvarchar2
+                varchar2 和数据库中的varchar2不同，最大长度为32767
+   
+
+    3日期类型：date
+
+    4 布尔类型   boolean---------------true   false  null
+
+
+	5 自定义类型
+	  type  <类型名> is <数据类型>
+
+	Oracle中 允许定义两种数据类型   record（记录类型）和table（表类型）
+
+		type   user_record is record(
+
+			 Id number(5) ,
+			 Name varchar2(20),
+			 Sex char(1)
+	   )  
+
+	   使用：
+
+		 auser  user_record
+		 auser.id     auser.name  ..........
+
+
+	  另外，pl/sql还提供了两种特殊的变量   %TYPE和%ROWTYPE，用来声明与表的列相匹配的变量和用户定义数据类型。前一个表示单属性的数据类型，后一个表示整个属性列表的结构
+
+
+	上面例子可以改写为：
+
+	   type   user_record is record(
+
+			 Id   USERS.id%TYPE
+			 Name USERS.NAME%TYPE
+			 Sex USER.SEX%TYPE
+		 
+	   )  
+
+
+	或
+	user_record  USERS%ROWTYPE;
+
+	user_record.
+
+	Aaa EMPLOYEES%ROWTYPE
+
+	Type aaa is record(
+		Employee_id number
+		First_name varchar2()
+	............  
+
+	)
+
+
+五、结构控制语句
+
+         选择结构
+        
+         If ...then...     If(){}
+         If...then...else...
+         If...then...elseif
+         case
+
+
+       
+		if    no  = 100    then
+		  
+		insert into users()
+
+		end if;
+
+
+		 if    no  = 100    then
+		  
+		Insert into users();
+
+		else
+
+		Insert into.....
+
+		end if;
+
+
+		If score>90 then
+
+		  Score := score-5;
+		else if score<60 then
+		Score:=score+5;
+		end if;
+
+
+		case------类似于switch
+
+		num：=  case  name 
+			   when 'A' then '0001'
+			   when 'B' then '0003'
+			   ....
+
+			   else 'no user'
+
+			   end;
+
+
+
+
+
+
+
+六、null结构
+
+	Declare 
+	Num1 number;
+	Num2 number;
+	Res varchar2（10）
+
+	Begin 
+
+	If num1<num2 then
+	  Res:='yes'
+
+	Else
+	   Res:='no';
+	End if;
+
+	End;
+
+
+	Declare 
+	Num1 number;
+	Num2 number;
+	Res varchar2（10）
+
+	Begin 
+
+	If num1>num2 then
+	  Res:='no'
+
+	Else
+	   Res:='yes';
+	End if;
+
+	End;
+
+
+	当num1=1 num2=null时，结果将是不同的
+
+
+
+	所以要在程序中加入null值检查
+
+	If    num1 is  null   or   num2 is null  then  res=‘noresult’
+
+	Else if。。。。。。。。。。。
+
+
+
+
+七、循环结构
+	1  loop...exit...end
+
+	 Control_var := 0;
+
+	 loop--------------------------------------------循环开始
+	   If control_var>5 then 
+		  Exit;
+	   End if;
+	Control_var:=Control_var+1;
+	.......
+	End loop;------------------------------------------循环结束
+
+
+
+	2  loop...exit when...end
+
+	 Control_var := 0;
+	Loop 
+	Exit when  Control_var>5
+	Control_var:=Control_var+1;
+	End loop;
+
+
+	3.while ...loop...end
+
+		Control_var := 0;
+	   While Control_var<5 loop
+	Control_var:=Control_var+1;
+	......
+	End loop;
+
+
+	4.for... In...loop...end
+	   
+	for control_var in 0..5 loop
+
+	.......
+
+	End loop;
+
+八、游标
+
+	类似于C语言中的指针，但指针的数据是定义好的，游标用select语句从表或视图中选出需要的数据，
+	然后放入内存中，游标指向查询结果的首部。使用游标对此查询结果进行一些取值操作，
+	随着游标的移动，也就访问到了所有的行。
+
+	游标分为两种：
+	   隐示游标-----------不需要用户定义。
+
+	   显示游标
+	  
+
+	显示游标处理包括4个步骤：
+	1 声明游标
+	2 为查询打开游标
+	3 将结果提取到pl/sql变量中
+	4 关闭游标
+
+例子：
+	(1)显示游标
+	Declare
+
+	  User_id number(4);------------------------定义3个变量来存放user表中的数据
+	  User_name varchar(50);
+	  User_sex char(1);
+
+	cursor user_cur   is    select id,name,sex from users where id <100;--定义游标
+
+	 Begin
+
+	Open user_cur ;----------------打开游标
+	Fetch user_cur  into user_id,user_name, user_sex;----将第一行数据存入变量，游标后移
+
+	Loop
+
+	Exit when not user_cur%FOUND;---如果游标到结尾结束
+
+	If user_sex ='m' then 
+	Insert into 
+	.....
+	else
+	Insert into
+	....
+	End if;
+	Fetch user_cur into into user_id,user_name, user_sex;
+	End loop;
+	Close user_cur;
+	End;
+
+
+	(2)隐式游标操作 
+
+	Select id ,name,sex into user_id,user_name,user_sex from users where id =100;
+
+
+
+	游标的属性操作
+
+	%FOUND-----是否找到游标
+
+	%NOTFOUND---是否没找到游标
+
+	%ROWCOUNT------游标行数
+
+	%ISOPEN
+
+
+	(3)动态游标
+
+
+	声明：
+
+	TYPE<类型名>  IS  REF  CURSOR  RETURN <返回类型>
+
+
+	Type user_cur_type is ref cursor return users%rowtype;
+
+	User_cur   user_cur_type;
+
+	也可不加return-------即，非受限游标变量
+
+	Type user_cur_type is ref cursor;
+	User_cur   user_cur_type;
+
+
+
+
+
+
+九、存储过程：
+
+	Create or replace mycount（in_sex in user.ssex%type）
+
+	As 
+
+	Out_num number;
+
+	Begin
+
+	If in_sex ='m' then 
+	Select count(sex) into out_num from users where sex='m';
+
+	Dbms_output.put_line(out_num);
+	Else
+	Select count(sex) into out_num from users where sex='f;
+
+	Dbms_output.put_line(out_num);
+
+	End if;
+
+	End count;
+	
+	执行
+	Execute count（‘m’）；
+
+
+	参数类型：
+
+	In类型参数
+
+	Out类型参数
+
+	In out 类型参数
+
+	Create or replace produce double（in_num in number,out_num out number）as
+	Begin 
+		Out_num:=in_num*2;
+	End double;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

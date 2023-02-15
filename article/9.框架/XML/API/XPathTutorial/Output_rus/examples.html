@@ -1,0 +1,142 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" type="text/css" href="../CSS/tutorial.css">
+      <title>XPath Tutorial</title>
+   </head>
+   <body>
+      <table xmlns="http://www.w3.org/1999/xhtml" width="100%">
+         <tr>
+            <td><span class="mediumText"><a class="naviBlack" target="_self" href="../Output/examples.html">English</a> | <a class="naviBlack" target="_self" href="../Output_cze/examples.html">česky</a> | <a class="naviBlack" target="_self" href="../Output_dut/examples.html">Nederlands</a> | <a class="naviBlack" target="_self" href="../Output_fre/examples.html">Fran&ccedil;ais</a> | <a class="naviBlack" target="_self" href="../Output_spa/examples.html">Espa&ntilde;ol</a> | <b>&gt;&gt;&nbsp;По-русски&nbsp;&lt;&lt;</b> | <a class="naviBlack" target="_self" href="../Output_ger/examples.html">Deutsch</a> | <a class="naviBlack" target="_self" href="../Output_chi/examples.html">中文</a> | <a class="naviBlack" target="_self" href="../Output_ita/examples.html">Italiano</a></span></td>
+         </tr>
+      </table>
+      <table xmlns="http://www.w3.org/1999/xhtml" class="bar" width="750px" border="0" cellpadding="0" cellspacing="0">
+         <tr>
+            <td class="naviBlue"><a class="naviWhite" target="_top" href="../General_rus/examples.html">Введение</a> 
+               	/
+               	  <a class="naviWhite" target="_top" href="http://zvon.org/search.php">Поиск</a> 
+               	/
+               	<a class="naviWhite" target="_top" href="http://www.zvon.org"> ZVON </a></td>
+         </tr>
+      </table>
+      <table xmlns="http://www.w3.org/1999/xhtml" width="100%">
+         <tr>
+            <td class="descriptionMenu">
+               <ul>
+                  <li>
+                     	 &gt;&gt;&nbsp;Примеры&nbsp;&lt;&lt;
+                     
+                  </li>
+                  <li><a class="menu" href="./paths.html">Выражения XPath</a></li>
+               </ul>
+            </td>
+         </tr>
+      </table>
+      <hr xmlns="http://www.w3.org/1999/xhtml">
+      <table border="1" width="100%" cellpadding="1">
+         <tr>
+            <td><a class="example" href="example1.html" target="mainWindow">Пример 1</a><br>Базовый синтаксис языка XPath похож на адресацию в файловой системе. Если путь начинается  с символа '/', то он представляет
+               абсолютный путь к заданному элементу.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example2.html" target="mainWindow">Пример 2</a><br>Если путь начинается с //, то будут выбраны все элементы документа, которые соответствуют указанному шаблону.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example3.html" target="mainWindow">Пример 3</a><br>Символ '*' указывает, что надо выбрать все элементы, соответствующие пути перед ней.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example4.html" target="mainWindow">Пример 4</a><br>Выражение в квадратных скобках позволяет задавать более четкие критерии для элемента. Так число в квадратных скобках обозначает
+               позицию элемента в выбранном множестве. Функция last() позволяет указать последний элемент в выборке.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example5.html" target="mainWindow">Пример 5</a><br>Атрибуты определяются префиксом @.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example6.html" target="mainWindow">Пример 6</a><br>Значения атрибутов могут служить критерием при выборке. Функция normalize-space() удаляет пробелы в начале и конце параметра,
+               а все последовательности пробельных символов заменяет одиночным пробелом.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example7.html" target="mainWindow">Пример 7</a><br>Функция count() возвращает число элементов в указанном множестве.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example8.html" target="mainWindow">Пример 8</a><br>Функция name() возвращает имя элемента. Функция starts-with() возвращает истину, если строка первого аргумента начинается
+               строкой второго аргумента. Функция contains() возвращает истину, если строка из первого аргумента содержит строку из второго.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example9.html" target="mainWindow">Пример 9</a><br>Функция string-length() возвращает число символов в строке. Следует использовать &amp;lt; вместо &lt;, так как символ '&lt;' зарезервирован
+               для нужд разметки.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example10.html" target="mainWindow">Пример 10</a><br>Несколько путей можно скомбинировать с помощью разделителя |.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example11.html" target="mainWindow">Пример 11</a><br>Ось child содержит дочерние элементы контекстного узла. Ось child является осью, применяемой по умолчанию, и может быть опущена.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example12.html" target="mainWindow">Пример 12</a><br>Ось descendant содержит потомков контекстного узла; потомком является дочерний элемент, дочерний элемент дочернего элемента
+               и так далее; таким образом ось descendant не содержит узлов атрибутов и пространств имен.
+               
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example13.html" target="mainWindow">Пример 13</a><br>Ось parent содержит родителя контекстного узла, если он существует.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example14.html" target="mainWindow">Пример 14</a><br>Ось ancestor содержит предков контекстного узла; предками контесктного узла являются родитель контесктного узла, родитель
+               родителя и так далее; Таким образом, ось ancestor всегда включает корневой узел, заисключением случая, когда контекстный узел
+               является корневым.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example15.html" target="mainWindow">Пример 15</a><br>Ось following-sibling содержит все следующих братьев контекстного узла. Братьями называются те узлы, что имеют одного родителя
+               с контекстным.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example16.html" target="mainWindow">Пример 16</a><br>Ось preceding-sibling содержит всех предыдущих братьев контекстного узла.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example17.html" target="mainWindow">Пример 17</a><br>Ось following содержит в том же порядке, что и в самом документе, все узлы, идущие после контекстного, за исключением всех
+               потомков, узлов атрибутов и пространств имен.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example18.html" target="mainWindow">Пример 18</a><br>Ось preceding содержит в том же порядке, что и в самом документе, все узлы, идущие перед контекстным узлом, исключая любых
+               предков, узлов атрибутов и пространств имен.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example19.html" target="mainWindow">Пример 19</a><br>Ось descendant-or-self содержит контекстный узел и всех его потомков.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example20.html" target="mainWindow">Пример 20</a><br>Ось ancestor-or-self содержит контекстный узел и всех его предков; таким образом, эта ось всегда содержит корневой узел.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example21.html" target="mainWindow">Пример 21</a><br>Оси ancestor, descendant, following, preceding и self axes покрывают документ (за исключением узлов атрибутов и пространств
+               имен): они не перескаются и вместе содержат все узлы документа.
+            </td>
+         </tr>
+         <tr>
+            <td><a class="example" href="example22.html" target="mainWindow">Пример 22</a><br>Оператор div производит деление, оператор mod возвращает остаток от деления нацело. Функция  floor возвращает максимальное
+               целое чило, не большее аргумента. Функция ceiling возвращает минимальное целое число, не меньшее аргумента.
+            </td>
+         </tr>
+      </table>
+   </body>
+</html>

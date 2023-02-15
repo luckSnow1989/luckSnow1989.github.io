@@ -1,0 +1,15 @@
+== left.jsp
+
+<li>
+	<a href="../baseinfo/sysCodeAction_toedit" target="main" id="aa_1" onclick="linkHighlighted(this)">ÏµÍ³´úÂë</a>
+</li>	
+
+
+== struts-baseinfo.xml
+
+  	
+  	<package name="syscode" namespace="/baseinfo" extends="struts-default">
+  		<action name="sysCodeAction_*" method="{1}" class="cn.itcast.web.struts2.baseinfo.syscode.SysCodeAction">
+  			<result name="pedit">/baseinfo/syscode/jSysCodeEdit.jsp</result>
+  		</action>
+  	</package>

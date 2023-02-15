@@ -1,0 +1,214 @@
+一、访问DOM   (DOM  Document Object  Model)  文档对象模型
+	推荐使用这种方法，因为这种方法更贴近于面向对象的编程,与选择器的功能有很多是相同的,对于Java开发人员来说
+	使用这种方法，更快上手，更易熟悉。
+    
+	案例：
+	<ul>
+          <li class="c1">list item 1</li>
+          <li class="c1">list item 2</li>
+		  <li class="c2">list item 3</li>
+		  <li class="c2">list item 4</li>
+		  <li>list item 5</li>
+		  <li>list item 6</li>
+		  <li>list item 7</li>
+    </ul>
+
+1   .filter()--筛选出与指定表达式匹配的元素集合,这个方法用于缩小匹配的范围。用逗号分隔多个表达式
+
+	(1) expr			String		字符串值，包含供匹配当前元素集合的选择器表达式。
+		$("li").filter(".c2"),这就是一个selector的功能，选择了类是c2的li标签
+		$("li").filter(".c2, :first"),选择了类是c2的li标签中，以及第一个li标签，
+									  可能比上面的多一个dom节点这是结合了css选择器的方法
+	
+	(2) jQuery object	object		现有的jQuery对象，以匹配当前的元素。
+	
+	(3) element 		Expression	一个用于匹配元素的DOM元素。 
+
+	(4) function(index) Function	一个函数用来作为测试元素的集合。它接受一个参数index，
+									这是元素在jQuery集合的索引。在函数里，this指的是当前的DOM元素
+	
+    $('li').filter(function(index) {
+        return index % 3 == 2;
+    })      item 3  6
+
+2	.not 选择不是某一个表达式条件的
+    $('li').not('.c1'),所有不是类c1的li标签 
+	
+3 	.contains，包含某个文本---无法使用
+    $('li').contains('item 2')
+
+4 	.eq(n)  .lt(n) .gt(n)
+    $('li').eq(2)  等同于  $('li:eq(2)')
+
+5 	.find() 找所有子节点
+    $('div').find('p')  等同于   $('div p')
+	 
+6 	.children() 找所有子节点
+     $('div').children('p') 等同于   $('div>p')
+	 
+7 	.parents() 找祖先
+	例：
+     <ul class="level-1">
+           <li class="item-i">I</li>
+           <li class="item-ii">II
+			   <ul class="level-2">
+				   <li class="item-a">A</li>
+				   <li class="item-b">B
+					  <ul class="level-3">
+						<li class="item-1">1</li>
+						<li class="item-2">2</li>
+						<li class="item-3">3</li>
+					  </ul>
+				   </li>
+				   <li class="item-c">C</li>
+			   </ul>
+           </li>
+           <li class="item-iii">III</li>
+     </ul>
+    
+	$('li.item-a').parents()  level-2 item-ii  level-1
+	
+8 	.parent() 找父节点	
+   	       $('li.item-a').parent()    level-2
+		   
+		   
+		   
+9	.siblings() 找所有的兄弟		   
+	
+            <ul>
+			   <li>list item 1</li>
+			   <li>list item 2</li>
+			   <li class="third-item">list item 3</li>
+			   <li>list item 4</li>
+			   <li>list item 5</li>
+            </ul>
+ 	 $('li.third-item').siblings()  1,2,4,5
+
+		   
+10	.prev() 找直接前兄弟
+       $('li .third-item').prev() 2
+
+11	.next()	找直接后兄弟	   
+		   
+		$('li.third-item').next() 4   
+		   
+12 	.add() 选择多个节点
+		.add(selector)	.add(elements)	.add(html)
+		$('div').add('p')    等同于  $('div,p')
+		   
+13	.is()判断，返回Boolean类型	       
+		<ul>
+		  <li><strong>list</strong> item 1 - one strong tag</li>
+		  <li><strong>list</strong> item <strong>2</strong> - two <span>strong tags</span></li>
+		  <li>list item 3</li>
+		</ul>
+	
+        $("li").click(function() {
+			var $li = $(this);
+			var isWithTwo = $li.is(function() {
+				  return $('strong', this).length === 2;
+			});
+			if ( isWithTwo ) {
+				$li.css("background-color", "green");
+			} else {
+				$li.css("background-color", "red");
+			}
+		});
+	
+14	.end()		   
+	 $('ul.first').find('.foo').addClass('some-class').end() 
+                             .find('.bar').addClass('another-class');							 
+							 
+	这里的.end()的意思是 让 第一次的.find()结束，又从  $('ul.first')开始执行下一次.find()						 
+******************************************************************************************
+二、操纵DOM属性	
+	
+1.	获得与添加属性	
+	.attr(属性名)   	获取属性值
+	.attr(属性名,值)  	给属性赋值
+	赋值时的方法
+    .attr('title','点击查询')
+	.attr({'title':'ssss'})	
+	.attr('title',function(){})	   
+注意：对于jQuery1.9以上的版本，attr()功能不太稳定，推荐使用.prop(属性名,值) 对于新版本的适应性更好；
+
+2.	删除属性
+	.removeAttr('属性')	
+	<div id="dd">ddddd</div>
+   思考：document.getElementById('dd') 和 $('#dd') 是不是同一个对象？
+   答案：不是；
+   因为：$('#dd') 这种是Jquery的获取方式。获得的对象是经过 Jquery包装的
+   功能比 document.getElementById('dd') 获取的对象 更多
+   但是，$('#dd')[0] 和 document.getElementById('dd') 是同一个对象
+         $('#dd').get(0)
+         $('#dd').get(0).value=""
+******************************************************************************************
+三、操作css                ()括号中有值的是设置，没值的获得
+	js:	   
+	document.getElementById('dd').style.color
+	document.getElementById('dd').style.backgroudColor
+	Jquery：
+	$('#dd').css('css属性')     background-color  和  backgroundColor  都可以
+	1.	获取css属性.css('css属性')
+		设置css属性的方法如下
+		.css('css属性',value)
+		.css({})
+		.css('',function(){})
+	2.	设置属性
+	.height()    .attr('height')
+	.height(n)    .attr('height',n)
+	.width()
+	.addClass()      添加class
+	.removeClass()   撤销class
+	.toggleClass()   没有就添加  有就撤销
+
+	3.	设置文本
+	.html()		获取值	var str = xxx.innerHTML
+
+	.html(HTML) 赋值	xxx.innerHTML = 'ssss'
+
+	.text()          获取文本
+	.text(text)      赋值
+	  
+	.val()  ---------------- $('#id').val() 等同于 document.getElementById('id').value	
+	.val(value)    $('#id').val('xxx') 等同于 document.getElementById('id').value='xxx'
+
+******************************************************************************************
+四、DOM Insertion, Inside(DOM增加节点)
+	1.	增加节点
+		(1) 向前增加子节点	
+		prepend    	$('a').prepend(b)  b 将会作为a子节点  ，并会放在 a的所有子节点的前面
+		prependTo  	$('<div>xxx</div>').prepandTo('a') 
+		(2) 向后增加子节点
+		append		$('a').append(b)  b 将会作为a子节点  ，并会放在 a的所有子节点的后面
+		appendTo
+		(3) 向前增加兄弟节点
+		before()   	$('a').before(b)  b 作为  a 前兄弟
+		insertBefore()   $(b).insertBefore(a)
+		(4) 向后增加兄弟节点
+		after()    	$('a').after(b)  b 作为  a 后兄弟
+		insertAfter()
+		(5)增加父节点
+		.wrap()   $('a').wrap(b)  b将作为a的父节点
+
+	2.	删除所有子节点
+		.empty()  清除所有子节点
+		
+	3. 	删除自己(包括自己的子节点)
+		.remove() 删除自己 
+      
+  **********************************
+五、创建JavaScript对象
+var user = {   
+	"id":1,//成员属性
+	name:'zhangsan',//成员属性
+	//成员方法
+	sayHello:function(str){	  
+	    alert("Hello"+str);
+	}
+}; 
+	使用JavaScript对象
+    alert(user.id);
+	alert(user.name);
+	user.sayHello('Tom');
+******************************** 

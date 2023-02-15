@@ -1,0 +1,30 @@
+第一节：Oracle  用户
+	Oracle 用户分两种，一种是系统用户 sys system ；另外一种是普通用户；
+	
+	视图 dba_users 存储着所有用户信息；
+	
+	创建用户： 			Create user 用户名 identified by 密码 default tablespace 表空间
+	授予 session 权限：	grant create session to TEST;
+	锁定和开启帐号：	alter user TEST account lock / unlock ;
+	修改用户密码：		alter user TEST identified by 123 ;
+	删除用户： 			drop user TEST cascade ; 删除用户，并且把用户下的对象删除，比如表，视图，触发器等。
+
+第二节：Oracle  权限
+	Oracle 权限分为系统权限和对象权限；
+	系统权限是 Oracle 内置的，与具体对象无关的权限，比如创建表的权限，连接数据库权限；
+	对象权限就是对具体对象，比如表，视图，触发器等的操作权限；
+	
+	系统权限视图：	system_privilege_map
+	权限分配视图：	dba_sys_privs
+	回收系统权限：	revoke 权限 from 用户
+	
+	对象权限分配
+	用户表权限视图：dba_tab_privs
+	给对象授权：	grant 权限 on 对象 to 用户 with grant option;
+	回收权限：		revoke 对象权限 on 对象 from 用户；
+
+第三节：Oracle  角色
+	
+	角色是权限的集合；可以给用户直接分配角色，不需要一个一个分配权限；
+	Create role 角色名称；
+	使用视图 dba_roles 可以查找角色信息；

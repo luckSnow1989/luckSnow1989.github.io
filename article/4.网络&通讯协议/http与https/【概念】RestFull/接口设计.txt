@@ -1,0 +1,12 @@
+接口提供
+	建议使用spring boot 发布restAPI
+	或是使用spring 4.+ 的版本。
+	配置swagger进行接口管理。
+
+	spring boot 简易操作，符合敏捷开发的思路，并且天然集成在微服务中。
+
+	不推荐使用jersey。非主流
+
+RESTful API 设计规范精讲
+	https://mp.weixin.qq.com/s/bZrYc8-x0moQnx2kq9rHwg
+	简单概况设计分为： URL设计、响应结果结构、状态码

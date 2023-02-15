@@ -1,0 +1,190 @@
+1.关于文件上传下载时，临时文件的处理
+2.关于JavaBean工厂
+	1.例如-->User.class-->携带的内容是=类型 权限顶路径："class com.project.entity.User"
+	以下是一个最简单的获得JavaBean的方法：最大的优点：因为是静态类，在jvm的垃圾回收机制处理的级别最高，极大地提高内存释放的效率	
+	public static<T> T getBean(Class clazz){
+		String className = clazz.toString().split(" ")[1];
+		//User.class.toString()--->class com.project.User
+			try {
+				Class clazz2 = clazz.forName(className);		
+				return (T)clazz2.newInstance();
+			} catch (ClassNotFoundException e) {		
+				e.printStackTrace();
+			} catch (InstantiationException e) {				
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			return null;		
+	}
+3.关于ThreadLoad
+
+
+一、查询缓存：
+	1.为什么有查询缓存？  
+		因为一级缓存和二级缓存 缓存都是对象（get  load）， 不会缓存属性(Query)
+    
+	查询缓存可以缓存属性  但不能缓存对象
+   
+    2.使用查询缓存：
+		导入 ehcache.jar commons-logging.jar
+		注意版本号：有些版本之间的兼容性不是很好，兼容性比较好的是：ehcache-1.2.3.jar和commons-logging-1.1.3.jar
+			
+		(1)查询缓存是基于二级缓存的，要在hibernate.cfg.xml 启动查询缓存
+				<!-- 开启二级缓存 -->
+				<property name="hibernate.cache.use_second_level_cache">true</property>
+				
+				<!-- 指定二级缓存提供商 -->
+				<property name="hibernate.cache.provider_class">org.hibernate.cache.EHCacheProvider</property>
+				
+				<!-- 启动查询缓存 -->
+				<property name="hibernate.cache.use_query_cache">true</property>
+		(2)指定需要缓存的实体类
+			 <cache usage="read-write" region="sampleCache1"/>
+		
+		(3)在查询中也要启用查询缓存
+			@Test
+			public void test1() {
+				String hql = "from User where name='admin1'";		
+				SessionFactory factory = HibernateUtil.getSessionfFactory();//需要调用SessionFactory进行操作
+				
+				Session s1 = factory.openSession();	
+				Query qu1 = s1.createQuery(hql);
+				qu1.setCacheable(true);//开启查询缓存
+				User u1 = (User)qu1.uniqueResult();				
+				System.out.println(u1.getName()+"	"+u1.getBirthday());		
+				s1.close();
+				
+				Session s2 = factory.openSession();
+				Query qu2 = s2.createQuery(hql);
+				qu2.setCacheable(true);//开启查询缓存				
+				User u2 = (User)qu2.uniqueResult();				
+				System.out.println(u2.getName()+"	"+u2.getBirthday());				
+				s2.close();
+
+			}
+======================================================================
+
+ThreadLocale：  线程局部变量
+
+
+        每一个线程都会对应一个ThreadLocale
+
+        放入ThreadLocale中的值，只有当前线程可以访问到        
+
+
+二、反向工程：
+	1.MyEclipse绑定数据库：
+		切换perspective(右上角)--->MyEclipse database-->new -->填写必要数据即可；
+	
+	2.MyEclipse中添加struts2的功能
+		右击工程，选择MyEclipse--->选择add struts capabilities-->选择struts2.1
+				-->URL pattern 选择/*--->next--->User Libraries-->Finish
+		自动添加好：核心控制器以及struts.xml文件
+	3.MyEclipse中添加hibernate的功能
+		右击工程，选择MyEclipse--->选择add hibernate capabilities-->选择User Libraries
+		自动生成：HibernateSessionFactory工具类，hibernate.cfg.xml;	
+	4.根据数据库生成JavaBean:实体类、配置文件、工具类、映射文件、持久层；
+		切换perspective(右上角)--->MyEclipse database-->选择数据库以及需要用到表-->hibernate reverse engineering
+		注意：一般不使用自动生成持久层文件
+	
+	注意：
+	(1)	关于JavaBean中，实现java.io.Serializable，可序列化接口，主要是用于服务器集群，当其中某一个服务器出现问题的时候，这个服务器的数据会被序列化，
+		转移到其他的服务器上。
+	(2) 自动生成的实体类类中，没有指定泛型。	
+		
+				
+三、hibernate 中获取session：
+
+    1  随机获取     openSession      每次都开启一个新的session
+	 
+	2  和当前线程绑定 getCurrentSession
+	   要使用getCurrentSession  
+	   需要 开启在:hibernate.cfg.xml <property name="hibernate.current_session_context_class">thread</property>
+	 
+	   这时session,在事务提交时(tx.commit())自动关闭，不能手动关闭
+	 
+    3  和JTA绑定(略)
+
+
+四、hibernate抓取策略：fetch：
+	1、N:1 		
+		(1)select(默认) 获取关联对象的时候，发送SQL语句进行查询：
+			例如：查询员工的时候，它携带了一个部门的对象，
+				Employees em = (Employees)session.uniqueResult();
+				em.getName();
+				em.getDept().getName();//这是这个员工表的关联表，也就是这个em对象的关联对象，在使用这句的时候，hibernate会再次去查询它的Dept表
+									   //这就是默认的fetch--是需要的时候才会去查询,相当去延迟加载
+												
+		(2)join 迫切的左外连接，这时lazy失效，相当于立即加载，第一次去查询的时候就把所有的数据全部查询出来。
+		
+	2、1:N
+		(1)select(默认)		同上
+		(2)join				同上
+		(3)subselect		子查询：获取关联对象的时候，发送SQL语句进行查询：		
+			在使用子查询的时候与select的区别：select * from user where age in(15,20,25);
+			select是将这个语句分为3个：where age=15;where age=20;where age=25;	
+			而subselect是：select * from user where age in(15,20,25);只发送一条sql语句查询，提高查询的效率
+					
+	3、N:N	同1
+	
+	4、1:1	同1
+	
+五、整合struts与hibernate
+
+	第一要解决的问题是:在一些多表查询的时候，session在查询结束的时候，会关闭，而他关联的一些数据就不能去查询了；
+	解决方法：
+		1、不关闭session,可以解决，却也是最错误的解决方法;
+		2、立即加载，但是查询的效率很低，不建议使用
+		3、添加filter，在过滤器中统一开启与关闭session ,使用getCurrentSession()，
+					在这里默认使用使用MyEclipse生成的HibernateSessionFactory工具，可以直接使用getSession();就能获得新开线程的效果
+			
+			步骤一：创建filter
+			public class SessionFilter implements Filter {
+				public void destroy() {}
+				public void doFilter(ServletRequest arg0, ServletResponse arg1,
+						FilterChain arg2) throws IOException, ServletException {
+					Session session = HibernateUtil.getSession();
+					Transaction tr = session.beginTransaction();
+					arg2.doFilter(arg0, arg1);
+					tr.commit();
+				}
+				public void init(FilterConfig arg0) throws ServletException {}
+			}
+			
+			步骤二：向web.xml中配置这个过滤器：
+				注意：必须配置在struts的核心控制器之前，因为客户端请求向通过SessionFilter，之后返回数据的时候
+				必须先通过核心控制器，向页面输出数据，之后才可以关闭session。这是由于filter的数据结构是嵌套式
+				的，和堆栈式结构相似，也是先进的后出，后进的先出。但是建议这个filter的对象尽量要具体，可以提高效率
+				如/*.action
+				<filter>
+					<filter-name>SessionFilter</filter-name>
+					<filter-class>com.project.web.filter.SessionFilter</filter-class>
+				</filter>
+				
+				<filter-mapping>
+					<filter-name>SessionFilter</filter-name>
+					<url-pattern>/*</url-pattern>
+				</filter-mapping>
+			
+			步骤三：开启在getCurrentSession()-----或是使用MyEclipse生成的HibernateSessionFactory工具就可以不用这一步骤
+			hibernate.cfg.xml <property name="hibernate.current_session_context_class">thread</property>
+			
+			步骤四：修改BaseDaoImpl
+			public boolean insert(T t) {
+				Session se = HibernateUtil.getSession();
+				try {
+					se.save(t);			
+				} catch (Exception e) {
+					return false;
+				} 
+				return true;
+			}
+
+
+
+
+
+
+	  
+	  

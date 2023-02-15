@@ -1,0 +1,247 @@
+<div class="post">
+     <h3 class="title"><span>[Google Guava] 7-原生类型</span></h3>
+     <div class="post_content">
+      <p><a href="http://code.google.com/p/guava-libraries/wiki/PrimitivesExplained">原文链接</a> <a href="http://ifeve.com/google-guava-primitives">译文链接</a> 译者：沈义扬，校对：丁一</p>
+<h2>概述</h2>
+<p>Java的原生类型就是指基本类型：byte、short、int、long、float、double、char和boolean。</p>
+<p><i>在从Guava查找原生类型方法之前，可以先查查</i><a href="http://docs.oracle.com/javase/1.5.0/docs/api/java/util/Arrays.html"><b><i>Arrays</i></b></a><i>类，或者对应的基础类型包装类，如</i><a href="http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/Integer.html"><b><i>Integer</i></b></a><strong><i>。</i></strong></p>
+<p>原生类型不能当作对象或泛型的类型参数使用，这意味着许多通用方法都不能应用于它们。Guava提供了若干通用工具，包括原生类型数组与集合API的交互，原生类型和字节数组的相互转换，以及对某些原生类型的无符号形式的支持。<br>
+<span id="more-8987"></span></p>
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="204"><b>原生类型</b><b></b></td>
+<td width="408"><b>Guava</b><b>工具类（都在</b><b>com.google.common.primitives</b><b>包</b><b>）</b><b></b></td>
+</tr>
+<tr>
+<td width="204">byte</td>
+<td width="408"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/Bytes.html"><tt>Bytes</tt></a>, <a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/SignedBytes.html"><tt>SignedBytes</tt></a>, <a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/UnsignedBytes.html"><tt>UnsignedBytes</tt></a></td>
+</tr>
+<tr>
+<td width="204">short</td>
+<td width="408"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/Shorts.html"><tt>Shorts</tt></a></td>
+</tr>
+<tr>
+<td width="204">int</td>
+<td width="408"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/Ints.html"><tt>Ints</tt></a>, <a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/UnsignedInteger.html"><tt>UnsignedInteger</tt></a>, <a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/UnsignedInts.html"><tt>UnsignedInts</tt></a></td>
+</tr>
+<tr>
+<td width="204">long</td>
+<td width="408"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/Longs.html"><tt>Longs</tt></a>, <a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/UnsignedLong.html"><tt>UnsignedLong</tt></a>, <a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/UnsignedLongs.html"><tt>UnsignedLongs</tt></a></td>
+</tr>
+<tr>
+<td width="204">float</td>
+<td width="408"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/Floats.html"><tt>Floats</tt></a></td>
+</tr>
+<tr>
+<td width="204">double</td>
+<td width="408"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/Doubles.html"><tt>Doubles</tt></a></td>
+</tr>
+<tr>
+<td width="204">char</td>
+<td width="408"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/Chars.html"><tt>Chars</tt></a></td>
+</tr>
+<tr>
+<td width="204">boolean</td>
+<td width="408"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/Booleans.html"><tt>Booleans</tt></a></td>
+</tr>
+</tbody>
+</table>
+<p>Bytes工具类没有定义任何区分有符号和无符号字节的方法，而是把它们都放到了SignedBytes和UnsignedBytes工具类中，因为字节类型的符号性比起其它类型要略微含糊一些。</p>
+<p>int和long的无符号形式方法在UnsignedInts和UnsignedLongs类中，但由于这两个类型的大多数用法都是有符号的，Ints和Longs类按照有符号形式处理方法的输入参数。</p>
+<p>此外，Guava为int和long的无符号形式提供了包装类，即UnsignedInteger和UnsignedLong，以帮助你使用类型系统，以极小的性能消耗对有符号和无符号值进行强制转换。</p>
+<p>在本章下面描述的方法签名中，我们用Wrapper表示JDK包装类，prim表示原生类型。（Prims表示相应的Guava工具类。）</p>
+<h2>原生类型数组工具</h2>
+<p>原生类型数组是处理原生类型集合的最有效方式（从内存和性能双方面考虑）。Guava为此提供了许多工具方法。</p>
+<table width="666" border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="264"><b>方法签名</b><b></b></td>
+<td valign="top" width="162"><b>描述</b><b></b></td>
+<td valign="top" width="162"><b>类似方法</b><b></b></td>
+<td width="78"><b>可用性</b><b></b></td>
+</tr>
+<tr>
+<td width="264">List&lt;Wrapper&gt;&nbsp;asList(prim… backingArray)</td>
+<td valign="top" width="162">把数组转为相应包装类的List<b></b></td>
+<td width="162"><a href="http://docs.oracle.com/javase/6/docs/api/java/util/Arrays.html#asList(T...)">Arrays.asList</a><b></b></td>
+<td width="78">符号无关*</td>
+</tr>
+<tr>
+<td width="264">prim[]&nbsp;toArray(Collection&lt;Wrapper&gt; collection)</td>
+<td valign="top" width="162">把集合拷贝为数组，和collection.toArray()一样线程安全</td>
+<td width="162"><a href="http://docs.oracle.com/javase/6/docs/api/java/util/Collection.html#toArray()">Collection.toArray()</a><b></b></td>
+<td width="78">符号无关</td>
+</tr>
+<tr>
+<td width="264">prim[] concat(prim[]… arrays)</td>
+<td valign="top" width="162">串联多个原生类型数组</td>
+<td width="162"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Iterables.html#concat(java.lang.Iterable...)">Iterables.concat</a><b></b></td>
+<td width="78">符号无关</td>
+</tr>
+<tr>
+<td width="264">boolean contains(prim[] array, prim target)</td>
+<td valign="top" width="162">判断原生类型数组是否包含给定值</td>
+<td width="162"><a href="http://docs.oracle.com/javase/6/docs/api/java/util/Collection.html#contains(java.lang.Object)">Collection.contains</a><b></b></td>
+<td width="78">符号无关</td>
+</tr>
+<tr>
+<td width="264">int indexOf(prim[] array, prim target)</td>
+<td valign="top" width="162">给定值在数组中首次出现处的索引，若不包含此值返回-1</td>
+<td width="162"><a href="http://docs.oracle.com/javase/6/docs/api/java/util/List.html#indexOf(java.lang.Object)">List.indexOf</a><b></b></td>
+<td width="78">符号无关</td>
+</tr>
+<tr>
+<td width="264">int&nbsp;lastIndexOf(prim[] array, prim target)</td>
+<td valign="top" width="162">给定值在数组最后出现的索引，若不包含此值返回-1</td>
+<td width="162"><a href="http://docs.oracle.com/javase/6/docs/api/java/util/List.html#lastIndexOf(java.lang.Object)">List.lastIndexOf</a><b></b></td>
+<td width="78">符号无关</td>
+</tr>
+<tr>
+<td width="264">prim&nbsp;min(prim… array)</td>
+<td valign="top" width="162">数组中最小的值</td>
+<td width="162"><a href="http://docs.oracle.com/javase/6/docs/api/java/util/Collections.html#min(java.util.Collection)">Collections.min</a><b></b></td>
+<td width="78">符号相关*</td>
+</tr>
+<tr>
+<td width="264">prim&nbsp;max(prim… array)</td>
+<td valign="top" width="162">数组中最大的值</td>
+<td width="162"><a href="http://docs.oracle.com/javase/6/docs/api/java/util/Collections.html#max(java.util.Collection)">Collections.max</a><b></b></td>
+<td width="78">符号相关</td>
+</tr>
+<tr>
+<td width="264">String&nbsp;join(String separator, prim… array)</td>
+<td valign="top" width="162">把数组用给定分隔符连接为字符串</td>
+<td width="162"><a href="http://code.google.com/p/guava-libraries/wiki/StringsExplained#Joiner">Joiner.on(separator).join</a><b></b></td>
+<td width="78">符号相关</td>
+</tr>
+<tr>
+<td width="264">Comparator&lt;prim[]&gt; &nbsp; lexicographicalComparator()</td>
+<td valign="top" width="162">按字典序比较原生类型数组的Comparator</td>
+<td width="162"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#lexicographical()">Ordering.natural().lexicographical()</a><b></b></td>
+<td width="78">符号相关</td>
+</tr>
+</tbody>
+</table>
+<p>*符号无关方法存在于Bytes, Shorts, Ints, Longs, Floats, Doubles, Chars, Booleans。而UnsignedInts, UnsignedLongs, SignedBytes, 或UnsignedBytes不存在。</p>
+<p>*符号相关方法存在于SignedBytes, UnsignedBytes, Shorts, Ints, Longs, Floats, Doubles, Chars, Booleans, UnsignedInts, UnsignedLongs。而Bytes不存在。</p>
+<h2>通用工具方法</h2>
+<p>Guava为原生类型提供了若干JDK6没有的工具方法。但请注意，其中某些方法已经存在于JDK7中。</p>
+<table width="667" border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="232"><b>方法签名</b><b></b></td>
+<td valign="top" width="302"><b>描述</b><b></b></td>
+<td width="132"><b>可用性</b><b></b></td>
+</tr>
+<tr>
+<td width="232">int&nbsp;compare(prim a, prim b)</td>
+<td valign="top" width="302">传统的Comparator.compare方法，但针对原生类型。JDK7的原生类型包装类也提供这样的方法<b></b></td>
+<td width="132">符号相关<b></b></td>
+</tr>
+<tr>
+<td width="232">prim checkedCast(long value)</td>
+<td valign="top" width="302">把给定long值转为某一原生类型，若给定值不符合该原生类型，则抛出IllegalArgumentException<b></b></td>
+<td width="132">仅适用于符号相关的整型*</td>
+</tr>
+<tr>
+<td width="232">prim&nbsp;saturatedCast(long value)</td>
+<td valign="top" width="302">把给定long值转为某一原生类型，若给定值不符合则使用最接近的原生类型值<b></b></td>
+<td width="132">仅适用于符号相关的整型</td>
+</tr>
+</tbody>
+</table>
+<p>*这里的整型包括byte, short, int, long。不包括char, boolean, float, 或double。</p>
+<p><i>**译者注：不符合主要是指long值超出prim类型的范围，比如过大的long超出int范围。</i></p>
+<p>注：com.google.common.math.DoubleMath提供了舍入double的方法，支持多种舍入模式。相见第12章的”浮点数运算”。</p>
+<h2>字节转换方法</h2>
+<p>Guava提供了若干方法，用来把原生类型按<b>大字节序</b>与字节数组相互转换。所有这些方法都是符号无关的，此外Booleans没有提供任何下面的方法。</p>
+<table width="624" border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="300"><b>方法或字段签名</b><b></b></td>
+<td width="324"><b>描述</b><b></b></td>
+</tr>
+<tr>
+<td width="300">int BYTES</td>
+<td width="324">常量：表示该原生类型需要的字节数</td>
+</tr>
+<tr>
+<td width="300">prim fromByteArray(byte[] bytes)</td>
+<td width="324">使用字节数组的前Prims.BYTES个字节，按<b>大字节序</b>返回原生类型值；如果bytes.length &lt;= Prims.BYTES，抛出IAE</td>
+</tr>
+<tr>
+<td width="300">prim&nbsp;fromBytes(byte b1, …, byte bk)</td>
+<td width="324">接受Prims.BYTES个字节参数，按<b>大字节序</b>返回原生类型值</td>
+</tr>
+<tr>
+<td width="300">byte[] toByteArray(prim value)</td>
+<td width="324">按<b>大字节序</b>返回value的字节数组</td>
+</tr>
+</tbody>
+</table>
+<h2>无符号支持</h2>
+<p>JDK原生类型包装类提供了针对有符号类型的方法，而UnsignedInts和UnsignedLongs工具类提供了相应的无符号通用方法。UnsignedInts和UnsignedLongs直接处理原生类型：使用时，由你自己保证只传入了无符号类型的值。</p>
+<p>此外，对int和long，Guava提供了无符号包装类（<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/UnsignedInteger.html">UnsignedInteger</a>和<a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/UnsignedLong.html">UnsignedLong</a>），来帮助你以极小的性能消耗，对有符号和无符号类型进行强制转换。</p>
+<h3>无符号通用工具方法</h3>
+<p>JDK的原生类型包装类提供了有符号形式的类似方法。</p>
+<table width="624" border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="473"><b>方法签名</b><b></b></td>
+<td width="151"><b>说明</b><b></b></td>
+</tr>
+<tr>
+<td width="473"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/UnsignedInts.html#parseUnsignedInt(java.lang.String)"><tt>int&nbsp;UnsignedInts.parseUnsignedInt(String)</tt></a><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/UnsignedLongs.html#parseUnsignedLong(java.lang.String)"><tt>long&nbsp;UnsignedLongs.parseUnsignedLong(String)</tt></a></td>
+<td width="151">按无符号十进制解析字符串</td>
+</tr>
+<tr>
+<td width="473"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/UnsignedInts.html#parseUnsignedInt(java.lang.String, int)"><tt>int&nbsp;UnsignedInts.parseUnsignedInt(String string, int radix)</tt></a><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/UnsignedLongs.html#parseUnsignedLong(java.lang.String)"><tt>long&nbsp;UnsignedLongs.parseUnsignedLong(String string, int radix)</tt></a></td>
+<td width="151">按无符号的特定进制解析字符串</td>
+</tr>
+<tr>
+<td width="473"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/UnsignedInts.html#toString(int)"><tt>String&nbsp;UnsignedInts.toString(int)</tt></a><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/UnsignedLongs.html#toString(long)"><tt>String&nbsp;UnsignedLongs.toString(long)</tt></a></td>
+<td width="151">数字按无符号十进制转为字符串</td>
+</tr>
+<tr>
+<td width="473"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/UnsignedInts.html#toString(int, int)"><tt>String UnsignedInts.toString(int &nbsp; value, int radix)</tt></a><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/primitives/UnsignedLongs.html#toString(long, int)"><tt>String&nbsp;UnsignedLongs.toString(long value, int radix)</tt></a></td>
+<td width="151">数字按无符号特定进制转为字符串</td>
+</tr>
+</tbody>
+</table>
+<h3>无符号包装类</h3>
+<p>无符号包装类包含了若干方法，让使用和转换更容易。</p>
+<table width="624" border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="321"><b>方法签名</b><b></b></td>
+<td width="303"><b>说明</b><b></b></td>
+</tr>
+<tr>
+<td width="321">UnsignedPrim&nbsp;add(UnsignedPrim), subtract, multiply, divide, remainder</td>
+<td width="303">简单算术运算</td>
+</tr>
+<tr>
+<td width="321">UnsignedPrim&nbsp;valueOf(BigInteger)</td>
+<td width="303">按给定BigInteger返回无符号对象，若BigInteger为负或不匹配，抛出IAE</td>
+</tr>
+<tr>
+<td width="321">UnsignedPrim&nbsp;valueOf(long)</td>
+<td width="303">按给定long返回无符号对象，若long为负或不匹配，抛出IAE</td>
+</tr>
+<tr>
+<td width="321">UnsignedPrim&nbsp;asUnsigned(prim value)</td>
+<td width="303">把给定的值当作无符号类型。例如，UnsignedInteger.asUnsigned(1&lt;&lt;31)的值为2<sup>31</sup>,尽管1&lt;&lt;31当作int时是负的</td>
+</tr>
+<tr>
+<td width="321">BigInteger&nbsp;bigIntegerValue()</td>
+<td width="303">用BigInteger返回该无符号对象的值</td>
+</tr>
+<tr>
+<td width="321">toString(),&nbsp;&nbsp;toString(int radix)</td>
+<td width="303">返回无符号值的字符串表示</td>
+</tr>
+</tbody>
+</table>
+<p><i>译者注：UnsignedPrim指各种无符号包装类，如UnsignedInteger、UnsignedLong</i>。
+</p><div style="margin-top: 15px; font-style: italic">

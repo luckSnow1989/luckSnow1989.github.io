@@ -1,0 +1,32 @@
+功能描述：
+
+1、复制合同、合同下的货物、货物下的附件
+
+1）得到数据，
+2）改变主键，产生新的主键
+3）旧的内容赋给新的内容
+
+newContract.setCheckBy(oldContract.getCheckBy())
+
+4）标示出新的合同
+newContract.setContractNo("[复制]"+oldContract.getContractNo());
+
+5）得到合同下的货物
+Set<ContractProduct> newContractProductSet = new HashSet<ContractProduct>();
+
+6）得到货物下的附件
+
+Set<ExtCproduct> newExtCproductSet = new HashSet<ExtCproduct>();
+
+7）重点：复制时一定要初始化
+
+状态清为初始状态
+
+
+
+复制功能加强：
+1、com.sun.org.apache.commons.beanutils.BeanUtils	copyProperties
+
+2、复制时一定要初始化，合同、货物、附件
+
+

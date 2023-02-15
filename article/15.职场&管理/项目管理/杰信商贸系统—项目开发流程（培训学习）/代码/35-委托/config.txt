@@ -1,0 +1,15 @@
+<mapping resource="cn/itcast/entity/ShippingOrder.hbm.xml" />
+
+<bean id="daoShippingOrder" class="cn.itcast.entity.dao.ShippingOrderDAO" autowire="byName"/>
+
+
+  	
+<package name="shippingorder" namespace="/shippingorder" extends="struts-default">
+	<action name="shippingOrderAction_*" method="{1}" class="cn.itcast.web.struts2.cargo.shippingorder.ShippingOrderAction">
+		<result name="pedit">/cargo/shippingorder/jShippingOrderEdit.jsp</result>
+	</action>
+</package>
+
+
+<li id="new"><a href="#" onclick="formSubmit('/shippingorder/shippingOrderAction_toedit','_self');this.blur();">Î¯ÍÐ</a></li>
+

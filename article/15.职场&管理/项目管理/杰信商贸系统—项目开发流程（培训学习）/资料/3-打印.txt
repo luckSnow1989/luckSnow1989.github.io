@@ -1,0 +1,9 @@
+1、传参	request, response, dao
+2、读取模板文件 make/xlsprint
+3、建立临时目录
+4、复制模板文件，产生新的excel
+5、打开文件，写入内容
+6、写入信息，合并单元格、设置样式，分页、图片、画线、前缀、后缀
+7、关闭excel
+8、调用prototypeDowload（）进行下载
+

@@ -1,0 +1,136 @@
+一、jQuery：
+	Ajax框架：
+		(1)客户端框架
+		底层框架(.js): jQuery、prototype,同样使用率也是最高的：29.3% ，34.1% 	
+		高层框架：ExtJS、YUI、DOJO	：22.5%  13%	11.8%
+		
+		(2)服务器端框架
+		DWR、GWT(Google) 用js代码，直接调用普通Java类中的方法
+		
+******************************************************************************************		
+注意：
+	1.table的直接的子节点是<thead>,<tbody>,<tfoot>，一般写的时候如果不加这三个的话，默认都是被<tbody>包着的
+		例如：我们写的时候						浏览器处理后
+		<table>                                 <table>
+			<tr>11</tr>						 <tbody><tr>11</tr>
+			<tr>22</tr>								<tr>22</tr>
+			<tr>33</tr>								<tr>33</tr>
+			<tr>44</tr>								<tr>44</tr></tbody>
+		</table>								</table>
+	2.阅读时注意，标题前标记有√√的内容是常用的。
+******************************************************************************************
+二、CSS风格选择器   selector
+
+√√√√0、最常用的三种选择器
+		(1)标签选择器：
+			$('div') $(table )
+		(2)id选择器：
+			$('#myID')
+		(3)class选择器：
+			 $('.myclass')  class="myclass"			  
+			 $('div.myclass')
+			 
+		$('div#myid') 内部两个元素紧挨着的是选择div标签中id是myid的。
+		$('.class1.class2') 是选择同时又class1和class2的。如<a class="class1 class2"></a>
+		 
+	1、后代（Descendant）选择器 E F
+	(中间是空格，意为前一个节点内部的子节点)
+	$('#container p')  等同于样式中的  div p(color:red;)
+
+	2 子节点选择器(child)  E>F
+	$('div > p')(div下的子节点中所有的p)
+
+	3 直接后兄弟选择器(adjacent sibing) E+F
+	$('div + p')(div相邻的下一个兄弟节点)
+
+	4 后兄弟选择器（General silbling） E~F
+	$('div ~ p')(div后面所有的是p兄弟节点)
+
+	5 多元素选择器(Multiple Elements) E,F,G
+	同时选中这些节点
+	$('table,tr,td') 等同于样式中的 $('div,span,p')
+		
+	6  :nth-child(n)  ------------------------从1开始数
+	$('li:nth-child(1)')   选择到的是li标签 ，这个li是它父标签的第一个孩子  
+
+	7  :first-child	
+	$('li:first-child')  选择到的是li标签，这个li是它父标签的第一个孩子
+
+	8 :last-child
+	$('li:last-child')  选择到的是li标签，这个li是它父标签的最后一个孩子
+			
+	9 :only-child 
+	$('div:only-child') 选择的是 div标签， 这个div是它父标签的唯一的孩子
+
+	10 :not (这些节点中，class不是myclass的)
+	$('li:not(.myclass)') 
+
+	11 :empty (没有子节点的某个节点)
+	$(':empty')选到没有孩子的节点
+	$('p:empty')选到没有孩子的p节点
+
+	12 $('*')  选择页面上的所有标签
+	   $('p > *')
+   
+******************************************************************************************
+三、属性选择器，可以选择标签:$(div[name=abc])；选择id：$(#id[name=abc]);选择类：$(.class[name=abc])
+√√√√		
+	1.	$('a[href]') 		选择有href属性的a标签
+		$('div[id]') 		选择有id属性的div标签
+	2.	$('a[href=abcd]') 	选择href属性值等于abcd的a标签 	
+	3.	$('a[href!=ab]') 	选择href属性值不是abcd的a标签 	
+	4.	$('a[href^=abcd]') 	选择href属性值开头是ab的a标签 	
+	5.	$('a[href$=abcd]') 	选择href属性值末尾是abcd的a标签
+	6.	$('a[href*=abcd]') 	选择href属性值包含abcd的a标签
+        
+******************************************************************************************
+四、表单选择器：
+	:input  	$(":input") 	所有 <input> 元素  
+	:text   	$(":text")  	所有 type="text" 的 <input> 元素  
+	:password   $(":password")  所有 type="password" 的 <input> 元素  
+	:radio  	$(":radio") 	所有 type="radio" 的 <input> 元素  
+	:checkbox   $(":checkbox")  所有 type="checkbox" 的 <input> 元素  
+	:submit 	$(":submit")    所有 type="submit" 的 <input> 元素  
+	:reset  	$(":reset") 	所有 type="reset" 的 <input> 元素  
+	:button 	$(":button")    所有 type="button" 的 <input> 元素  
+	:image  	$(":image") 	所有 type="image" 的 <input> 元素  
+	:file   	$(":file")  	所有 type="file" 的 <input> 元素  
+	           
+	:enabled    $(":enabled")   所有激活的 input 元素  
+	:disabled   $(":disabled")  所有禁用的 input 元素  
+	:selected   $(":selected")  所有被选取的 select 元素  
+	:checked    $(":checked")   所有被选中的 input 元素 
+******************************************************************************************	 
+五、其他选择器
+	1.奇偶选择器
+	even 偶数   odd  奇数
+	$('li:even') 选择的是li标签   这个li是它的父标签的第 偶数个孩子   (从零开始数)
+	$('li:odd')
+
+	2.:eq(n), :nth(n)，从0开始
+	选择到的是li标签 ，这个li是它父标签的第(n+1)个孩子  
+		例：
+		<ul id="uu">
+			   <li>111</li>
+			   <li>222</li>
+			   <li>333</li>
+			   <li>444</li>
+			   <li>555</li>
+		</ul>	 
+	$('li:eq(3)')  ----   444
+	$('li:nth(3)')------- 444	 
+
+	3 :gt(n)  :lt(n)	从0开始
+		$('li:gt(2)')   选择到的是li标签 ，这个li是它父标签的大于n的所有子节点 
+		$('li:lt(2)')   选择到的是li标签 ，这个li是它父标签的小于n的所有子节点
+	   
+	4 :first  :last
+		$('li:first()')   选择到的是li标签 ，这个li是它父标签的第一个子节点 
+		$('li:last()')    选择到的是li标签 ，这个li是它父标签的最后一个子节点
+
+
+	5 :contains(text) 判断是否包含这个
+	$(div:contains(abcd))   选择的是div ，这个div中要包含 abcd这个文本
+		
+	6. :visible  选择所有可见的标签
+	   :hidden	 选择所有隐藏的标签

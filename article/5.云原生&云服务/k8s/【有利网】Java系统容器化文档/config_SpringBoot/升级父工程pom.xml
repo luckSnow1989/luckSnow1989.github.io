@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+        <groupId>tech.yooli.maven.dependencies</groupId>
+        <artifactId>tech-yooli-maven-dependencies</artifactId>
+        <version>0.6.0.RELEASE</version>
+    </parent>
+
+	<properties>
+        <!--项目组名称-->
+        <project.group>settle</project.group>
+        <!--多模块配置为欲打成镜像的jar包的子模块名称，单模块直接配置为“.”，默认情况为单模块-->
+        <serverModuleRootPath>settle-check-web</serverModuleRootPath>
+        <!--需要构建为镜像的jar包名称-->
+        <serverModuleName>settle-check-web</serverModuleName>
+        <!--服务发布的名称，必须和日志路径名完全一致，且必须是小写字母-->
+        <server.publish.name>settle-check</server.publish.name>
+        <!--服务需要暴露的端口号-->
+        <bind.server.port>8100</bind.server.port>
+    </properties>
+	
+	<!--多模块项目务必在每个子模块pom中添加以下内容，单模块无视-->
+	<build>
+        <plugins>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                    <skipBuild>true</skipBuild>
+                    <skipPush>true</skipPush>
+                    <skipSave>true</skipSave>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+	
+
+</project>

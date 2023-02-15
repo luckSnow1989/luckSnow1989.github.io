@@ -1,0 +1,68 @@
+1、安装前提：CentOS 7.X	内核版本3.1
+
+2、查看内核版本uname -r (查看发行版本号cat /etc/redhat-release)
+
+3、删除系统自带的旧版本docker
+yum remove docker-ce && rm -rf /var/lib/docker		
+     
+
+4、yum update		将yum升级至最新版
+(启用repo中的Extras源，这个存在于CentOS-Base.repo中，默认是启用的,可以使用yum repolist查看是否启用)
+
+5、添加docker仓库(清华大学镜像库)
+vim /etc/yum.repos.d/docker.repo,添加以下内容：
+[dockerrepo]
+name=Docker Repository
+baseurl=https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/centos/7/$basearch/stable
+enabled=1
+gpgcheck=0
+
+******************************
+禁用firewall、iptables、selinux
+******************************
+
+6、安装docker-ce
+yum -y install docker-ce.x86_64
+
+7、在/etc/docker/下新建文件daemon.json并添加以下内容：(作用：加速docker hub拉去镜像速度)
+{
+	"registry-mirrors":["https://zq47c6ug.mirror.aliyuncs.com","https://registry.docker-cn.com"]
+}
+
+
+8、启动、开机启动、状态检查docker
+systemctl start docker && systemctl enable docker && systemctl status docker
+
+9、执行vim /lib/systemd/system/docker.service，修改[Service]节点下配置为：(作用：可以监听非本地客户端访问)
+[Service] 
+... 
+ExecStart=/usr/bin/dockerd -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375
+...
+
+10、重启docker守护进程：
+systemctl daemon-reload  &&  systemctl 	restart docker
+
+==============================================================================================================
+docker常用基础命令：
+1、docker version	查看docker版本
+2、docker images	查看docker镜像
+3、docker run		运行docker镜像
+4、docker ps		查看当前运行的镜像
+5、docker stop		停止容器
+6、docker exec		执行容器中的命令，可以通过它进入容器
+7、docker rm		删除容器
+8、docker rmi		删除镜像
+9、docker logs		查看容器日志
+10、docker build	使用dockerfile构建镜像
+11、docker search	寻找镜像(默认在docker hub)
+12、docker pull		拉取镜像
+13、docker push		推送镜像(需要先进行登录验证)
+===============================================================================================================
+常用镜像仓库地址：
+1、Docker Hub：https://hub.docker.com/
+2、阿里云地址：https://account.aliyun.com/	登录后点->“产品分类”->“云计算基础”->“容器镜像服务”->“管理控制台”
+3、Yooli私有镜像仓库：https://harbor-master.yooli-me.com  (测试仓库地址，用户名：deploy_test   密码：LoFkO73THnV9byQC)
+
+
+
+

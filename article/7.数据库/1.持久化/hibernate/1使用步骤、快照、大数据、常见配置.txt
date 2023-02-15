@@ -1,0 +1,233 @@
+一。hibernate介绍
+	hibernate: 持久层框架
+
+	也称为ORM框架   
+	Object         对象
+	Relational     关系型数据库 
+	Mapping        映射
+
+	JDBC依赖于SQL，属于结构化语言，是一种不完全的面向对象的方式
+	而hibernate能做到完全面向对象的方式操作数据库
+	创始人：
+	Gevin King
+
+1.常见的持久层框架：
+
+	Hibernate OJB   JDO    MyBatis(ibatis)   TopLink   ...
+2.关于Java EE-----13个技术规范
+	JPA   Java Persistence API Java持久化接口
+
+	Servlet/JSP  JDBC  JNDI   JTA  JCA  JPA  EJB   XML  ...
+
+	版本：  2  3  4
+
+			实际开发中3.6是最稳定的版本 
+
+3.jdbc与hibernate的对比
+	1.ormapping框架：数据库的操作框架(ormapping是hibernate的核心框架)
+   	优点
+		(1)、比较简单;
+		(2)、数据缓存：一级缓存    二级缓存   查询缓存;
+		(3)、移植性比较好。
+   	缺点
+		(1)、因为sql语句是hibernate内部生成的，所以程序员干预不了，不可控;(如对sql语句的优化等级非常高，不适合hibernate)
+		(2)、如果数据库特别大，不适合用hibernate;
+	
+	2.jdbc的优点和缺点
+	缺点
+		(1)、查询代码特别繁琐
+		(2)、重复性代码特别多，频繁的try,catch
+		(3)、数据的缓存
+		(4)、sql的移植性不好
+	优点
+		速度比较快
+		把控性比较好
+      
+	
+	
+=========================================================================================
+二、创建工程的基本步骤
+	步骤一、导入jar包	 
+	    
+		hibernate3.jar
+		lib/required/*
+		lib/jpa/*
+		数据库驱动包
+		
+	步骤二、hibernate的配置文件：
+        两类配置文件：这些文件的存放路径是可以改变的，但是一般都是默认下面的方法
+
+            1 总体配置文件(主要配置的就是数据库的连接信息)
+			src/hibernate.cfg.xml
+			=================================================
+			<!DOCTYPE hibernate-configuration PUBLIC
+			"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+			"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+			<hibernate-configuration>
+				
+				<session-factory>  <!-- 一个sessionFactory 就表示一个数据库连接 -->
+				
+					<!-- 数据库方言 -->
+					<property name="dialect">
+					 	org.hibernate.dialect.MySQLDialect
+					</property>
+					
+					<!-- 数据库连接信息 -->
+					<property name="connection.driver_class">
+					   com.mysql.jdbc.Driver
+					</property>
+					
+					<property name="connection.url">
+					   jdbc:mysql://localhost:3306/db0729
+					</property>
+					
+					<property name="connection.username">root</property>
+					<property name="connection.password">mysql</property>
+					<!-- 数据库连接信息 -->
+					
+					<property name="show_sql">true</property>
+					<property name="format_sql">true</property>
+					
+					<!-- 加载映射配置文件 -->
+					<mapping resource="com/zrgk/entity/User.hbm.xml" />
+				</session-factory>
+			</hibernate-configuration>	
+			==============================================================
+			2 映射配置文件
+                ***.hbm.xml	
+                通常情况下      和实体类在同一个包下   类名.hbm.xml
+				
+				实体类   和  数据库表的对应
+
+				属性    和     列
+			==============================================================				
+			<!DOCTYPE hibernate-mapping PUBLIC 
+				"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+				"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+				
+			<hibernate-mapping>
+				<class name="com.project.entity.User" table="user">
+					<id name="id" column="id">
+						<generator class="native"></generator>
+					</id>
+					<property name="name" column="name" type="java.lang.String"></property>
+					<property name="age" column="age" type="java.lang.Integer"></property>
+					<property name="birthday" column="birthday" type="java.util.Date"></property>
+					<property name="photo" column="photo" type="java.sql.Blob"></property>	
+				</class>
+			</hibernate-mapping>
+			================================================================
+    
+    步骤三、创建持久层			 
+        代码基本流程
+		
+		1.保存数据:
+            Configuration
+            SessionFactory
+            Session
+            Transaction
+            session.save()
+            tx.commit()
+            session.close()			
+
+		2.根据主键的查询   OID
+	        session
+			    load
+				get
+
+
+			load和get的区别：(一般都使用get)		
+				load方法查询数据采用的延时加载(执行load时，并没有发送sql查询数据库，而是生成一个代理对象)
+				
+					什么时候发送sql查询数据？ ---  当第一次取代理对象下的非主键的属性时，发送sql查询数据
+
+				get方法查询数据采用的是立即加载(执行get时，已经发送sql查询数据了)
+
+				load当查询的数据不存在是抛异常
+				get 当查询的数据不存在时 返回null
+	注意：关于代码的操作，可以封装到一个工具类中
+			================================================================
+			public class HibernateUtil {	
+				/*
+				 * SessionFactory是一个重量级对象(创建和销毁时都要消耗比较多的内存和资源)
+				 *   1 加载映射配置文件
+				 *   2 生成预定义的sql
+				 *   3 为创建Session准备环境
+				 *   把SessionFactory 设置成 静态的
+				 * */				
+				private static SessionFactory factory;								
+				public static SessionFactory getSessionFactory(){					
+					if(factory==null){						
+						Configuration cfg = new Configuration().configure();						
+						factory = cfg.buildSessionFactory();						
+					}					
+					return factory;					
+				}								
+				public static Session getSession(){				
+					return getSessionFactory().openSession();
+				}
+			}
+			================================================================
+三、实体对象在hibernate中的三种状态(*****)
+	
+	（1）瞬时(临时) Transient
+		刚刚创建出的对象， 生命周期没有被session管理，不和数据库中的任何一条记录对应所谓和数据库中的数据对应，指的是 主键对应
+		一般操作save()方法的时候会将瞬时对象转换为持久化的。
+
+	（2） 持久化     Persistent
+		生命周期被session管理  和数据库中的一条数据对应
+  		转换为Detached状态，在session调用close() 货 clear()，evict() ；
+
+	（3）脱管(游离) Detached
+		生命周期没有被session管理，和数据库中的一条数据对应。
+		转换为持久对象，通过 Session 的 update(),saveOrUpdate() 和 lock() 等方法。
+
+四、关于hibernate的"快照" 
+-------------------------------------------------------------------	 
+ hibernate会为 持久化状态的对象拍一个快照， 当 session关闭时，
+ hibernate会比较 持久化对象和快照，如果不相同则会生成update语句
+-------------------------------------------------------------------- 
+
+五、大字段入库：
+
+          数据库  BLOB		配置文件  <property type="java.sql.Blob" >
+
+          实体类  byte[]	配置文件  <property type="binary" >
+		  
+
+六、常见配置。
+	1.显示sql，默认false
+	<property name="hibernate.show_sql">true</property>
+	
+	2.显示的sql是否格式化
+	<property name="hibernate.format_sql">true</property>
+	
+	3.
+	<property name="hbm2ddl.auto">update</property>
+		create：先删除，再创建
+********update：如果表不存在就创建，不一样就更新，一样就什么都不做。
+		create-drop：初始化时创建表，SessionFactory执行close()时删除表。
+********validate：验证表结构是否一致，如果不一致，就抛异常。
+		
+	4.session.getCurrentSession的用法，告诉hibernate，session由线程产生
+	  1、在hibernate的配置文件中：
+	        <property name="current_session_context_class">thread</property>
+	  2、不需要写session.close方法，在事务提交的时候会自动关闭(由hibernate内部完成)
+	  3、crud都需要事务
+	      1、因为是一个线程，所以整个方法中一个session,一个事务
+	      2、保证了整个业务操作的安全性
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

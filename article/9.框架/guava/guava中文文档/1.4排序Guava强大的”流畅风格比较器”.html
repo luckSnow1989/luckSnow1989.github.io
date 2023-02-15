@@ -1,0 +1,112 @@
+<div class="post">
+     <h3 class="title"><span>[Google Guava] 排序: Guava强大的”流畅风格比较器”</span></h3>
+     <div class="post_content">
+      <p><a href="http://code.google.com/p/guava-libraries/wiki/OrderingExplained" onclick="javascript:window.open('http://code.google.com/p/guava-libraries/wiki/OrderingExplained'); return false;">原文链接</a> 译者: 沈义扬</p>
+<p><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html'); return false;">排序器[Ordering]</a>是Guava流畅风格比较器[Comparator]的实现，它可以用来为构建复杂的比较器，以完成集合排序的功能。</p>
+<p>从实现上说，Ordering实例就是一个特殊的Comparator实例。Ordering把很多基于Comparator的静态方法（如Collections.max）包装为自己的实例方法（非静态方法），并且提供了链式调用方法，来定制和增强现有的比较器。</p>
+<p><span id="more-8819"></span></p>
+<p><strong>创建排序器</strong>：常见的排序器可以由下面的静态方法创建</p>
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="199"><b>方法</b><b></b></td>
+<td width="419"><b>描述</b><b></b></td>
+</tr>
+<tr>
+<td width="199"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#natural()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#natural()'); return false;"><tt>natural()</tt></a></td>
+<td width="419">对可排序类型做自然排序，如数字按大小，日期按先后排序</td>
+</tr>
+<tr>
+<td width="199"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#usingToString()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#usingToString()'); return false;"><tt>usingToString()</tt></a></td>
+<td width="419">按对象的字符串形式做字典排序[lexicographical ordering]</td>
+</tr>
+<tr>
+<td width="199"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#from(java.util.Comparator)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#from(java.util.Comparator)'); return false;"><tt>from(Comparator)</tt></a></td>
+<td width="419">把给定的Comparator转化为排序器</td>
+</tr>
+</tbody>
+</table>
+<p>实现自定义的排序器时，除了用上面的from方法，也可以跳过实现Comparator，而直接继承Ordering：</p>
+<div id="highlighter_770686" class="syntaxhighlighter  "><div class="bar"><div class="toolbar"><a href="#viewSource" title="查看源代码" class="item viewSource" style="width: 16px; height: 16px;">查看源代码</a><div class="item copyToClipboard"><embed width="16" height="16" id="highlighter_770686_clipboard" type="application/x-shockwave-flash" title="复制到剪贴板" allowscriptaccess="always" wmode="transparent" flashvars="highlighterId=highlighter_770686" menu="false" src="http://ifeve.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter2/scripts/clipboard.swf"></div><a href="#printSource" title="打印" class="item printSource" style="width: 16px; height: 16px;">打印</a><a href="#about" title="帮助" class="item about" style="width: 16px; height: 16px;">帮助</a></div></div><div class="lines"><div class="line alt1"><table><tbody><tr><td class="number"><code>1</code></td><td class="content"><code class="plain">Ordering&lt;String&gt; byLengthOrdering = </code><code class="keyword">new</code> <code class="plain">Ordering&lt;String&gt;() {</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>2</code></td><td class="content"><code class="spaces">&nbsp;&nbsp;</code><code class="keyword">public</code> <code class="keyword">int</code> <code class="plain">compare(String left, String right) {</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>3</code></td><td class="content"><code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="keyword">return</code> <code class="plain">Ints.compare(left.length(), right.length());</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>4</code></td><td class="content"><code class="spaces">&nbsp;&nbsp;</code><code class="plain">}</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>5</code></td><td class="content"><code class="plain">};</code></td></tr></tbody></table></div></div></div>
+<p><strong>链式调用方法</strong>：通过链式调用，可以由给定的排序器衍生出其它排序器</p>
+<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="199"><b>方法</b></td>
+<td width="419"><b>描述</b></td>
+</tr>
+<tr>
+<td width="199"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#reverse()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#reverse()'); return false;"><tt>reverse()</tt></a></td>
+<td width="419">获取语义相反的排序器</td>
+</tr>
+<tr>
+<td width="199"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#nullsFirst()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#nullsFirst()'); return false;"><tt>nullsFirst()</tt></a></td>
+<td width="419">使用当前排序器，但额外把null值排到最前面。</td>
+</tr>
+<tr>
+<td width="199"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#nullsLast()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#nullsLast()'); return false;"><tt>nullsLast()</tt></a></td>
+<td width="419">使用当前排序器，但额外把null值排到最后面。</td>
+</tr>
+<tr>
+<td width="199"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#compound(java.util.Comparator)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#compound(java.util.Comparator)'); return false;"><tt>compound(Comparator)</tt></a></td>
+<td width="419">合成另一个比较器，以处理当前排序器中的相等情况。</td>
+</tr>
+<tr>
+<td width="199"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#lexicographical()" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#lexicographical()'); return false;"><tt>lexicographical()</tt></a></td>
+<td width="419">基于处理类型T的排序器，返回该类型的可迭代对象Iterable&lt;T&gt;的排序器。</td>
+</tr>
+<tr>
+<td width="199"><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#onResultOf(com.google.common.base.Function)" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#onResultOf(com.google.common.base.Function)'); return false;"><tt>onResultOf(Function)</tt></a></td>
+<td width="419">对集合中元素调用Function，再按返回值用当前排序器排序。</td>
+</tr>
+</tbody>
+</table>
+<p>例如，你需要下面这个类的排序器。</p>
+<div id="highlighter_902019" class="syntaxhighlighter  "><div class="bar"><div class="toolbar"><a href="#viewSource" title="查看源代码" class="item viewSource" style="width: 16px; height: 16px;">查看源代码</a><div class="item copyToClipboard"><embed width="16" height="16" id="highlighter_902019_clipboard" type="application/x-shockwave-flash" title="复制到剪贴板" allowscriptaccess="always" wmode="transparent" flashvars="highlighterId=highlighter_902019" menu="false" src="http://ifeve.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter2/scripts/clipboard.swf"></div><a href="#printSource" title="打印" class="item printSource" style="width: 16px; height: 16px;">打印</a><a href="#about" title="帮助" class="item about" style="width: 16px; height: 16px;">帮助</a></div></div><div class="lines"><div class="line alt1"><table><tbody><tr><td class="number"><code>1</code></td><td class="content"><code class="keyword">class</code> <code class="plain">Foo {</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>2</code></td><td class="content"><code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="color1">@Nullable</code> <code class="plain">String sortedBy;</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>3</code></td><td class="content"><code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="keyword">int</code> <code class="plain">notSortedBy;</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>4</code></td><td class="content"><code class="plain">}</code></td></tr></tbody></table></div></div></div>
+<p>考虑到排序器应该能处理sortedBy为null的情况，我们可以使用下面的链式调用来合成排序器：</p>
+<div id="highlighter_678324" class="syntaxhighlighter  "><div class="bar"><div class="toolbar"><a href="#viewSource" title="查看源代码" class="item viewSource" style="width: 16px; height: 16px;">查看源代码</a><div class="item copyToClipboard"><embed width="16" height="16" id="highlighter_678324_clipboard" type="application/x-shockwave-flash" title="复制到剪贴板" allowscriptaccess="always" wmode="transparent" flashvars="highlighterId=highlighter_678324" menu="false" src="http://ifeve.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter2/scripts/clipboard.swf"></div><a href="#printSource" title="打印" class="item printSource" style="width: 16px; height: 16px;">打印</a><a href="#about" title="帮助" class="item about" style="width: 16px; height: 16px;">帮助</a></div></div><div class="lines"><div class="line alt1"><table><tbody><tr><td class="number"><code>1</code></td><td class="content"><code class="plain">Ordering&lt;Foo&gt; ordering = Ordering.natural().nullsFirst().onResultOf(</code><code class="keyword">new</code> <code class="plain">Function&lt;Foo, String&gt;() {</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>2</code></td><td class="content"><code class="spaces">&nbsp;&nbsp;</code><code class="keyword">public</code> <code class="plain">String apply(Foo foo) {</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>3</code></td><td class="content"><code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="keyword">return</code> <code class="plain">foo.sortedBy;</code></td></tr></tbody></table></div><div class="line alt2"><table><tbody><tr><td class="number"><code>4</code></td><td class="content"><code class="spaces">&nbsp;&nbsp;</code><code class="plain">}</code></td></tr></tbody></table></div><div class="line alt1"><table><tbody><tr><td class="number"><code>5</code></td><td class="content"><code class="plain">});</code></td></tr></tbody></table></div></div></div>
+<p>当阅读链式调用产生的排序器时，应该从后往前读。上面的例子中，排序器首先调用apply方法获取sortedBy值，并把sortedBy为null的元素都放到最前面，然后把剩下的元素按sortedBy进行自然排序。之所以要从后往前读，是因为每次链式调用都是用后面的方法包装了前面的排序器。</p>
+<p><i>注：用compound方法包装排序器时，就不应遵循从后往前读的原则。为了避免理解上的混乱，请不要把compound写在一长串链式调用的中间，你可以另起一行，在链中最先或最后调用compound。</i></p>
+<p>超过一定长度的链式调用，也可能会带来阅读和理解上的难度。我们建议按下面的代码这样，在一个链中最多使用三个方法。此外，你也可以把Function分离成中间对象，让链式调用更简洁紧凑。</p>
+<div id="highlighter_629220" class="syntaxhighlighter  "><div class="bar"><div class="toolbar"><a href="#viewSource" title="查看源代码" class="item viewSource" style="width: 16px; height: 16px;">查看源代码</a><div class="item copyToClipboard"><embed width="16" height="16" id="highlighter_629220_clipboard" type="application/x-shockwave-flash" title="复制到剪贴板" allowscriptaccess="always" wmode="transparent" flashvars="highlighterId=highlighter_629220" menu="false" src="http://ifeve.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter2/scripts/clipboard.swf"></div><a href="#printSource" title="打印" class="item printSource" style="width: 16px; height: 16px;">打印</a><a href="#about" title="帮助" class="item about" style="width: 16px; height: 16px;">帮助</a></div></div><div class="lines"><div class="line alt1"><table><tbody><tr><td class="number"><code>1</code></td><td class="content"><code class="plain">Ordering&lt;Foo&gt; ordering = Ordering.natural().nullsFirst().onResultOf(sortKeyFunction)</code></td></tr></tbody></table></div></div></div>
+<p><strong>运用排序器：</strong>Guava的排序器实现有若干操纵集合或元素值的方法</p>
+<table>
+<tbody>
+<tr>
+<td><strong>方法</strong></td>
+<td><strong>描述</strong></td>
+<td><strong>另请参见</strong></td>
+</tr>
+<tr>
+<td><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#greatestOf(java.lang.Iterable, int)" rel="nofollow" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#greatestOf(java.lang.Iterable, int)'); return false;"><tt>greatestOf(Iterable iterable, int k)</tt></a></td>
+<td>获取可迭代对象中最大的k个元素。</td>
+<td><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#leastOf(java.lang.Iterable, int)" rel="nofollow" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#leastOf(java.lang.Iterable, int)'); return false;"><tt>leastOf</tt></a></td>
+</tr>
+<tr>
+<td><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#isOrdered(java.lang.Iterable)" rel="nofollow" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#isOrdered(java.lang.Iterable)'); return false;"><tt>isOrdered(Iterable)</tt></a></td>
+<td>判断可迭代对象是否已按排序器排序：允许有排序值相等的元素。</td>
+<td><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#isStrictlyOrdered(java.lang.Iterable)" rel="nofollow" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#isStrictlyOrdered(java.lang.Iterable)'); return false;"><tt>isStrictlyOrdered</tt></a></td>
+</tr>
+<tr>
+<td><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#sortedCopy(java.lang.Iterable)" rel="nofollow" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#sortedCopy(java.lang.Iterable)'); return false;"><tt>sortedCopy(Iterable)</tt></a></td>
+<td>判断可迭代对象是否已严格按排序器排序：不允许排序值相等的元素。</td>
+<td><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#immutableSortedCopy(java.lang.Iterable)" rel="nofollow" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#immutableSortedCopy(java.lang.Iterable)'); return false;"><tt>immutableSortedCopy</tt></a></td>
+</tr>
+<tr>
+<td><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#min(E, E)" rel="nofollow" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#min(E, E)'); return false;"><tt>min(E, E)</tt></a></td>
+<td>返回两个参数中最小的那个。如果相等，则返回第一个参数。</td>
+<td><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#max(E, E)" rel="nofollow" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#max(E, E)'); return false;"><tt>max(E, E)</tt></a></td>
+</tr>
+<tr>
+<td><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#min(E, E, E, E...)" rel="nofollow" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#min(E, E, E, E...)'); return false;"><tt>min(E, E, E, E...)</tt></a></td>
+<td>返回多个参数中最小的那个。如果有超过一个参数都最小，则返回第一个最小的参数。</td>
+<td><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#max(E, E, E, E...)" rel="nofollow" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#max(E, E, E, E...)'); return false;"><tt>max(E, E, E, E...)</tt></a></td>
+</tr>
+<tr>
+<td><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#min(java.lang.Iterable)" rel="nofollow" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#min(java.lang.Iterable)'); return false;"><tt>min(Iterable)</tt></a></td>
+<td>返回迭代器中最小的元素。如果可迭代对象中没有元素，则抛出NoSuchElementException。</td>
+<td><a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#max(java.lang.Iterable)" rel="nofollow" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#max(java.lang.Iterable)'); return false;"><tt>max(Iterable)</tt></a>, <a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#min(java.util.Iterator)" rel="nofollow" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#min(java.util.Iterator)'); return false;"><tt>min(Iterator)</tt></a>, <a href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#max(java.util.Iterator)" rel="nofollow" onclick="javascript:window.open('http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/collect/Ordering.html#max(java.util.Iterator)'); return false;"><tt>max(Iterator)</tt></a></td>
+</tr>
+</tbody>
+</table>
+<div style="margin-top: 15px; font-style: italic">

@@ -1,0 +1,2 @@
+案例：
+	https://gitee.com/luckSnow/spring-boot-example/tree/master/lab_030_cache_ehcache

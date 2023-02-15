@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="cn.itcast.entity">
+	<class name="Invoice" table="INVOICE_C">
+
+		<id name="id" type="string" column="INVOICE_ID" length="40">
+			<generator class="assigned" />
+		</id>
+		
+		<property name="scNo" column="SC_NO" type="string" />
+		<property name="blNo" column="BL_NO" type="string" />
+		<property name="tradeTerms" column="TRADE_TERMS" type="string" />
+		
+		<!-- Associations -->
+		<one-to-one name="packingList" class="cn.itcast.entity.PackingList" lazy="false"/>
+
+	</class>
+</hibernate-mapping>

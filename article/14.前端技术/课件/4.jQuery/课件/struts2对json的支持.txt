@@ -1,0 +1,56 @@
+Java代码  收藏代码
+json-lib-2.1-jdk15.jar,  
+ezmorph-1.0.3.jar,  
+struts2-json-plugin-2.2.1.jar,(也就是googlecode(http://jsonplugin.googlecode.com/files/jsonplugin-0.34.jar)上面的jsonplugin，在struts2_2.2.1的里面叫struts2-json-plugin-2.2.1.jar),  
+struts2-core-2.2.1.jar  
+xwork-core-2.2.1.jar  
+
+
+struts.xml的配置： 
+Java代码  收藏代码
+ <package name="test"  extends="json-default">  
+   <action name="*Area" class="com.yeepay.agent.action.AreaAction" method="{1}">  
+     <interceptor-ref name="json" /><!--处理以JSON文本提交的请求-->    
+     <result name="findProvince" type="json" />    
+     <result name="findCityByProvince" type="json" />  
+    </action>  
+</package>  
+
+
+Action的代码： 
+Java代码  收藏代码
+@SuppressWarnings("serial")  
+public class AreaAction extends BaseAction{  
+public static final Logger log = Logger.getLogger(AreaAction.class);  
+    private String areaList=null;  
+    private AreaBaseService areaBaseService;  
+  public String findProvince(){  
+    try {  
+        List<Area> list=areaBaseService.findProvince();  
+        JSONArray arrayObject=JSONArray.fromObject(list);  
+        areaList=arrayObject.toString();  
+    } catch (SQLException e) {  
+        log.error(e);  
+    }  
+    return "findProvince";  
+  }  
+    public String getAreaCode() {  
+        return areaCode;  
+    }  
+    public void setAreaCode(String areaCode) {  
+        this.areaCode = areaCode;  
+    }  
+    public AreaBaseService getAreaBaseService() {  
+        return areaBaseService;  
+    }  
+    public void setAreaBaseService(AreaBaseService areaBaseService) {  
+        this.areaBaseService = areaBaseService;  
+    }  
+}  
+
+
+jsp里用jquery发送ajax请求： 
+Java代码  收藏代码
+$.getJSON("findProvinceArea.action",null,function(msg){  
+rt(msg);  
+});  

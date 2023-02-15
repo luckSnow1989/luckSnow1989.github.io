@@ -1,0 +1,42 @@
+一、关于皮肤使用的详细说明，仅支持4.8以上(含4.8)的版本使用以下步骤
+	步骤：
+	
+	1.下载皮肤，例如：ext.zip，解压后得到ext文件夹(只是使用的话，就不要修改里面的内容。)
+	
+	2.找到时间插件的根目录，My97DatePicker-->skin，将ext文件夹复制到skin文件夹下
+	
+	3.打开My97DatePicker文件夹下的WdatePicker.js。应该会马上看到代码(一般是在11行)
+		$skinList:[
+			{name:"default",charset:"gb2312"},//默认的样式
+			{name:"whyGreen",charset:"gb2312"}//原装的第二样式
+			
+		],
+	4.将皮肤指定的属性如：{name:'ext',charset:'gb2312'}加进去，注意json的书写规范；
+	
+	5.在页面使用的时候
+		加入参数	skin:'皮肤名称'，即可。
+		<input id="startDate" class="Wdate" onClick="WdatePicker({skin:'ext'});"  />
+
+		
+二、关于皮肤使用的详细说明，4.7以下(含4.7)~4.5以上(不含4.5)的版本使用以下步骤
+	步骤：
+	
+	1.下载皮肤，例如：ext.zip，解压后得到ext文件夹(只是使用的话，就不要修改里面的内容。)
+	
+	2.找到时间插件的根目录，My97DatePicker-->skin，将ext文件夹复制到skin文件夹下
+	
+	3.打开My97DatePicker文件夹下的config.js。应该会马上看到代码
+		var skinList = 
+		[
+			{name:'default',	charset:'UTF-8'},
+			{name:'whyGreen',	charset:'UTF-8'}
+		];
+	4.将皮肤指定的属性如：{name:'ext',charset:'gb2312'}加进去，注意json的书写规范；
+	
+	5.在页面使用的时候
+		加入参数	skin:'皮肤名称'，即可。
+		<input id="startDate" class="Wdate" onClick="WdatePicker({skin:'ext'});"  />
+		
+		
+		
+		

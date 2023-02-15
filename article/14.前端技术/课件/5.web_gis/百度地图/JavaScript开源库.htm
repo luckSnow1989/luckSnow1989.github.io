@@ -1,0 +1,681 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0042)http://developer.baidu.com/map/library.htm -->
+<HTML><HEAD><TITLE>JavaScript 开源库</TITLE>
+<META content="text/html; charset=UTF-8" http-equiv=Content-Type>
+<SCRIPT type=text/javascript src="JavaScript%20开源库_files/mapnav.js"></SCRIPT>
+<LINK rel=stylesheet type=text/css href="JavaScript%20开源库_files/mapi.css" 
+media=screen>
+<SCRIPT type=text/javascript 
+src="JavaScript%20开源库_files/jquery-1.7.2.min.js"></SCRIPT>
+
+<SCRIPT type=text/javascript src="JavaScript%20开源库_files/menu.js"></SCRIPT>
+
+<SCRIPT type=text/javascript src="JavaScript%20开源库_files/mapi.js"></SCRIPT>
+
+<META name=GENERATOR content="MSHTML 8.00.7601.17514"></HEAD>
+<BODY>
+<SCRIPT type=text/javascript>
+mnav({
+    one_nav:"mapnav_product",
+    two_nav:"mapnav_javascript"
+});
+</SCRIPT>
+
+<DIV class=mbody>
+<DIV class="mbread clearfix"><A 
+href="http://developer.baidu.com/map/library.htm#">您当前的位置</A>：<A 
+href="http://developer.baidu.com/map/library.htm">JavaScript 开源库</A> </DIV>
+<DIV class="mwrapper clearfix">
+<DIV style="WIDTH: 930px" class=mcontainer>
+<H1>JavaScript 开源库</H1>
+<P style="COLOR: red">注：JavaScript 开源库不支持极速版JavaScript API。</P>
+<P>百度地图JavaScript开源库，是一套基于百度地图API二次开发的开源的代码库。目前提供多个lib库，帮助开发者快速实现在地图上添加Marker、自定义信息窗口、标注相关开发、快速加载城市列表、拉框放大、拉框搜索、区域限制设置、几何运算、实时交通、检索与公交驾车查询、鼠标绘制工具等功能。</P>
+<P>百度地图JavaScript开源库秉着与大家一起学习交流的态度，全部开源。您可以参考开发文档，直接调用现有的开源库，实现您的需求；或者下载每个类的源文件，自行修改再使用。源文件里具有详尽的注释，可以帮助您更好的理解。</P>
+<P>如果您对百度地图JavaScript开源库的意见和建议，请<A 
+href="http://developer.baidu.com/map/help_developer.html" 
+target=_blank>发送邮件。</A></P>
+<P>此外，欢迎广大的开发爱好者，基于百度地图API，提供你们制作的JavaScript library库。我们也会放在这里供其他爱好者学习、交流。</P>
+<P>&nbsp;</P>
+<H2>热力图</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/heatmap.png" width=174 height=130> 
+<DIV class=lib_content>
+<P>提供热力图可视化展现功能，注: 支持chrome, safari, IE9及以上的浏览器. 核心的代码主要来自于第三方<A 
+href="http://www.patrick-wied.at/static/heatmapjs/">heatmap.js</A>, 
+主入口类是HeatmapOverlay， 基于Baidu Map API 2.0。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A href="http://developer.baidu.com/map/jsdemo/demo/c1_15.htm" 
+      target=_blank>热力图示例 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A href="http://api.map.baidu.com/library/Heatmap/2.0/src/heatmap.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/Heatmap/2.0/docs/symbols/BMapLib.HeatmapOverlay.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>城市商圈及行政区域</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/city.png" width=174 height=130> 
+<DIV class=lib_content>
+<P>城市行政区域和商圈数据获取工具类，使用者可以通过调用该接口智能获取城市行政区域和商圈多边形及相关坐标点数据。 主入口类是CityList， 基于Baidu 
+Map API 1.5。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/CityList/1.4/examples/CityList.html" 
+      target=_blank>城市商圈多边形获取示例 <IMG 
+      src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/CityList/1.4/src/CityList.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/CityList/1.4/src/CityList_min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/CityList/1.4/docs/symbols/BMapLib.CityList.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>绘制弧线类</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/js_fn13.jpg" width=174 height=130> 
+<DIV class=lib_content>
+<P>提供绘制弧线功能的开源代码库，且用户可通过编辑功能（如开启拖拽起终点、线的宽度与颜色）绘制所需的弧线样式。基于Baidu Map APIv1.5。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A href="http://developer.baidu.com/map/jsdemo.htm#c1_13" 
+      target=_blank>鼠标绘制覆盖物示例 <IMG 
+    src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/CurveLine/1.5/src/CurveLine.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/CurveLine/1.5/src/CurveLine.min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/CurveLine/1.5/docs/symbols/BMapLib.CurveLine.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>鼠标绘制工具条库</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/mouseTool.png"> 
+<DIV class=lib_content>
+<P>提供鼠标绘制点、线、面、多边形（矩形、圆）的编辑工具条的开源代码库。且用户可使用JavaScript 
+API对应覆盖物（点、线、面等）类接口对其进行属性（如颜色、线宽等）设置、编辑（如开启线顶点编辑等）等功能。基于Baidu Map API 1.4。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A href="http://developer.baidu.com/map/jsdemo/demo/f0_7.htm" 
+      target=_blank>鼠标绘制覆盖物示例 <IMG 
+    src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/DrawingManager/1.4/docs/symbols/BMapLib.DrawingManager.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>检索信息窗口类</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/searchinfowindow.jpg"> 
+<DIV class=lib_content>
+<P>提供“百度地图样式”的信息窗口，且窗口内容可自由定制多种风格。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A href="http://developer.baidu.com/map/jsdemo.htm#d0_4" 
+      target=_blank>检索信息窗口示例 <IMG 
+    src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD>查看源文件：<A 
+      href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow.js" 
+      target=_blank>1.4 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> <A 
+      href="http://api.map.baidu.com/library/SearchInfoWindow/1.5/src/SearchInfoWindow.js" 
+      target=_blank>1.5 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> 查看压缩文件：<A 
+      href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js" 
+      target=_blank>1.4 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> <A 
+      href="http://api.map.baidu.com/library/SearchInfoWindow/1.5/src/SearchInfoWindow_min.js" 
+      target=_blank>1.5 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+</TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD>查看类参考：<A 
+      href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/docs/help.html" 
+      target=_blank>1.4 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> <A 
+      href="http://api.map.baidu.com/library/SearchInfoWindow/1.5/docs/help.html" 
+      target=_blank>1.5 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>地图包裹类</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/wrapper.jpg"> 
+<DIV class=lib_content>
+<P>MapWrapper类提供了将Google或GPS坐标形式的Marker添加到百度地图上的功能。用户可以直接通过该类提供的addOverlay方法,添加Google或GPS坐标形式的Marker到百度地图上,不再需要先将Google或GPS坐标转化为百度坐标，然后再添加的操作。基于Baidu 
+Map API 1.2。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/MapWrapper/1.2/examples/simple.html" 
+      target=_blank>添加Marker示例 <IMG 
+    src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/MapWrapper/1.2/src/MapWrapper.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/MapWrapper/1.2/src/MapWrapper.min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/MapWrapper/1.2/docs/help.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>事件包装器</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/EventWrapper.png"> 
+<DIV class=lib_content>
+<P>百度地图API事件包装器类，对外开放。 对百度地图提供的事件机制，进行了包装，更好的提供事件绑定、删除体验。 基于Baidu Map API 1.2 
++。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/EventWrapper/1.2/examples/simple.html" 
+      target=_blank>添加Marker示例 <IMG 
+      src="JavaScript%20开源库_files/btn-see.gif"></A> </TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/EventWrapper/1.2/src/EventWrapper.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/EventWrapper/1.2/src/EventWrapper.min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/EventWrapper/1.2/docs/help.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>自定义信息窗口</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/InfoBox.png"> 
+<DIV class=lib_content>
+<P>百度地图的infoBox。类似于infoWindow，比infoWindow更有灵活性，比如可以定制border，关闭按钮样式等。 基于Baidu Map 
+API 1.2 +。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/InfoBox/1.2/examples/InfoBox_House.html" 
+      target=_blank>在顶部打开infoBox <IMG 
+      src="JavaScript%20开源库_files/btn-see.gif"></A> <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/InfoBox/1.2/examples/InfoBox_House_At_Bottom.html" 
+      target=_blank>在底部打开inofBox <IMG 
+      src="JavaScript%20开源库_files/btn-see.gif"></A> </TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A href="http://api.map.baidu.com/library/InfoBox/1.2/src/InfoBox.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/InfoBox/1.2/src/InfoBox_min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A href="http://api.map.baidu.com/library/InfoBox/1.2/docs/help.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>标注管理器</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/MarkerManager.png"> 
+<DIV class=lib_content>
+<P>百度地图的标注管理器。多marker的管理，更高效、解析更快。 基于Baidu Map API 1.2 +。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/MarkerManager/1.2/example/MarkerManager.html" 
+      target=_blank>MarkerManger示例 <IMG 
+      src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/MarkerManager/1.2/src/MarkerManager.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/MarkerManager/1.2/src/MarkerManager_min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/MarkerManager/1.2/docs/help.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>富标注</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/RichMarker.png"> 
+<DIV class=lib_content>
+<P>百度地图的富Marker类，对外开放。 允许用户在自定义丰富的Marker展现，并添加点击、双击、拖拽等事件。 基于Baidu Map API 1.2 
++。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/RichMarker/1.2/examples/richmarker.html" 
+      target=_blank>普通富Marker使用示例 <IMG 
+      src="JavaScript%20开源库_files/btn-see.gif"></A> <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/RichMarker/1.2/examples/advanced.html" 
+      target=_blank>高级富Marker绚丽样式示例 <IMG 
+      src="JavaScript%20开源库_files/btn-see.gif"></A> </TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/RichMarker/1.2/src/RichMarker.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/RichMarker/1.2/src/RichMarker_min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/RichMarker/1.2/docs/help.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>路书</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/LuShu.png"> 
+<DIV class=lib_content>
+<P>百度地图的路书。实现marker沿路线运动，并有暂停等功能。 基于Baidu Map API 1.2 +。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r>示例：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/LuShu/1.2/examples/LuShu.html" 
+      target=_blank>普通路书使用示例 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/LuShu/1.2/examples/LuShu_CutomIcon.html" 
+      target=_blank>自定义marker样式示例 <IMG 
+      src="JavaScript%20开源库_files/btn-see.gif"></A> </TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A href="http://api.map.baidu.com/library/LuShu/1.2/src/LuShu.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/LuShu/1.2/src/LuShu_min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A href="http://api.map.baidu.com/library/LuShu/1.2/docs/help.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>测距工具</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/distance.png"> 
+<DIV class=lib_content>
+<P>百度地图的测距工具类，对外开放。 允许用户在地图上点击完成距离的测量。 使用者可以自定义测距线段的相关样式，例如线宽、颜色、测距结果所用的单位制等等。 
+主入口类是DistanceTool， 基于Baidu Map API 1.2。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/DistanceTool/1.2/examples/DistanceTool.html" 
+      target=_blank>测距示例 <IMG 
+src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/DistanceTool/1.2/src/DistanceTool.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/DistanceTool/1.2/src/DistanceTool_min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/DistanceTool/1.2/docs/help.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>聚合marker</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/MarkerClusterer.png"> 
+<DIV class=lib_content>
+<P>MarkerClusterer标记聚合器用来解决加载大量点要素到地图上产生覆盖现象的问题，并提高性能。 主入口类是MarkerClusterer， 
+基于Baidu Map API 1.2。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/MarkerClusterer/1.2/examples/simple.htm" 
+      target=_blank>marker聚合示例 <IMG 
+    src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay.js" 
+      target=_blank>查看源文件1 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> <A 
+      href="http://api.map.baidu.com/library/MarkerClusterer/1.2/src/MarkerClusterer.js" 
+      target=_blank>查看源文件2 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js" 
+      target=_blank>查看压缩文件1 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <A 
+      href="http://api.map.baidu.com/library/MarkerClusterer/1.2/src/MarkerClusterer_min.js" 
+      target=_blank>查看压缩文件2 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+    </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/MarkerClusterer/1.2/docs/help.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>添加标注工具</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/MarkerTool.png"> 
+<DIV class=lib_content>
+<P>百度地图的添加标注工具类，对外开放。 允许用户在地图上点击后添加一个点标注，允许用户设定标注的图标样式。 主入口类是MarkerTool， 基于Baidu 
+Map API 1.2。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/MarkerTool/1.2/examples/simple.html" 
+      target=_blank>普通可连续添加标注示例 <IMG 
+      src="JavaScript%20开源库_files/btn-see.gif"></A> <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/MarkerTool/1.2/examples/advance.html" 
+      target=_blank>自定义样式和属性的标注示例 <IMG 
+      src="JavaScript%20开源库_files/btn-see.gif"></A> </TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/MarkerTool/1.2/src/MarkerTool.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/MarkerTool/1.2/src/MarkerTool_min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/MarkerTool/1.2/docs/help.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>自定义覆盖物</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/myMarker.png"> 
+<DIV class=lib_content>
+<P>此类表示地图上的一个覆盖物，该覆盖物由文字和图标组成，从Overlay继承。 主入口类是TextIconOverlay， 基于Baidu Map API 
+1.2。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/TextIconOverlay/1.2/examples/simple.htm" 
+      target=_blank>查看自定义覆盖物示例 <IMG 
+      src="JavaScript%20开源库_files/btn-see.gif"></A> <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/TextIconOverlay/1.2/examples/advanced.htm" 
+      target=_blank>修改自定义覆盖物样式示例 <IMG 
+      src="JavaScript%20开源库_files/btn-see.gif"></A> </TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/TextIconOverlay/1.2/docs/help.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>拉框放大工具</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/zoom.png"> 
+<DIV class=lib_content>
+<P>百度地图的拉框缩放类，对外开放。 允许用户在地图上执行拉框放大或者缩小操作， 使用者可以自定义缩放时的动画、遮盖层的样式等效果。 
+主入口类是RectangleZoom， 基于Baidu Map API 1.2。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/RectangleZoom/1.2/examples/RectangleZoom.html" 
+      target=_blank>拉框缩放示例 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/RectangleZoom/1.2/src/RectangleZoom.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/RectangleZoom/1.2/src/RectangleZoom_min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/RectangleZoom/1.2/docs/help.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>拉框搜索</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/SearchInRectangle.png"> 
+<DIV class=lib_content>
+<P>拉框缩放类，实现拉框缩放效果的入口。 主入口类是SearchInRectangle， 基于Baidu Map API 1.2。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/SearchInRectangle/1.2/example/searchInRectangle.html" 
+      target=_blank>普通的拉框搜索 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/SearchInRectangle/1.2/example/searchInRectangle_panel.html" 
+      target=_blank>拉框搜索完成后，显示panel面板 <IMG 
+      src="JavaScript%20开源库_files/btn-see.gif"></A> <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/SearchInRectangle/1.2/example/searchInRectangle_searchComplete.html" 
+      target=_blank>拉框搜索完成后，自定义搜索完成后的样式 <IMG 
+      src="JavaScript%20开源库_files/btn-see.gif"></A> </TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/SearchInRectangle/1.2/src/searchInRectangle.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/SearchInRectangle/1.2/src/searchInRectangle_min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/SearchInRectangle/1.2/doc/help.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>区域限制</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/cage.png"> 
+<DIV class=lib_content>
+<P>百度地图浏览区域限制类，对外开放。 允许开发者输入限定浏览的地图区域的Bounds值， 则地图浏览者只能在限定区域内浏览地图。 基于Baidu Map 
+API 1.2。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/AreaRestriction/1.2/examples/AreaRestriction.html" 
+      target=_blank>区域限制示例 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/AreaRestriction/1.2/src/AreaRestriction.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/AreaRestriction/1.2/src/AreaRestriction_min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/AreaRestriction/1.2/docs/help.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>几何运算</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/GeoUtils.png"> 
+<DIV class=lib_content>
+<P>GeoUtils类提供若干几何算法，用来帮助用户判断点与矩形、 圆形、多边形线、多边形面的关系,并提供计算折线长度和多边形的面积的公式。 
+主入口类是GeoUtils， 基于Baidu Map API 1.2。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/GeoUtils/1.2/examples/simple.html" 
+      target=_blank>几何计算示例 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/GeoUtils/1.2/src/GeoUtils.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/GeoUtils/1.2/src/GeoUtils_min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A href="http://api.map.baidu.com/library/GeoUtils/1.2/docs/help.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2>交通流量</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/traffic.png"> 
+<DIV class=lib_content>
+<P>百度地图的交通流量控件，对外开放。 控制当前，未来交通流量图层在地图上的显示，隐藏 等。 主入口类是TrafficControl， PC端基于Baidu 
+Map API 1.2。移动端基于Baidu Map API 1.4，提供高清底图。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD>交通流量图层：<A 
+      href="http://api.map.baidu.com/library/TrafficControl/1.2/examples/trafficControl.html" 
+      target=_blank>1.2 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> <A 
+      href="http://api.map.baidu.com/library/TrafficControl/1.4/examples/trafficControl.html" 
+      target=_blank>1.4 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD>查看源文件：<A 
+      href="http://api.map.baidu.com/library/TrafficControl/1.2/src/TrafficControl.js" 
+      target=_blank>1.2 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> <A 
+      href="http://api.map.baidu.com/library/TrafficControl/1.4/src/TrafficControl.js" 
+      target=_blank>1.4 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> 查看压缩文件：<A 
+      href="http://api.map.baidu.com/library/TrafficControl/1.2/src/TrafficControl_min.js" 
+      target=_blank>1.2 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> <A 
+      href="http://api.map.baidu.com/library/TrafficControl/1.4/src/TrafficControl_min.js" 
+      target=_blank>1.4 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+</TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/TrafficControl/1.2/docs/help.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV>
+<H2 id=SearchControlId>检索控件</H2>
+<DIV class="lib_box clearfix"><IMG class=lib_img 
+src="JavaScript%20开源库_files/SearchControl.jpg"> 
+<DIV class=lib_content>
+<P>SearchControl类，此类提供城市列表选择、本地检索、公交驾车查询功能。 主入口类是SearchControl， 基于Baidu Map API 
+1.4。</P>
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD class=t-r><LABLE>示例：</LABLE></TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/SearchControl/1.4/examples/SearchControl.html" 
+      target=_blank>检索与公交驾车查询示例 <IMG 
+      src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR>
+  <TR>
+    <TD class=t-r>资源引用：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/SearchControl/1.4/src/SearchControl.js" 
+      target=_blank>查看源文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+      <SPAN>&nbsp;</SPAN> <A 
+      href="http://api.map.baidu.com/library/SearchControl/1.4/src/SearchControl_min.js" 
+      target=_blank>查看压缩文件 <IMG src="JavaScript%20开源库_files/btn-see.gif"></A> 
+  </TD></TR>
+  <TR>
+    <TD class=t-r>类参考：</TD>
+    <TD><A 
+      href="http://api.map.baidu.com/library/SearchControl/1.4/docs/help.html" 
+      target=_blank>查看类参考 <IMG 
+  src="JavaScript%20开源库_files/btn-see.gif"></A></TD></TR></TBODY></TABLE></DIV></DIV></DIV></DIV>
+<DIV class="mwrappend clearfix"></DIV>
+<DIV class="copyright clearfix">
+<P>©2014 Baidu<A href="http://www.baidu.com/duty/">使用百度前必读</A><A 
+href="http://www.miibeian.gov.cn/" target=_blank>京ICP证030173号</A><IMG 
+src="JavaScript%20开源库_files/gs.gif"></P></DIV></DIV>
+<DIV></DIV>
+<SCRIPT type=text/javascript>
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F5650c092812f8659cdfe23eeb42024ef' type='text/javascript'%3E%3C/script%3E"));
+</SCRIPT>
+</BODY></HTML>

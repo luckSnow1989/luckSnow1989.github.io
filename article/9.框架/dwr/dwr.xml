@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE dwr PUBLIC  
+    "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN"  
+    "http://directwebremoting.org/schema/dwr30.dtd">  
+<dwr>  
+    <allow>  
+        <create creator="new" javascript="my">  
+            <!-- name=class或beanName， value是java中的类名 -->  
+            <param name="class" value="com.demo.Demo"/>
+            <include method="abc"/>
+        </create>  
+    </allow>  
+</dwr>    

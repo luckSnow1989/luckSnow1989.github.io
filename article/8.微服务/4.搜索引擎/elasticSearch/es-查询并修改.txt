@@ -1,0 +1,60 @@
+public void update2() {
+		Map<String, String> data = Maps.newHashMap();
+		data.put("ab0173162b3e4f598253c9428cfbb78e", "ecd64c73-6e07-41ad-84aa-db88d85ae295");
+
+		
+		String indexName = "resourcelog-test";
+//		String indexName = "resourcelog-prd";// 上线后执行SQL
+		Set<Entry<String, String>> entrySet = data.entrySet();
+		for (Entry<String, String> entry : entrySet) {
+			String oldSn = entry.getKey();
+			String newSn = entry.getValue();
+			
+			BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+			boolQuery.filter(QueryBuilders.matchQuery(ResourceLogSchema.resourceId.name(), oldSn));
+			
+			
+			NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+					.withIndices(indexName)
+					.withTypes("meta")
+					.withQuery(boolQuery)
+					.withPageable(PageRequest.of(0, 9999))
+					.build();
+			
+			List<EsQueryDto> queryForList = this.elasticsearchTemplate.queryForList(searchQuery, EsQueryDto.class);
+			for (EsQueryDto dto : queryForList) {
+				Map<String, Object> params = new HashMap<>();
+				
+				if(dto.containsKey("resourceId")) {
+					String resourceId = (String)dto.get("resourceId");
+					params.put("resourceId", newSn);
+				}
+				
+				if(dto.containsKey("summary")) {
+					String oldSummary = (String)dto.get("summary");
+					String newSummary = oldSummary.replace(oldSn, newSn);
+					params.put("summary", newSummary);
+				}
+				
+				if(dto.containsKey("detail")) {
+					String oldDetail = (String)dto.get("detail");
+					String newDetail = oldDetail.replace(oldSn, newSn);
+					params.put("detail", newDetail);
+				}
+				
+				UpdateRequest updateRequest = new UpdateRequest();
+				updateRequest.doc(params);
+				
+				UpdateQuery updateQuery = new UpdateQueryBuilder()
+						.withId(dto.get("id").toString())
+						.withIndexName(indexName)
+						.withType("meta")
+						.withUpdateRequest(updateRequest)
+						.build();
+				
+				elasticsearchTemplate.update(updateQuery);
+			}
+			
+		}
+		elasticsearchTemplate.refresh(indexName);
+	}
