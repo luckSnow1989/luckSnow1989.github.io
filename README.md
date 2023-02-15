@@ -45,7 +45,6 @@
 - 思维与设计。《代码整洁之道》、《领域驱动设计》、《剑指Offer》、《数据密集型应用设计》
 - Linux。《鸟哥的Linux私房菜》
 
-
 ### 政治经济文学
 
 ## 公众号
@@ -69,7 +68,6 @@
 - [https://stackoverflow.com/](https://stackoverflow.com/)
 - [https://heapdump.cn/](https://heapdump.cn/)
 - [https://juejin.cn/](https://juejin.cn/)
-
 
 
 ## 知识图谱
