@@ -10,7 +10,7 @@ sort: 3
 - [从面试角度一文学完 Kafka](https://mp.weixin.qq.com/s/una4HQgGpjVd51e_RVRaIQ)
 - [笔记整理](https://mp.weixin.qq.com/s/3xHUsqEgg7Kb6MZOdW8tnw)
 - [Kafka 原理以及分区分配策略剖析](https://mp.weixin.qq.com/s/7njhaaLSsY-U3c8TWZ_jhA)
-
+- [开源消息引擎系统 Kafka 3 新特性](https://mp.weixin.qq.com/s/MpGntCtSv-w6J5GJ7lLpFw)
 
 ## 1.基础
 

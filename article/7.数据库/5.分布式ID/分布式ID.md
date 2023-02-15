@@ -15,6 +15,8 @@ sort: 1
 
 分布式ID之雪法算法Snowflake实现分布式ID：[https://www.itqiankun.com/article/1565747019](https://www.itqiankun.com/article/1565747019)
 
+[分布式唯一 ID 生成方案浅谈](https://mp.weixin.qq.com/s/10hn22MInanJXuT6wOYh1Q)
+
 ## 1.使用场景
 
 在复杂分布式系统中，往往需要对大量的数据和消息进行唯一标识，如在美团点评的金融、支付、餐饮、酒店、猫眼电影等产品的系统中数据逐渐增长，对数据库分库分表后需要有一个唯一ID来标识一条数据或信息；

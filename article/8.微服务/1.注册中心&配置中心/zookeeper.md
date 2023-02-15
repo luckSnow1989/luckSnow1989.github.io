@@ -15,6 +15,7 @@ sort: 1
 - ZooKeeper源码研究系列（4）集群版服务器介绍：[https://my.oschina.net/pingpangkuangmo/blog/495311](https://my.oschina.net/pingpangkuangmo/blog/495311)
 - ZooKeeper源码研究系列（5）集群版建立连接过程：[https://my.oschina.net/pingpangkuangmo/blog/496136](https://my.oschina.net/pingpangkuangmo/blog/496136)
 
+[ZooKeeper 核心通识](https://mp.weixin.qq.com/s/uustNtBOGvPOx4Q3oPFmSw)
 ## 1.介绍
 
 名字的由来：在Apache的开源项目中有很多是以动物形象取名字的，比如，Tomcat、hive等。Zookeeper的工作就是协调这些动物工作。
