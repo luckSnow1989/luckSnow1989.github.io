@@ -11,33 +11,31 @@ sort: 1
 2. 服务注册与发现；
 3. dns服务管理；
 
-官网：[https://nacos.io/zh-cn/](https://nacos.io/zh-cn/)
-
-源码：[https://github.com/alibaba/nacos](https://github.com/alibaba/nacos)
-
-官方文档： [https://nacos.io/zh-cn/docs/what-is-nacos.html](https://nacos.io/zh-cn/docs/what-is-nacos.html)
-
-案例：[https://gitee.com/luckSnow/spring-boot-example/tree/master/lab_082_cfg_nacos](https://gitee.com/luckSnow/spring-boot-example/tree/master/lab_082_cfg_nacos)
+- 官网：[https://nacos.io/zh-cn/](https://nacos.io/zh-cn/)
+- 源码：[https://github.com/alibaba/nacos](https://github.com/alibaba/nacos)
+- 官方文档： [https://nacos.io/zh-cn/docs/what-is-nacos.html](https://nacos.io/zh-cn/docs/what-is-nacos.html)
+- 案例：[https://gitee.com/luckSnow/spring-boot-example/tree/master/lab_082_cfg_nacos](https://gitee.com/luckSnow/spring-boot-example/tree/master/lab_082_cfg_nacos)
 
 教程：
-
-nacos安装与基础配置：[https://blog.csdn.net/qq_40523572/article/details/89364340](https://blog.csdn.net/qq_40523572/article/details/89364340)
-
-Nacos 高可用特性：[https://mp.weixin.qq.com/s/WipvefNF2a2Heru3BZV-3A](https://mp.weixin.qq.com/s/WipvefNF2a2Heru3BZV-3A)
-
-Nacos实现原理详细讲解：[https://mp.weixin.qq.com/s/zFqNe7TDD8am-_jOYX7PhQ](https://mp.weixin.qq.com/s/zFqNe7TDD8am-_jOYX7PhQ)
-
-实现原理教材：[https://mp.weixin.qq.com/s/nbNEYn5YwK3rVo8CX4rb8A](https://mp.weixin.qq.com/s/nbNEYn5YwK3rVo8CX4rb8A)
+- nacos安装与基础配置：[https://blog.csdn.net/qq_40523572/article/details/89364340](https://blog.csdn.net/qq_40523572/article/details/89364340)
+- Nacos 高可用特性：[https://mp.weixin.qq.com/s/WipvefNF2a2Heru3BZV-3A](https://mp.weixin.qq.com/s/WipvefNF2a2Heru3BZV-3A)
+- Nacos实现原理详细讲解：[https://mp.weixin.qq.com/s/zFqNe7TDD8am-_jOYX7PhQ](https://mp.weixin.qq.com/s/zFqNe7TDD8am-_jOYX7PhQ)
+- 实现原理教材：[https://mp.weixin.qq.com/s/nbNEYn5YwK3rVo8CX4rb8A](https://mp.weixin.qq.com/s/nbNEYn5YwK3rVo8CX4rb8A)
 
 ## 2.安装
 
-部署手册：[https://nacos.io/zh-cn/docs/deployment.html](https://nacos.io/zh-cn/docs/deployment.html)
+- 部署手册：[https://nacos.io/zh-cn/docs/deployment.html](https://nacos.io/zh-cn/docs/deployment.html)
+- 集群部署手册：[https://nacos.io/zh-cn/docs/cluster-mode-quick-start.html](https://nacos.io/zh-cn/docs/cluster-mode-quick-start.html)
+- 控制台：[https://nacos.io/zh-cn/docs/console-guide.html](https://nacos.io/zh-cn/docs/console-guide.html)
+- 监控：[https://nacos.io/zh-cn/docs/monitor-guide.html](https://nacos.io/zh-cn/docs/monitor-guide.html)
 
-集群部署手册：[https://nacos.io/zh-cn/docs/cluster-mode-quick-start.html](https://nacos.io/zh-cn/docs/cluster-mode-quick-start.html)
+部署方式：
+- 单机模式 - 用于测试和单机试用。
+- 集群模式 - 用于生产环境，确保高可用。
+- 多集群模式 - 用于多数据中心场景。
 
-控制台：[https://nacos.io/zh-cn/docs/console-guide.html](https://nacos.io/zh-cn/docs/console-guide.html)
+可以使用内嵌的Derby数据库，也可以更换为mysql。 可以参考[nacos集群搭建](https://blog.csdn.net/qq_44027353/article/details/125828993)
 
-监控：[https://nacos.io/zh-cn/docs/monitor-guide.html](https://nacos.io/zh-cn/docs/monitor-guide.html)
 
 ## 3.使用技巧
 
