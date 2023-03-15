@@ -15,7 +15,7 @@ sort: 1
 - 源码：[https://github.com/alibaba/nacos](https://github.com/alibaba/nacos)
 - 官方文档： [https://nacos.io/zh-cn/docs/what-is-nacos.html](https://nacos.io/zh-cn/docs/what-is-nacos.html)
 - 案例：[https://gitee.com/luckSnow/spring-boot-example/tree/master/lab_082_cfg_nacos](https://gitee.com/luckSnow/spring-boot-example/tree/master/lab_082_cfg_nacos)
-
+- 官方书籍：[https://developer.aliyun.com/ebook/36](https://developer.aliyun.com/ebook/36)
 教程：
 - nacos安装与基础配置：[https://blog.csdn.net/qq_40523572/article/details/89364340](https://blog.csdn.net/qq_40523572/article/details/89364340)
 - Nacos 高可用特性：[https://mp.weixin.qq.com/s/WipvefNF2a2Heru3BZV-3A](https://mp.weixin.qq.com/s/WipvefNF2a2Heru3BZV-3A)
@@ -35,7 +35,6 @@ sort: 1
 - 多集群模式 - 用于多数据中心场景。
 
 可以使用内嵌的Derby数据库，也可以更换为mysql。 可以参考[nacos集群搭建](https://blog.csdn.net/qq_44027353/article/details/125828993)
-
 
 ## 3.使用技巧
 
