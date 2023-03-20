@@ -64,6 +64,7 @@
 - [架构案例](/article/12.架构与应用/案例集合)
 
 > 外链【拒绝CSDN】
+- [阿里云开发者社区](https://developer.aliyun.com/) ：包括学习、最新技术书籍、比赛、工具、圈子等
 - [https://segmentfault.com/](https://segmentfault.com/)
 - [https://stackoverflow.com/](https://stackoverflow.com/)
 - [https://heapdump.cn/](https://heapdump.cn/)
