@@ -44,23 +44,25 @@ docker run -p 9000:9000 \
 1.主要是介绍需要引入的依赖：
 
 ```xml
-<!--        thymeleaf模板渲染引擎-->
-		<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-<!--       操作minio的java客户端-->
-         <dependency>
-            <groupId>io.minio</groupId>
-            <artifactId>minio</artifactId>
-            <version>8.2.1</version>
-        </dependency>
-<!--     lombok插件-->
-         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
+<!-- thymeleaf模板渲染引擎-->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-thymeleaf</artifactId>
+</dependency>
+
+<!-- 操作minio的java客户端-->
+ <dependency>
+    <groupId>io.minio</groupId>
+    <artifactId>minio</artifactId>
+    <version>8.2.1</version>
+</dependency>
+
+<!-- lombok插件-->
+ <dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <optional>true</optional>
+</dependency>
 ```
 
 依赖可以官方文档里找：`https://docs.min.io/docs/java-client-quickstart-guide.html`

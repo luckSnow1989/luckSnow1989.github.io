@@ -593,6 +593,19 @@ idea 社区版，无法创建spring boot项目。可以安装这个插件。
 
 ![](img/idea/fa88f65e.png)
 
+### 5.21.自动生成单测代码
+- Squaretest。【idea插件，收费】非常好用、非常智能的单测代码生成工具。官网：[https://squaretest.com/](https://squaretest.com/)
+- TestMe。【idea插件】自动生成 Java JUnit 4/5, TestNG 单元测试 自动生成 Mockito mocks 自动生成 测试参数和断言语句 自动生成相关 mock 方法
+
+推荐使用TestMe。
+- 优点：Spring 的 Bean 生成单测代码时，即使 @Component 这类注解标注，属性通过 Setter 注解注入时，也会自动给添加 @Mock 和 @InjectMock 这类属性。 
+- 缺点：默认模板会在生成的方法上都加上 throws Exception
+
+功能：
+1. 支持生成多种单测框架的代码。
+2. 支持自定义代码模板
+
+
 ## 6. 常见问题
 <p style="color: red;">问题1：A problem occurred starting process 'command 'C:/Program Files/Java/jdk1.8.0_221/bin/java.exe''</p>
 

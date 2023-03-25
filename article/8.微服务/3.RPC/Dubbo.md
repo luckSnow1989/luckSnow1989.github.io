@@ -6,8 +6,11 @@ sort: 1
 官网：[https://dubbo.apache.org/zh/](https://dubbo.apache.org/zh/)
 
 Dubbo高级面试题：[http://dubbo.apache.org/zh-cn/docs/source_code_guide/dubbo-spi.html](http://dubbo.apache.org/zh-cn/docs/source_code_guide/dubbo-spi.html)
+- [5 分钟读懂开源服务框架 Dubbo 及其最新规划](https://mp.weixin.qq.com/s/GvDES9uXlboA8t3sk_ko1Q)
+- [提升集群吞吐量与稳定性的秘诀： Dubbo 自适应负载均衡与限流策略实现解析](https://mp.weixin.qq.com/s/WoqbJWw_Q3u6wWjWJ9UoGg)
+- [如何用一个端口同时暴露 HTTP1/2、gRPC、Dubbo 协议？](https://mp.weixin.qq.com/s/3Qr6diH6WJSwv8HIma7-eA)
+Dubbo 框架底层可灵活的选用 HTTP/2、HTTP/REST、TCP、gRPC、JsonRPC、Hessian2 等任一 RPC 通信协议，同时享用统一的 API 与对等的服务治理能力。同时，我们还介绍了 Dubbo 的单端口多协议能力，也就是在单个端口同时监听、处理多个协议，这对于简化多协议同时发布的场景非常有用。
 
-[代码案例](https://gitee.com/luckSnow/spring-boot-example)
 
 ## 1.概念介绍
 
@@ -213,7 +216,6 @@ Dubbo服务在暴露的时候是会进行远程暴露与本地暴露。本地暴
 
 [https://mp.weixin.qq.com/s/UpcS_gmh39nMS07N6ih-xg](https://mp.weixin.qq.com/s/UpcS_gmh39nMS07N6ih-xg)
 
-
 ## 5.最佳实践
 
 ### 5.1.dubbo一个提供方和一个消费方，默认使用单一长连接
@@ -358,9 +360,6 @@ dubbo默认不提供，可以使用hystrix/sentinel
 [https://mp.weixin.qq.com/s/dPbLLrltH5K7ul82lkxHUg](https://mp.weixin.qq.com/s/dPbLLrltH5K7ul82lkxHUg)
 
 [https://mp.weixin.qq.com/s/yUe30i4qVopD0LEpaQbbPw](https://mp.weixin.qq.com/s/yUe30i4qVopD0LEpaQbbPw)
-
-
-## 6.面试题
 
 
 
