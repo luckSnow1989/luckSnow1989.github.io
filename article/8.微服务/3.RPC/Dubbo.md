@@ -372,3 +372,14 @@ dubbo默认不提供，可以使用hystrix/sentinel
 
 
 
+
+
+## 6.事故分析
+
+[dubbo线程池耗尽问题](./dubbo/生产问题/dubbo线程池耗尽问题.docx)
+
+[zookeeper网络异常引发的dubbo服务provider丢失事故](./dubbo/生产问题/zookeeper网络异常引发的dubbo服务provider丢失事故.docx)
+
+[【携程案例】dubbo升级采坑](./dubbo/生产问题/【携程案例】dubbo升级采坑.docx)
+
+[【有利网案例】基于dubbo实现分布式定时任务管理](./dubbo/生产问题/【有利网案例】基于dubbo实现分布式定时任务管理.docx)
