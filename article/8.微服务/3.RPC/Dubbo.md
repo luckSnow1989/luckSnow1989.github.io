@@ -309,21 +309,10 @@ iothreads=“9” />
 
 
 ### 5.5.dubbo限流
-针对某个接口做限流
 
-服务消费方：
-<dubbo:reference>connections
-
-防止服务提供方接收过多连接：
-<dubbo:protocol name="dubbo"accepts="1000"/>
 
 ### 5.7.请求响应数据大小限制
 
-<dubbo:protocal> payload
-
-默认8M
-
-不要传送大包
 
 ### 5.8.业务的熔断降级
 
@@ -361,25 +350,14 @@ dubbo默认不提供，可以使用hystrix/sentinel
 
 [https://mp.weixin.qq.com/s/yUe30i4qVopD0LEpaQbbPw](https://mp.weixin.qq.com/s/yUe30i4qVopD0LEpaQbbPw)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## 6.事故分析
 
-[dubbo线程池耗尽问题](./dubbo/生产问题/dubbo线程池耗尽问题.docx)
+- [dubbo线程池耗尽问题](./dubbo/生产问题/dubbo线程池耗尽问题.docx)
+- [zookeeper网络异常引发的dubbo服务provider丢失事故](./dubbo/生产问题/zookeeper网络异常引发的dubbo服务provider丢失事故.docx)
+- [【携程案例】dubbo升级采坑](./dubbo/生产问题/【携程案例】dubbo升级采坑.docx)
+- [【有利网案例】基于dubbo实现分布式定时任务管理](./dubbo/生产问题/【有利网案例】基于dubbo实现分布式定时任务管理.docx)
 
-[zookeeper网络异常引发的dubbo服务provider丢失事故](./dubbo/生产问题/zookeeper网络异常引发的dubbo服务provider丢失事故.docx)
-
-[【携程案例】dubbo升级采坑](./dubbo/生产问题/【携程案例】dubbo升级采坑.docx)
-
-[【有利网案例】基于dubbo实现分布式定时任务管理](./dubbo/生产问题/【有利网案例】基于dubbo实现分布式定时任务管理.docx)
+面试题
+- [dubbo.docx](./dubbo/面试题/dubbo.docx)
+- [dubbo.docx](./dubbo/面试题/dubbo.docx)
+- [dubbo.docx](./dubbo/面试题/dubbo架构设计.docx)

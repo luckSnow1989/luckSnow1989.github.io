@@ -61,7 +61,7 @@
 - [我自己](/article/99.自己/生活)
 - [idea配置](/article/11.辅助开发/IDE/idea)
 - [Linux命令](/article/16.Linux/2.Linux命令)
-- [架构案例](/article/12.架构与应用/案例集合)
+- [架构案例](/article/12.架构与应用/架构案例)
 
 > 外链【拒绝CSDN】
 - [阿里云开发者社区](https://developer.aliyun.com/) ：包括学习、最新技术书籍、比赛、工具、圈子等
