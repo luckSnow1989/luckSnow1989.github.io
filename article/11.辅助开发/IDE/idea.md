@@ -3,6 +3,14 @@ sort: 1
 ---
 # idea
 
+- [IDEA 2023.1 正式发布，新特性真香](https://mp.weixin.qq.com/s/E8nMygufsUCHGf-OtYRmRA)
+- [IDEA 2022.3 发布，终于支持 redis 了](https://mp.weixin.qq.com/s/ZaZur67S1WbRZR00UIQllg)
+- [IDEA 2022.2 发布](https://mp.weixin.qq.com/s/UNb-VQBqaeCSVTQAxWENdg)
+- [IntelliJ IDEA 2022正式发布](https://mp.weixin.qq.com/s/zV_CjQ5iWcjm8oilLZhz-g)
+- [IntelliJ IDEA 2021.3](https://mp.weixin.qq.com/s/EAIuCV78jCkD0SAmNpBm-Q)
+- [IntelliJ IDEA 2021.2 正式发布](https://mp.weixin.qq.com/s/JHQkiHdx4E0MRvf_CeCALQ)
+- [IDEA 2021.1版本正式发布，完美支持WSL 2](https://mp.weixin.qq.com/s/ku6T7fbCbVM0SDcf6ZPijw)
+
 ## 1.介绍
 
 JetBrains成立于2000年，是家私人持股的公司（private company）。主要开发开发工具。为各种开发语音、开发环境、开发流程，
