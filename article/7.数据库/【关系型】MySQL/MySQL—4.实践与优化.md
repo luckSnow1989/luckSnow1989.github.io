@@ -221,9 +221,8 @@ Connection**s：大型应用程序连接数通常需高于默认值。不同于�
 
 - 数据库分布在多台物理机器上，所以数据库不会受到单个硬件故障点的影响。
 
-虽然横向扩展是有好处的，但也有一定的局限性。扩展需要复制，例如基本的MySQL复制或Percona
-XtraDB
-Cluster，以实现数据同步。但是作为回报，可以获得额外的性能和高可用性。如果您需要更大的扩展，请使用MySQL分片。您还需要确保连接到集群体系结构的应用程序能够找到所需的数据–通常通过一些代理服务器和负载平衡器(如ProxySQL或HAProxy)。
+虽然横向扩展是有好处的，但也有一定的局限性。扩展需要复制，例如基本的MySQL复制或PerconaXtraDB Cluster，以实现数据同步。
+但是作为回报，可以获得额外的性能和高可用性。如果您需要更大的扩展，请使用MySQL分片。您还需要确保连接到集群体系结构的应用程序能够找到所需的数据–通常通过一些代理服务器和负载平衡器(如ProxySQL或HAProxy)。
 
 (1) 优化技巧 #7：可观测性
 
@@ -232,7 +231,6 @@ Enterprise Monitor、Monyog和 Percona Monitoring and Management
 (PMM)，后者具有免费和开源的额外优势。这些工具为监视和故障排除提供了很好的可操作性。
 
 ![image](img/MySQL—4.实践与优化/media/image2.jpeg)
-
 
 ## 3.分库分表
 
@@ -445,8 +443,7 @@ lock死锁也有可能导致主从模式下的replication产生数据不一致�
 lock问题，官方文档也没有相关描述，只是进行如下描述：
 
 An INSERT ... ON DUPLICATE KEY UPDATE statement against a table having
-more than one unique or primary key is also marked as unsafe. (Bug
-#11765650, Bug #58637)
+more than one unique or primary key is also marked as unsafe. (Bug#11765650, Bug #58637)
 
 也就是如果一个表定义有多个唯一键或者主键时，是不安全的，这又引发了以一个问题，见https://bugs.mysql.com/bug.php?id=58637。
 
@@ -559,3 +556,127 @@ ID hash，
 例如使用dubbo，feign等可以自定义负载和路由算法。
 
 方案二：可以把连接数据库的服务单独抽离出去，用户不直接访问该服务。
+
+
+## 8.高可用
+
+mysql作为互联网公司都会用到的数据库，在使用过程中。会用主从复制来提高性能。会用分库分表解决写入问题。以下介绍mysql中间件的一些实现方案
+
+### 8.1.Atlas
+Atlas时 360 公司开发维护的一个基于MySQL协议的数据中间层项目。
+
+- atlas架构
+
+Atlas是一个位于应用程序与MySQL之间中间件。在后端DB看来，Atlas相当于连接它的客户端，在前端应用看来，Atlas相当于一个DB。
+Atlas作为服务端与应用程序通讯，它实现了MySQL的客户端和服务端协议，同时作为客户端与MySQL通讯。它对应用程序屏蔽了DB的细节，同时为了降低MySQL负担，它还维护了连接池。
+
+![](img/6/e97a9882.png)
+
+- 主要功能
+1. 读写分离
+2. 从库负载均衡
+3. IP过滤
+4. 自动分表
+5. DBA可平滑上下线DB
+6. 自动摘除宕机的DB
+
+### 8.2.Mysql router
+MySQL Router是mysql官方发布的数据库中间件，是处于应用client和dbserver之间的轻量级代理程序，它能检测，分析和转发查询到后端数据库实例，并把结果返回给client。是mysql-proxy的一个替代品
+
+- mysql router架构
+![](img/6/f0be5df4.png)
+
+1. Router实现读写分离，程序不是直接连接数据库IP，而是固定连接到mysql router。MySQL Router对前端应用是透明的。 
+应用程序把MySQL Router当作是普通的mysql实例，把查询发给MySQL Router,而MySQL Router会把查询结果返回给前端的应用程序。
+2. 从数据库服务器故障，业务可以正常运行。由MySQL Router来进行自动下线不可用服务器。 程序配置不需要任何修改。 
+3. 主数据库故障，由MySQL Router来决定主从自动切换，业务可以正常访问。 程序配置不需要做任何修改。
+
+- mysql router原理：
+
+MySQL Router接受前端应用程序请求后，根据不同的端口来区分读写，把连接读写端口的所有查询发往主库，把连接只读端口的select查询以轮询方式发往多个从库，从而实现读写分离的目的。
+读写返回的结果会交给MySQL Router,由MySQL Router返回给客户端的应用程序。
+
+- 主要功能
+
+读写分离，主主故障自动切换，负载均衡，连接池
+
+
+### 8.3.Mycat
+
+Mycat是基于开源cobar演变而来，对cobar的代码进行了彻底的重构，使用NIO重构了网络模块，并且优化了Buffer内核，增强了聚合，Join等基本特性，
+同时兼容绝大多数数据库成为通用的数据库中间件。1.4 版本以后 完全的脱离基本cobar内核，结合Mycat集群管理、自动扩容、智能优化，成为高性能的中间件。
+
+- 一个彻底开源的，面向企业应用开发的大数据库集群
+- 支持事务、ACID、可以替代MySQL的加强版数据库
+- 一个可以视为MySQL集群的企业级数据库，用来替代昂贵的Oracle集群
+- 一个融合内存缓存技术、NoSQL技术、HDFS大数据的新型SQL Server
+- 结合传统数据库和新型分布式数据仓库的新一代企业级数据库产品
+- 一个新颖的数据库中间件产品
+
+- mycat架构
+![](img/6/67bb3951.png)
+
+mycat主要功能
+- 支持SQL92标准
+- 遵守Mysql原生协议，跨语言，跨平台，跨数据库的通用中间件代理。
+- 基于心跳的自动故障切换，支持读写分离，支持MySQL主从，以及galera cluster集群。
+- 支持Galera for MySQL集群，Percona Cluster或者MariaDB cluster
+- 基于Nio实现，有效管理线程，高并发问题。
+- 支持数据的多片自动路由与聚合，支持sum,count,max等常用的聚合函数。
+- 支持单库内部任意join，支持跨库2表join，甚至基于caltlet的多表join。
+- 支持通过全局表，ER关系的分片策略，实现了高效的多表join查询。
+- 支持多租户方案。
+- 支持分布式事务(弱xa)。
+- 支持全局序列号，解决分布式下的主键生成问题。
+- 分片规则丰富，插件化开发，易于扩展。
+- 强大的web，命令行监控。
+- 支持前端作为mysq通用代理，后端JDBC方式支持Oracle、DB2、SQL Server 、 mongodb 、巨杉。
+- 支持密码加密
+- 支持服务降级
+- 支持IP白名单
+- 支持SQL黑名单、sql注入攻击拦截
+- 支持分表(1.6)
+- 集群基于ZooKeeper管理，在线升级，扩容，智能优化，大数据处理(2.0开发版)。
+
+### 8.4.Cobar
+Cobar是提供关系型数据库(MySQL)分布式服务的中间件，它可以让传统的数据库得到良好的线性扩展，并看上去还是一个数据库,对应用保持透明。
+产品在阿里巴巴稳定运行3年以上。接管了3000+个MySQL数据库的schema。集群日处理在线SQL请求50亿次以上。集群日处理在线数据流量TB级别以上。
+
+- 架构
+![](img/6/0111e42f.png)
+
+- cobar现状
+
+2013年阿里的Cobar在社区使用过程中发现存在一些比较严重的问题，及其使用限制，后来在cobar的基础上改良诞生mycat，也就是目前cobar的代替版，而且2013年之后就没有版本更新了。
+
+### 8.5.Amoeba
+Amoeba(变形虫)项目,该开源框架于2008年 开始发布一款 Amoeba for Mysql软件。这个软件致力于MySQL的分布式数据库前端代理层，
+它主要在应用层访问MySQL的 时候充当SQL路由功能，专注于分布式数据库代理层(Database Proxy)开发。座落与 Client、DB Server(s)之间,对客户端透明。
+具有负载均衡、高可用性、SQL 过滤、读写分离、可路由相关的到目标数据库、可并发请求多台数据库合并结果。通过Amoeba你能够完成多数据源的高可用、负载均衡、数据切片的功能
+
+**目前作者已经停止维护**
+
+- amoeba架构
+![](img/6/3bc1f7df.png)
+
+### 8.6.Mysql proxy
+MySQL Proxy是一个处于你的client端和MySQL server端之间的简单程序，它可以监测、分析或改变它们的通信。
+它使用灵活，没有限制，常见的用途包括：负载均衡，故障、查询分析，查询过滤和修改等等。
+MySQL Proxy就是这么一个中间层代理，简单的说，MySQL Proxy就是一个连接池，负责将前台应用的连接请求转发给后台的数据库，
+并且通过使用lua脚本，可以实现复杂的连接控制和过滤，从而实现读写分离和负载平衡。对于应用来说，MySQL Proxy是完全透明的，
+应用则只需要连接到MySQL Proxy的监听端口即可。当然，这样proxy机器可能成为单点失效，但完全可以使用多个proxy机器做为冗余，
+在应用服务器的连接池配置中配置到多个proxy的连接参数即可。MySQL Proxy更强大的一项功能是实现“读写分离”，基本原理是让主数据库处理事务性查询，
+让从库处理SELECT查询。数据库复制被用来把事务性查询导致的变更同步到集群中的从库。
+
+- mysql proxy现状
+
+自从mysql官网出现mysql router之后，mysql proxy就已经停止维护了。
+
+### 8.7.ProxySQL
+
+ProxySQL 是基于 MySQL 的一款开源的中间件的产品，是一个灵活的 MySQL 代理层，可以实现读写分离，支持 Query 路由功能，
+支持动态指定某个 SQL 进行缓存，支持动态加载（无需重启 ProxySQL 服务），故障切换和一些 SQL 的过滤功能。
+
+- [https://www.proxysql.com/](https://www.proxysql.com/)
+- [https://github.com/sysown/proxysql/wiki](https://github.com/sysown/proxysql/wiki)
+- [ProxySQL 基础篇](https://www.cnblogs.com/keme/p/12290977.html )

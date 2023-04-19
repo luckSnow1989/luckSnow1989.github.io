@@ -20,8 +20,7 @@ Apache JMeter是一款纯java编写负载功能测试和性能测试开源工具
 官网下载地址：http://www.oracle.com/technetwork/java/javase/downloads/index.html\
 2. 选择Java SE 8u151/ 8u152，点击JDK下载\
 ![image](img/jmeter/media/image1.png)
-\
-3. 安装下载的JDK\
+3. 安装下载的JDK
 4. 配置系统环境变量
 
 ### 1.2.JMeter安装

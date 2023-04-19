@@ -54,6 +54,12 @@ pandoc官方文档[可以查看常用命令]：[https://pandoc.org/MANUAL.html](
 * -t: 指定输出格式，比如docx、epub、md、html等
 * -o: 输出到file文件
 
+案例
+```shell
+# 页面转doc
+pandoc -f html -t docx -o 1.docx https://developer.aliyun.com/article/1093816
+```
+
 ## 3.客户端
 
 ### 3.1.Obsidian
