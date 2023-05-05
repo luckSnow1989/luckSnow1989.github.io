@@ -722,6 +722,22 @@ spring boot 项目想同时启动2个不同的端口。一个8001，另一个800
 5.如果想要查看更详细的资源消耗情况，可以在win10上安装JProfiler，并在idea中安装JProfiler插件，可以查看更详细的信息
 ![](img/idea/8b35a211.png)
 
+### 7.4.远程debug
+
+[idea远程debug教程](https://mp.weixin.qq.com/s/bm6-wqE808e30z66tMlrug)
+
+```java
+// idea  的配置
+jdk5~8： -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=50055
+jdk9+:  -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:50055
+
+// 服务端 的配置
+nohup java \
+    -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=50055 \
+    -jar remote-debug-0.0.1-SNAPSHOT.jar &
+```
+
+
 ## 8.pycharm
 
 [pycharm快捷键](file/pycharm快捷键.txt)

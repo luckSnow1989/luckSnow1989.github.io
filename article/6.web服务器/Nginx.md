@@ -152,7 +152,7 @@ An Aggregation API Gateway in Java . Fizz Gateway 是一个基于 Java开发的�
 
 ### 1.8.互联网公司的api网关
 
-- 腾讯内部123平台网关：采用的方案是nginx  +  nginx插件二次开发 +  MySQL。支持内部百万API，每日亿级流量。
+- [支持 10 亿日流量的基础设施：当 Apache APISIX 遇上腾讯](https://apisix.apache.org/zh/blog/2021/05/24/tencent-games/)
 - 京东主站网关：采用的方案是网关层：openresty + lua，后端管理是： java + zookeeper。每日百亿级流量。
 
 ### 1.9.Nginx和Apache的优缺点
