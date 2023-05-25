@@ -21,6 +21,31 @@ sort: 1
 
 一个2C44的虚拟机，一般可以支持2W左右的并发。可以代理多个小型网站。
 
+
+#### 1.1.1.互联网公司的api网关
+
+- [支持 10 亿日流量的基础设施：当 Apache APISIX 遇上腾讯](https://apisix.apache.org/zh/blog/2021/05/24/tencent-games/)
+- 京东主站网关：采用的方案是网关层：openresty + lua，后端管理是： java + zookeeper。每日百亿级流量。
+
+#### 1.1.2.Nginx和Apache的优缺点
+
+1. nginx相对于apache的优点：
+    - 轻量级，比apache占用更少的内存及资源；
+    - 高并发，nginx 处理请求是异步非阻塞的，而apache 则是阻塞型的，在高并发下nginx能保持低资源低消耗高性能；
+    - 高度模块化的设计，编写模块相对简单；
+    - 社区活跃，各种高性能模块出品迅速啊
+2. apache 相对于nginx 的优点：
+    - nginx只适合静态和反向，Apache可以处理动态请求
+    - rewrite，比nginx 的rewrite 强大；
+    - 模块超多，基本想到的都可以找到（Tomcat是Apache的一个插件）；
+    - 少bug ，nginx的bug相对较多；
+3. Nginx 配置简洁, Apache 复杂；
+4. 最核心的区别在于apache是同步多进程模型，一个连接对应一个进程；nginx是异步的，多个连接（万级别）可以对应一个进程。
+
+#### 1.1.3.大型网站系统架构
+
+![](img/Nginx/40bf718e.png)
+
 ### 1.2.Tengine
 
 Tengine是nginx的加强版，封装版，淘宝开源
@@ -150,29 +175,13 @@ An Aggregation API Gateway in Java . Fizz Gateway 是一个基于 Java开发的�
 
 演示环境（Demo）：http://demo.fizzgate.com/ 账号/密码:admin/Aa123!
 
-### 1.8.互联网公司的api网关
+### 1.8.BFE（Baidu Front End）
 
-- [支持 10 亿日流量的基础设施：当 Apache APISIX 遇上腾讯](https://apisix.apache.org/zh/blog/2021/05/24/tencent-games/)
-- 京东主站网关：采用的方案是网关层：openresty + lua，后端管理是： java + zookeeper。每日百亿级流量。
+BFE（Baidu Front End）是百度的一款开源的应用负载均衡产品，目前已接入百度大部分流量，每日转发请求接近1万亿，峰值QPS超过1000万。
+在2019年百度春晚红包活动中，BFE平台在超大用户压力、数次流量波峰下平稳运行，保证了春晚红包活动的顺利进行。
 
-### 1.9.Nginx和Apache的优缺点
-
-1. nginx相对于apache的优点：
-    - 轻量级，比apache占用更少的内存及资源；
-    - 高并发，nginx 处理请求是异步非阻塞的，而apache 则是阻塞型的，在高并发下nginx能保持低资源低消耗高性能；
-    - 高度模块化的设计，编写模块相对简单；
-    - 社区活跃，各种高性能模块出品迅速啊
-2. apache 相对于nginx 的优点：
-    - nginx只适合静态和反向，Apache可以处理动态请求
-    - rewrite，比nginx 的rewrite 强大；
-    - 模块超多，基本想到的都可以找到（Tomcat是Apache的一个插件）；
-    - 少bug ，nginx的bug相对较多；
-3. Nginx 配置简洁, Apache 复杂；
-4. 最核心的区别在于apache是同步多进程模型，一个连接对应一个进程；nginx是异步的，多个连接（万级别）可以对应一个进程。
-
-### 1.10.大型网站系统架构
-
-![](img/Nginx/40bf718e.png)
+- 网地址：https://www.bfe-networks.net，github 
+- 地址：https://github.com/baidu/bfe。
 
 ## 2.Nginx安装
 
