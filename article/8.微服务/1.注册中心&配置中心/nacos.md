@@ -21,7 +21,7 @@ sort: 1
 - Nacos 高可用特性：[https://mp.weixin.qq.com/s/WipvefNF2a2Heru3BZV-3A](https://mp.weixin.qq.com/s/WipvefNF2a2Heru3BZV-3A)
 - Nacos实现原理详细讲解：[https://mp.weixin.qq.com/s/zFqNe7TDD8am-_jOYX7PhQ](https://mp.weixin.qq.com/s/zFqNe7TDD8am-_jOYX7PhQ)
 - 实现原理教材：[https://mp.weixin.qq.com/s/nbNEYn5YwK3rVo8CX4rb8A](https://mp.weixin.qq.com/s/nbNEYn5YwK3rVo8CX4rb8A)
-
+- 高可用部署：[https://mp.weixin.qq.com/s/hmH5bprfQ6Q7XEjHMw1Yhw](https://mp.weixin.qq.com/s/hmH5bprfQ6Q7XEjHMw1Yhw)
 ## 2.安装
 
 - 部署手册：[https://nacos.io/zh-cn/docs/deployment.html](https://nacos.io/zh-cn/docs/deployment.html)
@@ -75,12 +75,10 @@ sort: 1
 
 ### 3.5.配置管理
 
-我们主要使用的功能。需要注意的配置，是data id 和
-group。我们可以使用group去区分dev,test,prd。
+我们主要使用的功能。需要注意的配置，是data id 和 group。我们可以使用group去区分dev,test,prd。
 
-DataId尽可能的设置成能够明显的区分出项目和具体的配置类型。\
-注意：dataId的后缀为配置文件的类型，不能随意定义，比如.properties, .yml,
-.json等
+DataId尽可能的设置成能够明显的区分出项目和具体的配置类型。
+注意：dataId的后缀为配置文件的类型，不能随意定义，比如.properties, .yml, .json等
 
 ![image](img/nacos/media/image7.png)
 
