@@ -59,6 +59,7 @@
 > 本站常用连接
 - [面试题](https://docs.qq.com/doc/DQldwQkRZeVZiUVVU)
 - [我自己](/article/99.自己/生活)
+- [告诫](/article/99.自己/各种总结.md)
 - [idea配置](/article/11.辅助开发/IDE/idea)
 - [Linux命令](/article/16.Linux/2.Linux命令)
 - [架构案例](/article/12.架构与应用/架构案例)

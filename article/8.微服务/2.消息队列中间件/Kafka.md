@@ -1042,8 +1042,8 @@ mmap 和 sendfile总结
 3. mmap将磁盘文件映射到内存，支持读和写，对内存的操作会反映在磁盘文件上。
 
 RocketMQ 是适用于 Topic 数量较多、对时效性要求高的场景。所以 RocketMQ 采用了和 Kafka 不一样的零拷贝方案。   
-Kafka 采用的是阻塞式 IO 进行 sendfile， 适用于系统日志消息这种高吞吐量的大块文件，sendfile的只会对已经成功刷盘的数据进行消费。        
-RocketMQ 选择了 mmap + write 非阻塞式 IO (基于多路复用) 作为零拷贝方式，这是因为 RocketMQ 定位于业务级消息这种小数据块/高频率的 IO 传输，在消息写到package cahce只可以进行消费看。    
+Kafka 采用的是阻塞式 IO 进行 sendfile， 适用于系统日志消息这种高吞吐量的大块文件，sendfile的只会对已经成功刷盘的数据进行消费。如果多个partition并发写入数据，多个文件之间必然会有磁盘的寻道，磁盘访问有很大的瓶颈。   
+RocketMQ 选择了 mmap + write 非阻塞式 IO (基于多路复用) 作为零拷贝方式，这是因为 RocketMQ 定位于业务级消息这种小数据块/高频率的 IO 传输，在消息写到package cahce就可以进行消费。    
 当想要更低的延迟的时候选择 mmap 更合适。   
 
 RocketMQ 零拷贝的 缺点：使用mmap会占用系统内存（虚拟内存），可能导致系统内存使用率过高。如果这时产生大量的新分配需求（大量写入，乱序读取）或者缺页中断，
@@ -1081,3 +1081,32 @@ https://blog.csdn.net/qq_16681169/article/details/101081656
 1. 会在zookeeper中的/brokers/topics节点下创建一个新的topic节点，如：/brokers/topics/first
 2. 触发Controller的监听程序
 3. kafka Controller 负责topic的创建工作，并更新metadata cache
+
+
+<p style="color: red">zk的作用？以及rocketmq为什么不用zk?</p>
+
+zk的作用是：
+- kafka的元数据存储
+- broker、topic、生产者、消费者注册时的负载均衡
+- zk进行leader选举。
+
+首先：kafka的broker都是一样的，但是有一个broker承担协调工作，也就是kafkaController。
+其次：broker中的partion是分为master和slave的。所以当kafkaController挂了之后，会进行下面两个操作。
+1. zk之间进行选举，选择某个broker为kafkaController。
+2. kafkaController，决定每个partition的Master是谁，Slave是谁
+
+因为有了选举功能，所以kafka某个partition的master挂了，该partition对应的某个slave会升级为主对外提供服务。
+
+rocketmq的不是这样设计的。Master/Slave的角色也是固定的。当一个Master挂了，你可以写到其他Master上，但不能让一个Slave切换成Master。
+所以就不需要选举，就不用zk，自研一个nameServer存储元数据就行了。
+
+![](img/kafka/7417a57a.png)
+
+
+<p style="color: red">rocketmq 和 kafka的同步与刷盘策略</p>
+- rocketmq
+    - 同步策略:配置文件中设置brokerRole，ASYNC_MASTER(异步)、SYNC_MASTER(同步，至少一个slave同步成功)、SLAVE
+    - 刷盘策略:配置文件中设置flushDiskType， SYNC_FLUSH, ASYNC_FLUSH
+- kafka
+    - 同步策略:请求参数中设置acks，0 异步，1 master成功，all是master的ISR表中所以保持同步状态的slave都成功。
+    - 刷盘策略:配置文件中设置flush.message和flush.ms。flush.message默认5表示每5条消息进行一次刷盘。flush.ms刷盘时间间隔。

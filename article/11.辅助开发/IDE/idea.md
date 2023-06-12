@@ -675,6 +675,8 @@ help -> edit custom vm options 增加下面的配置
 
 ### 7.1.破解
 
+最新激活工具：[http://www.idejihuo.com/](http://www.idejihuo.com/)
+
 工具： [JetbrainsPatch_20210101.zip](file/JetbrainsPatch_20210101.zip)
 
 1.将工具拖拽到idea的编辑窗口内。会提示安装成功是否重启。这里重启即可。
