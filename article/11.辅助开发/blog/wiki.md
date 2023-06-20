@@ -39,3 +39,10 @@ wiki.js 是一个基于 Node.js 的现代而强大的 wiki 应用程序，使用
 XWiki 是一个由 Java 编写的基于 LGPL 协议发布的开源 wiki 和应用平台。操作与样式与Confluence非常相似，可以用来代替Confluence
 
 官网：[http://www.xwiki.org/](http://www.xwiki.org/)
+
+## 4.VuePress
+
+Vue 驱动的静态网站生成器。
+
+官网[https://vuepress.vuejs.org/zh/](https://vuepress.vuejs.org/zh/s)
+[搭建教程](https://mp.weixin.qq.com/s/S7I-L7Dl4-aVa8n_aHNZJA)
