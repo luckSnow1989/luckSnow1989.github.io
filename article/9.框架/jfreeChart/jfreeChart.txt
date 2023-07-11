@@ -1,6 +1,0 @@
-官网；	
-	http://www.jfree.org/
-	
-案例：
-	https://gitee.com/luckSnow/spring-boot-example/tree/master/lab_056_util_jFreeChart
-	
