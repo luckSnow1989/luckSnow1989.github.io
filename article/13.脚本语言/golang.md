@@ -1,5 +1,6 @@
 # golang
 
+## 1.教程
 - 官网[https://golang.org/dl/](https://golang.org/dl/)
 - Go官方镜像站[https://golang.google.cn/dl/](https://golang.google.cn/dl/)
 
@@ -9,12 +10,22 @@
 - [【强烈推荐】Go语言圣经（中文版）](https://books.studygolang.com/gopl-zh/)
 - [学习参考博客](https://www.liwenzhou.com/posts/Go/golang-menu/)
 - [Go 语言设计与实现](https://draveness.me/golang/)
-
-
   
 - [简单教程](https://www.runoob.com/go/go-tutorial.html)
 
-## 1.介绍
+- (零)入门级日常开发 https://code2life.top/2018/08/01/0028-go-snippets-1 
+- (一)文本处理与编解码 https://code2life.top/2018/07/31/0028-go-snippets-2 
+- (二)数学计算与加解密 https://code2life.top/2018/07/30/0028-go-snippets-3 
+- (三)操作系统与进程操作 https://code2life.top/2018/07/29/0028-go-snippets-4 
+- (四)网络编程基础篇 https://code2life.top/2018/07/28/0028-go-snippets-5 
+- (五)网络编程框架篇 https://code2life.top/2018/07/27/0028-go-snippets-6 
+- (六)远程方法调用 https://code2life.top/2018/07/26/0028-go-snippets-7 
+- (七)数据库访问和操作 https://code2life.top/2018/07/25/0028-go-snippets-8 
+- (八)常用中间件使用 https://code2life.top/2018/07/24/0028-go-snippets-9 
+- (九)日志记录与链路追踪 https://code2life.top/2018/07/23/0028-go-snippets-10
+- (十)多编程语言交互 https://code2life.top/2018/07/22/0028-go-snippets-11
+
+## 2.介绍
 
 1.Go 是一个开源的编程语言，它能让构造简单、可靠且高效的软件变得容易。
 
