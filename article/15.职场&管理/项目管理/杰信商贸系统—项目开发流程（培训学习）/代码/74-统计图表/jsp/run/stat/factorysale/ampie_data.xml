@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<pie>
-  <slice title="IE6" pull_out="true">358</slice>
-  <slice title="IE7">258</slice>
-  <slice title="IE8">154</slice>
-  <slice title="FireFox">11</slice>
-  <slice title="OHTER">114</slice>
-</pie>

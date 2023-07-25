@@ -1,9 +1,0 @@
-1、引入js
-
-<script type="text/javascript" src="../../js/datepicker/WdatePicker.js"></script>
-
-2、设置格式yyyy-MM-dd HH:mm:ss、yyyy-MM-dd、yyyy-MM
-
-<input type="text" style="width:90px;" name="inputDate"
-	             value="2013-03"
-	             onclick="WdatePicker({el:this,isShowOthers:true,dateFmt:'yyyy-MM'});"/>
