@@ -63,6 +63,7 @@
 - [idea配置](/article/11.辅助开发/IDE/idea)
 - [Linux命令](/article/16.Linux/2.Linux命令)
 - [架构案例](/article/12.架构与应用/架构方案)
+- [3D展览馆](/assets/gallery/)
 
 > 外链【拒绝CSDN】
 - [阿里云开发者社区](https://developer.aliyun.com/) ：包括学习、最新技术书籍、比赛、工具、圈子等

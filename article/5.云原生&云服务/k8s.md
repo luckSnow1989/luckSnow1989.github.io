@@ -28,6 +28,7 @@ K8s从1.24开始移除了docker。
 - 官网：[https://goharbor.io/](https://goharbor.io/)
 - 安装教程： https://www.cnblogs.com/pangguoping/p/7650014.html
 - 教程：https://blog.csdn.net/robin_cai/article/details/124292678
+- 简单的安装教程：[https://blog.csdn.net/shawn210/article/details/98068165](https://blog.csdn.net/shawn210/article/details/98068165)
 
 ### 2.1.介绍
 
