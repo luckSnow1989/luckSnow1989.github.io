@@ -11,6 +11,7 @@ Dubbo高级面试题：[http://dubbo.apache.org/zh-cn/docs/source_code_guide/dub
 - [如何用一个端口同时暴露 HTTP1/2、gRPC、Dubbo 协议？](https://mp.weixin.qq.com/s/3Qr6diH6WJSwv8HIma7-eA)
 Dubbo 框架底层可灵活的选用 HTTP/2、HTTP/REST、TCP、gRPC、JsonRPC、Hessian2 等任一 RPC 通信协议，同时享用统一的 API 与对等的服务治理能力。同时，我们还介绍了 Dubbo 的单端口多协议能力，也就是在单个端口同时监听、处理多个协议，这对于简化多协议同时发布的场景非常有用。
 
+官方教程：[Apache Dubbo 微服务开发从入门到精通](https://developer.aliyun.com/ebook/7913)
 
 ## 1.概念介绍
 
@@ -359,5 +360,4 @@ dubbo默认不提供，可以使用hystrix/sentinel
 
 面试题
 - [dubbo.docx](./dubbo/面试题/dubbo.docx)
-- [dubbo.docx](./dubbo/面试题/dubbo.docx)
-- [dubbo.docx](./dubbo/面试题/dubbo架构设计.docx)
+- [dubbo架构设计.docx](./dubbo/面试题/dubbo架构设计.docx)

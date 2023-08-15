@@ -21,13 +21,7 @@ sort: 1
 
 一个2C44的虚拟机，一般可以支持2W左右的并发。可以代理多个小型网站。
 
-
-#### 1.1.1.互联网公司的api网关
-
-- [支持 10 亿日流量的基础设施：当 Apache APISIX 遇上腾讯](https://apisix.apache.org/zh/blog/2021/05/24/tencent-games/)
-- 京东主站网关：采用的方案是网关层：openresty + lua，后端管理是： java + zookeeper。每日百亿级流量。
-
-#### 1.1.2.Nginx和Apache的优缺点
+### 1.2.Nginx和Apache的优缺点
 
 1. nginx相对于apache的优点：
     - 轻量级，比apache占用更少的内存及资源；
@@ -45,143 +39,6 @@ sort: 1
 #### 1.1.3.大型网站系统架构
 
 ![](img/Nginx/40bf718e.png)
-
-### 1.2.Tengine
-
-Tengine是nginx的加强版，封装版，淘宝开源
-
-1. 官网:[http://tengine.taobao.org/](http://tengine.taobao.org/)
-2. 动态模块加载（DSO）支持。加入一个模块不再需要重新编译整个Tengine；
-3. 支持SO_REUSEPORT选项，建连性能提升为官方nginx的三倍；
-4. 支持SPDY v3协议，自动检测同一端口的SPDY请求和HTTP请求；
-5. 流式上传到HTTP后端服务器或FastCGI服务器，大量减少机器的I/O压力；
-6. 更加强大的负载均衡能力，包括一致性hash模块、会话保持模块，还可以对后端的服务器进行主动健康检查，根据服务器状态自动上线下线，以及动态解析upstream中出现的域名；
-7. 输入过滤器机制支持。通过使用这种机制Web应用防火墙的编写更为方便；
-8. 支持设置proxy、memcached、fastcgi、scgi、uwsgi在后端失败时的重试次数
-9. 动态脚本语言Lua支持。扩展功能非常高效简单；
-10. 支持管道（pipe）和syslog（本地和远端）形式的日志以及日志抽样；
-11. 支持按指定关键字(域名，url等)收集Tengine运行状态；
-12. 组合多个CSS、JavaScript文件的访问请求变成一个请求；
-13. 自动去除空白字符和注释从而减小页面的体积。
-
-### 1.3.OpenResty
-
-- 官网[http://openresty.org/cn/](http://openresty.org/cn/)
-- 代码[https://github.com/openresty/](https://github.com/openresty/)
-
-Nginx 是俄罗斯人发明的， Lua 是巴西几个教授发明的，中国人章亦春把 LuaJIT VM 嵌入到 Nginx 中，实现了 OpenResty 这个高性能服务端解决方案。
-OpenResty是一个流量网关,根据前面对流量网关的介绍就可以知道流量网关的指责。通过 OpenResty，你可以把 nginx 的各种功能进行自由拼接， 更重要的是，开发门槛并不高，这一切都是用强大轻巧的 Lua 语言来操控。
-
-OpenResty基于 Nginx 与 Lua 的高性能 Web 平台，其内部集成了大量精良的 Lua 库、第三方模块以及大多数的依赖项。用于方便地搭建能够处理超高并发、扩展性极高的动态 Web 应用、Web 服务和动态网关。
-通过揉和众多设计良好的 Nginx 模块，OpenResty 有效地把 Nginx 服务器转变为一个强大的 Web 应用服务器，基于它开发人员可以使用 Lua 编程语言对 Nginx 核心以及现有的各种 Nginx C 模块进行脚本编程，构建出可以处理一万以上并发请求的极端高性能的 Web 应用
-OpenResty 最早是顺应 OpenAPI 的潮流做的，所以 Open 取自“开放”之意，而Resty便是 REST 风格的意思。虽然后来也可以基于 ngx_openresty 实现任何形式的 web service 或者传统的 web 应用。
-也就是说 Nginx 不再是一个简单的静态网页服务器，也不再是一个简单的反向代理了。第二代的 openresty 致力于通过一系列 nginx 模块，把nginx扩展为全功能的 web 应用服务器。
-
-ngx_openresty 是用户驱动的项目，后来也有不少国内用户的参与，从 http://openresty.org 的点击量分布上看，国内和国外的点击量基本持平。
-
-ngx_openresty 目前有两大应用目标：
-1. 通用目的的 web 应用服务器。在这个目标下，现有的 web 应用技术都可以算是和 OpenResty 或多或少有些类似，比如 Nodejs, PHP 等等。ngx_openresty 的性能（包括内存使用和 CPU 效率）算是最大的卖点之一。
-2. Nginx 的脚本扩展编程，用于构建灵活的 Web 应用网关和 Web 应用防火墙。有些类似的是 NetScaler。其优势在于 Lua 编程带来的巨大灵活性。
-
-
-<p style="color:red;">1、请问 OpenResty 的定位是什么，从分享来看似乎全栈了？</p>
-定位主要是高性能，所有的新功能和优化，都是针对性能的。 但是也有人拿来做页面，比如京东；也有人拿来替代 PHP 做 Web server，比如新浪。 
-我觉得它越来越像一个独立的开发语言。
-
-<p style="color:red;">2、请问 Lua 是不是可以实现动态配置 location？比如动态切流量？</p>
-balancer_by_lua 可能是你需要的，你可以用 Lua 来定义自己的负载均衡器，可以在每个请求的级别上去定义，当前访问的后端的节点地址、端口，
-还可以定制很细力度的访问失败之后的重试策略。
-
-<p style="color:red;">3、OpenResty 是可以拿到 nginx 请求里面的所有信息？那是不是可以做一些更复杂的转发操作？能介绍一下 OpenResty 在 cdn 里面的应用场景吗？</p>
-可以看下 iresty.com 的分享，又拍的张聪非常详细的介绍了 OpenResty 在又拍 CDN 的使用。
-
-<p style="color:red;">4、OpenResty 是否修改了 nginx 的源码，还是和 nginx 完全可剥离开的？Nginx 版本升级，OpenResty 也跟着升级吗？例如 nginx 修复漏洞 bug 等情况。</p>
-OpenResty 不修改 nginx 的源码，可以跟随 nginx 无痛升级。 如果你觉得 OpenResty 升级慢了， 你可以只拿 ngx_lua 出来，
-当做 nginx 的一个模块来编译。实际上，OpenResty 在测试过程中，发现了很多 nginx 自身的 bug 。
-
-<p style="color:red;">5、软 WAF nginx + Lua 是主流和未来方向么？</p>
-我觉得 WAF 应该基于 nginx，不管是性能还是流行程度。而 OpenResty 具有更灵活操控 nginx 的能力，所以我觉得 OpenResty 在
-WAF 领域非常合适。cloudflare 的 WAF 就是基于 OpenResty。
-
-<p style="color:red;">6、看样子未来可能有各种 ngx_xx，最有可能的是 js，不知道这方面有什么前沿的动向？</p>
-我们组在尝试把 PHP 嵌入到 nginx 中，当然性能肯定不如 LuaJIT，但是会方便很多 PHP 同学，有进展的话，我们会开源出来
-
-<p style="color:red;">7、OpenResty 目前看似乎是一个 proxy 的配置框架（糅合了 nginx + Lua），但以后的发展是什么样子？会不会以后更进一步，比如做一个 API gateway 之类的。</p>
-OpenResty其实是希望大家忽略 nginx 的存在，直接使用 ngx_lua 提供的 API 实现自己的业务逻辑。更像一门独立的开发语言，
-只不过底层使用 nginx 的网络库而已。你可以按照你的想法搭建任何好玩的服务端应用出来。
-
-### 1.4.Kong
-
-- 官网[https://konghq.com/](https://konghq.com/)
-- 代码[https://github.com/Kong/](https://github.com/Kong/)
-
-#### 1.4.1.介绍
-Kong基于OpenResty开发，也是流量层网关, 是一个云原生、快速、可扩展、分布式的API 网关。继承了OpenResty的高性能、易扩展性等特点。Kong通过简单的增加机器节点，可以很容易的水平扩展。同时功能插件化，可通过插件来扩展其能力。而且在任何基础架构上都可以运行。具有以下特性：
-- 提供了多样化的认证层来保护API。
-- 可对出入流量进行管制。
-- 提供了可视化的流量检查、监视分析API。
-- 能够及时的转换请求和相应。
-- 提供log解决方案
-- 可通过API调用Serverless 函数。
-
-#### 1.4.2.Kong解决了什么问题
-当我们决定对应用进行微服务改造时，应用客户端如何与微服务交互的问题也随之而来，毕竟服务数量的增加会直接导致部署授权、负载均衡、通信管理、分析和改变的难度增加。
-面对以上问题，API GATEWAY是一个不错的解决方案，其所提供的访问限制、安全、流量控制、分析监控、日志、请求转发、合成和协议转换功能，可以解放开发者去把精力集中在具体逻辑的代码，而不是把时间花费在考虑如何解决应用和其他微服务链接的问题上。
-图片来自Kong官网:
-
-![](img/Nginx/b61cb138.png)
-
-可以看到Kong解决的问题。专注于全局的API管理策略，全局流量监控、日志记录、全局限流、黑白名单控制、接入请求到业务系统的负载均衡等。
-
-#### 1.4.3.Kong的优点以及性能
-在众多 API GATEWAY 框架中，Mashape 开源的高性能高可用API网关和API服务管理层——KONG（基于 NGINX+Lua）特点尤为突出，
-它可以通过插件扩展已有功能，这些插件（使用 lua 编写）在API请求响应循环的生命周期中被执行。
-于此同时，KONG本身提供包括 HTTP 基本认证、密钥认证、CORS、TCP、UDP、文件日志、API请求限流、请求转发及 NGINX 监控等基本功能。
-目前，Kong 在 Mashape 管理了超过 15,000 个 API，为 200,000 开发者提供了每月数十亿的请求支持。
-
-
-#### 1.4.4.Kong架构
-Kong提供一些列的服务,这就不得不谈谈内部的架构:
-![](img/Nginx/2f54ef1c.png)
-
-首先最底层是基于Nginx, Nginx是高性能的基础层, 一个良好的负载均衡、反向代理器,然后在此基础上增加Lua脚本库,形成了OpenResty,拦截请求, 响应生命周期,可以通过Lua编写脚本,所以插件比较丰富。
-关于Kong的一些插件库以及如何配置,可以参考简书 [开源API网关系统（Kong教程）入门到精通](https://www.jianshu.com/p/a68e45bcadb6)
-
-### 1.6.Apisix【行业新星】
-
-官网：https://apisix.apache.org/                  开源协议：Apache2.0 可以使用
-apisix是Apache开源的且已经“毕业”，满足常规的商业网关的功能需求。
-apisix是一款云原生微服务API网关，可以为API提供终极性能、安全性、开源和可扩展的平台。apisix基于OpenResty和etcd实现，与传统API网关相比，apisix具有动态路由和插件热加载，特别适合微服务系统下的API管理。
-支持的功能：
-- 客户端的api管理，配置变更热更新
-- 动态负载均衡：跨多个上游服务的动态负载均衡，目前已支持 round-robin 轮询和一致性哈希算法。
-- 身份验证：支持 key-auth、JWT、basic-auth、wolf-rbac 等多种认证方式。
-- 限流限速：可以基于速率、请求数、并发等维度限制。
-- APISIX 还支持 A/B 测试、金丝雀发布(灰度发布)、蓝绿部署、监控报警、服务可观测性、服务治理等等高级功能，这在作为微服务 API 网关非常重要的特性。
-- 与Apache SkyWalking等监控体系完美兼容。
-
-![](img/ag/8b09f30d.png)
-
-### 1.7.An Aggregation API Gateway
-
-- 开源地址：https://github.com/fizzgate/fizz-gateway-community
-- 官网：https://www.fizzgate.com
-- 开源协议：GNU v3。个人非商业免费
-
-An Aggregation API Gateway in Java . Fizz Gateway 是一个基于 Java开发的微服务聚合网关，是拥有自主知识产权的应用网关国产化替代方案，
-能够实现热服务编排聚合、自动授权选择、线上服务脚本编码、在线测试、高性能路由、API审核管理、回调管理等目的，拥有强大的自定义插件系统可以自行扩展，
-并且提供友好的图形化配置界面，能够快速帮助企业进行API服务治理、减少中间层胶水代码以及降低编码投入、提高 API 服务的稳定性和安全性。
-目前是已知开源的方案中，功能最多最全的，但是商业不免费，可以借鉴其设计思路，完善自身网关的功能。
-
-演示环境（Demo）：http://demo.fizzgate.com/ 账号/密码:admin/Aa123!
-
-### 1.8.BFE（Baidu Front End）
-
-BFE（Baidu Front End）是百度的一款开源的应用负载均衡产品，目前已接入百度大部分流量，每日转发请求接近1万亿，峰值QPS超过1000万。
-在2019年百度春晚红包活动中，BFE平台在超大用户压力、数次流量波峰下平稳运行，保证了春晚红包活动的顺利进行。
-
-- 网地址：https://www.bfe-networks.net，github 
-- 地址：https://github.com/baidu/bfe。
 
 ## 2.Nginx安装
 
@@ -435,7 +292,6 @@ ubuntu可能需要以下：
     - 经验1：第一次安装时的源码不要删除，最好把configuration命令记录下来，其中安装的第三方模块也一样处理
     - 经验2：重新配置的时候，最好换一个目录，方便nginx回滚。
 - 配置生效验证。比如最大文件打开数量，最好看下进程中的配置是否生效  ` cat /proc/nginx的pid/limits `    
-
 
 ## 4.模块
 
@@ -758,7 +614,6 @@ patching file src/http/ngx_http_upstream_round_robin.h
 
 ![](img/Nginx/106ba4b9.png)
 
-
 ## 5.高阶使用教程
 
 ### 5.1.map
@@ -952,7 +807,6 @@ location / {
 <p style="color: red">内核长连接优化</p>
 
 参考《网络协议》文章中的优化
-
 
 ## 6.高并发设置
 ```text
