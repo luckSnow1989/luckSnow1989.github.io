@@ -5,6 +5,7 @@ sort: 1
 
 - [eureka性能测试](img/eureka/eureka性能测试.docx)
 - [深入理解Eureka实现原理](https://jbone.cn/learn/spring-cloud/deep-eureka.html)
+- [Eureka优化技巧](https://blog.csdn.net/weixin_45380450/article/details/119962762)
 
 ## 1.介绍
 

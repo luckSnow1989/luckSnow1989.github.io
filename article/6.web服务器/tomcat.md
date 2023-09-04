@@ -6,34 +6,23 @@ Tomcat服务器由Apache提供，开源免费。由于Sun和其他公司参与�
 当前最新版本是Tomcat8，我们课程中使用Tomcat7。Tomcat7支持Servlet3.0，而Tomcat6只支持Servlet2.5！
 
 ## 2.Tomcat类加载
-图解Tomcat类加载机制：https://www.cnblogs.com/aspirant/p/8991830.html
+Tomcat类加载机制
+
+![](img/tomcat/21551df3.png)
 
 Tomcat的类加载机制是什么样的？是否违反双亲委派机制？
 - https://mp.weixin.qq.com/s/4Kv58XUzbZyzvZCM1qx2eA
 - https://mp.weixin.qq.com/s/YsW3MxozoxSrOeSCJOhuBQ
 
-为什么要违反：1.为了保证多个webAPP之间的隔离性；2.提高公共类库的性能，不用重复加载。3.提高灵活性，热加载使用的是卸载响应的classloader。不影响别人。
+Tomcat并没有完全打破双亲委派模型，但它在某些场景下会打破双亲委派模型。
+例如，当Web应用程序中的类需要访问Tomcat自身的类或第三方库的类时，Tomcat会使用自定义的类加载器来加载这些类，而不是使用双亲委派模型。
+这是因为Web应用程序中的类通常是由Web应用程序本身提供的，而不是由系统类库提供的。
+但是，Tomcat仍然会使用双亲委派模型来加载Java标准库和其他核心类库中的类，以确保程序的稳定性和安全性。
 
-当Tomcat启动时，会创建几种类加载器：
-1. Bootstrap 引导类加载器 
-加载JVM启动所需的类，以及标准扩展类（位于jre/lib/ext下）
-
-2. System 系统类加载器 
-加载Tomcat启动的类，比如bootstrap.jar，通常在catalina.bat或者catalina.sh中指定。位于CATALINA_HOME/bin下
-
-
-3. Common 通用类加载器 
-加载Tomcat使用以及应用通用的一些类，位于CATALINA_HOME/lib下，比如servlet-api.jar
-
-4. webapp 应用类加载器
-每个应用在部署后，都会创建一个唯一的类加载器。该类加载器会加载位于 WEB-INF/lib下的jar文件中的class 和 WEB-INF/classes下的class文件
-
-当应用需要到某个类时，则会按照下面的顺序进行类加载：
-1、使用bootstrap引导类加载器加载
-2、使用system系统类加载器加载
-3、使用应用类加载器在WEB-INF/classes中加载
-4、使用应用类加载器在WEB-INF/lib中加载
-5、使用common类加载器在CATALINA_HOME/lib中加载 
+为什么要违反：换个思维方式，可以理解Tomcat内部自行构成了一个“双亲委派模型”，本质还是负责加载的class范围不同。
+1. 为了保证多个webAPP之间的隔离性。例如不同webAPP需要使用不同版本的某个第三方类，如果还使用父classloader加载可能出现类冲突。
+2. 提高公共类库的性能，不用重复加载。
+3. 提高灵活性，热加载使用的是卸载响应的classloader。不影响别人。
 
 
 ## 3.学习资源

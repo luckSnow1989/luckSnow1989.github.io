@@ -82,7 +82,6 @@ DataId尽可能的设置成能够明显的区分出项目和具体的配置类�
 
 ![image](img/nacos/media/image7.png)
 
-
 ## 4.Nacos配置中心实现原理
 
 https://www.jianshu.com/c/a43af0cc4698?order_by=added_at
@@ -105,17 +104,20 @@ Nacos 并不是通过推的方式将服务端最新的配置信息发送给客�
 
 ![image](img/nacos/media/image10.png)
 
-
+- nacos 2以下
 1. Nacos 客户端会循环请求服务端变更的数据，并且超时时间设置为30s，当配置发生变化时，请求的响应会立即返回，
    否则会一直等到 29.5s+ 之后再返回响应
 2. Nacos 客户端能够实时感知到服务端配置发生了变化。
 3. 实时感知是建立在客户端拉和服务端“推”的基础上，但是这里的服务端“推”需要打上引号，因为服务端和客户端直接本质上还是通过 
    http进行数据通讯的，之所以有“推”的感觉，是因为服务端主动将变更后的数据通过 http 的 response 对象提前写入了。
+- nacos 2以上
+   - [支持gRPC长链接，深度解读Nacos2.0架构设计及新模型](https://baijiahao.baidu.com/s?id=1688267648806940996&wfr=spider&for=pc)
+   - [【微服务】Nacos为什么丢弃短连接(http)而选择拥抱长连接(gRPC)](http://681314.com/A/OfYsfLiWeL)
+
+
 
 ## 5.分别说下Nacos与Eureka
 
-[https://blog.csdn.net/fly910905/article/details/100023415](https://blog.csdn.net/fly910905/article/details/100023415)
-
-[https://www.cnblogs.com/skj0330insn/p/12057416.html](https://www.cnblogs.com/skj0330insn/p/12057416.html)
-
-[https://blog.csdn.net/xc123_java/article/details/90200189](https://blog.csdn.net/xc123_java/article/details/90200189)
+- [https://blog.csdn.net/fly910905/article/details/100023415](https://blog.csdn.net/fly910905/article/details/100023415)
+- [https://www.cnblogs.com/skj0330insn/p/12057416.html](https://www.cnblogs.com/skj0330insn/p/12057416.html)
+- [https://blog.csdn.net/xc123_java/article/details/90200189](https://blog.csdn.net/xc123_java/article/details/90200189)
