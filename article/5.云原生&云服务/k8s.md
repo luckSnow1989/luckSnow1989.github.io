@@ -124,3 +124,24 @@ Kuboard可以使用内建用户库、gitlab/github单点登录或者LDAP用户�
 
 Rancher 是一个开源的企业级全栈容器部署及管理平台。Rancher 为容器提供了一揽子基础架构服务,CNI 兼容的网络服务,存储服务,主机管理,负载均衡,防护墙。
 Rancher让上述服务跨越有云,私有云,虚拟机,物理环境运行,真正实现一键式应用部署和管理。
+
+## 4.资源动态调配
+
+- Pod调度机制：Kubernetes使用调度器（Scheduler）来决定将Pod部署到哪个节点上运行。调度器会根据一系列的调度策略，包括资源需求、节点负载、亲和性和互斥性等因素，选择最合适的节点进行调度。
+- 资源限制和请求：在定义Pod时，可以通过资源限制（Resource Limits）和资源请求（Resource Requests）来指定容器对CPU和内存等资源的需求。
+  资源限制用于限制容器使用的最大资源量，而资源请求则是向调度器申请所需的最小资源量。调度器根据这些需求来选择合适的节点进行调度。
+- 自动伸缩：Kubernetes提供了水平自动伸缩（Horizontal Pod Autoscaling，HPA）的功能，可以根据指标（如CPU使用率）自动调整Pod的副本数量。
+  当负载增加时，HPA会自动增加Pod的副本数量，以满足负载需求；当负载减少时，HPA会自动减少Pod的副本数量，以节省资源。
+- 节点管理：Kubernetes通过节点管理器（Node Manager）监控节点上的资源使用情况，包括CPU、内存和存储等。
+  当节点资源不足时，节点管理器会发出警告并触发自动扩容或迁移Pod的操作，将Pod调度到其他资源充足的节点上。
+
+总的来说，Kubernetes通过调度机制、资源限制和请求、自动伸缩和节点管理等多种方式，实现了对容器资源的动态调配和管理，以确保应用程序能够高效地利用集群资源，并根据负载情况进行自动调整。
+
+### 4.1.自动伸缩
+
+- [Kubernetes-自动伸缩](https://blog.csdn.net/kankan_s/article/details/132484676)
+- [k8s多维度自动弹性伸缩](https://cloud.tencent.com/developer/article/2092254)
+
+1. HPA。调整pod数量
+2. VPA。调整pod资源大小
+3. Cluster Autoscaler。k8s节点资源不足导致pod分配不到资源，自动伸缩节点数量。（多用于云服务器上）

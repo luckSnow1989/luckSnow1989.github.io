@@ -10,21 +10,21 @@ sort: 1
 ## 1.介绍
 
 ### 1.1.介绍
-Eureka 是Netflix开发的服务发现组件， 本身是一个基于 REST的服务。Spring Cloud将它集成在其子项目 spring-cloud-netflix 中， 以实现 Spring Cloud 的服务注册于发现， 同时还提供了负载均衡、 故障转移等能力。
+Eureka 是Netflix开发的服务发现组件，使用REST提供服务。Spring Cloud将它集成在其子项目 spring-cloud-netflix 中， 以实现 Spring Cloud 的服务注册于发现， 同时还提供了负载均衡、 故障转移等能力。
 
 服务拓扑图如下：
 ![](img/eureka/4b228b81.png)
 
 涉及到3中角色：
-- Eureka Server :通过 Register、 Get、 Renew 等接口提供服务的注册和发现。
-- Application Service (Service Provider)：服务提供方：把自身的服务实例注册到 Eureka Server 中
-- Application Client (Service Consumer)：服务调用方：通过 Eureka Server 获取服务列表， 消费服务
+- Eureka Server:通过 Register、 Get、 Renew 等接口提供服务的注册和发现。
+- Application Service (Service Provider)：服务提供方，把自身的服务实例注册到 Eureka Server 中
+- Application Client (Service Consumer)：服务调用方，通过 Eureka Server 获取服务列表， 消费服务
 
 角色之间的工作：
 - Register(服务注册)： 把自己的 IP 和端口注册给 Eureka。
-- Renew(服务续约)： 发送心跳包， 每 30 秒发送一次。 告诉 Eureka 自己还活着。
-- Cancel(服务下线)： 当 provider 关闭时会向 Eureka 发送消息， 把自己从服务列表中删除。 防止 consumer 调用到不存在的服务。
-- Get Registry(获取服务注册列表)： 获取其他服务列表。
+- Renew(服务续约)： 客户端主动发送心跳包， 每 30 秒发送一次，告诉 Eureka 自己还活着。
+- Cancel(服务下线)： 当客户端关闭时会向 Eureka 发送消息， 把自己从服务列表中删除。 防止 consumer 调用到已下线的服务发生异常。
+- Get Registry(获取服务注册列表)： 获取其他服务列表。因为Eureka注册表没有隔离性，所以每个客户端会拉取全部的注册表。
 - Replicate(集群中数据同步)： eureka 集群中的数据复制与同步。
 - Make Remote Call(远程调用)： 完成服务的远程调用。
 
@@ -65,9 +65,9 @@ Eureka 为了保障注册中心的高可用性，容忍了数据的非强一致�
 ### 1.4.注意事项
 
 - 集群监控：使用spring boot的监控 actator
-- 优雅停服：客户端需要使用优雅停服，帮助应用正常被下线。可以使用 actator 的shutdown接口
+- 优雅停服：因为kill -9服务，注册表会被动监测删除，导致调用方无法感知服务下线。所以客户端需要使用优雅停服，帮助应用正常被下线。可以使用 actator 的shutdown接口
 - 密码认证：使用spring-boot-starter-security
-- 应用名称隔离。需要二次开发，推进规范化命令，比如：系统名称-模块名称-运行环境。参数之间以中划线隔离，例如：myDemo-dbDemo-dev
+- 注册表隔离。需要二次开发，推进规范化命令，比如：系统名称-模块名称-运行环境。参数之间以中划线隔离，例如：myProject-myModel-dev
 - 租户：因为eureka天然的对应用的隔离性支持的不好，没有租户的概念。我们基于 spring-boot-starter-security 扩展用户认证。实现简单的多租户
     [使用Spring Security实现单点登录](https://blog.csdn.net/m0_64714024/article/details/125549592)
 
@@ -81,19 +81,19 @@ Eureka 为了保障注册中心的高可用性，容忍了数据的非强一致�
     OUT_OF_SERVICE  不提供服务
     UNKNOWN         未知状态
 2 实例操作类型。参考：PeerAwareInstanceRegistryImp.Action
-    Heartbeat心              跳检查
+    Heartbeat               心跳检查
     Register                注册
     Cancel                  取消
     StatusUpdate            状态变更
     DeleteStatusOverride    删除
 3.任务处理结果。参考：TaskProcessor.ProcessingResult
-    Success成功          服务端返回200～300，不包含300
-    Congestion拥堵       比如服务繁忙503、超时异常）
+    Success             成功，服务端返回200～300，不包含300
+    Congestion          拥堵，比如服务繁忙503、超时异常
     TransientError      处理异常，可重试。主要通过判断是否IOException
     PermanentError      处理异常
 ```
 
-## 2.扩展功能
+## 2.最佳实践
 
 ### 2.1.Eureka自我保护
 
@@ -102,8 +102,9 @@ Eureka 为了保障注册中心的高可用性，容忍了数据的非强一致�
 - 触发阀值：Eureka Server 在运行期间，会统计心跳失败的比例在 15 分钟内是否低于 85%这种算法叫做 Eureka Server 的自我保护模式
 
 Eureka Server收不到微服务的心跳：
-- 是微服务自身的原因
-- 是微服务与 Eureka 之间的网络故障，通常(微服务的自身的故障关闭)只会导致个别服务出现故障， 一般不会出现大面积故障， 而(网络故障)通常会导致Eureka Server在短时间内无法收到大批心跳。
+- 微服务自身的原因
+- 大规模服务上下线。  
+- 网络故障，通常(微服务的自身的故障关闭)只会导致个别服务出现故障， 一般不会出现大面积故障， 而(网络故障)通常会导致Eureka Server在短时间内无法收到大批心跳。
 
 考虑到这个区别，Eureka设置了一个阀值， 当判断挂掉的服务的数量超过阀值时，Eureka Server 认为很大程度上出现了网络故障， 将不再删除心跳过期的服务。
 
@@ -118,13 +119,20 @@ Eureka Server收不到微服务的心跳：
 #关闭自我保护:true 为开启自我保护， false 为关闭自我保护
 eureka.server.enableSelfPreservation=false
 
+## 自我保护触发的阈值，可以适当修改      
+eureka.server.renewal-percent-threshold: 0.85
+
 #清理间隔(从服务列表删除无用服务的时间间隔，单位:毫秒， 默认是 60*1000)
 eureka.server.eviction.interval-timer-in-ms=60000
 ```
 
+#### 2.1.4.开启建议
+
+注册应用数量非常小，不建议开启。例如注册服务本身就3个，服务重启就会造车进入包含模式。
+
 ### 2.2.优雅停服
 
-客户端使用actato
+客户端使用 actuator
 ```text
 1.maven坐标
 <dependency>
@@ -189,6 +197,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 ```
+
+### 2.4.健康监测
+
+[数据库异常导致eureka注销问题排查](https://segmentfault.com/a/1190000023766801)
+
+Eureka-client定时通过所有的HealthIndicator的health方法获取对应的健康检查状态，如果有HealthIndicator检测结果为DOWN，
+那Eureka-client就会判定当前服务有问题，是不可用的，就会将自身状态设置为DOWN，并上报给Eureka-server。
+Eureka-server收到信息之后将该节点状态标识为DOWN，这样其他服务就无法从Eureka-server获取到该节点。
+
+### 2.5.实例ID
+
+```properties
+# 推荐使用ip:port。默认规则 机器hostname:应用名称:端口
+eureka.instance.instance-id = ${spring.cloud.client.ip-address}:${server.port}
+```
+
 
 ## 3.高可用方案
 
