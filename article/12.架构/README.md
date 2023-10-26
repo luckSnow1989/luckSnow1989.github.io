@@ -2,6 +2,6 @@
 sort: 12
 ---
 
-# 12.架构与应用
+# 12.架构
 
 {% include list.liquid all=true %}

@@ -1,10 +1,9 @@
 # jekyll
 
-官网： [https://jekyllrb.com/ ](https://jekyllrb.com/ )  
-
-中文官网：[http://jekyllcn.com/](http://jekyllcn.com/)
-
-主题： [https://jekyllthemes.io/](https://jekyllthemes.io/)
+- 官网： [https://jekyllrb.com/ ](https://jekyllrb.com/ )  
+- 中文官网：[http://jekyllcn.com/](http://jekyllcn.com/)
+- 主题： [https://jekyllthemes.io/](https://jekyllthemes.io/)
+- 主题： [http://jekyllthemes.org/](http://jekyllthemes.org/)
 
 jekyll 是一个简单的免费的Blog生成工具，类似WordPress。
 但是和WordPress又有很大的不同，原因是jekyll只是一个生成静态网页的工具，不需要数据库支持。

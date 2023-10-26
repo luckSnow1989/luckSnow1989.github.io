@@ -46,13 +46,18 @@ pandoc官方文档[可以查看常用命令]：[https://pandoc.org/MANUAL.html](
 
 ### 2.5.pandoc的一些命令结合Writage
 
-教程: [http://t.zoukankan.com/junge-mike-p-12761669.html](http://t.zoukankan.com/junge-mike-p-12761669.html)
+- 教程: [http://t.zoukankan.com/junge-mike-p-12761669.html](http://t.zoukankan.com/junge-mike-p-12761669.html)
+- [pandoc使用技巧](https://www.jianshu.com/p/be291ac296c3)
 
 命令： pandoc -f docx -t markdown --extract-media=./MySQL/ -o MySQL.md MySQL.docx
 
-* -f: 指定输入格式，比如docx、epub、md、html等
-* -t: 指定输出格式，比如docx、epub、md、html等
-* -o: 输出到file文件
+- --from=FORMAT, -f FORMAT: 指定输入格式，比如docx、epub、md、html等
+- --to=FORMAT,   -t FORMAT: 指定输出格式，比如docx、epub、md、html等
+- --output=FILE, -o FILE  : 输出到file文件，如果没有指定输出文件，则输出至标准输出(stdout)，默认格式为HTML。
+- --file-scope：如果给出多个输入文件，则默认将多个文件拼接起来（添加空行分隔）。使用此选项分别转换每一个文件。
+- -standalone, -s :   默认生成文档片段。使用此选项后，Pandoc将使用一个模板来添加必要信息，以生成完整的文件（HTML、LaTeX等）。
+- --template=FILE:当使用standalone选项时，Pandoc默认采用内置模板。使用template选项指定创建文档所需的模板后，Pandoc将默认生成完整文件。
+
 
 案例
 ```shell
@@ -103,3 +108,6 @@ obsidian 默认使用wiki格式的链接，如下
 与传统的Markdown格式不兼容。需要设置链接格式
 
 ![](img/Obsidian/3.png)
+
+### 3.2.其他
+idea开发工具自带的markdown插件也很好使用
