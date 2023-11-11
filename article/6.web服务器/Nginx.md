@@ -8,6 +8,7 @@ sort: 1
 - **入门指南**：[https://www.w3cschool.cn/nginx/](https://www.w3cschool.cn/nginx/)
 - 博客：[https://blog.51cto.com/liangey/category5.html](https://blog.51cto.com/liangey/category5.html)
 - 可视化配置:[https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN](https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN)
+- [nginx进阶使用](https://blog.csdn.net/long_xu/category_12105928.html)
 
 ## 1.Nginx介绍
 
@@ -256,9 +257,15 @@ ubuntu可能需要以下：
 - [尚学堂培训课件-第五节](./Nginx/课件/尚学堂培训课件/第五节.pdf)
 - [尚学堂培训课件-第六节](./Nginx/课件/尚学堂培训课件/第六节.pdf)
 
+
+- [nginx 流量限制](https://blog.csdn.net/qfyangsheng/article/details/108775273)
+- [nginx 的平滑升级](https://blog.csdn.net/qfyangsheng/article/details/108775215)
+- [nginx会话保持与防盗链](https://blog.csdn.net/qfyangsheng/article/details/108647348)
+
 学习案例文档：
 
 <div name="wordShowDiv"  word-url="./Nginx/Nginx.docx"></div>
+
 
 ### 3.2.配置说明
 
@@ -275,15 +282,13 @@ ubuntu可能需要以下：
 <a target="_blank" href="./Nginx/Nginx配置/Nginx配置推荐/tcp.conf">四层负载</a>
 
 - 配置案例2：内容太多，需要到项目中看
-  
 - 配置案例3：内容太多，需要到项目中看
 
 
 ### 3.3.高可用机群部署文档
 <div name="wordShowDiv"  word-url="./Nginx/nginx高可用机群部署文档.docx"></div>
 
-
-### 3.4.运维
+### 3.4.运维常见问题
 - 如安装失败，一般是因安装目录未授权或安装服务器缺少依赖库导致。授权问题使用chmod命令处理，缺少的依赖库可根据报错详情使用yum全局安装或在/.configure里添加依赖。
 - 如修改HTML目录后报403，一般是目录未授权导致，使用chmod授权处理。
 - Nginx Log中部分参数无法输出，是因为参数未定义，Log中的参数除了自带参数，均需要先定义再输出。
@@ -291,7 +296,7 @@ ubuntu可能需要以下：
 - 添加新的第三方模块，或者开启/关闭自带模块的时候，需要重新 配置、编译、安装。
     - 经验1：第一次安装时的源码不要删除，最好把configuration命令记录下来，其中安装的第三方模块也一样处理
     - 经验2：重新配置的时候，最好换一个目录，方便nginx回滚。
-- 配置生效验证。比如最大文件打开数量，最好看下进程中的配置是否生效  ` cat /proc/nginx的pid/limits `    
+- 配置生效验证。比如最大文件打开数量，最好看下进程中的配置是否生效  ` cat /proc/{nginx的pid}/limits `    
 
 ## 4.模块
 
@@ -510,7 +515,6 @@ nginx七种状态
 - Writing   响应
 - Waiting   等待的请求数，开启了keepalive
 
-
 ### 4.3.后端服务健康检测
 - 第三方模块: nginx_upstream_check_module  和 自带的检测功能
 - 下载地址： [https://github.com/yaoweibin/nginx_upstream_check_module](https://github.com/yaoweibin/nginx_upstream_check_module)
@@ -613,6 +617,30 @@ patching file src/http/ngx_http_upstream_round_robin.h
 ```
 
 ![](img/Nginx/106ba4b9.png)
+
+### 4.4.流量带宽请求状态统计
+
+- 第三方模块: ngx_req_status
+- 下载地址：[https://github.com/zls0424/ngx_req_status](https://github.com/zls0424/ngx_req_status)
+- [nginx 变量与监控](https://blog.csdn.net/qfyangsheng/article/details/108775187)
+
+```text
+zone_name       key     max_active      max_bw  traffic requests        active  bandwidth
+imgstore_appid  43    27      6M      63G     374063  0        0
+imgstore_appid  53    329     87M     2058G   7870529 50      25M
+server_addr     10.128.1.17     2        8968   24M     1849    0        0
+server_addr     127.0.0.1       1       6M      5G      912     1        0
+server_name     d.123.sogou.com 478     115M    2850G   30218726        115     39M
+
+zone_name   - 利用req_status_zone定义的分组标准。例如，按照服务器名称对请求进行分组后；
+key         - 请求按分组标准分组后的分组标识（即组名）。例如按服务器名称分组时，组名可能是localhost；
+max_active  - 该组的最大并发连接数；
+max_bw      - 该组的最大带宽；
+traffic     - 该组的总流量；
+requests    - 该组的总请求数；
+active      - 该组当前的并发连接数；
+bandwidth   - 该组当前带宽。
+```
 
 ## 5.高阶使用教程
 
@@ -808,7 +836,7 @@ location / {
 
 参考《网络协议》文章中的优化
 
-## 6.高并发设置
+### 5.5.高并发设置
 ```text
 一：服务器设置
 1. 调整同时打开文件数量             ulimit -n 65535 。甚至更高
@@ -827,3 +855,12 @@ location / {
 # 压测基本性能
 ab -c 10000 -n 150000 http://127.0.0.1/index.html    
 ```
+
+### 5.6.配置热更新
+
+reload 并不是热更新，而是重启所有的worker进程。重启时会引起流量抖动，对长连接影响尤为明显。在网关的集群规模非常大时，更是不能随意的做 reload。
+
+现在已经有很多主流应用选择采用长连接，HTTP 1.1 一般默认会使用 Keep-Alive 去保持长连接，后续 HTTP 2 以及 HTTP 3 也是如此，
+随着网络协议的发展，未来使用长连接会变得更加普遍。而配置热更新天然对长连接非常友好。
+
+如何解决这点呢？一是采用两层网关，即流量网关 + 业务网关；二是实现网关原生支持配置热更新

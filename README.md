@@ -51,7 +51,8 @@
 
 - 美团技术团队
 - 阿里巴巴中间件
-- 阿里开发者
+- 阿里云开发者
+- 阿里云云原生
 - 腾讯技术工程
 
 ## 导航
@@ -59,14 +60,15 @@
 > 本站常用连接
 - [面试题](https://docs.qq.com/doc/DQldwQkRZeVZiUVVU)
 - [我自己](/article/99.自己/1.生活)
-- [告诫](/article/99.自己/2.各种总结.md)
+- [各种总结](/article/99.自己/2.各种总结.md)
 - [idea配置](/article/11.辅助开发/IDE/idea)
 - [Linux命令](/article/16.Linux/2.Linux命令)
-- [架构案例](/article/12.架构与应用/架构方案)
+- [解决方案](/article/12.架构/解决方案)
 - [3D展览馆](/assets/gallery/)
 
 > 外链【拒绝CSDN】
 - [阿里云开发者社区](https://developer.aliyun.com/) ：包括学习、最新技术书籍、比赛、工具、圈子等
+- [开源之夏](https://summer-ospp.ac.cn/) ：由中科院发起并长期支持的活动，主要由学生和社区人员参与维护开源项目，有很多不错的idea。
 - [https://segmentfault.com/](https://segmentfault.com/)
 - [https://stackoverflow.com/](https://stackoverflow.com/)
 - [https://heapdump.cn/](https://heapdump.cn/)

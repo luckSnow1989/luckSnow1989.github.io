@@ -23,33 +23,23 @@ Kafka  是一种高吞吐量 的分布式发布订阅消息系统，有如下特
 1. 通过O(1)的磁盘数据结构提供消息的持久化，这种结构对于即使数以TB的消息存储也能够保持长时间的稳定性能。
 2. 高吞吐量：即使是非常普通的硬件Kafka也可以支持每秒数百万的消息。
 3. 支持通过Kafka服务器和消费机集群来分区消息。
-4、数据最后一次消费后在磁盘保存一星期，到期后数据过期
-5、多副本机制，可以并行消费，提高并行消费速度
-6、单节点可以连接上千客户端，消费速度可以达到百兆每秒（数据零拷贝）
-7、分区数据严格有序，要是topic数据严格有序可以设置topic一个分区
-
+4. 数据最后一次消费后在磁盘保存一星期，到期后数据过期清除
+5. 多副本机制，可以并行消费，提高并行消费速度
+6. 单节点可以连接上千客户端，消费速度可以达到百兆每秒（数据零拷贝）
+7. 分区数据严格有序，要是topic数据严格有序可以设置topic一个分区
 
 ### 1.2 基本概念
 
 1.2.基本概念
 
-- broker ：一台kafka服务器就是一个broker。一个集群由多个broker组成。一个broker可以容纳多个topic。
-  负责读写请求，存储消息，管理分区，无主从关系，依赖zk协调
-  
-- message：消息是kafka处理的对象，在kafka中，消息是被发布到broker的topic中。
-  而consumer也是从相应的topic中拿数据。也就是说，message是按topic存储的
-
-- producer:
-    可以自己控制写入哪个partition
-
+- broker：一个kafka服务是一个broker，一个集群可以有多个broker组。负责读写请求，存储消息，管理分区，无主从关系，依赖zk协调
+- message：消息是kafka处理的对象，在kafka中，消息是被发布到broker的topic中。 consumer从topic中拿数据。
+- producer:可以自己控制写入哪个partition
 - Consumer Group ：将topic消息的广播发给consumer的手段。一个topic可以有多个CG。
-
 - consumer： 具体的消费者实例，一个Consumer Group下，只有一个consumer可以消费数据
-
-- Partition：为了实现扩展性，一个非常大的topic可以分布到多个broker（即服务器）上，一个topic可以分为多个partition，
-  每个partition是一个有序的队列。partition中的每条消息都会被分配一个有序的id（offset）。
+- Partition：为了实现扩展性，一个非常大的topic可以分布到多个broker上，一个topic可以分为多个partition，
+  每个partition是一个有序的队列，partition中的每条消息都会被分配一个有序的id（offset）。
   kafka只保证按一个partition中的顺序将消息发给consumer，不保证一个topic的整体（多个partition间）的顺序。
-
 - Offset：kafka的存储文件都是按照offset.kafka来命名，用offset做名字的好处是方便查找。
   例如你想找位于2049的位置，只要找到2048.kafka的文件即可。当然the first offset就是00000000000.kafka
 
@@ -64,68 +54,43 @@ Kafka  是一种高吞吐量 的分布式发布订阅消息系统，有如下特
 2. 修改配置文件/usr/local/kafka/config/server.properties，修改如下内容
 
 ```properties
+#broker.id属性在kafka集群中必须要是唯一
 broker.id=0
 host.name=localhost
+
+#kafka部署的机器ip和提供服务的端口号
+listeners=PLAINTEXT://localhost:9092   
+
+#kafka的消息存储文件
+log.dir=/usr/local/data/kafka-logs
+
+#kafka连接zookeeper的地址
 zookeeper.connect=localhost:2181
-log.dirs=/data/kafka_2.12-2.0.1/logs
 ```
 
 3. 修改完配置文件即可将整个文件夹传输到其他节点 scp -r 。。。。
 4. 传输完之后修改每个节点的broker.id的编号，递增。
 5. 启动zookeeper
-
-这边可以使用kafka自带的zookeeper，也可以使用自己安装的zookeeper。
-
 ```shell
+## 这边可以使用kafka自带的zookeeper，也可以使用自己安装的zookeeper。
 /app/zookeeper-3.4.6/bin/zkServer.sh start
-```
 
-各个节点均启动完成之后，可以查看zk的状态
-
-```shell
+## 各个节点均启动完成之后，可以查看zk的状态
 /app/zookeeper-3.4.6/bin/zkServer.sh status
 ```
 
 6. 常见命令
 
-- 启动kafka
 ```shell
-/usr/local/kafka/bin/kafka-server-start.sh \
-/usr/local/kafka/config/server.properties &
-```
+启动kafka：./kafka-server-start.sh /usr/local/kafka/config/server.properties &
 
-尾部加上&的作用是可以启动完之后直接按回车退出，继续下一步操作。也可不加&
+关闭kafka：./kafka-server-stop.sh /usr/local/kafka/config/server.properties &
 
-- 关闭kafka
-```shell
-/usr/local/kafka/bin/kafka-server-stop.sh \
-/usr/local/kafka/config/server.properties &
-```
+创建topic：./kafka-topics.sh --create --bootstrap-server localhost:9092 --topic my_demo_topic --replication-factor 1 --partitions 1
 
-- 创建topic
-```shell
-/usr/local/kafka/bin/kafka-topics.sh --create \
---topic my_demo_topic \
---replication-factor 1 \
---partitions 1 \
---zookeeper localhost:2181
-```
+更改tioic分区数量(只能增加，不能减少): ./kafka-topics.sh --zookeeper localhost:2181 --topic my_demo_topic --alter --partitions 3
 
-- 更改tioic分区数量(只能增加，不能减少)
-```shell
-/usr/local/kafka/bin/kafka-topics.sh \
---zookeeper localhost:2181 \ 
---topic my_demo_topic \
---alter 
---partitions 3
-```
-
--- 删除topic
-```shell
-kafka-topics.sh  --delete \
---zookeeper localhost:2181 \    
---topic my_demo_topic
-
+删除topic：kafka-topics.sh  --delete --zookeeper localhost:2181 --topic my_demo_topic
 #  逻辑删除，并没有真正删除
 # 1. 删除zk上的topic元数据:
 rmr /kafka/config/topics/my_demo_topic
@@ -134,99 +99,44 @@ rmr /kafka/admin/delete_topics/my_demo_topic
 
 # 2.删除本地磁盘上的topic数据：
 rm -rf /usr/local/kafka/kafka-logs/my_demo_topic
-```
 
+可通过指令查看所有的topic：./kafka-topics.sh --list --zookeeper localhost:2181
 
-- 可通过指令查看所有的topic
-```shell
-/usr/local/kafka/bin/kafka-topics.sh \
---list --zookeeper localhost:2181
-```
-
-- 查看指定topic信息
-```shell
-/usr/local/kafka/bin/kafka-topics.sh \
---zookeeper localhost:2181 \
---topic my_demo_topic \
---describe
-
-
+查看指定topic信息：./kafka-topics.sh --zookeeper localhost:2181 --topic my_demo_topic --describe
 显示结果如下：
 Topic: my_demo_topic     PartitionCount:3                ReplicationFactor:3     Configs:
 Topic: my_demo_topic     Partition: 0    Leader: 1       Replicas: 1,3,2         Isr: 1,3,2
 Topic: my_demo_topic     Partition: 1    Leader: 2       Replicas: 2,1,3         Isr: 2,1,3
 Topic: my_demo_topic     Partition: 2    Leader: 3       Replicas: 3,2,1         Isr: 3,2,1
+
+发送消息：./kafka-console-producer.sh --broker-list localhost:9092 --sync --topic my_demo_topic
+
+消费消息（重新打开一个终端执行指令）：./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my_demo_topic --from-beginning
+
+查看消费组名：./kafka-consumer-groups.sh --bootstrap-server localhost:9092 --list
+
+查看消费组的消费偏移量：./kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group my_group
+GROUP           TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                              HOST            CLIENT-ID
+my_group        my_demo_topic   0          2               2               0               consumer-my_group-1-8d74ff41-bd06-42cb-abad-8d40a102a521 /10.252.115.46  consumer-my_group-1
+current-offset：当前消费组的已消费偏移量
+log-end-offset：主题对应分区消息的结束偏移量(HW)
+lag：当前消费组未消费的消息数
 ```
-
-- 发送消息
-```shell
-/usr/local/kafka/bin/kafka-console-producer.sh \
---broker-list localhost:9092 \
---sync \
---topic my_demo_topic
-```
-
-- 消费消息。重新打开一个终端执行指令
-```shell
-/usr/local/kafka/bin/kafka-console-consumer.sh \
---bootstrap-server localhost:9092 \
---topic my_demo_topic \
---from-beginning
-```
-
-- 测试该topic的producer峰值吞吐量Tp
-
-```shell
-/usr/local/kafka/bin/kafka-producer-pref-test.sh \
---producer-props bootstrap.servers=localhost:9092 \
---producer.config /usr/local/kafka/config/producer.properties \
---topic my_demo_topic \
---record-size 900000 \  #(根据你们的业务进行配置)
---num-records 10000000 \
---throughput -1 \
---producer-prop  \   #参数下还可以额外指定其他键值对，如"acks=1"
---throughput      #代表每秒发多少条消息，-1代表不限流
-```
-
-测试环境测得约为Tp=80MB/s。
-
-- 测试该topic的consumer峰值吞吐量Tc
-
-```shell
-/usr/local/kafka/bin/kafka-consumer-pref-test.sh \
---broker-list localhost:9092 \
---consumer.config=/usr/local/kafka/config/consumer.properties \
---topic my_demo_topic \
---messages 10000000 \
---reporting-interval 1000 \
---show-detailed-stats
-```
-测试环境测得约为Tc=90MB/s。
 
 ### 2.2.Window安装
 
+```shell
 （1）在kafka安装目录中找到bin\windows目录中的kafka-run-class.bat为%CLASSPATH%加上双引号
 修改前：
-
-```shell
 set COMMAND=%JAVA% %KAFKA_HEAP_OPTS% %KAFKA_JVM_PERFORMANCE_OPTS% %KAFKA_JMX_OPTS%%KAFKA_LOG4J_OPTS% -cp %CLASSPATH% %KAFKA_OPTS% %* 
-```
 
 修改后：
-
-```shell
 set COMMAND=%JAVA% %KAFKA_HEAP_OPTS% %KAFKA_JVM_PERFORMANCE_OPTS% %KAFKA_JMX_OPTS%%KAFKA_LOG4J_OPTS% -cp "%CLASSPATH%" %KAFKA_OPTS% %*
-```
 
 （2）启动自带的zk
-
-```shell
 zookeeper-server-start.bat ../../config/zookeeper.properties
-```
 
 （3）启动kafka
-
-```shell
 kafka-server-start.bat ../../config/server.properties
 ```
 
@@ -234,63 +144,23 @@ kafka-server-start.bat ../../config/server.properties
 
 #### 2.3.1 允许远程访问
 
-修改配置文件config/server.properties
-
-修改前:
-
+修改 server.properties。把listeners设置为0.0.0.0，把advertised.listeners设置为局域网IP
 ```properties
-# The address the socket server listens on. It will get the value returned from
-# java.net.InetAddress.getCanonicalHostName() if not configured.
-#   FORMAT:
-#     listeners = listener_name://host_name:port
-#   EXAMPLE:
-#     listeners = PLAINTEXT://your.host.name:9092
-#listeners=PLAINTEXT://:9092
-
-# Hostname and port the broker will advertise to producers and consumers. If not set,
-# it uses the value for "listeners" if configured.  Otherwise, it will use the value
-# returned from java.net.InetAddress.getCanonicalHostName().
-#advertised.listeners=PLAINTEXT://your.host.name:9092
-```
-
-修改后:
-
-```properties
-# The address the socket server listens on. It will get the value returned from
-# java.net.InetAddress.getCanonicalHostName() if not configured.
-#   FORMAT:
-#     listeners = listener_name://host_name:port
-#   EXAMPLE:
-#     listeners = PLAINTEXT://your.host.name:9092
 listeners=PLAINTEXT://0.0.0.0:9092
-
-# Hostname and port the broker will advertise to producers and consumers. If not set,
-# it uses the value for "listeners" if configured.  Otherwise, it will use the value
-# returned from java.net.InetAddress.getCanonicalHostName().
 advertised.listeners=PLAINTEXT://192.168.1.100:9092
 ```
 
-修改的内容是： 把listeners设置为0.0.0.0，把advertised.listeners设置为局域网IP
-
 为啥这么修改：
-
-1. 0.0.0.0+局域网IP：监听的是所有的IP
-
 ```shell
+1. 0.0.0.0+局域网IP：监听的是所有的IP
 server3@server3:~$ sudo netstat -apn|grep 'LISTEN '|grep 9092
 tcp6       0      0 :::9092                 :::*                    LISTEN      9780/java     
-```
 
 2. 局域网IP+未配置：只监听了局域网IP
-
-```shell
 server3@server3:~$ sudo netstat -apn|grep 'LISTEN '|grep 9092
 tcp6       0      0 192.168.1.117:9092      :::*                    LISTEN      10172/java    
-```
 
 3. 未配置+局域网IP：监听了所有的IP
-
-```shell
 server3@server3:~$ sudo netstat -apn|grep 'LISTEN '|grep 9092
 tcp6       0      0 :::9092                 :::*                    LISTEN      10561/java    
 ```
@@ -300,22 +170,25 @@ tcp6       0      0 :::9092                 :::*                    LISTEN      
 开启账号密码认证
 
 > 官方文档： https://kafka.apache.org/documentation/#security_sasl
->
 > 教程地址：https://www.cnblogs.com/iamsach/p/9234624.html
 
-### 2.4.管理界面
+### 2.4.运维管理
 
 - 【推荐】kafka-ui-lite。[https://gitee.com/itqczzz/kafka-ui-lite](https://gitee.com/itqczzz/kafka-ui-lite)
+- Kafka Tool。界面简单，但是功能很全面。[Kafka Tool安装及使用教程](https://blog.csdn.net/weixin_51216079/article/details/133925383)
+- KnowStreaming。原名LogiKM，滴滴开源的一站式云原生实时流数据平台，通过0侵入、插件化构建企业级Kafka服务，极大降低操作、存储和管理实时流数据门槛。
+    [https://github.com/didi/KnowStreaming](https://github.com/didi/KnowStreaming)  
 - eagle。[https://www.kafka-eagle.org/](https://www.kafka-eagle.org/)
 - kafka magic。[https://www.kafkamagic.com/](https://www.kafkamagic.com/)
 - Cmak[https://github.com/yahoo/CMAK](https://github.com/yahoo/CMAK)
+- kafka-manager。老版本的cmak，不推荐使用。[https://github.com/yahoo/kafka-manager](https://github.com/yahoo/kafka-manager)
+
 
 ## 3 分区副本
 
-kafka中生产者是如何把消息投递到哪个分区的？消费者又是怎么选择分区的？
-https://mp.weixin.qq.com/s/fHmqZsetdY-cDb-ylrUgIg
+[kafka中生产者是如何把消息投递到哪个分区的？消费者又是怎么选择分区的](https://mp.weixin.qq.com/s/fHmqZsetdY-cDb-ylrUgIg)
 
-### 3.1 背景
+### 3.1.背景
 
 kafka最开始没有副本，数据可能丢失，所以大家都使用它处理一些不重要的数据，但是随着kafka的发展，人们对副本的诉求越来越高，所以在0.8.0的版本增加了副本
 
@@ -330,18 +203,16 @@ kafka最开始没有副本，数据可能丢失，所以大家都使用它处理
 2. 没有指明 partition 值但有 key 的情况下，将 key 的 hash 值与 topic 的 partition 数进行取余得到 partition 值；
 3. 既没有 partition 值又没有 key 值的情况下，第一次调用时随机生成一个整数（后面每次调用在这个整数上自增），将这个值与 topic 可用的 partition 总数取余得到 partition 值，也就是常说的 round-robin 算法。
 
-### 3.2 作用
-
+<p style="color: red">副本的作用</p>
 1. 高可用：允许 Kafka 在集群服务器发生故障时自动切换到这些副本，以便在出现故障时消息仍然可用。
 2. 可靠性和数据一致性
 
-### 3.3 原理
+### 3.2.原理
 
 1. 每一个 partition 都有一个预写日志(write-ahead log)，为每条消息分配一个offset，用来表示消息在当前partition日志中的位置
 2. Kafka 的复制是以分区为粒度的，每个partition都有 n份数据(replication)，均匀的分布在broker中，这样分区的预写日志被复制到 n 个服务器。n 是复制因子, 默认=1
 
 ```properties
-## server.properties
 offsets.topic.replication.factor=1
 ```
 
@@ -351,13 +222,23 @@ offsets.topic.replication.factor=1
    通过分区副本，引入了数据冗余，同时也提供了 Kafka 的数据可靠性。
    分区多副本架构是 Kafka 可靠性保证的核心，把消息写入多个副本可以使 Kafka 在发生崩溃时仍能保证消息的持久性。
 
-### 3.4 Leader 选举
+### 3.4.Leader 选举
 
-每个分区的 leader 会维护一个 ISR（in-sync replicas） 列表，ISR 里面就是 follower 副本的 Borker 编号，
-只有跟得上 Leader 的 follower 副本才能加入到 ISR 里面，这个是通过replica.lag.time.max.ms参数配置的。
-只有 ISR 里的成员才有被选为 leader 的可能。
-所以当 Leader 挂掉了，而且unclean.leader.election.enable=false的情况下，Kafka 会从 ISR 列表中选择第一个 follower 作为新的 Leader，
-因为这个分区拥有最新的已经 committed 的消息。通过这个可以保证已经 committed 的消息的数据可靠性。
+查看某个topic的信息，可以看出以下三条信息。
+- 每个partition有3个副本，这三个副本会选举一个为leader负责读写数据， 剩余两个为flower负责备份数据。Replicas 的 1,2,3是brokerId
+- 每个partition 的 leader 会维护一个 ISR（in-sync replicas） 列表，这三个副本根据与leader同步消息的速度进行排序，同步速度低于阈值会从ISR列表剔除。
+  这个是通过replica.lag.time.max.ms参数配置的。
+- 当 Leader 挂掉了，而且unclean.leader.election.enable=false的情况下，Kafka 会从 ISR 列表中选择第一个 follower 作为新的 Leader。
+  因为这个副本拥有最新的已经 commit 的消息，通过这个可以进一步确保已经 commit 消息的数据可靠性。
+- 同时我们也看出，如果kafka如果所有partition的数量太多的时候，一旦某个broker发生故障，那么集群所有的partition都需要选举，时间延长会很大。
+
+```shell
+./kafka-topics.sh --zookeeper localhost:2181 --topic my_demo_topic --describe
+Topic: my_demo_topic     PartitionCount:3                ReplicationFactor:3     Configs:
+Topic: my_demo_topic     Partition: 0    Leader: 1       Replicas: 1,3,2         Isr: 1,3,2
+Topic: my_demo_topic     Partition: 1    Leader: 2       Replicas: 2,1,3         Isr: 2,1,3
+Topic: my_demo_topic     Partition: 2    Leader: 3       Replicas: 3,2,1         Isr: 3,2,1
+```
 
 ![](img/kafka/1e021511.png)
 
@@ -448,7 +329,9 @@ Producer生产的数据会被不断追加到该log文件末端，且每条数据
 
 ![](img/kafka/5f2e7dff.png)
 
-### 4.2.消费方式
+### 4.2.消息消费
+
+#### 4.2.1.消费模式
 
 consumer采用pull（拉）模式从broker中读取数据。
 - push（推）模式很难适应消费速率不同的消费者，因为消息发送速率是由broker决定的。
@@ -457,18 +340,57 @@ consumer采用pull（拉）模式从broker中读取数据。
 - pull模式不足之处是，如果kafka没有数据，消费者可能会陷入循环中，一直返回空数据。针对这一点，Kafka的消费者在消费数据时会传入一个时长参数timeout，
 如果当前没有数据可供消费，consumer会等待一段时间之后再返回，这段时长即为timeout。 简单来说就是采用长轮询的方式。
 
-
-<p style="color: red">消费的过程</p>
+#### 4.2.2.消费的过程
 
 - 生产者往某个Topic发送数据时，数据会被hash到不同的partition,这些partition位于不同的集群节点上，所以每个消息都会被记录一个offset消息号，随着消息的增加逐渐增加，这个offset也会递增，同时，每个消息会有一个编号，就是offset号。
 - 消费者读取保证在broker上的消费进度，知道应该消费消息的offset。通过这个offset号去查询读取这个消息，kafka消费者在会保存其消费的进度，也就是offset。（kafka消费者在对应分区上已经消费的消息数）
 
 备注：生产者的偏移量在*.index文件，消费者的偏移量在 __offset_consumer 主题。
 
-### 4.3 消息重试
+#### 4.2.3.offset维护
+
+目的：由于consumer在消费过程中可能会出现断电宕机等故障，consumer恢复后，需要从故障前的位置的继续消费，所以consumer需要实时记录自己消费到了哪个offset，以便故障恢复后继续消费。
+
+方案：Kafka0.9版本之前，consumer默认将offset保存在Zookeeper中，从0.9版本开始，consumer默认将offset保存在Kafka一个内置的topic中，该topic为__consumer_offsets。
+每当消费者提交（commit）新的offset时，Kafka会将这个offset记录到__consumer_offsets主题中。
+
+- __consumer_offsets默认50个partition。保存的消息内容如下：
+    - group: 消费者组的ID。
+    - topic: 消费者所消费的主题。
+    - partition: 主题的分区。
+    - offset: 消费者当前的offset。
+    - metadata: 一些可选的与offset关联的元数据。
+- 需要注意的是，__consumer_offsets主题的副本因子（replication factor）应该设置为大于等于3，以确保高可用性和数据的持久性。
+
+#### 4.2.4.消息重试
 
 https://www.infoq.cn/article/51XSHW2opSmakhHmtth8
 微信备份：https://mp.weixin.qq.com/s/R6-_N9zhbqbXVuZaJg0OlQ
+
+#### 4.2.5.时间回溯
+如果某段时间对已消费消息计算的结果觉得有问题，可能是由于程序bug导致的计算错误，当程序bug修复后，这时可能需要对之前已消费的消息重新消费，可以指定从多久之前的消息回溯消费。
+可以用consumer的offsetsForTimes、seek等方法指定从某个offset偏移的消息开始消费，完成消息的回溯消费！
+
+#### 4.2.6.消息传递模型
+
+传统的消息传递模式有2种：队列( queue) 和（publish-subscribe）
+
+- queue模式：多个consumer从服务器中读取数据，消息只会到达一个consumer。
+- publish-subscribe模式：消息会被广播给所有的consumer。
+
+为了实现这两种模型，kafka提供了一种consumer的抽象概念：consumer group，因为consumer也需要高可用，是多个节点。
+- queue模式：所有的consumer都使用同一个consumer group。
+- publish-subscribe模式：所有的consumer都有着自己唯一的consumer group。
+
+#### 4.2.7.顺序消费
+
+一个partition同一个时刻在一个consumer group中只能有一个consumer instance在消费，从而保证消费顺序。
+
+#### 4.2.8.多线程消费
+
+一个partition，只能被一个consumer instance订阅。客户端程序中使用多线程消费，本质上就是创建多个consumer instance。
+如果只有一个partition，多线程只有一个线程进行消费，其他线程是空转的，这样就不会提供消费效率。
+
 
 ### 4.4.日志清理策略
 
@@ -496,81 +418,53 @@ broker参数log.cleanup.policy可设置日志清理策略，delete表示日志�
 日志压缩适用于某些场景，必须适用kafka记录某些状态，这种情况不用记录过程，保留最终状态是可行的；
 但不是所有场景都适用，比如相同key的消息通过不同的字段划分不同的行为，这时合并消息就不是理想的方案了
 
-### 4.5 时间回溯
-如果某段时间对已消费消息计算的结果觉得有问题，可能是由于程序bug导致的计算错误，当程序bug修复后，这时可能需要对之前已消费的消息重新消费，可以指定从多久之前的消息回溯消费。
-可以用consumer的offsetsForTimes、seek等方法指定从某个offset偏移的消息开始消费，完成消息的回溯消费！
-
 ### 4.6.日志存储
 
 #### 4.6.0.简述存储机制
-由于生产者生产的消息会不断追加到log文件末尾，为防止log文件过大导致数据定位效率低下，Kafka采取了分片和索引机制，将每个partition分为多个segment。
-每个segment对应两个文件——“.index”文件和“.log”文件。这些文件位于一个文件夹下，该文件夹的命名规则为：topic名称+分区序号。
-例如，first这个topic有三个分区，则其对应的文件夹为first-0,first-1,first-2。
+由于生产者生产的消息会不断追加到log文件末尾，为防止log文件过大导致数据定位效率低下，Kafka采取了分片和索引机制。
+- 每个partition都有一个文件夹，文件夹的命名规则为：topic名称+分区序号，例如：my_toptic-0,my_toptic-1等
+- 每个partition分为多个segment。 每个segment对3个文件：index timeindex log。 文件以当前segment的第一条消息的offset命名。
 
 ![](img/kafka/6a2d21c4.png)
 
-index和log文件以当前segment的第一条消息的offset命名。
+![](img/kafka/e430fa73.png)
 
-![](img/kafka/c9c9aaac.png)
-
-“.index”文件存储大量的索引信息，“.log”文件存储大量的数据，索引文件中的元数据指向对应数据文件中message的物理偏移地址。
+index、timeindex 存储索引信息，log存储消息数据，索引文件中的元数据指向对应数据文件中message的物理偏移地址。
 ![](img/kafka/7e2cf43f.png)
 
 当offset=9时，寻找Segement-1的 9-6=3号位置对应 日志文件 偏移量为 699 的数据。
 
-
 #### 4.6.1.目录结构
 kafka文件的存储目录，log.dirs=/usr/local/var/lib/kafka-logs，内部目录如下：
 ```text
->  kafka-logs ls
-__consumer_offsets-0             __consumer_offsets-22            __consumer_offsets-36            __consumer_offsets-5
-__consumer_offsets-1             __consumer_offsets-23            __consumer_offsets-37            __consumer_offsets-6
-__consumer_offsets-10            __consumer_offsets-24            __consumer_offsets-38            __consumer_offsets-7
-__consumer_offsets-11            __consumer_offsets-25            __consumer_offsets-39            __consumer_offsets-8
-__consumer_offsets-12            __consumer_offsets-26            __consumer_offsets-4             __consumer_offsets-9
-__consumer_offsets-13            __consumer_offsets-27            __consumer_offsets-40            cleaner-offset-checkpoint
-__consumer_offsets-14            __consumer_offsets-28            __consumer_offsets-41            localTestTopic-0
-__consumer_offsets-15            __consumer_offsets-29            __consumer_offsets-42            localTestTopic-1
-__consumer_offsets-16            __consumer_offsets-3             __consumer_offsets-43            localTestTopic-2
-__consumer_offsets-17            __consumer_offsets-30            __consumer_offsets-44            log-start-offset-checkpoint
-__consumer_offsets-18            __consumer_offsets-31            __consumer_offsets-45            meta.properties
-__consumer_offsets-19            __consumer_offsets-32            __consumer_offsets-46            recovery-point-offset-checkpoint
-__consumer_offsets-2             __consumer_offsets-33            __consumer_offsets-47            replication-offset-checkpoint
-__consumer_offsets-20            __consumer_offsets-34            __consumer_offsets-48           
+__consumer_offsets-0             __consumer_offsets-1            __consumer_offsets-2            __consumer_offsets-5
+.......
 __consumer_offsets-21            __consumer_offsets-35            __consumer_offsets-49
 ```
 
 - __consumer_offsets-xx文件夹是kafka存储消费者offset的默认主题，暂不深究
 - xxx-checkpoint文件统称为其他文件，暂不深究
-- localTestTopic-x文件夹则是我们测试使用主题localTestTopic的日志文件夹了，可以看到
-    主题的日志文件按照分区划分为多个文件夹，文件夹命名为<topic>-<partition>
+- my_toptic-x文件夹则是我们测试使用主题my_toptic的日志文件夹了
 
 ```text
-➜  kafka-logs ls -l localTestTopic-0
+kafka-logs ls -l my_toptic-0
 total 784
--rw-r--r--  1 zhangsan  admin     72 Oct 24 22:15 00000000000000000014.index
--rw-r--r--  1 zhangsan  admin  41805 Oct 24 22:15 00000000000000000014.log
--rw-r--r--  1 zhangsan  admin      0 Oct 24 22:15 00000000000000000014.timeindex
+-rw-r--r--  1 zhangsan  admin     72 Oct 24 22:15 00000000000000000000.index
+-rw-r--r--  1 zhangsan  admin  41805 Oct 24 22:15 00000000000000000000.log
+-rw-r--r--  1 zhangsan  admin      0 Oct 24 22:15 00000000000000000000.timeindex
 
 -rw-r--r--  1 zhangsan  admin     80 Oct 24 22:15 00000000000000000536.index
 -rw-r--r--  1 zhangsan  admin  41760 Oct 24 22:15 00000000000000000536.log
 -rw-r--r--  1 zhangsan  admin      0 Oct 24 22:15 00000000000000000536.timeindex
-
--rw-r--r--  1 zhangsan  admin     80 Oct 24 22:15 00000000000000001058.index
--rw-r--r--  1 zhangsan  admin  41760 Oct 24 22:15 00000000000000001058.log
--rw-r--r--  1 zhangsan  admin      0 Oct 24 22:15 00000000000000001058.timeindex
-
--rw-r--r--  1 zhangsan  admin     80 Oct 24 22:15 00000000000000001580.index
--rw-r--r--  1 zhangsan  admin  41760 Oct 24 22:15 00000000000000001580.log
--rw-r--r--  1 zhangsan  admin      0 Oct 24 22:15 00000000000000001580.timeindex
 ```
 
 分区内(文件夹)内的日志文件分为多个Segment，且每个LogSegment包含三个主要文件：
 - xxx.log: 消息内容主文件，记录消息内容信息
 - xxx.index: 偏移量索引文件，记录偏移量到消息位置的映射
 - xxx.timeindex: 时间戳索引文件，记录时间戳到偏移量的映射
-每个LogSegment都有一个基准偏移量baseOffset, 用来表示当前LogSegment中第一条消息的偏移量，日志文件和两个索引文件都是根据baseOffset命名的，文件名称固定20位整数，不够用0填充。以第二个分段00000000000000000536.log为例：
-00000000000000000536.log表示当前LogSegment中第一条消息偏移量为536 同时可以推断出第一个分段中的偏移量为14 - 535
+
+每个LogSegment都有一个基准偏移量baseOffset, 用来表示当前LogSegment中第一条消息的偏移量，日志文件和两个索引文件都是根据baseOffset命名的， 文件名称固定20位整数，不够用0填充。
+以第二个分段00000000000000000536.log为例： 00000000000000000536.log表示当前LogSegment中第一条消息偏移量为536 同时可以推断出第一个分段中的偏移量为0 ~ 535
 
 #### 4.6.2.日志分段的条件
 
@@ -583,18 +477,15 @@ total 784
 对于每个topic.partition目录，我们会创建一个日志对象。日志对象使用了 ConcurrentSkipListMap 来保存各个日志分段，
 每个日志分段的 baseOffset 作为 key，这样可以根据指定偏移量来快速定位到消息所在的日志分段。
 
-#### 4.6.4.
-#### 4.6.5.
-#### 4.6.6.
-
 ### 4.7.日志索引
 日志索引类型
 - 偏移量索引
 - 时间戳索引
 
-索引文件建立偏移量(offset)/时间戳(timestamp)到物理地址之间的映射关系，方便快速定位消息所在的物理文件的位置；
+索引文件建立偏移量(offset)/时间戳(timestamp)到物理地址之间的映射关系，主要是为了快速定位到指定 offset 的消息。
+index文件中两个字段的含义（offset,position） 指的是指定 offset 的消息在 log 文件中的物理 position，这里大概每54条消息建立一个索引。
 
-**kafka中使用稀疏索引的方式构造消息索引**，所以索引中不保证每个消息在索引中都有对应物理地址的映射；
+**index使用稀疏索引的方式构造消息索引**，所以索引中不保证每个消息在索引中都有对应物理地址的映射；
 索引记录的方式由配置参数log.index.interval.bytes指定，默认4KB。当kafka写入消息大小大于4KB时，
 偏移量索引文件和时间戳索引文件分别增加一个索引项，记录此刻偏移量/时间戳与消息物理地址的映射，修改此配置，可以改变索引文件中索引项的密度
 
@@ -607,15 +498,16 @@ total 784
 
 仍然以00000000000000000536.index为例，使用kafka自带命令kafka-dump-log可以解析日志文件：
 
-```text
-> localTestTopic-0 /usr/local/Cellar/kafka/3.0.0/bin/kafka-dump-log --files 00000000000000000536.index
-Dumping 00000000000000000536.index
-offset: 588 position: 4160
-offset: 640 position: 8320
-offset: 692 position: 12480
-offset: 744 position: 16640
-offset: 796 position: 20800
-offset: 848 position: 24960
+```shell
+./kafka-dump-log.sh --files ../../kafka-logs/my_demo_topic-0/00000000000000000000.index
+Dumping ..\..\kafka-logs\my_demo_topic-0\00000000000000000000.index
+offset: 33 position: 16346
+offset: 49 position: 32551
+offset: 65 position: 48756
+offset: 81 position: 64961
+offset: 97 position: 81166
+offset: 113 position: 97371
+offset: 129 position: 113576
 ```
 
 #### 4.7.2.时间戳索引
@@ -626,22 +518,54 @@ offset: 848 position: 24960
 
 使用场景：通过时间戳，实现消息回溯。
 
+```shell
+./kafka-dump-log.sh --files ../../kafka-logs/my_demo_topic-0/00000000000000000000.timeindex
+Dumping ..\..\kafka-logs\my_demo_topic-0\00000000000000000000.timeindex
+timestamp: 1699338057326 offset: 3
+timestamp: 1699338057337 offset: 80
+timestamp: 1699338057342 offset: 113
+timestamp: 1699338057344 offset: 130
+timestamp: 1699338057345 offset: 147
+```
+
 #### 4.7.3.索引查找方式
 
-消费者在拉取数据时，会根据broker上保存的消费进度，确定当前应该消费的位置。这里使用的是 偏移量索引。 假设我们现在需要查找partition = 0, offset = 745的消息，其过程如下：
+消费者在拉取数据时，会根据broker上保存的消费进度，确定当前应该消费的位置。这里使用的是 偏移量索引。 假设我们现在需要查找 partition = 0, offset = 745 的消息，其过程如下：
 1. 确定分段。先从跳表中确定，offset=745 所在的分段(00000000000000000536)。
 2. 确定offset的索引项。使用二分查找（通过分段文件的名称-开始位置，下一个文件的名称-结束位置，没有的话，就是当前写入的LEO高水位）
    因为每行索引的大小都是固定的，所有很容易找到 offset = 745在744 - 796之间。
 3. 确定消息位置。在日志文件中，从offset:744 position: 16640开始顺序查找，知道找到offset = 745的消息
 
-#### 4.7.4.offset维护
+#### 4.7.4.日志结构
 
-目的：由于consumer在消费过程中可能会出现断电宕机等故障，consumer恢复后，需要从故障前的位置的继续消费，所以consumer需要实时记录自己消费到了哪个offset，以便故障恢复后继续消费。
+kafka-dump-log.sh 就是封装了kafka-run-class.sh kafka.tools.DumpLogSegments。
 
-方案：Kafka0.9版本之前，consumer默认将offset保存在Zookeeper中，从0.9版本开始，consumer默认将offset保存在Kafka一个内置的topic中，该topic为__consumer_offsets。
+```shell
+./kafka-run-class.sh kafka.tools.DumpLogSegments --files ../../kafka-logs/my_demo_topic-0/00000000000000000000.log --print-data-log 
 
-#### 4.7.5.
-#### 4.7.6.
+Dumping ..\..\kafka-logs\my_demo_topic-0\00000000000000000000.log
+Starting offset: 0
+baseOffset: 0 lastOffset: 0 count: 1 baseSequence: -1 lastSequence: -1 producerId: -1 producerEpoch: -1 partitionLeaderEpoch: 0 isTransactional: false isControl: false position: 0 CreateTime: 1699337329146 size: 72 magic: 2 compresscodec: NONE crc: 2035750657 isvalid: true
+| offset: 0 CreateTime: 1699337329146 keysize: -1 valuesize: 4 sequence: -1 headerKeys: [] payload: msg1
+baseOffset: 1 lastOffset: 1 count: 1 baseSequence: -1 lastSequence: -1 producerId: -1 producerEpoch: -1 partitionLeaderEpoch: 0 isTransactional: false isControl: false position: 72 CreateTime: 1699337386007 size: 69 magic: 2 compresscodec: NONE crc: 2109983962 isvalid: true
+| offset: 1 CreateTime: 1699337386007 keysize: -1 valuesize: 1 sequence: -1 headerKeys: [] payload: 2
+baseOffset: 2 lastOffset: 17 count: 16 baseSequence: -1 lastSequence: -1 producerId: -1 producerEpoch: -1 partitionLeaderEpoch: 0 isTransactional: false isControl: false position: 141 CreateTime: 1699338057326 size: 16205 magic: 2 compresscodec: NONE crc: 958784937 isvalid: true
+| offset: 2 CreateTime: 1699338057311 keysize: -1 valuesize: 1000 sequence: -1 headerKeys: [] payload: SSXVNJHPDQDXVCRASTVYBCWVMGNYKRXVZXKGXTSPSJDGYLUEGQFLAQLOCFLJBEPOWFNSOMYARHAOPUFOJHHDXEHXJBHWGSMZJGNLONJVXZXZOZITKXJBOZWDJMCBOSYQQKCPRRDCZWMRLFXBLGQPRPGRNTAQOOSVXPKJPJLAVSQCCRXFRROLLHWHOHFGCFWPNDLMWCSSHWXQQYKALAAWCMXYLMZALGDESKKTEESEMPRHROVKUMPSXHELIDQEOOHOIHEGJOAZBVPUMCHSHGXZYXXQRUICRIJGQEBBWAXABQRIRUGZJUUVFYQOVCDEDXYFPRLGSGZXSNIAVODTJKSQWHNWVPSAMZKOUDTWHIORJSCZIQYPCZMBYWKDIKOKYNGWPXZWMKRDCMBXKFUILWDHBFXRFAOPRUGDFLPDLHXXCXCUPLWGDPPHEMJGMTVMFQQFVCUPOFYWLDUEBICKPZKHKVMCJVWVKTXBKAPWAPENUEZNWNWDCACDRLPIPHJQQKMOFDQSPKKNURFBORJLBPCBIWTSJNPRBNITTKJYWAHWGKZYNUSFISPIYPIOGAUPZDXHCFVGXGIVVCPFHIXAACZXZLFDMOOSSNTKUPJQEIRRQAMUCTBLBSVPDDYOIHAOODZNJTVHDCIEGTAVMYZOCIVSKUNSMXEKBEWNZPRPWPUJABJXNQBOXSHOEGMJSNBUTGTIFVEQPSYBDXEXORPQDDODZGBELOISTRWXMEYWVVHGMJKWLJCCHPKAFRASZEYQZCVLFSLOWTLBMPPWPPFPQSAZPTULSTCDMODYKZGSRFQTRFTGCNMNXQQIYVUQZHVNIPHZWVBSGOBYIFDNNXUTBBQUYNXOZCSICGRTZSSRHROJRGBHMHEQJRDLOQBEPTOBMYLMIGPPDPOLTEUVDGATCGYPQOGOYYESKEGBLOCBIYSLQEYGCCIPBXPNSPKDYTBEWDHBHWVDPLOVHJPNYGJUHKKHDASNFGZDAIWWQEPPBRJK
+| offset: 3 CreateTime: 1699338057326 keysize: -1 valuesize: 1000 sequence: -1 headerKeys: [] payload: SSXVNJHPDQDXVCRASTVYBCWVMGNYKRXVZXKGXTSPSJDGYLUEGQFLAQLOCFLJBEPOWFNSOMYARHAOPUFOJHHDXEHXJBHWGSMZJGNLONJVXZXZOZITKXJBOZWDJMCBOSYQQKCPRRDCZWMRLFXBLGQPRPGRNTAQOOSVXPKJPJLAVSQCCRXFRROLLHWHOHFGCFWPNDLMWCSSHWXQQYKALAAWCMXYLMZALGDESKKTEESEMPRHROVKUMPSXHELIDQEOOHOIHEGJOAZBVPUMCHSHGXZYXXQRUICRIJGQEBBWAXABQRIRUGZJUUVFYQOVCDEDXYFPRLGSGZXSNIAVODTJKSQWHNWVPSAMZKOUDTWHIORJSCZIQYPCZMBYWKDIKOKYNGWPXZWMKRDCMBXKFUILWDHBFXRFAOPRUGDFLPDLHXXCXCUPLWGDPPHEMJGMTVMFQQFVCUPOFYWLDUEBICKPZKHKVMCJVWVKTXBKAPWAPENUEZNWNWDCACDRLPIPHJQQKMOFDQSPKKNURFBORJLBPCBIWTSJNPRBNITTKJYWAHWGKZYNUSFISPIYPIOGAUPZDXHCFVGXGIVVCPFHIXAACZXZLFDMOOSSNTKUPJQEIRRQAMUCTBLBSVPDDYOIHAOODZNJTVHDCIEGTAVMYZOCIVSKUNSMXEKBEWNZPRPWPUJABJXNQBOXSHOEGMJSNBUTGTIFVEQPSYBDXEXORPQDDODZGBELOISTRWXMEYWVVHGMJKWLJCCHPKAFRASZEYQZCVLFSLOWTLBMPPWPPFPQSAZPTULSTCDMODYKZGSRFQTRFTGCNMNXQQIYVUQZHVNIPHZWVBSGOBYIFDNNXUTBBQUYNXOZCSICGRTZSSRHROJRGBHMHEQJRDLOQBEPTOBMYLMIGPPDPOLTEUVDGATCGYPQOGOYYESKEGBLOCBIYSLQEYGCCIPBXPNSPKDYTBEWDHBHWVDPLOVHJPNYGJUHKKHDASNFGZDAIWWQEPPBRJK
+
+baseOffset：当前batch中第一条消息的位移。
+lastOffset：最新消息的位移相对于第一条消息的唯一增量。
+count：当前batch有的数据数量，kafka在进行消息遍历的时候，可以通过该字段快速的跳跃到下一个batch进行数据读取。
+partitionLeaderEpoch：记录了当前消息所在分区的 leader 的服务器版本，主要用于进行一些数据版本的校验和转换工作。
+crc：当前整个batch的数据crc校验码，主要用于对数据进行差错校验的。
+compresscode：数据压缩格式，主要有GZIP、LZ4、Snappy三种。
+Sequence、producerId、producerEpoch：这三个参数主要是为了实现事务和幂等性而使用的，其中producerId和producerEpoch用于确定当前 producer 是否合法，而起始序列号则主要用于进行消息的幂等校验。
+isTransactional：是否开启事务。
+magic：Kafka服务程序协议版本号。
+CreateTime：数据创建的时间戳。
+payload：实际存储的数据。
+最后2行，payload 后面是固定字符，长度1000，表示没有数据，作用是预分配磁盘空间，提高读写效率。
+```
 
 ### 4.8.zookeeper的作用/Kafka Controller的作用
 
@@ -654,11 +578,7 @@ offset: 848 position: 24960
 
 Producer拦截器(interceptor)是在Kafka 0.10版本被引入的，主要用于实现clients端的定制化控制逻辑。
 
-### 4.10.监听器
-1. KafkaMonitor（每个分区的日志写入情况-表格、每个分区对应消费组的消费清空-图标/表格、每个分区的 生产/消费速率-图标 等）
-2. KafkaManager（管理多个 kafka cluster 、broker列表、创建topic、查看主题详情、增加分区、分区/副本重新分配、消费状况 等）
-
-### 4.11.客户端原理
+### 4.10.客户端原理
 Kafka生产者客户端的整体结构是什么样子的？使用了几个线程来处理？分别是什么？
 
 Kafka的Producer发送消息采用的是异步发送的方式。在消息发送的过程中，涉及到了两个线程——main线程和Sender线程，以及一个线程共享变量——RecordAccumulator。
@@ -668,134 +588,26 @@ ProducerRecord 消息封装对象，main线程是单条消息发送至 RecordAcc
 
 ![](img/kafka/5d6965a3.png)
 
-## 5 最佳实践
-### 5.1 整合spring boot
-整合案例： https://gitee.com/luckSnow/spring-boot-example/tree/master/lab_091_mq_kafka
+## 5.最佳实践
 
-### 5.2 计算所需要的topic分区数
+### 5.1.性能测试
 
-假设你需要的目标吞吐量为T，则分区数num=T/min(Tp,Tc)。
-分母取最小值表明即使取消费者额生产者的最小吞吐量，只要设置为num的分区数， 仍能达到目标吐吞量要求。
+- [Kafka性能基准测试](https://blog.csdn.net/weixin_42641909/article/details/89320999)
+- [Kafka机器数量计算、性能评估、压力测试](https://blog.csdn.net/qq_22473611/article/details/113063238)
+- [Kafka消息迁移工具的压测与调优](https://segmentfault.com/a/1190000042008882)
 
-假设我们需要的吐吞量为100MB/s，则分区数num=100/min(80,90)=2
+kafka自带性能测试工具：
+- kafka-producer-perf-test.sh (生产端)
+- kafka-consumer-perf-test.sh (消费端)
 
-由于消费者Flink数量为3台，为保证充分利用flink计算资源，避免flink消费者空转，
-我们不妨将Kafka的topic分区设置为3。
+性能测试参数控制：
+- 生产者：topic的分区数、分区副本数。会影响生产端吞吐量的参数：batch.size\longer.ms\acks\,这些参数都可以在--producer-props参数后。
+- 消费者:topic的分区数、分区副本数。会影响消费端吞吐量的参数：--fetch-size--threads
+- 其他参数还有：压缩格式、网络带宽。
 
-后续若业务升级再动态扩容topic分区到6个、9个、12个...保持与flink消费者数n:1的关系。
-
-### 5.3 性能测试
-- kafka生产者性能优化测试
-
-我们设置好topic的分区数、分区副本数后，可以使用控制变量的方式来测试，寻找公司集群上各参数的最佳值。
-会影响生产端吞吐量的参数：batch.size\longer.ms\acks\,这些参数都可以在--producer-props参数后。
-其他参数还有：压缩格式、网络带宽。
-
-- kafka消费者性能优化测试
-
-我们设置好topic的分区数、分区副本数后，可以使用控制变量的方式来测试，寻找公司集群上各参数的最佳值。
-会影响消费端吞吐量的参数：--fetch-size--threads
-其他参数还有：压缩格式、网络带宽。
-
-### 5.4 kafka broker 数量
-n=2*(峰值生产速度*副本数/100)+1
-
-更关注峰值生产速度是为了避免数据在业务层积压。
-
-### 5.5 消费者设置
-1. 只有当找不到任何消费的offset且消费策略是earliest的时候，才会从最开始的地方消费。
-
-找不到任何消费的offset的两种情况：
-- 使用了全新的消费者组。
-- 数据消费发生在7天前，已经清除了数据。
-
-2. 一个消费者组可以订阅多个不同的topic，但为了防止数据混乱，生产开发强制一个消费者组只能订阅一个topic。
-
-3. 所谓的offset自动提交，其实就是每隔一段时间自动将内存中的offset保存到名为“__consumer_offsets”的topic中，
-消费者只有在刚启动时才会去该topic中获取offset。其他时刻直接通过内存中的offset读取数据。
-
-kafka的消费者拉取数据也是一批一批的拉取，拉取完了之后立马开始消费，
-
-如果没有消费完就自动提交了offset，此时宕机重启，就丢数据了。
-
-如果消费完了没有自动提交offset，此时提交宕机重启，就重复消费了。
-
-所以自动提交时提交的时间间隔就很重要了。可是开发人员又很难把握这个时间间隔到底设置为多少。所以开发人员一般手动提交offset。
-
-所谓的offset手动提交，其实就是在消费完成后或者消费开始前手动调用提交offset的方法将内存中的offset保存到名为“__consumer_offsets”的topic。
-手动提交分为同步提交"consumer.commitAsync();"和异步提交"consumer.commitAsync(new OffsetCommitCallback() {...})"，
-
-同步提交会阻塞当前线程不断重试直到提交成功(用得少)。异步提交不会重试提交，效率更高。
-
-如果先消费然后手动提交offset未完成,宕机重启可能会造成重复消费。
-
-如果先手动提交offset然后消费未完成,宕机重启可能会造成数据丢失。
-
-所以自动提交和手动提交都不靠谱，kafka提供了第三种提交offset的方式：即自定义存储offset。
-
-自定义存储offset时需要考虑到消费者组rebalance后带来的消费者消费数据offset变化的问题。
-
-### 5.6 消费者参数设置
-- bootstrap.servers: broker集群地址，格式：ip1:port,ip2:port...，不需要设定全部的集群地址，设置两个或者两个以上即可。
-
-- group.id: 消费者隶属的消费者组名称，如果为空会报异常，一般而言，这个参数要有一定的业务意义。
-
-- fetch.min.bytes: 该参数用来配置 Consumer 在一次拉取请求（调用 poll() 方法）中能从 Kafka 中拉取的最小数据量，默认值为1（B）。
-    Kafka 在收到 Consumer 的拉取请求时，如果返回给 Consumer 的数据量小于这个参数所配置的值，那么它就需要进行等待，直到数据量满足这个参数的配置大小。
-    可以适当调大这个参数的值以提高一定的吞吐量，不过也会造成额外的延迟（latency），对于延迟敏感的应用可能就不可取了。
-
-- fetch.max.bytes ：该参数与 fetch.min.bytes 参数对应，它用来配置 Consumer 在一次拉取请求中从Kafka中拉取的最大数据量，默认值为52428800（B），也就是50MB。
-  如果这个参数设置的值比任何一条写入 Kafka 中的消息要小，那么会不会造成无法消费呢？该参数设定的不是绝对的最大值，如果在第一个非空分区中拉取的第一条消息大于该值，那么该消息将仍然返回，
-  以确保消费者继续工作。Kafka 中所能接收的最大消息的大小通过服务端参数 message.max.bytes（对应于主题端参数 max.message.bytes）来设置。
-
-- fetch.max.wait.ms ：这个参数也和 fetch.min.bytes 参数有关，如果 Kafka 仅仅参考 fetch.min.bytes 参数的要求，那么有可能会一直阻塞等待而无法发送响应给 Consumer，
-  显然这是不合理的。fetch.max.wait.ms 参数用于指定 Kafka 的等待时间，默认值为500（ms）。如果 Kafka 中没有足够多的消息而满足不了 fetch.min.bytes 参数的要求，那么最终会等待500ms。
-  这个参数的设定和 Consumer 与 Kafka 之间的延迟也有关系，如果业务应用对延迟敏感，那么可以适当调小这个参数。
-
-- max.partition.fetch.bytes ：这个参数用来配置从每个分区里返回给 Consumer 的最大数据量，默认值为1048576（B），即1MB。这个参数与 fetch.max.bytes 参数相似，
-  只不过前者用来限制一次拉取中每个分区的消息大小，而后者用来限制一次拉取中整体消息的大小。同样，如果这个参数设定的值比消息的大小要小，那么也不会造成无法消费，Kafka 为了保持消费逻辑的正常运转不会对此做强硬的限制。
-
-- max.poll.records ：这个参数用来配置 Consumer 在一次拉取请求中拉取的最大消息数，默认值为500（条）。如果消息的大小都比较小，则可以适当调大这个参数值来提升一定的消费速度。
-
-- connections.max.idle.ms：这个参数用来指定在多久之后关闭闲置的连接，默认值是540000（ms），即9分钟。
-
-- exclude.internal.topics：Kafka 中有两个内部的主题： __consumer_offsets 和 __transaction_state。
-    exclude.internal.topics 用来指定 Kafka 中的内部主题是否可以向消费者公开，默认值为 true。
-    如果设置为 true，那么只能使用 subscribe(Collection)的方式而不能使用 subscribe(Pattern)的方式来订阅内部主题，设置为 false 则没有这个限制。
-
-- receive.buffer.bytes：这个参数用来设置 Socket 接收消息缓冲区（SO_RECBUF）的大小，默认值为65536（B），即64KB。
-    如果设置为-1，则使用操作系统的默认值。如果 Consumer 与 Kafka 处于不同的机房，则可以适当调大这个参数值。
-
-- send.buffer.bytes：这个参数用来设置Socket发送消息缓冲区（SO_SNDBUF）的大小，默认值为131072（B），即128KB。与receive.buffer.bytes参数一样，如果设置为-1，则使用操作系统的默认值。
-
-- request.timeout.ms：这个参数用来配置 Consumer 等待请求响应的最长时间，默认值为30000（ms）。
-
-- metadata.max.age.ms：这个参数用来配置元数据的过期时间，默认值为300000（ms），即5分钟。如果元数据在此参数所限定的时间范围内没有进行更新，则会被强制更新，即使没有任何分区变化或有新的 broker 加入
-
-- reconnect.backoff.ms：这个参数用来配置尝试重新连接指定主机之前的等待时间（也称为退避时间），避免频繁地连接主机，默认值为50（ms）。这种机制适用于消费者向 broker 发送的所有请求。
-
-- auto.offset.reset：参数值为字符串类型，有效值为“earliest”“latest”“none”，配置为其余值会报出异常
-
-- enable.auto.commit：boolean 类型，配置是否开启自动提交消费位移的功能，默认开启
-
-- auto.commit.interval.ms：当enbale.auto.commit参数设置为 true 时才生效，表示开启自动提交消费位移功能时自动提交消费位移的时间间隔
-
-- partition.assignment.strategy：消费者的分区分配策略
-
-- interceptor.class：用来配置消费者客户端的拦截器
-
-### 5.7 腾讯云最佳实践
-学习最佳实践的好地方（腾讯云文档）： https://cloud.tencent.com/document/product/597
-
-生产消费最佳实践： https://cloud.tencent.com/document/product/597/55481
-
-### 5.8.性能测试工具
-
-[Kafka消息迁移工具的压测与调优](https://segmentfault.com/a/1190000042008882)
-
-kafka本身就提供了 benchmark 工具，可以方便的使用内置的命令行进行压测
 ```shell
-./bin/kafka-producer-perf-test.sh --topic test_perf --num-records 1000000 --record-size 15000 --throughput -1 --producer-props bootstrap.servers=10.xx.xx.1:9094,10.xx.xx.2:9094 acks=1
+./bin/kafka-producer-perf-test.sh --topic test_perf --num-records 1000000 --record-size 15000 --throughput -1 
+    --producer-props bootstrap.servers=10.xx.xx.1:9094,10.xx.xx.2:9094 acks=1
 
 --acks 消息确认模式，-1 表示需要确认所有副本都写入成功，1 表示只需确认一个副本写入成功，0 表示无需确认。
 --topic topic 名称，本例为 test_perf
@@ -807,7 +619,71 @@ kafka本身就提供了 benchmark 工具，可以方便的使用内置的命令�
 --request-timeouts-ms 一个消息请求发送超时时间
 ```
 
-### 5.9.kafka热备机制
+### 5.2.资源评估
+
+[Kafka的分区是不是越多越好](https://blog.csdn.net/weixin_42641909/article/details/89294698)
+- 分区数量：T/min(Tp,Tc)。假设目标吞吐量为T，经过性能测试producer和consumer吞吐量分别是Tp和Tc。
+    - 理论计算：producer吞吐量 = 20m/s；consumer吞吐量 = 50m/s，期望吞吐量100m/s；分区数 = 100 / 20 = 5分区
+    - 架构计算：假设consumer 3个，分区数最好是3的倍数，可以确保性能均衡。
+    - 通常分区数量保持在3~10个即可。
+- broker数量：2 *（峰值生产速度 * 副本数 / 100）+ 1。峰值生产速度通过压测获得；副本数默认1，设置3个最佳。
+    - 理论计算：峰值生产速度是50M/s。副本数为2。broker数量= 2 *（50 * 2 / 100）+ 1 = 3台
+    - 通常搭建3节点的集群即可满足需求，集群规模太大，会影响整体响应速度，问题恢复速度。
+
+### 5.3.消费提交
+1. 只有当找不到任何消费的offset且消费策略是earliest的时候，才会从最开始的地方消费。找不到任何消费的offset的两种情况：
+    - 使用了全新的消费者组。
+    - 数据消费发生在7天前，已经清除了数据。
+2. 一个消费者组可以订阅多个不同的topic，但为了防止数据混乱，生产开发强制一个消费者组只能订阅一个topic。
+3. offset自动提交，就是每隔一段时间自动将内存中的offset保存到名为“__consumer_offsets”的topic中。
+    - 消费者只有在刚启动时才会去获得topic的offset，其他时刻直接通过内存中的offset读取数据。
+    - 消费者批量拉取数据之后进行消费，然后再拉取下一批数据，如果没有消费完就自动提交了offset，此时应用宕机重启，就丢数据了。
+    如果消费完了没有自动提交offset，应用交宕机重启后就会重复消费。
+    - 所以自动提交时提交的时间间隔就很重要了。可是开发人员又很难把握这个时间间隔到底设置为多少。所以开发人员一般手动提交offset。
+4. offset手动提交，其实就是在消费完成后或者消费开始前手动调用提交offset的方法将内存中的offset保存到名为“__consumer_offsets”的topic。
+    - 手动提交分为同步提交和异步提交。同步提交会阻塞当前线程不断重试直到提交成功。异步提交不会重试提交，效率更高。
+    - 如果先消费然后手动提交offset未完成, 应用宕机重启可能会造成重复消费；如果先手动提交offset然后消费未完成,宕机重启可能会造成数据丢失。
+    - 所以自动提交和手动提交都不靠谱，kafka提供了第三种提交offset的方式：即自定义存储offset。
+5. 自定义存储offset时需要考虑到消费者组rebalance后带来的消费者消费数据offset变化的问题。
+
+### 5.4.消费者参数设置
+- bootstrap.servers: broker集群地址，格式：ip1:port,ip2:port，不需要设定全部的集群地址，设置两个或者两个以上即可。
+- group.id: 消费者隶属的消费者组名称，如果为空会报异常，一般而言，这个参数要有一定的业务意义。
+- fetch.min.bytes: 该参数用来配置 Consumer 在一次拉取请求（调用 poll() 方法）中能从 Kafka 中拉取的最小数据量，默认值为1（B）。
+    Kafka 在收到 Consumer 的拉取请求时，如果返回给 Consumer 的数据量小于这个参数所配置的值，那么它就需要进行等待，直到数据量满足这个参数的配置大小。
+    可以适当调大这个参数的值以提高一定的吞吐量，不过也会造成额外的延迟（latency），对于延迟敏感的应用可能就不可取了。
+- fetch.max.bytes ：该参数与 fetch.min.bytes 参数对应，它用来配置 Consumer 在一次拉取请求中从Kafka中拉取的最大数据量，默认值为52428800（B），也就是50MB。
+  如果这个参数设置的值比任何一条写入 Kafka 中的消息要小，那么会不会造成无法消费呢？该参数设定的不是绝对的最大值，如果在第一个非空分区中拉取的第一条消息大于该值，那么该消息将仍然返回，
+  以确保消费者继续工作。Kafka 中所能接收的最大消息的大小通过服务端参数 message.max.bytes（对应于主题端参数 max.message.bytes）来设置。
+- fetch.max.wait.ms ：这个参数也和 fetch.min.bytes 参数有关，如果 Kafka 仅仅参考 fetch.min.bytes 参数的要求，那么有可能会一直阻塞等待而无法发送响应给 Consumer，
+  显然这是不合理的。fetch.max.wait.ms 参数用于指定 Kafka 的等待时间，默认值为500（ms）。如果 Kafka 中没有足够多的消息而满足不了 fetch.min.bytes 参数的要求，那么最终会等待500ms。
+  这个参数的设定和 Consumer 与 Kafka 之间的延迟也有关系，如果业务应用对延迟敏感，那么可以适当调小这个参数。
+- max.partition.fetch.bytes ：这个参数用来配置从每个分区里返回给 Consumer 的最大数据量，默认值为1048576（B），即1MB。这个参数与 fetch.max.bytes 参数相似，
+  只不过前者用来限制一次拉取中每个分区的消息大小，而后者用来限制一次拉取中整体消息的大小。同样，如果这个参数设定的值比消息的大小要小，那么也不会造成无法消费，Kafka 为了保持消费逻辑的正常运转不会对此做强硬的限制。
+- max.poll.records ：这个参数用来配置 Consumer 在一次拉取请求中拉取的最大消息数，默认值为500（条）。如果消息的大小都比较小，则可以适当调大这个参数值来提升一定的消费速度。
+- connections.max.idle.ms：这个参数用来指定在多久之后关闭闲置的连接，默认值是540000（ms），即9分钟。
+- exclude.internal.topics：Kafka 中有两个内部的主题： __consumer_offsets 和 __transaction_state。
+    exclude.internal.topics 用来指定 Kafka 中的内部主题是否可以向消费者公开，默认值为 true。
+    如果设置为 true，那么只能使用 subscribe(Collection)的方式而不能使用 subscribe(Pattern)的方式来订阅内部主题，设置为 false 则没有这个限制。
+- receive.buffer.bytes：这个参数用来设置 Socket 接收消息缓冲区（SO_RECBUF）的大小，默认值为65536（B），即64KB。
+    如果设置为-1，则使用操作系统的默认值。如果 Consumer 与 Kafka 处于不同的机房，则可以适当调大这个参数值。
+- send.buffer.bytes：这个参数用来设置Socket发送消息缓冲区（SO_SNDBUF）的大小，默认值为131072（B），即128KB。与receive.buffer.bytes参数一样，如果设置为-1，则使用操作系统的默认值。
+- request.timeout.ms：这个参数用来配置 Consumer 等待请求响应的最长时间，默认值为30000（ms）。
+- metadata.max.age.ms：这个参数用来配置元数据的过期时间，默认值为300000（ms），即5分钟。如果元数据在此参数所限定的时间范围内没有进行更新，则会被强制更新，即使没有任何分区变化或有新的 broker 加入
+- reconnect.backoff.ms：这个参数用来配置尝试重新连接指定主机之前的等待时间（也称为退避时间），避免频繁地连接主机，默认值为50（ms）。这种机制适用于消费者向 broker 发送的所有请求。
+- auto.offset.reset：参数值为字符串类型，有效值为“earliest”“latest”“none”，配置为其余值会报出异常
+- enable.auto.commit：boolean 类型，配置是否开启自动提交消费位移的功能，默认开启
+- auto.commit.interval.ms：当enbale.auto.commit参数设置为 true 时才生效，表示开启自动提交消费位移功能时自动提交消费位移的时间间隔
+- partition.assignment.strategy：消费者的分区分配策略
+- interceptor.class：用来配置消费者客户端的拦截器
+
+### 5.5.腾讯云最佳实践
+
+学习最佳实践的好地方（腾讯云文档）： https://cloud.tencent.com/document/product/597
+
+生产消费最佳实践： https://cloud.tencent.com/document/product/597/55481
+
+### 5.6.kafka热备机制
 
 一般情况的 Kafka 集群，都是在同一个 IDC 中的，跨 IDC 的热备在 Kafka 的使用场景叫做 Mirror，Kafka 内置的支持为 MirrorMaker，现在已经进化到了第二版
 
@@ -819,11 +695,11 @@ kafka本身就提供了 benchmark 工具，可以方便的使用内置的命令�
   ，还需要考虑丢包率，滑动窗口增加，在增加发送速率的同时，也增加了丢包重传的成本
 - 优化消息。进行压缩和消息裁剪
 
-### 5.10.架构规范
+### 5.7.架构规范
 
-- kafka规范:机器名规范，副本数量，过期时间，过期大小，允许最多的kafka数量，topic命名规范
-- kafka监控:可视化界面kafka运维，监控短信报警（服务停掉、磁盘空间、网络使用率、宕机等）， kafa服务梳理 。
-- kafka运维:kafka集群部署（目录、版本、日历目录、多磁盘）、kafka集群扩容、 等等
+- kafka规范: 机器名规范，副本数量，过期时间，过期大小，允许最多的kafka数量，topic命名规范
+- kafka监控: 可视化界面kafka运维，监控短信报警（服务停掉、磁盘空间、网络使用率、宕机等）, kafa服务梳理 。
+- kafka运维: kafka集群部署（目录、版本、日历目录、多磁盘）、kafka集群扩容等等
 
 ## 6 常见面试题
 <p style="color: red">问题：什么情况下会导致一个副本与 leader 失去同步</p>
