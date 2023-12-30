@@ -266,7 +266,6 @@ ubuntu可能需要以下：
 
 <div name="wordShowDiv"  word-url="./Nginx/Nginx.docx"></div>
 
-
 ### 3.2.配置说明
 
 - 配置案例1：拆分为不同的部分进行说明
@@ -297,6 +296,12 @@ ubuntu可能需要以下：
     - 经验1：第一次安装时的源码不要删除，最好把configuration命令记录下来，其中安装的第三方模块也一样处理
     - 经验2：重新配置的时候，最好换一个目录，方便nginx回滚。
 - 配置生效验证。比如最大文件打开数量，最好看下进程中的配置是否生效  ` cat /proc/{nginx的pid}/limits `    
+
+### 3.5.管理工具
+
+https://github.com/NginxProxyManager/nginx-proxy-manager
+
+
 
 ## 4.模块
 

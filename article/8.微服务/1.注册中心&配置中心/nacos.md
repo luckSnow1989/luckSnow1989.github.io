@@ -121,3 +121,50 @@ Nacos 并不是通过推的方式将服务端最新的配置信息发送给客�
 - [https://blog.csdn.net/fly910905/article/details/100023415](https://blog.csdn.net/fly910905/article/details/100023415)
 - [https://www.cnblogs.com/skj0330insn/p/12057416.html](https://www.cnblogs.com/skj0330insn/p/12057416.html)
 - [https://blog.csdn.net/xc123_java/article/details/90200189](https://blog.csdn.net/xc123_java/article/details/90200189)
+
+相比eureka的对等星型同步AP模型，nacos虽然也保留了这种模型，自研的AP模型Distro协议，nacos对所有服务实例进行分片，
+将服务实例均匀分配到不同的server进行续约和数据同步（内部使用grpc维护），降低了整个集群的压力。
+
+## 6.api接口
+
+- [Open API 指南](https://nacos.io/zh-cn/docs/v2/guide/user/open-api.html)
+- [参数校验](https://nacos.io/zh-cn/docs/v2/guide/user/parameters-check.html)
+- [鉴权](https://nacos.io/zh-cn/docs/v2/guide/user/auth.html)
+
+```json
+curl --location 'http://127.0.0.1:8848/nacos/v2/ns/instance/list?serviceName=lab_082_cfg_nacos&accessToken=鉴权信息&namespaceId=cd825704-40ec-444a-bcbb-97a9bd31e2c3&groupName=lab_082_cfg_nacos' \
+
+{
+    "code": 0,
+    "message": "success",
+    "data": {
+        "name": "lab_082_cfg_nacos@@lab_082_cfg_nacos",
+        "groupName": "lab_082_cfg_nacos",
+        "clusters": "",
+        "cacheMillis": 10000,
+        "hosts": [
+            {
+                "ip": "192.168.56.1",
+                "port": 8080,
+                "weight": 1.0,
+                "healthy": true,
+                "enabled": true,
+                "ephemeral": true,
+                "clusterName": "DEFAULT",
+                "serviceName": "lab_082_cfg_nacos@@lab_082_cfg_nacos",
+                "metadata": {
+                    "preserved.register.source": "SPRING_CLOUD"
+                },
+                "instanceHeartBeatTimeOut": 15000,
+                "instanceHeartBeatInterval": 5000,
+                "ipDeleteTimeout": 30000
+            }
+        ],
+        "lastRefTime": 1703039815143,
+        "checksum": "",
+        "allIPs": false,
+        "reachProtectionThreshold": false,
+        "valid": true
+    }
+}
+```

@@ -11,6 +11,8 @@ sort: 1
 - [IntelliJ IDEA 2021.2 正式发布](https://mp.weixin.qq.com/s/JHQkiHdx4E0MRvf_CeCALQ)
 - [IDEA 2021.1版本正式发布，完美支持WSL 2](https://mp.weixin.qq.com/s/ku6T7fbCbVM0SDcf6ZPijw)
 
+- [idea乱码解决方式大汇总](https://blog.csdn.net/weixin_43185154/article/details/131704184)
+
 ## 1.介绍
 
 JetBrains成立于2000年，是家私人持股的公司（private company）。主要开发开发工具。为各种开发语音、开发环境、开发流程，
@@ -453,7 +455,7 @@ IntelliJ IDEA中可以在主菜单中选择Analyze | Dataflow from/to Here两个
 
 ## 5.插件
 
-### 5.1 GitToolBook
+### 5.1 GitToolBox
 
 ![](./img/idea/10dbaf44.png)
 
@@ -473,7 +475,7 @@ check文件：[tencent_checks.xml](./file/tencent_checks.xml)
 
 ![](./img/idea/0f4c21cc.png)
 
-### 5.3 CodeStyle
+### 5.3 save actions
 
 [save actions使用](https://blog.csdn.net/weixin_44712778/article/details/117332374)
 

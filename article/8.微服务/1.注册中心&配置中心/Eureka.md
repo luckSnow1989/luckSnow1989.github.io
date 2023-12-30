@@ -213,6 +213,14 @@ Eureka-server收到信息之后将该节点状态标识为DOWN，这样其他服
 eureka.instance.instance-id = ${spring.cloud.client.ip-address}:${server.port}
 ```
 
+### 2.6.性能优化
+
+eureka是去中心化的，对等星型同步架构，ap模型。所以对于每次变更(注册/心跳续约/状态变更等)都会生成相应的同步任务来用于所有实例数据的同步，
+这样一来同步作业量随着集群规模、实例数正相关同步上涨。 如果集群里注册的服务实例数过万，可能出现CPU占用率、负载都很高，时不时还会发生 Full GC 导致业务抖动。
+
+再加上eureka的二级队列发布模型，很容易造成同步队列任务积压，加剧服务发现的延迟，如果再遇到网络抖动，导致客户端切换eureka节点，就会引发同步任务的重试风暴，性能直接爆炸。
+
+eureka官方提到：Eureka 的这种广播复制模型，不仅会导致它自身的架构脆弱性，也影响了集群整体的横向扩展性。
 
 ## 3.高可用方案
 
@@ -348,25 +356,26 @@ PS：服务同步机制是用来同步Eureka Server节点之间服务信息的
 2. 客户端主动通过拉取服务端注册表数据，如果发现与本地数据存在冲突，则让有冲突的客户端从新执行注册操作
 
 
-
 ## REST API列表
 
 | 操作                      | API                                                                | 描述                                     |
 | --------------------------- | -------------------------------------------------------------------- | ------------------------------------------ |
-| 注册新的已用实例          | POST /eureka/apps/(appId}                                          | 输入json或xml格式的body，成功返回204     |
-| 注销应用实例              | DELETE /eureka/apps/(appId}/{instanceId}                           | 成功返回200                              |
-| 应用实例发送心跳          | PUT /eureka/apps/(appId}/{instanceId}                              | 成功返回200，如果instanceId不存在返回404 |
+| 注册新的已用实例          | POST /eureka/apps/{appId}                                          | 输入json或xml格式的body，成功返回204     |
+| 注销应用实例              | DELETE /eureka/apps/{appId}/{instanceId}                           | 成功返回200                              |
+| 应用实例发送心跳          | PUT /eureka/apps/{appId}/{instanceId}                              | 成功返回200，如果instanceId不存在返回404 |
 | 查询所有实例              | GET /eureka/apps/                                                  | 成功返回200，输出json或xml格式。         |
-| 查询指定appId实例         | GET /eureka/apps/(appId}                                           | 成功返回200，输出json或xml格式。         |
-| 查询指定appId和instanceId | GET /eureka/apps/(appId} /{instanceId}                             | 成功返回200，输出json或xml格式。         |
-| 查询指定instanceId        | GET /eureka/instances/(instanceId}                                 | 成功返回200，输出json或xml格式。         |
-| 暂停应用实例              | PUT /eureka/apps/(appId} /{instanceId}/status?value=OUT_OF_SERVICE | 成功返回200，失败返回500。               |
-| 恢复应用实例              | DELETE /eureka/apps/(appId} /{instanceId}/status?value=UP          | 成功返回200，失败返回500                 |
-| 更新元数据                | PUT /eureka/apps/(appId} /{instanceId}/metadata?key=value          | 成功返回200，失败返回500                 |
-| 根据vip地址查询           | GET /eureka/vips/(appId} /{vipAddress}                             | 成功返回200，输出json或xml格式。         |
-| 根据svip地址查询          | GET /eureka/svips/(appId} /{svipAddress}                           | 成功返回200，输出json或xml格式。         |
+| 查询指定appId实例         | GET /eureka/apps/{appId}                                           | 成功返回200，输出json或xml格式。         |
+| 查询指定appId和instanceId | GET /eureka/apps/{appId}/{instanceId}                             | 成功返回200，输出json或xml格式。         |
+| 查询指定instanceId        | GET /eureka/instances/{instanceId}                                 | 成功返回200，输出json或xml格式。         |
+| 暂停应用实例              | PUT /eureka/apps/{appId}/{instanceId}/status?value=OUT_OF_SERVICE | 成功返回200，失败返回500。               |
+| 恢复应用实例              | DELETE /eureka/apps/{appId}/{instanceId}/status?value=UP          | 成功返回200，失败返回500                 |
+| 更新元数据                | PUT /eureka/apps/{appId}/{instanceId}/metadata?key=value          | 成功返回200，失败返回500                 |
+| 根据vip地址查询           | GET /eureka/vips/{appId}/{vipAddress}                             | 成功返回200，输出json或xml格式。         |
+| 根据svip地址查询          | GET /eureka/svips/{appId}/{svipAddress}                           | 成功返回200，输出json或xml格式。         |
 
-注册实例请求案例【重点：注意设置请求参数的类型为JSON。否则默认接受XML格式的请求】：
+注册实例请求案例 
+- PS：设置请求参数的类型为JSON。否则默认接受XML格式的请求。Accept:application/json
+- PS：如果server开启了security，就要设置请求头：Authorization:Basic cm9vdDpzRkFJZDcyaw== 。后面的内容就是 base64(账号:密码)
 
 ```shell
 curl --location --request POST 'http://127.0.0.1:9001/eureka/apps/OPENFEIGN-PROVIDER' \
