@@ -80,5 +80,8 @@ Go1.14版本之后，都推荐使用go mod模式来管理依赖了，也不再�
 - LiteIDE： http://www.golangtc.com/download/liteide
 - goland：https://www.jetbrains.com/zh-cn/go/
 
+6.360报警
+window系统使用golang编译后生成exe文件，因为没有数字签名，被判断为不安全应用，会报警并移除文件。
+可以在360里：360设置中心->安全防护中心->开发者模式，设置忽略某个文件、或者文件夹。
 
-
+![](img/golang/970a6e0d.png)

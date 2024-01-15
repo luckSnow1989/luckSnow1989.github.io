@@ -105,7 +105,10 @@ Idea暂时不能做到像eclipse那样自动补全调用函数的参数，但是
 
 ![](./img/idea/cd393348.png)
 
-#### 2.4.10
+#### 2.4.10.不显示usage 和 author
+![](img/idea/83e9d651.png)
+新安装的idea显示usage 和 author，导致界面不够优雅，可以关闭
+![](img/idea/05668216.png)
 
 ### 2.5 Plugins
 
@@ -615,7 +618,6 @@ idea 社区版，无法创建spring boot项目。可以安装这个插件。
 1. 支持生成多种单测框架的代码。
 2. 支持自定义代码模板
 
-
 ## 6. 常见问题
 <p style="color: red;">问题1：A problem occurred starting process 'command 'C:/Program Files/Java/jdk1.8.0_221/bin/java.exe''</p>
 
@@ -742,7 +744,10 @@ nohup java \
 ```
 
 
-## 8.pycharm
+## 8.其他JetBrains
 
 [pycharm快捷键](file/pycharm快捷键.txt)
 
+如果不习惯pycharm 和 goland的快捷键，可以安装快捷键插件。搜索：  /tag:Keymap
+
+![](../img/idea/c252e33d.png)
