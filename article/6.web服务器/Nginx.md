@@ -9,6 +9,7 @@ sort: 1
 - 博客：[https://blog.51cto.com/liangey/category5.html](https://blog.51cto.com/liangey/category5.html)
 - 可视化配置:[https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN](https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN)
 - [nginx进阶使用](https://blog.csdn.net/long_xu/category_12105928.html)
+- [Nginx开发从入门到精通](https://tengine.taobao.org/book/index.html)
 
 ## 1.Nginx介绍
 
@@ -18,7 +19,6 @@ sort: 1
 2. 第一个公开版本0.1.0发布于2004年10月4日；
 3. 其将源代码以类BSD许可证的形式发布，因它的稳定性、丰富的功能集、示例配置文件和低系统资源的消耗而闻名；
 4. 官方测试nginx能够支支撑5万并发链接，并且cpu、内存等资源消耗却非常低，运行非常稳定。
-5. Nginx的进程是一个主进程（master），一个或多个工作进程（worker）。主进程负责调度工作进程、加载配置、启动工作进程及配置热更新，子进程负载处理请求
 
 一个2C44的虚拟机，一般可以支持2W左右的并发。可以代理多个小型网站。
 
@@ -300,8 +300,6 @@ ubuntu可能需要以下：
 ### 3.5.管理工具
 
 https://github.com/NginxProxyManager/nginx-proxy-manager
-
-
 
 ## 4.模块
 
@@ -869,3 +867,61 @@ reload 并不是热更新，而是重启所有的worker进程。重启时会引�
 随着网络协议的发展，未来使用长连接会变得更加普遍。而配置热更新天然对长连接非常友好。
 
 如何解决这点呢？一是采用两层网关，即流量网关 + 业务网关；二是实现网关原生支持配置热更新
+
+
+## 6.原理
+
+### 6.1.启动原理
+nginx是一个master进程和多个worker进程，worker进程是master进程的子进程。
+- master进程负责创建socket句柄、创建和管理worker进程、配置检测 和 配置热更新。
+- worker进程负责与客户端建立连接，并处理请求。
+
+<p style="color: red">1. master 创建socket，那为什么是worker进程与客户端创建连接</p>
+
+前提：
+1. Linux中子进程可以继承父进程的socket 的 fd，可以监听并接收父进程socket的信息。
+2. Socket 的创建涉及到一系列的系统调用，如 创建：socket(), 绑定端口：bind(), 开启监听：listen(), 接收数据：accept() 等
+
+nginx启动时
+1. master启动后会创建socket，并开启socket的监听。
+2. 然后master创建worker进程，继承了master的socket fd，开启监听，并调用accept开始接收数据。
+3. 没有请求时worker进程进入休眠状态；当客户端发送过来消息，内核会调用监听的回调唤醒worker进程进行处理。
+
+<p style="color: red">2. 当一个请求过来时，如果判断有哪个worker处理</p>
+
+[Nginx多进程连接请求/事件分发流程分析](https://blog.csdn.net/wangrenhaioylj/article/details/114297336)
+
+惊群问题：当多个子进程监听并接受同一个socket fd后，当客户端发送请求时，唤醒所有worker进程去尝试与客户端的连接，
+但是只会有一个worker进程会成功，其他尝试失败的进程会继续休眠，这种方式会很大程度长浪费系统资源，这就是惊群问题（羊群效应）
+
+nginx是如何实现的：nginx 提供了accept_mutex特性，他是一种互斥锁。
+因为worker进程创建之后，调用accept，如果底层使用的是epoll，就意味着每个worker都创建了一个epoll_fd来管理自己竞争到的connect_fd和公共的listen_fd；
+https://tengine.taobao.org/book/chapter_2.html#connection
+
+accept_mutex的效果：当一个新连接到达时，如果激活了accept_mutex，那么多个Worker将以串行方式来处理，只有一个Worker会被唤醒，其他继续保持休眠状态；
+如果没有激活accept_mutex，那么所有的Worker都会被唤醒，不过只有一个Worker能获取新连接，其它的Worker会重新进入休眠状态。
+
+```
+events {
+	accept_mutex on
+}
+```
+
+最贱实践：Nginx默认开启accept_mutex，是一种保守的选择。如果关闭了它，可能会引起一定程度的惊群问题，
+表现为上下文切换增多（sar -w）或者负载上升，但是如果流量太大的话，为了保障吞吐量，可以尝试关闭。
+[Nginx作者给出的解释](https://forum.nginx.org/read.php?2,1641,1686#msg-1686)
+
+注意：高版本内核的Linux，accept不存在惊群问题。
+
+<p style="color: red">Nginx的重启过程</p>
+
+使用 nginx -s reload 或者 kill -HUP pid (master 进程id)
+1. 向master进程发送HUP信号。
+2. master进程收到HUP信号后开始校验配置文件语法的正确性。
+3. master进程尝试打开新的监听端口（如果配置文件中新增了服务端口）。
+4. master进程使用新配置启动新的worker子进程。
+5. master进程向老worker子进程发送QUIT信号。
+6. 老worker收到QUIT信号后，首先关闭监听端口，从而不会再接受新的连接，然后处理完当前连接后结束进程。
+
+总结：先启动新worker再关闭老worker来保证服务不中断的。新worker启动后就可以接受新连接，而老worker只有在处理完当前连接后再结束。
+本质就是TCP状态变化，但是什么是“处理完当前连接”，因为TCP数据交互没有明确的结束点，所以在TCP进入CLOSE_WAIT状态，等待后端响应。
