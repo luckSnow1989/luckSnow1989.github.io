@@ -1,7 +1,82 @@
 ---
 sort: 1
 ---
-# 字节码加强
+# Java加强
+
+Java加强的手段包括：
+1. 编译时注解处理器（JSR269）：通过编写自定义注解处理器，在编译阶段对源代码进行加强。
+    - 实现原理：编译时注解处理器通过在编译阶段扫描源代码中的注解，并根据注解的定义进行相应的处理，如生成新的源代码、修改已有的源代码等。
+    - 使用场景：编译时注解处理器适用于生成代码、代码检查、自动配置等场景。
+    - 开发框架：Java编译器自带的注解处理器、Google的AutoService。
+    - 常用框架：Lombok、mapstruct等
+2. Java Agent：是一种在运行时修改字节码的机制，在类加载之前对字节码进行修改。
+    - 实现原理：Java Agent通过类似于AOP（面向切面编程）的方式，在类加载时通过字节码操作库（如ASM、Byte Buddy）修改字节码，添加或修改方法、字段等。
+    - 使用场景：Java Agent适用于需要在运行时对已有的类进行修改或增强的场景，如监控、性能调优、代码注入等。
+    - 常用框架：ASM、Byte Buddy、Javassist等。
+3. 动态代理：Java的动态代理机制允许在运行时动态地创建代理对象，可以在代理对象的方法调用前后进行一些额外的处理。
+    - 实现原理：动态代理是通过反射机制实现的。在运行时，通过实现InvocationHandler接口，并重写其invoke方法，可以在代理对象的方法调用前后进行额外的处理。
+    - 使用场景：动态代理适用于AOP、远程方法调用（RPC）等场景，可以在方法调用前后进行日志记录、权限验证等操作。
+    - 常用框架：Java Proxy主要基于接口进行代理，而Cglib则可以代理普通的类。 
+
+## 1.插入式注解JSR269
+
+- [Java-JSR-269-插入式注解处理器](https://liuyehcf.github.io/2018/02/02/Java-JSR-269-%E6%8F%92%E5%85%A5%E5%BC%8F%E6%B3%A8%E8%A7%A3%E5%A4%84%E7%90%86%E5%99%A8/)
+- [Java JSR-269 插入式注解处理器](https://blog.csdn.net/ME546926/article/details/126270868)
+- TreeMaker基础用法：[Java 中的屠龙之术：如何修改语法树？](https://my.oschina.net/u/4030990/blog/3211858)
+- 其实就是远程debug [IDEA结合maven进行编译期注解处理器调试](https://blog.csdn.net/duzm200542901104/article/details/126955491)
+
+### 1.1.使用
+
+继承AbstractProcessor，实现process方法即可，但是jdk提供的工具操作字节码非常繁琐，所以可以使用jdk提供的额外的工具包tools.jar内部的treeMarker，正常情况是引入不到的，需要我们单独引入本地
+
+```xml
+<!--自定义编译器注解-->
+<dependency>
+    <groupId>com.google.auto.service</groupId>
+    <artifactId>auto-service</artifactId>
+    <version>1.0-rc6</version>
+</dependency>
+
+<!-- jdk9之后移除了tools.jar。所以在自定义插入式注解时最好使用jdk8 -->
+<dependency>
+    <groupId>com.sun</groupId>
+    <artifactId>tools</artifactId>
+    <version>1.8</version>
+    <scope>system</scope>
+    <systemPath>D:/Program Files/jdk/jdk1.8.0_111/lib/tools.jar</systemPath>
+</dependency>
+```
+
+### 1.2.基本概念
+
+JCTree 和 TreeMaker 是 tools.jar 对我们提供的工具。
+
+JCTree：是语法树元素的基类，包含一个重要的字段 pos，该字段用于指明当前语法树节点（JCTree）在语法树中的位置。 JCTree 是一个抽象类，重要的几个子类如下
+1. JCStatement：声明语法树节点，常见的子类如下
+  - JCBlock：语句块语法树节点
+  - JCReturn：return 语句语法树节点
+  - JCClassDecl：类定义语法树节点
+  - JCVariableDecl：字段 / 变量定义语法树节点
+2. JCMethodDecl：方法定义语法树节点
+3. JCModifiers：访问标志语法树节点 
+4. JCExpression：表达式语法树节点，常见的子类如下
+  - JCAssign：赋值语句语法树节点
+  - JCIdent：标识符语法树节点，可以是变量，类型，关键字等等
+
+TreeMaker：用于创建一系列的语法树节点，用于帮助我们自动将JCTree实例化，并设置pos字段。核心方法如下
+- TreeMaker.Modifiers：用于创建访问标志语法树节点（JCModifiers）
+- TreeMaker.ClassDef：用于创建类定义语法树节点（JCClassDecl）
+- TreeMaker.MethodDef： 用于创建方法定义语法树节点（JCMethodDecl）
+- TreeMaker.VarDef 用于创建字段 / 变量定义语法树节点（JCVariableDecl）
+- TreeMaker.Ident 用于创建标识符语法树节点。比如使用this super等（JCIdent）
+- TreeMaker.Return 用于创建 return 语句（JCReturn）
+- TreeMaker.Select 用于创建域访问 / 方法访问（这里的方法访问只是取到名字，方法的调用需要用 TreeMaker.Apply）语法树节点（JCFieldAccess）
+- TreeMaker.NewClass 用于创建 new 语句语法树节点（JCNewClass）
+- TreeMaker.Apply 用于创建方法调用语法树节点（JCMethodInvocation）
+- TreeMaker.Assign 用户创建赋值语句语法树节点（JCAssign）
+- TreeMaker.Exec 用于创建可执行语句语法树节点（JCExpressionStatement）
+- TreeMaker.Block 用于创建组合语句的语法树节点（JCBlock）
+
 
 ## 1.字节码
 
@@ -599,7 +674,7 @@ After Method Invoke
 
 看到第一次update()方法的调用，即Dao类构造方法中的调用没有拦截，符合预期。
 
-## 5.运行时类的重载
+## 5.Java Agent
 
 ### 5.1.问题引出
 
