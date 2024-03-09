@@ -18,34 +18,29 @@ sort: 1
 
 ### 1.1.什么是docker
 
-- Docker是开源应用容器引擎，轻量级容器技术。
+- Docker是开源的轻量级的、可以快速部署的容器技术。
 - 基于Go语言，并遵循Apache2.0协议开源
 - Docker可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的Linux系统上，也可以实现虚拟化
 - 容器完全使用沙箱技术，相互之间不会有任何接口（不支持32位）
 - 类似于虚拟机技术(vmware、vitural)，但docker直接运行在操作系统(Linux)上，而不是运行在虚拟机中，速度快，性能开销极低
 
-### 1.2.Docker核心概念
-
-- docker镜像(Images)：Docker镜像是用于创建Docker容器的模板
-- docker容器(Container)：镜像启动后的一个实例称为容器，容器是独立运行的一个或一组应用
-- docker客户端(Client)：客户端通过命令行或其他工具使用 Docker API(https://docs.docker.com/reference/api/docker_remote_api)与Docker的守护进程进行通信
-- docker主机(Host)：一个物理或虚拟的机器用来执行Docker守护进程和容器
-- docker仓库(Registry)：Docker仓库用来存储镜像，可以理解为代码控制中的代码仓库，Docker Hub(https://hub.docker.com) 提供了庞大的镜像集合供使用
-
-### 1.3.作用
+### 1.2.作用
 1. 环境一致：Docker允许开发人员在容器中打包应用程序及其依赖项，确保应用程序在任何环境中运行一致
 2. 快速部署和扩缩容：开发人员可以快速部署应用程序，并且可以根据需求轻松扩展容器的数量，实现高可用性和负载均衡
 3. 资源利用率高：与传统虚拟机相比，Docker容器更加轻量级。它们共享宿主机的内核，减少了资源占用，并且启动速度非常快
 4. 简化CI/CD：Docker的容器化特性使得在不同环境中测试和部署应用程序变得更加简单和可靠，有利于持续集成和持续部署的实践。
 
-### 1.4.实现原理
-1. 命名空间（Namespaces） ：命名空间隔离了各个容器的进程视图，使得每个容器都有自己独立的进程树、网络、文件系统等。这样，一个容器中的进程无法直接访问另一个容器的资源。
-2. 控制组（Cgroups） ：控制组用于限制和隔离容器对系统资源的使用，如CPU、内存、网络带宽等。这保证了不同容器之间资源的公平共享和稳定性。
-3. 联合文件系统（UnionFS）：Docker使用UnionFS将文件系统层级组合在一起，允许容器的文件系统只读层和可写层的分离，节省存储空间并加速容器的启动速度。
+### 1.3.实现原理
+主要基于Linux内核的容器技术，主要包括以下几个关键技术：
+1. 命名空间（Namespaces） ：命名空间隔离了各个容器的进程视图，使得每个容器都有自己独立的进程、挂载点、网络、文件系统等。使得容器之间相互隔离，避免相互影响。
+2. 控制组（Cgroups） ：用于限制和隔离容器对系统资源的使用，如CPU、内存、网络带宽、磁盘I/O等。这保证了不同容器之间资源的公平共享和稳定性。
+3. 联合文件系统（UnionFS）：联合文件系统是Docker实现容器文件系统的轻量级虚拟化技术的关键。联合文件系统允许将多个目录挂载到一个统一的目录下，
+并且这些目录可以叠加在一起，形成一个联合的文件系统。Docker利用联合文件系统，将容器的文件系统与宿主机的文件系统隔离开来，同时实现了容器文件系统的轻量级和高效性。
 
-可以提供轻量级的虚拟化，以便隔离进程和资源，而且不需要提供指令解释机制以及全虚拟化的其他复杂性，相当于C++中的NameSpace。
-容器有效地将由单个操作系统管理的资源划分到孤立的组中，以更好地在孤立的组之间平衡有冲突的资源使用需求。
+总结：利用Linux内核的Namespaces实现资源隔离，通过Cgroups实现资源限制，结合UnionFS实现容器文件系统的轻量级虚拟化，
+并通过Docker引擎管理容器的生命周期。
 
+### 1.4.与传统虚拟化技术对比
 与传统虚拟化技术相比，它的优势在于：
 - 与宿主机使用同一个内核，性能损耗小；
 - 不需要指令级模拟；
@@ -55,36 +50,32 @@ sort: 1
 - 轻量级隔离，在隔离的同时还提供共享机制，以实现容器与宿主机的资源共享。
 
 总结：Linux Container是一种轻量级的虚拟化的手段。
-- Linux Container提供了在单一可控主机节点上支持多个相互隔离的server container同时执行的机制。
+- Linux Container提供了在单一可控主机节点上支持多个相互隔离的server container同时运行的机制。
 - Linux Container有点像chroot，提供了一个拥有自己进程和网络空间的虚拟环境，但又有别于虚拟机，因为lxc是一种操作系统层次上的资源的虚拟化。在LXC的基础之上，docker提供了一系列更强大的功能
 
 docker和openstack的几项对比
 
 ![image](img/docker/media/image1.png)
 
-### 1.5.Docker的架构
+### 1.5.架构
 
 ![image](img/docker/media/image2.jpeg)
 
-- docker daemon就是docker的守护进程即server端，可以是远程的，也可以是本地的，这个不是C/S架构吗，客户端Docker client 是通过rest api进行通信。
-- docker cli 用来管理容器和镜像，客户端提供一个只读镜像，然后通过镜像可以创建多个容器，这些容器可以只是一个RFS（Root file system根文件系统），
-也可以是一个包含了用户应用的RFS，容器再docker client中只是要给进程，两个进程之间互不可见。
+- docker镜像(Images)：Docker镜像是用于创建Docker容器的模板
+- docker容器(Container)：镜像启动后的一个实例称为容器，容器是独立运行的一个或一组应用
+- docker主机(Host)：一个物理或虚拟的机器用来执行Docker守护进程和容器
+- docker仓库(Registry)：Docker仓库用来存储镜像，可以理解为代码控制中的代码仓库，Docker Hub(https://hub.docker.com) 提供了庞大的镜像集合供使用
+- docker客户端(Client)：客户端通过命令行或其他工具使用 Docker API(https://docs.docker.com/reference/api/docker_remote_api)与Docker的守护进程进行通信
+- docker daemon(server)：是docker的守护进程，可以是远程的，也可以是本地的，客户端Docker client 是通过rest api进行通信。是核心实现。
 
-用户不能与server直接交互，但可以通过与容器这个桥梁来交互，由于是操作系统级别的虚拟技术，中间的损耗几乎可以不计。
+用户不能与server直接交互，但是可以通过rest api实现与docker命令一样的操作。
 
-### 1.6.注意事项
-1. 安全性：确保只使用受信任的Docker镜像，避免在生产环境中运行未经验证的镜像，以防止安全漏洞。
-2. 资源限制：在多容器部署中，合理设置容器的资源限制，防止一个容器耗尽所有资源影响其他容器和宿主机的稳定性。
-3. 定期清理：及时清理不再使用的Docker镜像、容器和卷，避免存储空间浪费和潜在的安全隐患。
-4. 容器持久化：默认情况下，Docker容器是临时的，当容器停止后，其中的数据将会丢失。为了持久化数据，你可以使用数据卷（Volumes）
-   或者绑定挂载（Bind Mounts）来将宿主机的目录与容器内的目录进行关联。这样可以确保重要的数据在容器重启时不会丢失。
-5. 容器编排:在现实世界的应用场景中，往往需要多个容器一起协作来构建一个复杂的应用。容器编排工具如Docker Compose和Kubernetes可以帮助你定义和管理多个容器的组合。
-   使用这些工具，你可以轻松定义应用的拓扑结构、服务依赖关系和自动伸缩等。
-6. 版本控制:Docker镜像的版本控制非常重要，特别是在生产环境中。确保每个镜像都有唯一的版本号，并在部署时明确指定使用的镜像版本。这样可以避免因为不同版本的镜像导致的兼容性问题和不稳定性。
-7. 安全加固:及时更新和升级使用的基础镜像和容器中的软件，以保持系统的安全性。同时，遵循最佳实践，限制容器的特权，避免容器间的通信漏洞，以及其他安全性措施。
-8. 监控与日志:在生产环境中，对Docker容器进行监控是必要的。使用监控工具可以帮助你实时了解容器的运行状态和性能指标，如CPU、内存和网络的使用情况。另外，配置和收集容器的日志是排查问题和故障的重要手段。
-9. 资源限制与公平共享:在多个容器运行在同一宿主机上时，确保适当设置资源限制，以防止一个容器耗尽所有资源导致其他容器运行缓慢。同时，可以使用Cgroups的权重属性来实现资源的公平共享。
-10. 排查问题:在使用Docker时，可能会遇到一些问题，例如容器无法启动、端口冲突等。学会使用Docker提供的命令和工具来查看容器的状态、日志和网络情况，帮助你更快地排查和解决问题。
+### 1.6.镜像
+docker镜像是容器运行的基础，镜像是只读的模板，它包含了应用程序及其依赖项、运行时环境、配置文件等。
+
+我们知道，一个镜像可以创建出多个容器，每个容器内部都可以进行不同的读写操作，而镜像是不可变的。它的实现原理如下：
+利用了分层存储结构 和 unionFS技术。 镜像是只读层，docker会在镜像之上添加一个可写的容器层，形成联合文件系统。
+容器对文件系统的任何修改都只会发生在容器层上，而不会影响到原始的镜像文件。
 
 ## 2.安装
 
@@ -189,128 +180,93 @@ docker pull your-registry-server/your/image/path
 
 ### 3.1.操作镜像
 
-1.下载一个镜像：docker pull 镜像名称 (如：docker pull ubuntu:14.04)
-
-2.查看docker中所有的镜像：docker images -a (-a 表示所有的)
-
-3.删除全部镜像的话：docker rmi $(docker images -q)
-
-4.删除一个镜像: docker rmi <image id>
-
-5.运行镜像：docker run --name container-name -d -it --restart=always -p port1:port2 image-name:tag
-
-
-```text
---name：      自定义容器名
--d：          表示后台运行
---restart=always  重启策略
-image-name:   指定运行的镜像名称
-tag:          镜像的版本
--p:           主机端口映射到容器内部的端口，1是外部，2是内部
--P            随机指定一个docker主机端口给容器中的端口做映射（-p与-P不能同时使用）
-```
-
-6.上传镜像到docker hub:docker push 用户名/仓库名:tag信息
-
-(比如：docker push zhangxue19890628/ubuntu-nginx:v1,这个过程非常慢，建议使用国内的镜像)
-
-如果使用的是国内的镜像。私有仓库pull和push
-
 ```shell
-Login：  docker login <host>
-Pull：   docker pull <host>/<project>/<repo>:<tag>
-重新tag： docker tag <img_name>:<tag><host>/<project>/<repo>:<tag>
-Push：   docker push <host>/<project>/<repo>:<tag>
+1. 下载镜像：docker pull 镜像名称
+2. 查看所有的镜像：docker images -a (-a 表示所有的)
+3. 删除全部镜像：docker rmi $(docker images -q)
+4. 删除一个镜像: docker rmi <image id>
+5. 运行镜像：docker run --name container-name -d -it --restart=always -p port1:port2 image-name:tag
+  --name：      自定义容器名
+  -d：          表示后台运行
+  --restart=always  重启策略
+  image-name:   指定运行的镜像名称
+  tag:          镜像的版本
+  -p:           主机端口映射到容器内部的端口，前是外部，后是内部
+  -P            随机指定一个docker主机端口给容器中的端口做映射（-p与-P不能同时使用）
+6. 上传镜像到docker hub: docker push 用户名/仓库名:tag信息
+   (比如：docker push zhangxue19890628/ubuntu-nginx:v1,这个过程非常慢，建议使用国内的镜像)
+
+  如果使用的是国内的镜像。私有仓库pull和push
+  Login：  docker login <host>
+  Pull：   docker pull <host>/<project>/<repo>:<tag>
+  tag：    docker tag <img_name>:<tag><host>/<project>/<repo>:<tag>
+  Push：   docker push <host>/<project>/<repo>:<tag>
+
+7. 导出镜像： docker save nginx > /tmp/nginx.tar.gz
+8. 导入镜像： docker load < /tmp/nginx.tar.gz
 ```
-
-7.导入/导出镜像
-
-导出镜像： docker save nginx > /tmp/nginx.tar.gz
-
-导入镜像： docker load < /tmp/nginx.tar.gz
 
 ### 3.2.操作容器
 
-1.运行镜像时自动创建容器
-
-2.查看容器
-- 查看所有容器 docker ps -a (-a 表示所有的)
-- 查看运行的容器 docker ps
-
-3.进入容器
-- docker exec -it <container_id> /bin/bash 【推荐】
-- docker attach <container_id> 【不推荐，可能导致容器停止】
-
-4.退出容器：
-- 快捷键：Ctl + P +Q
-- 命令：exit【正常shell命令】
-
-5.启动容器
-- 启动一个容器 docker start <container_id>
-- 启动所有的容器 docker start $(docker ps -a -q)
-
-6.停止容器
-
-> 默认stop后，docker会sleep 10s。我们也可以通过docker stop -t 100 id 的方式设置等待时长
-
-- 停止一个容器（优雅停机） docker stop <container_id>
-- 停止所有的容器（优雅停机） docker stop $(docker ps -a -q)
-- 停止一个容器（强制停机） docker kill <container_id>
-
-7.删除容器
-- 删除一个容器 docker rm <container_id>
-- 删除所有容器 docker rm $(docker ps -a -q)
-
-8.将容器保存为镜像:
-
-sudo docker commit -m "Added nginx from ubuntu14.04" -a "zhangxue19890628" 79c761f627f3 zhangxue19890628/ubuntu-nginx:v1
-
-```text
--m      参数用来来指定提交的说明信息；
--a      可以指定用户信息的；
-79c761f627f3代表的是容器的id；
-zhangxue19890628/ubuntu-nginx:v1指定目标镜像的用户名、仓库名和tag信息。
-```
-
-创建成功后会返回这个镜像的ID信息。
-
-注意的是，你一定要将saymagic改为你自己的用户名（docker hub用户名）
-
-之后执行：docker images，就会出现zhangxue19890628/ubuntu-nginx镜像
-
-9.查看容器内日志
-
 ```shell
-docker logs --tail 50 --follow --timestamps mysql
---follow 挂起这个终端，动态查看日志
---timestamps 带有时间戳
+1. 查看容器
+  查看所有容器        docker ps -a (-a 表示所有的)
+  查看运行的容器      docker ps
+  
+2. 进入容器
+  docker exec -it <container_id> /bin/bash 【推荐】
+  docker attach <container_id> 【不推荐，可能导致容器停止】
+
+3. 退出容器：
+  快捷键：Ctl + P +Q
+  命令：exit【正常shell命令】
+
+4. 启动容器
+  启动一个容器 docker start <container_id>
+  启动所有的容器 docker start $(docker ps -a -q)
+
+5. 停止容器。默认stop后，
+  停止容器（优雅停机）        docker stop <container_id>
+  停止所有的容器（优雅停机）   docker stop $(docker ps -a -q)
+  停止容器（强制停机）        docker kill <container_id>。直接使用这个命令并不好。
+  
+  优雅停机：stop后docker会发一个SIGTERM(kill -15 term信息)给容器进程，并且默认会等待10s， 再发送一个SIGKILL(kill -9 信息)给进程。 
+  很明显，docker stop允许程序有个默认10s的反应时间去做一下优雅停机的操作，程序只要能对kill -15 信号做出反应即可。 
+  通常可以通过docker stop -t 加上等待时间。
+
+6. 删除容器
+  删除一个容器 docker rm <container_id>
+  删除所有容器 docker rm $(docker ps -a -q)
+
+7. 将容器保存为镜像:
+   sudo docker commit -m "Added nginx from ubuntu14.04" -a "zhangxue19890628" 79c761f627f3 zhangxue19890628/ubuntu-nginx:v1
+   -m      参数用来来指定提交的说明信息；
+   -a      可以指定用户信息的；
+   79c761f627f3代表的是容器的id；
+   zhangxue19890628/ubuntu-nginx:v1指定目标镜像的用户名、仓库名和tag信息。
+   创建成功后会返回这个镜像的ID信息。之后执行：docker images，就会出现zhangxue19890628/ubuntu-nginx镜像
+  
+8. 查看容器内日志：docker logs --tail 50 --follow --timestamps mysql
+  --follow 挂起这个终端，动态查看日志
+  --timestamps 带有时间戳
+  
+9. 查看docker引擎日志：https://blog.csdn.net/warrior_0319/article/details/79713155
+  Centos查看日志：journalctl -u docker.service
+
+10. 更新容器：docker update [OPTIONS] CONTAINER [CONTAINER...]
+  更新 CPU 共享数量： docker update --cpu-shares 512 f361b7d8465
+  更新容器的重启策略： docker update --restart=always f361b7d8465
+  更新容器内存：      docker update -m 500M f361b7d8465
+
+11. 容器重启策略：docker run命令的时候使用
+  Docker容器的重启策略是面向生产环境的一个启动策略，在开发过程中可以忽略该策略
+  Docker容器的重启都是由Docker守护进程完成的，因此与守护进程息息相关
+  1)no，默认策略，在容器退出时不重启容器
+  2)on-failure，在容器非正常退出时（退出状态非0），才会重启容器
+  3)on-failure:3，在容器非正常退出时重启容器，最多重启3次
+  4)always，在容器退出时总是重启容器
+  5)unless-stopped，在容器退出时总是重启容器，但是不考虑在Docker守护进程启动时就已经停止了的容器
 ```
-
-10.查看docker引擎日志
-
-[https://blog.csdn.net/warrior_0319/article/details/79713155](https://blog.csdn.net/warrior_0319/article/details/79713155)
-
-Centos查看日志：journalctl -u docker.service
-
-12.更新容器
-
-> docker update [OPTIONS] CONTAINER [CONTAINER...]
-
-- 更新 CPU 共享数量： docker update --cpu-shares 512 f361b7d8465
-- 更新容器的重启策略： docker update --restart=always f361b7d8465
-- 更新容器内存： docker update -m 500M f361b7d8465
-
-12.容器重启策略
-
-docker run命令的时候使用
-
-> Docker容器的重启策略是面向生产环境的一个启动策略，在开发过程中可以忽略该策略
-> Docker容器的重启都是由Docker守护进程完成的，因此与守护进程息息相关
-- no，默认策略，在容器退出时不重启容器
-- on-failure，在容器非正常退出时（退出状态非0），才会重启容器
-- on-failure:3，在容器非正常退出时重启容器，最多重启3次
-- always，在容器退出时总是重启容器
-- unless-stopped，在容器退出时总是重启容器，但是不考虑在Docker守护进程启动时就已经停止了的容器
 
 ### 3.3.其他
 
@@ -320,19 +276,7 @@ docker run命令的时候使用
 4. 登录docker hub: sudo docker login
   - 国内镜像登录：sudo docker login --username=tb518550_11 registry.cn-beijing.aliyuncs.com
 
-### 3.4.注意
-
-问：docker部署服务是否支持优雅下线？
-
-方式1：docker stop，它会发一个SIGTERM(kill -15 term信息)给容器的PID1进程，并且默认会等待10s， 再发送一个SIGKILL(kill -9 信息)给PID1。
-很明显，docker stop允许程序有个默认10s的反应时间去做一下优雅停机的操作，程序只要能对kill -15 信号做些反应就好了。
-那么这是比较良好的方式。当然如果shutdownHook方法执行了个50s，那肯定不优雅了。可以通过docker stop -t 加上等待时间。
-
-方式2：docker kill，直接发送一个SIGKILL(kill -9 信息)给PID1。显然这是不好的方式
-
-方式3：通过docker exec kill -12去关闭，直接进入容器内部对服务器进行优雅停机，这也是不存的方式，就是实现起来不太方便
-
-### 3.5.docker run案例
+### 3.4.docker run案例
 ```shell
 docker run
   --network vfnet       ## 使用自定义网络
@@ -357,7 +301,16 @@ docker run
   docker-reg.zhangxue.com/standard/centos8.2-standard
 ```
 
-### 3.6.进程权能
+### 3.5.进程权能
+进程权能的作用是隔离容器内外的root权限，增强容器内部的权限管控。
+Docker 通过将部分 root 的特权操作权限细分成 Capability，可以将某些权限赋给特定的进程，即使该进程不是 root 用户也可以执行该权限对应的特权操作。
+这样，即使在容器内部运行的进程拥有 root 权限，也不能执行所有 root 用户可以执行的操作，从而提高了容器的安全性。
+
+Docker 还提供了权限设置的选项，如 --privileged 和 --device。
+- --privileged 参数运行容器将允许容器访问宿主机上的所有设备，并具有与宿主机上运行的进程几乎相同的权限。然而，这种做法会降低容器的安全性，因此应该谨慎使用。
+- --device 参数则允许用户指定容器内可以访问的一个或多个设备，并可以为这些设备设置默认的读写和创建权限。
+
+以下是细化的权能
 ```text
 CAP_CHOWN 0 允许改变文件的所有权
 CAP_DAC_OVERRIDE 1 忽略对文件的所有DAC访问限制
@@ -455,7 +408,6 @@ docker network create --driver network_type 自定义网络名字
 通过docker network inspect network_name可以查看该网络的信息
 
 [root@docker001 ~]# docker network inspect my_bridge
-
 
 ```json
 [
@@ -1008,9 +960,10 @@ URL        /containers/create
 
 启动失败。查看日志报这个错误。这是因为Centos7安全Selinux禁止了一些安全权限
 
-解决方案有三个【任选一个即可】：
-- 在docker run中加入 --privileged=true 给容器加上特定权限
-- 关闭selinux
+解决方案如下【任选一个即可】：
+```shell
+1. 在docker run中加入 --privileged=true 给容器加上特定权限。不推荐，会带来安全风险。
+2. 关闭selinux
 
 临时关闭
 [root@localhost ~]# getenforce
@@ -1023,7 +976,9 @@ Permissive
 永久关闭：
 [root@localhost ~]# vim /etc/sysconfig/selinux
 SELINUX=enforcing 改为 SELINUX=disabled
-- 在selinux添加规则，修改挂载目录
+
+2. 在selinux添加规则，修改挂载目录
+```
 
 <p style="color: red">WARNING: IPv4 forwarding is disabled. Networking will not work.</p>
 
@@ -1054,6 +1009,18 @@ sysctl net.ipv4.ip_forward
 4. 资源隔离方面。
     - 资源隔离方面，Docker 确实不如虚拟机KVM，Docker是利用Cgroup实现资源限制的，只能限制资源消耗的最大值，而不能隔绝其他程序占用自己的资源
 
-
+<p style="color: red">使用注意事项</p>
+1. 安全性：确保只使用受信任的Docker镜像，避免在生产环境中运行未经验证的镜像，以防止安全漏洞。
+2. 资源限制：在多容器部署中，合理设置容器的资源限制，防止一个容器耗尽所有资源影响其他容器和宿主机的稳定性。
+3. 定期清理：及时清理不再使用的Docker镜像、容器和卷，避免存储空间浪费和潜在的安全隐患。
+4. 容器持久化：默认情况下，Docker容器是临时的，当容器停止后，其中的数据将会丢失。为了持久化数据，你可以使用数据卷（Volumes）
+   或者绑定挂载（Bind Mounts）来将宿主机的目录与容器内的目录进行关联。这样可以确保重要的数据在容器重启时不会丢失。
+5. 容器编排:在现实世界的应用场景中，往往需要多个容器一起协作来构建一个复杂的应用。容器编排工具如Docker Compose和Kubernetes可以帮助你定义和管理多个容器的组合。
+   使用这些工具，你可以轻松定义应用的拓扑结构、服务依赖关系和自动伸缩等。
+6. 版本控制:Docker镜像的版本控制非常重要，特别是在生产环境中。确保每个镜像都有唯一的版本号，并在部署时明确指定使用的镜像版本。这样可以避免因为不同版本的镜像导致的兼容性问题和不稳定性。
+7. 安全加固:及时更新和升级使用的基础镜像和容器中的软件，以保持系统的安全性。同时，遵循最佳实践，限制容器的特权，避免容器间的通信漏洞，以及其他安全性措施。
+8. 监控与日志:在生产环境中，对Docker容器进行监控是必要的。使用监控工具可以帮助你实时了解容器的运行状态和性能指标，如CPU、内存和网络的使用情况。另外，配置和收集容器的日志是排查问题和故障的重要手段。
+9. 资源限制与公平共享:在多个容器运行在同一宿主机上时，确保适当设置资源限制，以防止一个容器耗尽所有资源导致其他容器运行缓慢。同时，可以使用Cgroups的权重属性来实现资源的公平共享。
+10. 排查问题:在使用Docker时，可能会遇到一些问题，例如容器无法启动、端口冲突等。学会使用Docker提供的命令和工具来查看容器的状态、日志和网络情况，帮助你更快地排查和解决问题。
 
 
