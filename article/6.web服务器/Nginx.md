@@ -2,12 +2,12 @@
 sort: 1
 ---
 # Nginx
-- 官网：[http://nginx.org/](http://nginx.org/)
-- 中文网：[http://nginx.p2hp.com/](http://nginx.p2hp.com/)
-- **使用手册** [https://www.w3cschool.cn/nginxsysc/](https://www.w3cschool.cn/nginxsysc/)  
-- **入门指南**：[https://www.w3cschool.cn/nginx/](https://www.w3cschool.cn/nginx/)
-- 博客：[https://blog.51cto.com/liangey/category5.html](https://blog.51cto.com/liangey/category5.html)
-- 可视化配置:[https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN](https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN)
+- 官网[http://nginx.org/](http://nginx.org/)
+- 中文网[http://nginx.p2hp.com/](http://nginx.p2hp.com/)
+- 使用手册 [https://www.w3cschool.cn/nginxsysc/](https://www.w3cschool.cn/nginxsysc/)  
+- 入门指南[https://www.w3cschool.cn/nginx/](https://www.w3cschool.cn/nginx/)
+- 博客[https://blog.51cto.com/liangey/category5.html](https://blog.51cto.com/liangey/category5.html)
+- 可视化配置[https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN](https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN)
 - [nginx进阶使用](https://blog.csdn.net/long_xu/category_12105928.html)
 - [Nginx开发从入门到精通](https://tengine.taobao.org/book/index.html)
 

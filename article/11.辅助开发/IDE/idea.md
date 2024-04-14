@@ -641,6 +641,16 @@ idea 社区版，无法创建spring boot项目。可以安装这个插件。
 1. 支持生成多种单测框架的代码。
 2. 支持自定义代码模板
 
+### 5.22.jclasslib
+
+代码编译后在菜单栏"View"中选择"Show Bytecode With jclasslib"，可以很直观地看到当前字节码文件的类信息、常量池、方法区等信息。
+
+作用等于执行javap命令
+
+### 5.22.JDT AST
+
+右键点击 “enable jdt ast view”可以直接预览解析好的java语法树 
+
 ## 6. 常见问题
 <p style="color: red;">问题1：A problem occurred starting process 'command 'C:/Program Files/Java/jdk1.8.0_221/bin/java.exe''</p>
 
