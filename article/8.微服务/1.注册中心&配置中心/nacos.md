@@ -22,6 +22,7 @@ sort: 1
 - Nacos实现原理详细讲解：[https://mp.weixin.qq.com/s/zFqNe7TDD8am-_jOYX7PhQ](https://mp.weixin.qq.com/s/zFqNe7TDD8am-_jOYX7PhQ)
 - 实现原理教材：[https://mp.weixin.qq.com/s/nbNEYn5YwK3rVo8CX4rb8A](https://mp.weixin.qq.com/s/nbNEYn5YwK3rVo8CX4rb8A)
 - 高可用部署：[https://mp.weixin.qq.com/s/hmH5bprfQ6Q7XEjHMw1Yhw](https://mp.weixin.qq.com/s/hmH5bprfQ6Q7XEjHMw1Yhw)
+
 ## 2.安装
 
 - 部署手册：[https://nacos.io/zh-cn/docs/deployment.html](https://nacos.io/zh-cn/docs/deployment.html)
@@ -82,8 +83,11 @@ DataId尽可能的设置成能够明显的区分出项目和具体的配置类�
 
 ![image](img/nacos/media/image7.png)
 
-## 4.Nacos配置中心实现原理
+## 4.实现原理
 
+[Nacos架构&原理](https://developer.aliyun.com/ebook/36)
+
+### 4.1.配置中心实现原理
 https://www.jianshu.com/c/a43af0cc4698?order_by=added_at
 
 Nacos 并不是通过推的方式将服务端最新的配置信息发送给客户端的，而是客户端维护了一个长轮询的任务，
@@ -114,7 +118,22 @@ Nacos 并不是通过推的方式将服务端最新的配置信息发送给客�
    - [支持gRPC长链接，深度解读Nacos2.0架构设计及新模型](https://baijiahao.baidu.com/s?id=1688267648806940996&wfr=spider&for=pc)
    - [【微服务】Nacos为什么丢弃短连接(http)而选择拥抱长连接(gRPC)](http://681314.com/A/OfYsfLiWeL)
 
+### 4.2.注册中心实现原理
 
+### 4.3.一致性协议
+
+nacos支持AP和CP两种模型，所以需要对于的一致性算法支撑：
+- CP: Raft
+  - 对于强一致性共识算法，当前实际生产中，最多使用的就是 Raft 协议，Raft 更容易让人理解，并且有很多成熟的算法实现。
+  - 比如蚂蚁金服的 JRaft、Zookeeper 的 ZAB、Consul 的 Raft、百度的 braft、Apache Ratis等。
+  - 因为 Nacos 是Java技术栈，并且是阿里系产品，所以选择JRaft。不仅方便交流，而且 JRaft 支持多 RaftGroup，为 Nacos 后面的多数据分片带来了可能。
+- AP: Distro
+  - Distro 协议是阿里自研的最终一致性协议
+  - Distro 是集 Gossip 以及 Eureka 协议的优点并加以优化而出来的。Gossip协议随机选择节点发送消息，消息存在重复消费的问题且去中心化设计，每次发送全量消息，增加网络带宽压力
+  - Distro 优化：算引入了权威 Server 的概念，每个节点负责一部分数据以及将自己的数据同步给其他节点，减少了数据量、有效的降低了消息冗余的问题。
+
+- CP模型：基于简化的raft的cp模型，由leader写入，一致性并不严格，可以保证一半一致，数据会进行持久化。
+- AP模型：基于distro的ap模型，参考了eureka，并做出了优化、
 
 ## 5.分别说下Nacos与Eureka
 

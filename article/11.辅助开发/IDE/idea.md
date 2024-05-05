@@ -649,7 +649,12 @@ idea 社区版，无法创建spring boot项目。可以安装这个插件。
 
 ### 5.22.JDT AST
 
-右键点击 “enable jdt ast view”可以直接预览解析好的java语法树 
+右键点击 “enable jdt ast view”可以直接预览解析好的java语法树
+
+
+### 5.23.git commit helper
+
+帮助团队规范化提交的内容，可以自定义提交模板。
 
 ## 6. 常见问题
 <p style="color: red;">问题1：A problem occurred starting process 'command 'C:/Program Files/Java/jdk1.8.0_221/bin/java.exe''</p>

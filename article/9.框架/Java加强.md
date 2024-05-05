@@ -3,21 +3,26 @@ sort: 1
 ---
 # Java加强
 
-## 2.ASM
+- ASM：ASM允许开发者以二进制形式修改已有类或者动态生成类。它操纵的级别是底层JVM的指令级别，因此要求使用者对class组织结构和JVM汇编指令有一定的了解。虽然ASM功能强大，但使用起来相对复杂。
+- Javassist：是一个开源的分析、编辑和创建Java字节码的类库。它是JBoss的一个子项目，主要优点在于其简单性和快速性。开发者可以直接使用Java编码的形式，而不需要了解虚拟机指令，就能动态改变类的结构或动态生成类。
+- Byte Buddy：是一个用于在运行时创建和修改Java类的库。它提供了一个简单而强大的API，用于创建代理、模拟和拦截Java类和接口。Byte Buddy尤其擅长处理复杂的类结构，包括泛型、嵌套类和注解等。
+- Cglib：也是一种字节码增强技术，主要应用于动态代理。
 
-对于需要手动操纵字节码的需求，可以使用ASM，它可以直接生成.class字节码文件，也可以在类被加载入JVM之前动态修改类行为（如下图17所示）。
+## 1.ASM
+
+对于需要手动操纵字节码的需求，可以使用ASM，它可以直接生成.class字节码文件，也可以在类被加载入JVM之前动态修改类行为。
 ASM的应用场景有AOP（Cglib就是基于ASM）、热部署、修改其他jar包中的类等。当然，涉及到如此底层的步骤，实现起来也比较麻烦。
 接下来，本文将介绍ASM的两种API，并用ASM来实现一个比较粗糙的AOP。但在此之前，为了让大家更快地理解ASM的处理流程，强烈建议读者先对访问者模式进行了解。
 简单来说，访问者模式主要用于修改或操作一些数据结构比较稳定的数据，而通过第一章，我们知道字节码文件的结构是由JVM固定的，所以很适合利用访问者模式对字节码文件进行修改。
 
 ![image](img/字节码加强/image16.png)
 
-### 2.1.ASM API
+### 1.1.ASM API
 
 - [https://www.oschina.net/p/asm?hmsr=aladdin1e1](https://www.oschina.net/p/asm?hmsr=aladdin1e1)
 - [https://zhuanlan.zhihu.com/p/94498015?utm_source=wechat_timeline](https://zhuanlan.zhihu.com/p/94498015?utm_source=wechat_timeline)
 
-#### 2.1.1.核心API
+#### 1.1.1.核心API
 
 ASM Core API可以类比解析XML文件中的SAX方式，不需要把这个类的整个结构读取进来，就可以用流式的方法来处理字节码文件。好处是非常节约内存，但是编程难度较大。
 然而出于性能考虑，一般情况下编程都使用Core API。在Core API中有以下几个关键类：
@@ -27,12 +32,12 @@ ASM Core API可以类比解析XML文件中的SAX方式，不需要把这个类�
 - 各种Visitor类：如上所述，CoreAPI根据字节码从上到下依次处理，对于字节码文件中不同的区域有不同的Visitor，
   比如用于访问方法的MethodVisitor、用于访问类变量的FieldVisitor、用于访问注解的AnnotationVisitor等。为了实现AOP，重点要使用的是MethodVisitor。
 
-#### 2.1.2.树形API
+#### 1.1.2.树形API
 
 ASM Tree API可以类比解析XML文件中的DOM方式，把整个类的结构读取到内存中，缺点是消耗内存多，但是编程比较简单。
 TreeApi不同于CoreAPI，TreeAPI通过各种Node类来映射字节码的各个区域，类比DOM节点，就可以很好地理解这种编程方式。
 
-### 2.2.直接利用ASM实现AOP
+### 1.2.直接利用ASM实现AOP
 
 利用ASM的CoreAPI来增强类。这里不纠结于AOP的专业名词如切片、通知，只实现在方法调用前、后增加逻辑，通俗易懂且方便理解。首先定义需要被增强的Base类：其中只包含一个process()方法，方法内输出一行"process"。增强后，我们期望的是，方法执行前输出"start"，之后输出"end"。
 
@@ -138,7 +143,7 @@ public class MyClassVisitor extends ClassVisitor implements Opcodes {
 
 ![image](img/字节码加强/image17.png)
 
-### 2.3.ASM工具
+### 1.3.ASM工具
 
 利用ASM手写字节码时，需要利用一系列visitXXXXInsn()方法来写对应的助记符，所以需要先将每一行源代码转化为一个个的助记符，然后通过ASM的语法转换为visitXXXXInsn()这种写法。
 第一步将源码转化为助记符就已经够麻烦了，不熟悉字节码操作集合的话，需要我们将代码编译后再反编译，才能得到源代码对应的助记符。
@@ -149,9 +154,10 @@ public class MyClassVisitor extends ClassVisitor implements Opcodes {
 
 ![image](img/字节码加强/image18.png)
 
-## 3.Javassist
+## 2.Javassist
 
-ASM是在指令层次上操作字节码的，阅读上文后，我们的直观感受是在指令层次上操作字节码的框架实现起来比较晦涩。故除此之外，我们再简单介绍另外一类框架：强调源代码层次操作字节码的框架Javassist。
+ASM是在指令层次上操作字节码的，阅读上文后，我们的直观感受是在指令层次上操作字节码的框架实现起来比较晦涩。
+故除此之外，我们再简单介绍另外一类框架：强调源代码层次操作字节码的框架Javassist。
 
 利用Javassist实现字节码增强时，可以无须关注字节码刻板的结构，其优点就在于编程简单。直接使用Java编码的形式，而不需要了解虚拟机指令，就能动态改变类的结构或者动态生成类。
 其中最重要的是ClassPool、CtClass、CtMethod、CtField这四个类：
@@ -180,6 +186,12 @@ public class JavassistTest {
     }
 }
 ```
+
+## 3.Byte Buddy
+
+- [ByteBuddy--介绍](https://blog.csdn.net/zhou920786312/article/details/130649090)
+- [ByteBuddy--介绍](https://blog.csdn.net/zhou920786312/article/details/130649115)
+- [ByteBuddy常用注解](https://blog.csdn.net/zhou920786312/article/details/130649136)
 
 ## 4.Cglib
 
@@ -460,51 +472,10 @@ After Method Invoke
 ## 最佳实践
 
 ### 运行时字节码加强
+JVM是不允许在运行时动态重载一个类的。也就是上述的几种技术都不能修改已经加载的class。
 
-其实，为了方便大家理解字节码增强技术，在上文中我们避重就轻将ASM实现AOP的过程分为了两个Main方法：
-第一个是利用MyClassVisitor对已编译好的Class文件进行修改，第二个是New对象并调用。这期间并不涉及到JVM运行时对类的重加载，而是在第一个Main方法中，通过ASM对已编译类的字节码进行替换，
-在第二个Main方法中，直接使用已替换好的新类信息。另外在Javassist的实现中，我们也只加载了一次Base类，也不涉及到运行时重加载类。
-
-如果我们在一个JVM中，先加载了一个类，然后又对其进行字节码增强并重新加载会发生什么呢？模拟这种情况，只需要我们在上文中Javassist的Demo中main()方法的第一行添加Base b=new Base()，
-即在增强前就先让JVM加载Base类，然后在执行到c.toClass()方法时会抛出错误，如下图20所示。跟进c.toClass()方法中，我们会发现它是在最后调用了ClassLoader的Native方法defineClass()时报错。
-**也就是说，JVM是不允许在运行时动态重载一个类的。**
-
-![image](img/字节码加强/image20.png)
-
-显然，如果只能在类加载前对类进行强化，那字节码增强技术的使用场景就变得很窄了。
-我们期望的效果是：在一个持续运行并已经加载了所有类的JVM中，还能利用字节码增强技术对其中的类行为做替换并重新加载。
-为了模拟这种情况，我们将Base类做改写，在其中编写main方法，每五秒调用一次process()方法，在process()方法中输出一行"process"。
-
-我们的目的就是，在JVM运行中的时候，将process()方法做替换，在其前后分别打印"start"和"end"。
-也就是在运行中时，每五秒打印的内容由"process"变为打印"start process end"。
-那如何解决JVM不允许运行时重加载类信息的问题呢？为了达到这个目的，我们就必须使用Java agent。
-利于Instrumentation#retransformClasses 重载class到JVM中
-
-```java
-import java.lang.management.ManagementFactory;
-
-public class Base {
-    public static void main(String[] args) {
-        String name = ManagementFactory.getRuntimeMXBean().getName();
-        String s = name.split("@")[0];
-        //打印当前Pid
-        System.out.println("pid:"+s);
-        while (true) {
-            try {
-                Thread.sleep(5000L);
-            } catch (Exception e) {
-                break;
-            }
-            process();
-        }
-    }
-
-    public static void process() {
-        System.out.println("process");
-    }
-}
-```
-
+解决方案：使用Java agent 的 attach机制，利于Instrumentation#retransformClasses 重载class到JVM中。
+当然修改字节码依旧可以使用上面的技术，只是需要Java agent进行类的重新加载
 
 字节码增强技术相当于是一把打开运行时JVM的钥匙，利用它可以动态地对运行中的程序做修改，也可以跟踪JVM运行中程序的状态。
 此外，我们平时使用的动态代理、AOP也与字节码增强密切相关，它们实质上还是利用各种手段生成符合规范的字节码文件。

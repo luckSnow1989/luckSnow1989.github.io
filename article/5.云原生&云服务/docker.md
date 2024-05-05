@@ -507,93 +507,178 @@ docker network create -d macvlan
 
 ## 5.案例
 
+### 5.1.学习案例
+
 这里以redis为例子
 
-### 5.1.下载redis镜像
-
+1. 下载redis镜像
 ![image](img/docker/media/image15.png)
-
-
-### 5.2.查看redis镜像
-
-我去一个镜像80多兆。
-
+2. 查看redis镜像，镜像竟然80MB。
 ![image](img/docker/media/image16.png)
-
-
-### 5.3.简单启动
-```shell
-docker run --name some-redis -d redis
-```
-
-用docker inspect 容器id
-可看到镜像的相关信息,直接用上述命令启动默认暴露6379端口,正常情况下都是不需要修改的
-
-### 5.4.添加持久化仓库
-```shell
-docker run --name some-redis -d redis redis-server --appendonly yes
-```
-
-数据默认存储在VOLUME /data目录下,使用--volumes-from
-some-volume-container 或者 -v /docker/host/dir:/data 可实现挂载
-
-### 5.5.应用需要连接redis
-
+3. 简单启动 ` docker run --name some-redis -d redis ` 
+4. 添加持久化配置 ` docker run --name some-redis -d redis redis-server --appendonly yes `
+   - 数据默认存储在VOLUME/data目录下, 使用--volumes-from、some-volume-container 或者 -v /docker/host/dir:/data 可实现挂载
+5. 应用需要连接redis
 ```shell
 docker run --name some-app --link some-redis:redis -d redis
-
 或者
-
 docker run -it --link some-redis:redis --rm redis redis-cli -h redis -p 6379
 ```
-
-### 5.6.外部应用访问redis（常用）
-
+6. 外部应用访问redis（常用）
 ```shell
 sudo docker run -it -p 192.168.1.40:6379:6379 --name some-redis -d redis
 redis-server --appendonly yes --requirepass pass123
 ```
-
-### 5.7.dockerfile
-
+7. dockerfile
 如果想使用自己的配置文件启动redis,则在其基础上写一个dockerfile
-
 ```dockerfile
 FROM redis
 COPY redis.conf /usr/local/etc/redis/redis.conf
 CMD [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
-```
 
 或者在启动命令中修改配置
 
 docker run -v /myredis/conf/redis.conf:/usr/local/etc/redis/redis.conf
 --name myredis redis redis-server /usr/local/etc/redis/redis.conf
-
-### 5.8.生成镜像
-
-这里我们使用的是阿里云提供的私服
-
+```
+8. 生成镜像，这里我们使用的是阿里云提供的私服
 ```shell
 sudo docker commit -m "张雪的redis镜像" -a "tb518550_11" 79c761f627f3 tb518550_11/zx-redis:v1 registry.cn-beijing.aliyuncs.com/zx_base_service_img/zx_base_service_img:v1
 ```
-
 如果生成的命名方式不对，需要使用命令重新修改。
 ```shell
 docker tag <img_name>:<tag><host>/<project>/<repo>:<tag>
-
 <img_name>:<tag> 是旧的的镜像名称和tag
-
 <host>/<project>/<repo> 是下图里面的内容
-
 最后的<tag>可有可无，默认是latest。这里我们写成v1
 ```
-
 ![image](img/docker/media/image17.png)
-
-
-### 5.9.Push
+9. Push
 ```shell
 docker push registry.cn-beijing.aliyuncs.com/zx_base_service_img/zx_base_service_img:v1
+```
+
+### 5.2.常用案例
+
+```shell
+1. mysql
+
+	docker run -p 3306:3306 --name mysql --privileged=true \
+		-v /data/docker/mysql/conf:/etc/mysql/conf.d \
+		-v /data/docker/mysql/logs:/var/log/mysql \
+		-v /data/docker/mysql/data:/var/lib/mysql \
+		-v /etc/localtime:/etc/localtime \
+		-v /etc/timezone:/etc/timezone \
+		-e MYSQL_ROOT_PASSWORD=root \
+		mysql:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+	进入:	sudo docker exec -it mysql /bin/bash
+
+	配置文件: /data/docker/mysql/conf/my.conf
+	
+	[mysqld]
+	variables.html#sysvar_default_authentication_plugin
+	port=3306
+	skip-host-cache
+	skip-name-resolve
+	datadir=/var/lib/mysql
+	socket=/var/run/mysqld/mysqld.sock
+	secure-file-priv=/var/lib/mysql-files
+	user=mysql
+	pid-file=/var/run/mysqld/mysqld.pid
+
+	[client]
+	port=3306
+	default-character-set=utf8
+	socket=/var/run/mysqld/mysqld.sock
+
+	[mysql]
+	default-character-set=utf8
+	!includedir /etc/mysql/conf.d/
+
+
+2. redis
+	docker run -it --name myredis -p 6379:6379 --privileged=true --restart=always \
+	-v /data/docker/redis/data/:/data \
+	-v /data/docker/redis/redis.conf:/etc/redis/redis.conf \
+	redis:6.0.6 redis-server /etc/redis/redis.conf --requirepass "pwd123"
+	启动：   docker start myredis
+	控制台： docker exec -it myredis redis-cli
+	
+
+3. centos
+	sudo docker run -it -d -p 50001:22 --privileged=true --name centos-node1 \
+		-v /data/docker/centos/data/:/data \
+		-v /etc/localtime:/etc/localtime \
+		-v /etc/timezone:/etc/timezone \
+		centos /usr/sbin/init
+
+	1. 进入容器内部：	sudo docker exec -it centos-node1  /bin/bash
+	2. 安装ssh服务和网络必须软件
+		yum install net-tools.x86_64 -y
+		yum install -y openssh-server
+	3. 重启网络： systemctl restart sshd
+	4. 安装passwd软件。默认启动后没有root账号:yum install passwd -y 
+	5. 设置root用户密码： passwd root
+	
+	centos8的yum源问题：Error: Failed to download metadata for repo 'appstream': Cannot prepare internal mirr...
+	原因：CentOS-8于2021年12月31日停止了源的服务。
+
+	解决办法
+	备份原有的yum源配置文件
+	cd /etc/yum.repo.d/
+	mkdir bak; cp *.repo bak/
+
+	执行如下命令，替换配置文件内容
+	sed -i 's/$releasever/8-stream/g' CentOS*repo
+
+	刷新yum缓存即可
+	yum clean; yum makecache
+
+4. jenkins
+    docker run -uroot -p 9095:8080 -p 50000:50000 --name jenkins \
+        -v /data/docker/jenkins/var/jenkins_home:/var/jenkins_home \
+        -v /etc/localtime:/etc/localtime \
+        -v /data/java/apache-maven-3.8.6:/usr/local/maven \
+        -v /data/java/jdk1.8:/usr/local/jdk \
+        -e JENKINS_UC=https://mirrors.cloud.tencent.com/jenkins \
+        -e JENKINS_UC_DOWNLOAD=https://mirrors.cloud.tencent.com/jenkins \
+        --restart=no \
+        --privileged=true \
+        jenkins/jenkins:lts
+  
+    地址：http://192.168.3.51:9095/   root/root
+    插件： git parameter【用于操作git 分支和读取】、publish over ssh【用于执行ssh命令】
+
+	
+5. gitlab
+    docker run  -itd -p 9980:80  -p 9922:22 \
+        -v /data/docker/gitlab/etc/gitlab:/etc/gitlab \
+        -v /data/docker/gitlab/var/log/gitlab:/var/log/gitlab \
+        -v /data/docker/gitlab/var/opt/gitlab:/var/opt/gitlab \
+        --restart=no \
+        --privileged=true \
+        --name gitlab \
+        gitlab/gitlab-ce
+		
+    地址：http://192.168.3.51:9980/        root/dX6hfBEAqU5eK9h
+
+	docker exec -it gitlab grep 'Password:' /etc/gitlab/initial_root_password
+	Password: o20N39V6DmYPhyHNL9PCFzFfuUPsCUYIKBW7W9ZVvIM=
+
+	docker exec -it gitlab /bin/bash
+
+	http://127.0.0.1:9980
+	root 3edc2wsx
+
+6. elasticsearch   https://blog.csdn.net/qq_44732146/article/details/120744829
+	sudo docker run --name elasticsearch -p 9200:9200  -p 9300:9300 \
+	-e "discovery.type=single-node" \
+	-e ES_JAVA_OPTS="-Xms84m -Xmx512m" \
+	-v /data/docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \
+	-v /data/docker/elasticsearch/data:/usr/share/elasticsearch/data \
+	-v /data/docker/elasticsearch/plugins:/usr/share/elasticsearch/plugins \
+	-d elasticsearch:7.12.0
 ```
 
 ## 6.dockerFile
