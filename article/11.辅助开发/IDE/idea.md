@@ -572,11 +572,11 @@ Json生成Java实体类
 
 [教程](https://mp.baomidou.com/guide/mybatisx-idea-plugin.html#%E5%8A%9F%E8%83%BD)
 
-### 5.11 Codota 代码智能提示插件
+### 5.11.智能辅助
 
-需要绑定GitHub，它会学习你的代码，根据你的代码习惯自动提示，并给出使用频率
-
-![](./img/idea/77fcd436.png)
+AI插件帮助编程辅助，直接插件搜索安装即可。
+1. Codota 代码智能提示插件
+2. Baidu Comate
 
 ### 5.12 CodeGlance
 
@@ -780,7 +780,6 @@ nohup java \
     -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=50055 \
     -jar remote-debug-0.0.1-SNAPSHOT.jar &
 ```
-
 
 ## 8.其他JetBrains
 
