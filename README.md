@@ -40,10 +40,13 @@
 
 - Java编程相关：《Java编程思想》（Bruce Eckel 著）、《Java高并发编程详解：多线程与架构设计》、《Java高并发编程详解：深入理解并发核心库》、《Java多线程编程核心技术》
 - JVM学习。就看这两本就够了，被誉为JVM双子星 《深入理解Java虚拟机》（周志明 著）、《深入理解Java虚拟机HotSpot》
-- MySQL。《高性能MySql》、《MySQL技术内幕：InnoDB存储引擎》
 - Java实战。《Spring实战》、《Spring Boot 实战》
-- 思维与设计。《代码整洁之道》、《领域驱动设计》、《剑指Offer》、《数据密集型应用设计》
+- MySQL。《高性能MySql》、《MySQL技术内幕：InnoDB存储引擎》
 - Linux。《鸟哥的Linux私房菜》
+- 人工智能：[《大语言模型》技术入门](https://github.com/LLMBook-zh/LLMBook-zh.github.io)
+   [《动手学大模型应用开发》技术入门](https://github.com/datawhalechina/llm-universe)
+   [《开源机器人学学习指南》](https://github.com/qqfly/how-to-learn-robotics)
+- 思维与设计。《代码整洁之道》、《领域驱动设计》、《剑指Offer》、《数据密集型应用设计》
 
 ### 政治经济文学
 

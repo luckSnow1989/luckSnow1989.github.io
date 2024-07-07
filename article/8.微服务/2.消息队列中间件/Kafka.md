@@ -11,6 +11,7 @@ sort: 3
 - [笔记整理](https://mp.weixin.qq.com/s/3xHUsqEgg7Kb6MZOdW8tnw)
 - [Kafka 原理以及分区分配策略剖析](https://mp.weixin.qq.com/s/7njhaaLSsY-U3c8TWZ_jhA)
 - [开源消息引擎系统 Kafka 3 新特性](https://mp.weixin.qq.com/s/MpGntCtSv-w6J5GJ7lLpFw)
+- [深度解析 Raft 协议与KRaft实战演示](https://blog.csdn.net/qq_35745940/article/details/136592257)
 
 ## 1.基础
 
