@@ -6,16 +6,9 @@ sort: 1
 - 官方：[https://zookeeper.apache.org/](https://zookeeper.apache.org/)
 - 源码：[https://github.com/apache/zookeeper](https://github.com/apache/zookeeper)
 - 中文教程： [https://www.w3cschool.cn/zookeeper/](https://www.w3cschool.cn/zookeeper/)
-- Zk原理目录：[https://www.cnblogs.com/leesf456/p/6239578.html](https://www.cnblogs.com/leesf456/p/6239578.html)
+- Zk原理：[https://www.cnblogs.com/leesf456/p/6239578.html](https://www.cnblogs.com/leesf456/p/6239578.html)
 - zK简单介绍：[https://www.cnblogs.com/51life/p/10265864.html](https://www.cnblogs.com/51life/p/10265864.html)
 - [ZooKeeper 核心通识](https://mp.weixin.qq.com/s/uustNtBOGvPOx4Q3oPFmSw)
-
-源码研究：
-- ZooKeeper源码研究系列（1）源码环境搭建：[https://my.oschina.net/pingpangkuangmo/blog/484955](https://my.oschina.net/pingpangkuangmo/blog/484955)
-- ZooKeeper源码研究系列（2）客户端创建连接过程分析：[https://my.oschina.net/pingpangkuangmo/blog/486780](https://my.oschina.net/pingpangkuangmo/blog/486780)
-- ZooKeeper源码研究系列（3）单机版服务器介绍：[https://my.oschina.net/pingpangkuangmo/blog/491673](https://my.oschina.net/pingpangkuangmo/blog/491673)
-- ZooKeeper源码研究系列（4）集群版服务器介绍：[https://my.oschina.net/pingpangkuangmo/blog/495311](https://my.oschina.net/pingpangkuangmo/blog/495311)
-- ZooKeeper源码研究系列（5）集群版建立连接过程：[https://my.oschina.net/pingpangkuangmo/blog/496136](https://my.oschina.net/pingpangkuangmo/blog/496136)
 
 ## 1.介绍
 
@@ -67,24 +60,23 @@ recipe ---> 一些应用案例
 src ---> zookeeper的源码，因为zookeeper是java写出来的
 ```
 
-### 2.2.启动
+### 2.2.Cli命令
 
-![image](img/zookeeper/media/image2.png)
-
-bin目录下常用的脚本解释
 ```text
-zkServer　　 服务器的启动、停止、和重启脚本
-zkCli　　　　 命令行客户端
+启动         ./zkServer.sh start
+状态         ./zkServer.sh status
+重启         ./zkServer.sh restart
+停止         ./zkServer.sh stop
+启动客户端    ./zkCli.sh -server 127.0.0.1:2181
 zkCleanup　　清理Zookeeper历史数据，包括事务日志文件和快照数据文件
 zkEnv　　　　 设置Zookeeper的环境变量
+zkSnapShotToolkit.sh     将快照数据转换成标准输出或者json文件
+        ./zkSnapShotToolkit.sh -d  ../dataDir/version-2/snapshot.40000b802  ../str22589
+zkTxnLogToolkit.sh       能够恢复带有损坏CRC的事务日志条目
+        ./zkTxnLogToolkit.sh        ../dataDir/version-2/log.100000001        
 ```
 
-```shell
-启动：
-1. windows环境双击zkServer.cmd。
-2. Linux执行命令: ./zkServer.sh start。
-```
-注意：window系统一般情况下启动服务的时候会出现闪退或启动失败的现象。继续往下读操作完3后重新启动zk，即可。
+注意：windows环境双击zkServer.cmd。但是可能会出现闪退或启动失败的现象，继续往下读操作完3后重新启动zk，即可。
 
 ### 2.3.修改配置文件
 
@@ -128,7 +120,7 @@ dataDirChinese=/media/zhangxue/工作空间/java/zookeeper-3.4.9/zookeeper
 
 之后修改zkServer.sh中的dataDir为dataDirChinese。这样就保证执行shell脚本的时候能正常操作目录了。其他的中文路径配置同上。
 
-### 2.4.客户端的命令操作
+### 2.4.基础命令
 启动客户端： ./zkCli.sh -server 127.0.0.1:2181
 ![image](img/zookeeper/media/image9.png)
 
@@ -180,16 +172,21 @@ ls2 path [watch]
 ```
 
 若获取根节点下面的所有子节点，使用ls /命令即可
+
 ![image](img/zookeeper/media/image17.png)
 
 若想获取根节点数据内容和属性信息，使用get /命令即可
+
 ![image](img/zookeeper/media/image18.png)
 
 也可以使用ls2 /命令查看，可以看到其子节点数量为8。
+
 ![image](img/zookeeper/media/image19.png)
 
 若想获取/zk-permanent的数据内容和属性，可使用如下命令：get /zk-permanent
+
 ![image](img/zookeeper/media/image20.png)
+
 可以看到其数据内容为123，还有其他的属性，之后会详细介绍。
 
 #### 2.4.5.更新节点
@@ -203,7 +200,9 @@ ls2 path [watch]
 使用delete命令可以删除Zookeeper上的指定节点，用法：delete path [version]
 
 使用delete /zk-permanent命令即可删除/zk-permanent节点
+
 ![image](img/zookeeper/media/image22.png)
+
 可以看到，已经成功删除/zk-permanent节点。
 
 注意：若删除节点存在子节点，那么无法删除该节点，必须先删除子节点，再删除父节点。
@@ -239,16 +238,6 @@ get /FirstZnode 1
 4. “.”字符可以用作另一个名称的一部分，但是“.”和“..”不能单独用于指示路径上的节点，因为ZooKeeper不使用相对路径。
 所以下列内容无效:“/a/b/./ c”或“c/a/b/../”。
 5. “zookeeper”是保留节点名，禁止创建。
-
-### 2.6.基本服务命令
-
-```text
-启动         ./zkServer.sh start
-状态         ./zkServer.sh status
-重启         ./zkServer.sh restart
-停止         ./zkServer.sh stop
-启动客户端    ./zkCli.sh -server 127.0.0.1:2181
-```
 
 ### 2.7.zoo.cfg配置信息
 
@@ -444,10 +433,13 @@ DataTree是zk内存数据结构的核心。一个DataTree对象表示一个完�
 - Set<String>children：数据节点的子节点列表，这是只是节点Path的字符串路径，并且是相对路径。
 
 数据量现在1M以内。
+
 ![image](img/zookeeper/media/image25.png)
 
 StatPersisted保存的信息如下：
+
 ![image](img/zookeeper/media/image26.png)
+
 ![image](img/zookeeper/media/image27.png)
 
 ```text
@@ -468,13 +460,16 @@ numChildren：子节点数
 
 zk本质是内存型数据库，ZKDatabase就是zk的数据库核心，用于管理zk所有会话、DataTree存储、事务日志等。
 同时负责向磁盘序列化快照文件，以及在启动的时候通过事务日志与快照文件恢复zk全部的内存数据库
+
 ![image](img/zookeeper/media/image28.png)
 
 其中FileTxnSnapLog提供了操作数据文件的接口
+
 ![image](img/zookeeper/media/image29.png)
 
 ### 4.2.znode状态
 文件系统：Zookeeper维护一个类似文件系统的数据结构
+
 ![image](img/zookeeper/media/image33.png)
 
 每个目录都被称为znoed，和文件系统一样，我们可以通过命令增加、删除、修改znode，在znode下增加、删除子znode。唯一不同的在于znode是可以存储数据的。
@@ -569,6 +564,11 @@ Zxid是ZK状态改变的唯一标识符，全局唯一且自增的64位的整数
 1. cZxid：是节点的创建时间所对应的Zxid。
 2. mZxid：是节点的修改时间所对应的Zxid。
 
+zxid 下32位是计数器，当超过32位（即0xffffffff）的时候，就会占用上32位，导致epoch被加一，zxid的机制就被破坏了。
+所以zk中如果发生溢出，会触发集群的强制选主过程，并重置zxid的低32位为0。
+
+目前没有干预手动，只能监控到，并找一个空闲时间批量写入数据主动触发选主。
+
 ### 4.5.server id（myid）
 
 集群中的每台ZK server都会有一个用于惟一标识自己的id，有两个地方会使用到这个id：myid文件和zoo.cfg文件中
@@ -595,28 +595,45 @@ Zxid是ZK状态改变的唯一标识符，全局唯一且自增的64位的整数
 
 使用方式：java -classpath zookeeper-3.4.9.jar;lib/* org.apache.zookeeper.server.LogFormatter ./dataDir/version-2/log.1
 
-日志的内容如下
-![image](img/zookeeper/media/image31.png)
-
 完成如下操作
-1. 创建/test_log节点，初始值为v1。
-2. 更新/test_log节点的数据为v2。
-3. 创建/test_log/c节点，初始值为v1。
-4. 删除/test_log/c节点。
-![image](img/zookeeper/media/image32.png)
+```shell
+create /test_log v1
+set /test_log v2
+create /test_log/c v1
+delete /test_log/c
+```
 
+可以看到如下日志:
 
-1. ZooKeeper Transactional Log File with dbid 0 txnlog format version 2 ：是文件头信息，主要是事务日志的DBID和日志格式版本。
-2. ...session 0x159...0xcec createSession 30000：表示客户端会话创建操作。
-3. ...session 0x159...0xced create '/test_log,...：表示创建/test_log节点，数据内容为#7631(v1)。
-4. ...session 0x159...0xcee setData‘/test_log,...：表示设置了/test_log节点数据，内容为#7632(v2)。
-5. ...session 0x159...0xcef create’/test_log/c,...：表示创建节点/test_log/c。
-6. ...session 0x159...0xcf0 delete'/test_log/c：表示删除节点/test_log/c。
+```shell
+D:\java\zookeeper-3.4.9>java -classpath zookeeper-3.4.9.jar;lib/* org.apache.zookeeper.server.LogFormatter ./dataDir/version-2/log.5
+ZooKeeper Transactional Log File with dbid 0 txnlog format version 2
+# 1. 客户端会话创建，超时时间为30s
+24-7-10 下午09时27分07秒 session 0x1909cd102860000 cxid 0x0 zxid 0x5 createSession 30000
+
+24-7-10 下午09时27分09秒 session 0x1909cd102860000 cxid 0x1 zxid 0x6 create '/test_log,#7631,v{s{31,s{'world,'anyone}}},F,2
+内容依次如下：
+1. 会话ID：0x1909cd102860000
+2. 客户端事务ID：0x1。  session内自增的属性。
+3. zxid：0x6
+4. 操作类型：create
+5. 操作内容：'/test_log,#7631,v{s{31,s{'world,'anyone}}},F,2 
+        /test_log 是节点路径
+        #7631     节点数据，经过ASCII编码
+        v{s{31,s{'world,'anyone}}}      acl为world:anyone任何人都可以管理该节点
+        F         表示节点不是 ephemeral
+        2         父节点的子版本号
+
+24-7-10 下午09时27分19秒 session 0x1909cd102860000 cxid 0x2 zxid 0x7 setData '/test_log,#7632,1
+24-7-10 下午09时27分41秒 session 0x1909cd102860000 cxid 0x3 zxid 0x8 create '/test_log/c,#7631,v{s{31,s{'world,'anyone}}},F,1
+24-7-10 下午09时27分48秒 session 0x1909cd102860000 cxid 0x4 zxid 0x9 delete '/test_log/c
+EOF reached after 5 txns.
+```
 
 #### 5.2.3.事务日志写入
 
 FileTxnLog负责维护事务日志对外的接口，包括事务日志的写入和读取等。Zookeeper的事务日志写入过程大体可以分为如下6个步骤。
-1. 确定是否有事务日志可写：当Zookeeper服务器启动完成需要进行第一次事务日志的写入，或是上一次事务日志写满时，都会处于与事务日志文件断开的状态。
+1. 确定是否有事务日志可写：当Zookeeper服务器启动完成需要进行一次事务日志的写入，或是上一次事务日志写满时，都会处于与事务日志文件断开的状态。
    即Zookeeper服务器没有和任意一个日志文件相关联。因此在进行事务日志写入前，Zookeeper首先会判断FileTxnLog组件是否已经关联上一个可写的事务日志文件。
    若没有，则会使用该事务操作关联的ZXID作为后缀创建一个事务日志文件，同时构建事务日志的文件头信息，并立即写入这个事务日志文件中去，同时将该文件的文件流放入streamToFlush集合，该集合用来记录当前需要强制进行数据落盘的文件流。
 2. 确定事务日志文件是否需要扩容(预分配)：Zookeeper会采用磁盘空间预分配策略。当检测到当前事务日志文件剩余空间不足4096字节时，就会开始进行文件空间扩容，即在现有文件大小上，将文件增加65536KB(64MB)，然后使用"0"填充被扩容的文件空间。
@@ -628,7 +645,7 @@ FileTxnLog负责维护事务日志对外的接口，包括事务日志的写入�
 #### 5.2.4.日志截断（异常日志处理）
 
 在Zookeeper运行过程中，可能出现非Leader记录的事务ID比Leader上大，这是非法运行状态。
-此时，需要保证所有机器必须与该Leader的数据保持同步，即Leader会发送TRUNC命令给该机器，要求进行日志截断，Learner收到该命令后，就会删除所有包含或大于该事务ID的事务日志文件。
+此时，需要保证所有机器必须与该Leader的数据保持同步，即Leader会发送TRUNC命令给该机器，要求进行日志截断，follower收到该命令后，就会删除所有包含或大于该事务ID的事务日志文件。
 
 ### 5.3.数据快照
 
@@ -829,11 +846,12 @@ Observer使用注意事项：但是注意，引入观察者，从性能角度来
 Zab（zookeeper atomic broadCast，原子广播）是基于Paxos裁剪出来的，为分布式协调服务 ZooKeeper 专门设计的一种支持崩溃恢复的原子广播协议。
 在 ZooKeeper 中，主要依赖 ZAB 协议来实现分布式数据一致性，基于该协议，ZooKeeper 实现了一种主备模式的系统架构来保持集群中各个副本之间的数据一致性。
 
-zk是强数据一致性的，且是顺序一致性的，实现方关键技术如下：
+zk是数据一致性的（表面上是强一致性，但其实还是最终一致性，可能存在延迟），且是顺序一致性的，实现方关键技术如下：
 1. 原子性操作：通过leader统一写操作，然后再广播出去。
 2. 2PC：由leader扮演事务协调者进行事务二阶段提交。广播出去后，超过半数响应才能提交事务。
 3. 顺序性。通过zxid，实现数据的顺序性。
-4. 多副本：每个节点都保存完整的数据，且leader选举后，会重新与leader强制同步数据、
+4. 多副本：每个节点都保存完整的数据，且leader选举后，会重新与leader强制同步数据
+5. 最终一致：原子广播只需要超过半数节点应答即可，可能存在短暂的数据延迟。
 
 #### 7.3.1.一致性协议
 
@@ -882,16 +900,12 @@ outstandingProposals虽然是map但是可以同每当zxid提交时，判断zxid-
 
 ### 7.4.读写机制
 
-Zk作为一个给集群提供一致性的数据服务，在集群中需要做到所有的节点之间进行数据复制。这样的好处有：
-- 容错:一个节点出现异常了，不会导致整个集群都通知工作，别的节点可以节点异常节点的工作
-- 提高系统的扩展性：使用均衡负载，通过增加节点，通过集群的负载能力
-- 提高性能：让客户端访问最近的节点，提供用户的访问速度
-
-数据写入分为两种类型：zk默认采用的方式是写任意。通过增加机器，它的读吞吐能力与响应能力扩展性非常好。
+数据写。分为两种类型：zk默认采用的方式是写任意。
 - 写主：客户端连接leader，并将写操作交给leader节点，读取数据的时候没有限制，可以读取任意节点的数据。这种情况下客户端需要对读与写进行区别，俗称读写分离。
 - 写任意：对数据的写操作可以提交给任意的节点，这种情况下，客户端对集群节点的角色与变化是透明的。但是follower会将写请求转发给leader。
 
-数据读：zk采用2PC，leader一旦提交事务，则所有节点也都提交实现，没有延迟。所以可以从任意节点读取数据。
+数据读：采用的是任意读模式，因为zk采用2PC，leader一旦提交事务，大部分节点的数据都是最新的。
+通用的也通过增加机器，它的读吞吐能力与响应能力扩展性非常好。但是数据可能存储一定的延迟。
 
 ### 7.5.选举算法
 
@@ -906,12 +920,18 @@ zk提供了四种选择机制。
 在3.4.10版本中，默认并建议是3,可通过electionAlg配置项设置,另外三种算法被弃用了,并且有计划在之后的版本中将它们彻底删除。
 FastLeaderElection 和 AuthLeaderElection 是类似的选举算法，唯一区别是后者加入了认证信息。
 
-#### 7.5.2.选举参数
+#### 7.5.2.选票
 
-投票中主要包括三个数据
-- 服务id(serverID)：节点选举出来的leader的id
-- 事务id(Zxid)：节点本地记录的最新的事务id，值越大说明数据越新，权重越大。
-- 逻辑时钟(epoch-logicalclock):节点本地的epoch，全局唯一自增的值，每次选举时+1。
+```golang
+struct Vote {
+    logicClock  // 逻辑时钟，表示该服务器发起的第多少轮投票
+    state       // 当前服务器的状态 （LOOKING-不确定Leader状态 FOLLOWING-跟随者状态 LEADING-领导者状态 OBSERVING-观察者状态）
+    self_myid   // 当前服务器的myid
+    self_zxid   // 当前服务器上所保存的数据的最大zxid。已经包含了epoch
+    vote_myid   // 被推举的服务器的myid
+    vote_zxid   // 被推举的服务器上所保存的数据的最大zxid
+}
+```
 
 #### 7.5.3.启动时选举
 
@@ -919,11 +939,14 @@ FastLeaderElection 和 AuthLeaderElection 是类似的选举算法，唯一区�
 
 1. 启动后，所有节点的epoch=1，zxid=0，state=looking。组装选票，投票给自己，并广播给所有participant节点。
 2. 更新选票。当节点接收选票后开始更新自己的选票。以 Server1 为例通过以下流程判断Server3当前，则更新自己的选票。
-   1. Epoch比较，选票中的epoch最大的当选。
-   2. 如果epoch都相同，则比较zxid，zxid最大的当前 
-   3. 如果zxid都相同，则比较myid，myid最大的当前
-3. 各节点更新好自身的选票后，重新选票广播出去后。（通常这里就已经选举出leader了，但是存在异常情况，2和3会重复几轮）
+   1. logicClock比较，ZooKeeper规定所有有效的投票都必须在同一轮次中，如果发现自己的logicClock小，则更新自己的logicClock
+   2. Epoch比较，选票中的epoch最大的当选。
+   3. 如果epoch都相同，则比较zxid，zxid最大的当选 
+   4. 如果zxid都相同，则比较myid，myid最大的当选
+3. 各节点更新好自身的选票后，重新广播出去。（通常这里就已经选举出leader了，但是存在异常情况，2和3会重复几轮）
 4. 超过半数票数的Server3当选，则变更自己状态为leading，未当选节点为following。
+
+注意：即使选票超过半数了，选出Leader服务实例了，也不是立刻结束，而是等待200ms，确保没有丢失其他服务的更优的选票
 
 #### 7.5.4.运行时Follower重启选举
 Follower 节点发生故障重启或网络产生分区恢复后如何进行选举。
@@ -1205,7 +1228,126 @@ Curator提供了LeaderSelector监听器实现Leader选举功能。同一时刻�
 这时Curator会利用Zookeeper再从剩余的Listener中选出一个新的Leader。
 autoRequeue()方法使放弃Leadership的Listener有机会重新获得Leadership，如果不设置的话放弃了的Listener是不会再变成Leader的。
 
-## 10.面试题
+## 10.监控
+
+### 10.1.四字母监控
+
+ZooKeeper内置了一系列简短却实用的四字母命令，这些命令可通过TCP客户端连接ZooKeeper的服务端口（默认为2181）进行发送，从而实现对ZooKeeper服务器的基本监控与诊断。
+开发者们可以利用诸如telnet或nc（netcat）等工具与ZooKeeper进行交互，执行这些命令以获取服务器的关键状态信息。
+
+以下列举了几种常见的四字母命令及其功能：
+- stat 命令：用于揭示ZooKeeper服务的基本状态参数，包括当前的连接数、活跃会话数、节点总量等重要数据。
+- ruok 命令：用于检测ZooKeeper服务是否处于正常的运行状态，若服务运转正常，ZooKeeper将返回字符串“imok”。
+- conf 命令：用于输出ZooKeeper服务器当前所应用的配置详情，帮助运维人员确认配置是否符合预期。
+- srvr 命令：提供更为详尽的服务器状态报告，涵盖了更多有关ZooKeeper服务器内部状态的细节信息。
+- wchs 命令：展示ZooKeeper中当前已注册Watcher的整体数量。
+- wchc 命令：列举出所有已被客户端观察的ZooKeeper节点及其对应的路径。
+- wchp 命令：展示每个被观察节点的路径与其关联的Watcher数量。
+
+默认浙西指令都是关闭的，如果想要使用，需要修改zoo.cfg
+```properties
+4lw.commands.whitelist=stat,ruok,conf,srvr,wchs,wchc,wchp
+```
+
+### 10.1.监控服务
+
+v3.5.0 引入内置 Jetty（AdminServer），该服务器提供了一个 HTTP 接口，用于执行四字命令。
+跟随zk服务一起启动，访问地址：http://localhost:8080/commands/
+
+内部监控的指标，在原有的四字母监控基础上，有扩展了很多集群相关的指标，JSON 格式返回。
+
+![](img/zookeeper/aa46c717.png)
+
+指标数据如下：
+
+![](img/zookeeper/a2c961d4.png)
+
+指标的类型如下：
+- connection_stat_reset/crst：重置所有客户端连接统计信息。不返回新的字段。
+- configuration/conf/config：打印服务的基本配置信息，例如客户端端口和数据目录的绝对路径。
+- connections/cons：提供与服务器建立的客户端连接的相关信息。注意，如果客户端连接数量很大，执行此操作可能较为昂贵（即可能影响服务器性能）。返回一个包含连接信息对象的列表“connections”。
+- hash：事务摘要的历史记录列表中的摘要信息，每128个交易记录一个摘要。返回一个包含事务摘要对象的列表“digests”。
+- dirs：日志文件目录和快照目录的大小（以字节为单位）信息。返回“datadir_size”和"logdir_size"两个字段。
+- dump：会话过期和临时节点信息。注意，如果全局会话和临时节点数量较大，此操作可能影响服务器性能。返回映射“expiry_time_to_session_ids”和“session_id_to_ephemeral_paths”。
+- environment/env/envi：所有定义的环境变量。每个变量都作为单独的字段返回。
+- get_trace_mask/gtmk：当前的跟踪掩码。这是一个只读版本的set_trace_mask命令。有关更多信息，请参阅关于stmk四字命令的描述。返回字段“tracemask”。
+- initial_configuration/icfg：打印用于启动节点的配置文件文本。返回字段“initial_configuration”。
+- is_read_only/isro：指示服务器是否处于只读模式的布尔值。返回字段“read_only”。
+- last_snapshot/lsnp：提供关于ZooKeeper服务器最后一次成功保存到磁盘的快照的信息。如果在服务器启动和首次保存快照期间调用此命令，将返回启动服务器时读取的快照信息。返回字段“zxid”和“timestamp”，其中“timestamp”使用秒作为时间单位。
+- leader/lead：如果集群配置为仲裁模式，则显示当前节点的领导者状态和当前领导者的地理位置。返回字段“is_leader”、“leader_id”和“leader_ip”。
+- monitor/mntr：输出多种用于监控的有用信息，包括性能统计、内部队列信息以及数据树概览（以及其他诸多内容）。每个信息都作为单独的字段返回。
+- observer_connection_stat_reset/orst：重置所有观察者连接统计信息。与observers命令相辅相成，不返回新的字段。
+- restore/rest：从输入流中恢复数据库到当前服务器。响应负载中返回的字段：“last_zxid”（String）。注意：此API受到速率限制（默认每5分钟一次），以防止服务器过载。
+- ruok：空操作命令，检查服务器是否正在运行。响应的存在并不一定意味着服务器已加入仲裁，仅表示管理服务器已激活并绑定了指定的端口。不返回新的字段。
+- set_trace_mask/stmk：设置跟踪掩码（因此需要一个参数）。get_trace_mask命令的写入版本。有关更多信息，请参阅关于stmk四字命令的描述。返回字段“tracemask”。
+- server_stats/srvr：服务器信息。返回多个字段，提供服务器状态的简要概述。
+- snapshot/snap：在当前服务器的数据目录中拍摄快照，并通过流输出数据。可选查询参数：“streaming”：布尔值（如果未提供参数，则默认为true）。通过Http头部返回以下信息：“last_zxid”（String）和“snapshot_size”（String）。注意：此API受到速率限制（默认每5分钟一次），以防止服务器过载。
+- stats/stat：与server_stats相同，但也返回“connections”字段（有关详细信息，请参阅connections命令）。注意，如果客户端连接数量很大，此操作可能影响服务器性能。
+- stat_reset/srst：重置服务器统计信息。这是server_stats和stats返回信息的一个子集。不返回新的字段。
+- observers/obsr：提供与服务器建立的观察者连接的信息。在领导者节点上始终可用，在充当学习主节点的跟随者节点上也可用。返回字段“synced_observers”（整数）和“observers”（观察者属性的列表）。
+- system_properties/sysp：所有定义的系统属性。每个属性都作为单独的字段返回。
+- voting_view：提供当前参与投票的ensemble成员列表。返回字段“current_config”（一个映射）。
+- watches/wchc：按会话聚合的监视器信息。注意，如果监视器数量很多，此操作可能影响服务器性能。返回映射“session_id_to_watched_paths”。
+- watches_by_path/wchp：按路径聚合的监视器信息。注意，如果监视器数量很多，此操作可能影响服务器性能。返回映射“path_to_session_ids”。
+- watch_summary/wchs：汇总的监视器信息。返回字段“num_total_watches”、“num_paths”和“num_connections”。
+- zabstate：指示节点当前正在运行的Zab协议阶段以及它是否为投票成员。节点可能处于以下阶段之一：ELECTION、DISCOVERY、SYNCHRONIZATION、BROADCAST。返回字段“voting”和“zabstate”。
+
+### 10.3.prometheus监控
+
+v3.6.0 增加了prometheus的相关指标功能。可以配置prometheus+Grafana实现可视化监控。这样就可以将监控指标进行可视化。
+只需要修改zoo.cfg，打开注释，默认通过开放了7000端口和`/metrics`作为指标的访问路径:
+
+```properties
+metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider
+metricsProvider.httpHost=0.0.0.0
+metricsProvider.httpPort=7000
+metricsProvider.exportJvmInfo=true
+```
+
+官方也提供一个监控的面板：https://grafana.com/grafana/dashboards/10465-zookeeper-by-prometheus/
+
+低版本监控方案： [zookeeper 3.4.x+prometheus监控](https://www.cnblogs.com/zmh520/p/17318628.html)
+
+## 11.最佳实践
+
+[ZooKeeper 避坑实践：如何调优 jute.maxbuffer](https://mp.weixin.qq.com/s/3xOvCWQanU5zBXX-atwrzg)
+
+客户端可以创建ephemeral 类型的zonde，当客户端session关闭时，这些被创建的ephemeral znode也会被删除。
+zk服务端，session对象维护着所有存活的ephemeral信息，如果关闭session，leader会向所有follower发生关闭session的请求，
+请求中是包括了这些ephemeral信息的。
+我们知道普通写请求，leader会进行预处理，校验数据包大小（1M），但是关闭session的请求不会校验。
+
+CloseSessionTxn底层也是继承了BinaryInputArchive，这个类在序列化的时候也会进行checkLength（1M+1K）。
+导致follower读取CloseSessionTxn进行反序列化的时候，出现异常，并且关闭与leader的连接。
+因为事务日志也属于WAL类型的，这个时候已经将请求数据写入数据到事务日志了。
+
+当超过半数的 follower 都因为 QuorumPacket 过大而无法反序列化的时候就会导致集群重新选主，并且如果原本的 Leader 在选举中获胜，那么这个 Leader 就会在从磁盘中 load 数据的时候，从磁盘中读取事物日志的时候，读取到刚刚写入的特别大的 CloseSessionTxn 的时候 checkLength 失败，导致 Leader 状态又重新进入 LOOKING 状态，集群又开始重新选主，并且一直持续此过程，导致集群一直处于选主状态
+
+最佳实践：
+1. zk 在新版本中提供了 last_proposal_size metrics 指标，可以监控集群的 proposal 大小数据。
+2. 客户端避免大量创建 ephemeral 类型的数据，可以使用一定次数后释放连接。
+3. jute.maxbuffer 不建议修改。容易出现非预期的问题。
+
+
+[Zxid溢出导致选主](https://mp.weixin.qq.com/s/NrIItUCGR5MCYTPK1MzmJQ)
+
+zxid 是64位，下32位是计数器，当事务超过32位（即0xffffffff）的时候，就会占用上32位，导致epoch被加一，zxid的机制就被破坏了。
+所以zk中如果发生溢出，会触发集群的强制选主过程，并重置zxid的低32位为0。
+解决方案:设置监控，leader中最新zxid中低32位的值预警后强制重启。
+
+
+[ZooKeeper 3.6.4 版本 BUG 导致的数据不一致问题](https://mp.weixin.qq.com/s/bhq9EMqPPYuNQYdXdsekog)
+注意不要将zk磁盘打满，使用过程要注意经常清理不使用的数据。最重要的是不要将zk集群当做大型存储。
+
+安全认证
+1. zk自带ACL: ZooKeeper 本身具备身份认证和细粒度的访问控制列表（ACL）能力。即便在默认配置下，它也能够支持多种身份认证模式，包括 Digest、IP 和 World 等。
+   开发者可以在初始化连接时提供认证信息，并针对特定的 Znode 设置相应的 ACL，这样一来就能有效地限制客户端访问 Znode 的权限范围。 
+   然而，这套机制虽然强大，但是实际使用起来比较复杂。针对每个 Znode 单独配置 ACL 意味着随着 Znode 数量的增加，尤其是在业务逻辑较为复杂时，管理工作将变得异常繁重并且容易出错。
+2. ZooKeeper 还提供了对 SASL（简单认证和安全层）身份认证模式的支持，该模式通过简单的服务器和客户端配置就能实现基于用户名和密码的认证机制。
+   [ZooKeeper and SASL](https://cwiki.apache.org/confluence/display/ZOOKEEPER/ZooKeeper+and+SASL)
+3. ZooKeeper提供了SSL机制。 [ZooKeeper SSL User Guide](https://cwiki.apache.org/confluence/display/ZOOKEEPER/ZooKeeper+SSL+User+Guide)
+
+## 11.面试题
 
 <p style="color: red">1.为什么规则要求 可用节点数量 > 集群总结点数量/2 ？</p>
 Quorums（法定人数）方式，脑裂的解决方案。

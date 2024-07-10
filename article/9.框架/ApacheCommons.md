@@ -517,4 +517,21 @@ Closure这一组接口和类提供一个操作对象的execute方法，为我们
 
 ## 7.common-pool2
 
-[https://www.jianshu.com/p/f403f1782d1c?utm_campaign](https://www.jianshu.com/p/f403f1782d1c?utm_campaign)
+- [深入理解Apache Commons Pool2池化技术](https://blog.csdn.net/qq_26664043/article/details/136662810)
+- [池技术之common-pool2使用案例](https://www.jianshu.com/p/f403f1782d1c?utm_campaign)
+
+应用的框架：redis和dbcp
+
+为什么其他客户端框架没有应用：因为其他的框架需要更加专业的、性能更强的、策略更精细化对象缓存技术。
+但是common-pool2也提供很多设计思想，被其他框架使用。
+
+对象池负载均衡策略：common-pool2 内部以队列的形式维护对象。对象的存取默认采用LIFO，存在以下问题：
+- 并发量高的时候，FIFI LIFO对于负载均衡的影响不大。
+- 并发量低的时候，FIFI 总数保持与高并发时相同的效果。而LIFO则出现一直使用队尾的情况。
+  一旦队尾的对象出现问题，例如连接池的连接，队尾的对象连接到性能较差的节点，导致后面服务的性能一直很差。
+
+所以推荐改为FIFI
+```java
+GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
+poolConfig.setLifo(false);
+```
