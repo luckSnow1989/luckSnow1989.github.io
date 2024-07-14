@@ -37,8 +37,9 @@ zk作为早期应用Paxos协议的中间件，实现了CAP中的CP，被许多�
 
 1. 选举时间长。由于故障导致的选举，期间服务不可用，且时间较长。
 2. 写入性能差。虽然zk是基于内存的框架，但是需要和大多数节点达成共识，写入时完全依赖于全局的zxid，事务提交采用2PC，导致性能较差。
+3. 非典型场景，例如大事务、zxid溢出各种异常容易出现重新选主、选主无法成功等问题，导致服务不可用。
 
-当前大部分场景需要的是可用性，对于A的需求大于C。
+当前大部分场景需要的是可用性，AP模型更适合作为注册中心。作为其他分布式技术的协调工具也逐步被raft协议的工具所代替。
 
 ## 2.安装
 
@@ -108,8 +109,7 @@ properties文件默认的文本编码是unicode，Java程序读取的时候会�
 所以需要我们在zoo.cfg中写入unicode编码的中文。
 ![image](img/zookeeper/media/image7.png)
 
-比如zk的安装目录是， /media/zhangxue/工作空间/java/zookeeper-3.4.9，
-将 工作空间 转为 \\u5DE5\\u4F5C\\u7A7A\\u95F4
+比如zk的安装目录是， /media/zhangxue/工作空间/java/zookeeper-3.4.9，将 工作空间 转为 \\u5DE5\\u4F5C\\u7A7A\\u95F4
 
 第二步：在zk启动时，会校验目录是否存在(命令在zkServer.sh中)。
 ![image](img/zookeeper/media/image8.png)
@@ -129,6 +129,7 @@ dataDirChinese=/media/zhangxue/工作空间/java/zookeeper-3.4.9/zookeeper
 
 #### 2.4.2.help
 可以使用帮助命令help来查看客户端的操作
+
 ![image](img/zookeeper/media/image11.png)
 
 #### 2.4.3.创建节点
@@ -143,21 +144,29 @@ Create /b/c/d 是错误的，会提示/b NodeNotExistsException
 其中，-s或-e分别指定节点特性，顺序或临时节点，若不指定，则表示持久节点；acl用来进行权限控制。
 
 ① 创建顺序节点：使用create -s /zk-test 123命令创建zk-test顺序节点
+
 ![image](img/zookeeper/media/image12.png)
+
 可以看到创建的zk-test节点后面添加了一串数字以示区别。
 
 ② 创建临时节点：使用create -e /zk-temp 123命令创建zk-temp临时节点
+
 ![image](img/zookeeper/media/image13.png)
 
 临时节点在客户端会话结束后，就会自动删除，下面使用quit命令退出客户端
+
 ![image](img/zookeeper/media/image14.png)
 
 再次使用客户端连接服务端，并使用ls / 命令查看根目录下的节点
+
 ![image](img/zookeeper/media/image15.png)
+
 可以看到根目录下已经不存在zk-temp临时节点了。
 
 ③ 创建永久节点：使用create /zk-permanent 123命令创建zk-permanent永久节点
+
 ![image](img/zookeeper/media/image16.png)
+
 可以看到永久节点不同于顺序节点，不会自动在后面添加一串数字。
 
 #### 2.4.4.读取节点
@@ -193,7 +202,9 @@ ls2 path [watch]
 使用set命令，可以更新指定节点的数据内容，用法：set path data [version]
 
 其中，data是新内容，version是节点数据的版本，如将/zk-permanent节点的数据更新为456，可以使用如下命令：set /zk-permanent 456
+
 ![image](img/zookeeper/media/image21.png)
+
 现在dataVersion已经变为1了，表示进行了更新。
 
 #### 2.4.6.删除节点
