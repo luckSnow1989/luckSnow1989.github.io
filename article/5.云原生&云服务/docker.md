@@ -37,8 +37,7 @@ sort: 1
 3. 联合文件系统（UnionFS）：联合文件系统是Docker实现容器文件系统的轻量级虚拟化技术的关键。联合文件系统允许将多个目录挂载到一个统一的目录下，
 并且这些目录可以叠加在一起，形成一个联合的文件系统。Docker利用联合文件系统，将容器的文件系统与宿主机的文件系统隔离开来，同时实现了容器文件系统的轻量级和高效性。
 
-总结：利用Linux内核的Namespaces实现资源隔离，通过Cgroups实现资源限制，结合UnionFS实现容器文件系统的轻量级虚拟化，
-并通过Docker引擎管理容器的生命周期。
+总结：利用Linux内核的Namespaces实现进程隔离，通过Cgroups实现资源限制，结合UnionFS实现容器文件系统的轻量级虚拟化，并通过Docker引擎管理容器的生命周期。
 
 ### 1.4.与传统虚拟化技术对比
 与传统虚拟化技术相比，它的优势在于：
@@ -452,14 +451,13 @@ docker network create --driver network_type 自定义网络名字
 
 ![image](img/docker/media/image14.png)
 
-
 ### 4.5.docker容器通信
 
-### 4.6.【宿主内】
+#### 4.5.1.【宿主内】通讯
 
 [https://www.cnblogs.com/soymilk2019/p/11553541.html](https://www.cnblogs.com/soymilk2019/p/11553541.html)
 
-#### 4.6.1.【跨主机】基于实现方式的分类
+#### 4.5.2.【跨主机】基于实现方式的分类
 
 - 隧道方案（Overlay Networking）：
     - Weave：UDP广播，本机建立新的BR，通过PCAP互通。
@@ -469,7 +467,7 @@ docker network create --driver network_type 自定义网络名字
     - Calico：基于BGP协议的路由方案，支持很细致的ACL控制，对混合云亲和度比较高。
     - Macvlan：从逻辑和Kernel层来看隔离性和性能最优的方案，基于二层隔离，所以需要二层路由器支持，大多数云服务商不支持，所以混合云上比较难以实现。
 
-#### 4.6.2.【跨主机】基于网络模型分类
+#### 4.5.3.【跨主机】基于网络模型分类
 
 - Docker Libnetwork Container Network Model(CNM)：
     - Docker Swarm overlay
@@ -492,7 +490,7 @@ CNI的优势是兼容其他容器技术(e.g. rkt)及上层编排系统(Kubernere
 
 跃势头迅猛，Kubernetes加上CoreOS主推；缺点是非Docker原生。
 
-#### 4.6.3.【案例】基于macvlan
+#### 4.5.4.【案例】基于macvlan
 
 docker 使用macvlan 实现独立ip，以及跨宿主通讯。定义网络
 
@@ -508,29 +506,34 @@ docker network create -d macvlan
 ## 5.案例
 
 ### 5.1.学习案例
-
 这里以redis为例子
 
-1. 下载redis镜像
+- 下载redis镜像
 ![image](img/docker/media/image15.png)
-2. 查看redis镜像，镜像竟然80MB。
+
+- 查看redis镜像，镜像竟然80MB。
 ![image](img/docker/media/image16.png)
-3. 简单启动 ` docker run --name some-redis -d redis ` 
-4. 添加持久化配置 ` docker run --name some-redis -d redis redis-server --appendonly yes `
-   - 数据默认存储在VOLUME/data目录下, 使用--volumes-from、some-volume-container 或者 -v /docker/host/dir:/data 可实现挂载
-5. 应用需要连接redis
+
+- 简单启动 ` docker run --name some-redis -d redis ` 
+
+- 添加持久化配置 ` docker run --name some-redis -d redis redis-server --appendonly yes `
+- 数据默认存储在VOLUME/data目录下, 使用--volumes-from、some-volume-container 或者 -v /docker/host/dir:/data 可实现挂载 
+
+- 应用需要连接redis
 ```shell
 docker run --name some-app --link some-redis:redis -d redis
 或者
 docker run -it --link some-redis:redis --rm redis redis-cli -h redis -p 6379
 ```
-6. 外部应用访问redis（常用）
+
+- 外部应用访问redis（常用）
 ```shell
 sudo docker run -it -p 192.168.1.40:6379:6379 --name some-redis -d redis
 redis-server --appendonly yes --requirepass pass123
 ```
-7. dockerfile
-如果想使用自己的配置文件启动redis,则在其基础上写一个dockerfile
+
+- dockerfile。如果想使用自己的配置文件启动redis,则在其基础上写一个dockerfile
+
 ```dockerfile
 FROM redis
 COPY redis.conf /usr/local/etc/redis/redis.conf
@@ -541,19 +544,25 @@ CMD [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
 docker run -v /myredis/conf/redis.conf:/usr/local/etc/redis/redis.conf
 --name myredis redis redis-server /usr/local/etc/redis/redis.conf
 ```
-8. 生成镜像，这里我们使用的是阿里云提供的私服
+
+- 生成镜像，这里我们使用的是阿里云提供的私服
+
 ```shell
 sudo docker commit -m "张雪的redis镜像" -a "tb518550_11" 79c761f627f3 tb518550_11/zx-redis:v1 registry.cn-beijing.aliyuncs.com/zx_base_service_img/zx_base_service_img:v1
 ```
+
 如果生成的命名方式不对，需要使用命令重新修改。
+
 ```shell
 docker tag <img_name>:<tag><host>/<project>/<repo>:<tag>
 <img_name>:<tag> 是旧的的镜像名称和tag
 <host>/<project>/<repo> 是下图里面的内容
 最后的<tag>可有可无，默认是latest。这里我们写成v1
 ```
+
 ![image](img/docker/media/image17.png)
-9. Push
+
+- Push镜像
 ```shell
 docker push registry.cn-beijing.aliyuncs.com/zx_base_service_img/zx_base_service_img:v1
 ```

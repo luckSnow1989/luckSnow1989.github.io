@@ -4,6 +4,8 @@ sort: 1
 # k8s
 
 ## 1.介绍
+
+### 1.1.基础
 K8s是由Google发起的CNCF出品的容器编排工具。
 
 服务治理：service mesh概念目前非常新，还在发展中，主要的代表作为istio，linkerd等
@@ -11,17 +13,18 @@ K8s是由Google发起的CNCF出品的容器编排工具。
 - Kubernetes面试题超详细总结：[https://mp.weixin.qq.com/s/1qsLwI_f3KUljx2mi7osAw](https://mp.weixin.qq.com/s/1qsLwI_f3KUljx2mi7osAw)
 - Docker 不香吗，为啥还要 K8s？：[https://mp.weixin.qq.com/s/YGLKTkl7D2baM_VsZiZFww](https://mp.weixin.qq.com/s/YGLKTkl7D2baM_VsZiZFww)
 - 带你快速了解 Docker 和 Kubernetes：[https://mp.weixin.qq.com/s/KLuMQj4y1gaHLCsdTbToDA](https://mp.weixin.qq.com/s/KLuMQj4y1gaHLCsdTbToDA)
+- [springboot + nacos + k8s 优雅停机](https://mp.weixin.qq.com/s/BtnpuA14epZw8XKeRAZICw)
 
-K8s从1.24开始移除了docker。
+### 1.2.被放弃的Docker
 
-> 原因是k8s操作pod，制定了一套CRI标准，而docker并没有实现这套标准且不打算实现。
-> 由于docker出现的早，市场占比大，所有k8s初期为了兼容docker，增加了一层接口的转换。
-> 而现在，k8s的市场已经很大，且已经有很多和docker一样优秀的容器化工具，比如containerd、CRI-O、podman等。
+K8s从1.24开始移除了docker，原因：
+1. k8s为了操作pod，制定了一套CRI标准，而docker并没有实现这套标准且不打算实现。（两家公司对标准的竞争，显然docker输了） 
+2. 由于docker出现的早，市场占比大，所有k8s初期为了兼容docker，增加了一层接口的转换。导致k8s操作docker的性能较差。 
+3. 现在k8s的市场已经很大，且已经有很多和docker一样优秀的容器化工具，比如containerd、CRI-O、podman等。
 
 如今使用k8s正式推荐使用Google自研的podman。
-
-> Podman的定位是从用户使用上完全兼容docker（操作命令与docker一样）
-> Docker的市场已经是昨日黄花。
+- Podman的定位是从用户使用上完全兼容docker（操作命令与docker一样）
+- Docker的市场已经是昨日黄花。
 
 ## 2.Harbor
 
@@ -62,7 +65,6 @@ Harbor支持安装在多个Registry节点的镜像资源复制，镜像全部保
 基本操作
 
 ```shell
-
 # 1.登录
 docker login -u admin -p Harbor12345 192.168.3.101:9010
 

@@ -535,3 +535,21 @@ Closure这一组接口和类提供一个操作对象的execute方法，为我们
 GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
 poolConfig.setLifo(false);
 ```
+
+## Imaging
+Apache Commons Imaging，之前被称为Sanselan，是一个开源的Java图像库，主要用于读取、写入和操作图像数据。
+这个库的强大之处在于它对多种格式的图像文件都有很好的支持，比如JPEG、PNG、GIF、BMP，甚至还包括一些专业的图片格式都能轻松处理，比如TIFF、PSD等。
+
+Imaging是一个纯Java的库，不仅功能强大，而且使用起来非常方便。最重要的是，它的开源特性让咱们可以深入了解其内部工作机制，更好地掌握图像处理的精髓。
+
+```xml
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-imaging</artifactId>
+    <version>1.0.0-alpha5</version>
+</dependency>
+```
+- 官方案例：[https://commons.apache.org/proper/commons-imaging/sampleusage.html](https://commons.apache.org/proper/commons-imaging/sampleusage.html)
+- [一张手机拍摄的照片包含有哪些信息？](https://zhuanlan.zhihu.com/p/672460957)
+- [Apache Commons Imaging处理图像实例深究](https://www.jb51.net/program/310370q1a.htm)
+

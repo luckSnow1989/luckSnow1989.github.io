@@ -1,16 +1,15 @@
-1¡¢°²×°Ç°Ìá£ºCentOS 7.X	ÄÚºË°æ±¾3.1
+1ã€å®‰è£…å‰æï¼šCentOS 7.X	å†…æ ¸ç‰ˆæœ¬3.1
 
-2¡¢²é¿´ÄÚºË°æ±¾uname -r (²é¿´·¢ĞĞ°æ±¾ºÅcat /etc/redhat-release)
+2ã€æŸ¥çœ‹å†…æ ¸ç‰ˆæœ¬uname -r (æŸ¥çœ‹å‘è¡Œç‰ˆæœ¬å·cat /etc/redhat-release)
 
-3¡¢É¾³ıÏµÍ³×Ô´øµÄ¾É°æ±¾docker
+3ã€åˆ é™¤ç³»ç»Ÿè‡ªå¸¦çš„æ—§ç‰ˆæœ¬docker
 yum remove docker-ce && rm -rf /var/lib/docker		
-     
 
-4¡¢yum update		½«yumÉı¼¶ÖÁ×îĞÂ°æ
-(ÆôÓÃrepoÖĞµÄExtrasÔ´£¬Õâ¸ö´æÔÚÓÚCentOS-Base.repoÖĞ£¬Ä¬ÈÏÊÇÆôÓÃµÄ,¿ÉÒÔÊ¹ÓÃyum repolist²é¿´ÊÇ·ñÆôÓÃ)
+4ã€yum update		å°†yumå‡çº§è‡³æœ€æ–°ç‰ˆ
+(å¯ç”¨repoä¸­çš„Extrasæºï¼Œè¿™ä¸ªå­˜åœ¨äºCentOS-Base.repoä¸­ï¼Œé»˜è®¤æ˜¯å¯ç”¨çš„,å¯ä»¥ä½¿ç”¨yum repolistæŸ¥çœ‹æ˜¯å¦å¯ç”¨)
 
-5¡¢Ìí¼Ódocker²Ö¿â(Çå»ª´óÑ§¾µÏñ¿â)
-vim /etc/yum.repos.d/docker.repo,Ìí¼ÓÒÔÏÂÄÚÈİ£º
+5ã€æ·»åŠ dockerä»“åº“(æ¸…åå¤§å­¦é•œåƒåº“)
+vim /etc/yum.repos.d/docker.repo,æ·»åŠ ä»¥ä¸‹å†…å®¹ï¼š
 [dockerrepo]
 name=Docker Repository
 baseurl=https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/centos/7/$basearch/stable
@@ -18,50 +17,50 @@ enabled=1
 gpgcheck=0
 
 ******************************
-½ûÓÃfirewall¡¢iptables¡¢selinux
+ç¦ç”¨firewallã€iptablesã€selinux
 ******************************
 
-6¡¢°²×°docker-ce
+6ã€å®‰è£…docker-ce
 yum -y install docker-ce.x86_64
 
-7¡¢ÔÚ/etc/docker/ÏÂĞÂ½¨ÎÄ¼şdaemon.json²¢Ìí¼ÓÒÔÏÂÄÚÈİ£º(×÷ÓÃ£º¼ÓËÙdocker hubÀ­È¥¾µÏñËÙ¶È)
+7ã€åœ¨/etc/docker/ä¸‹æ–°å»ºæ–‡ä»¶daemon.jsonå¹¶æ·»åŠ ä»¥ä¸‹å†…å®¹ï¼š(ä½œç”¨ï¼šåŠ é€Ÿdocker hubæ‹‰å»é•œåƒé€Ÿåº¦)
 {
 	"registry-mirrors":["https://zq47c6ug.mirror.aliyuncs.com","https://registry.docker-cn.com"]
 }
 
 
-8¡¢Æô¶¯¡¢¿ª»úÆô¶¯¡¢×´Ì¬¼ì²édocker
+8ã€å¯åŠ¨ã€å¼€æœºå¯åŠ¨ã€çŠ¶æ€æ£€æŸ¥docker
 systemctl start docker && systemctl enable docker && systemctl status docker
 
-9¡¢Ö´ĞĞvim /lib/systemd/system/docker.service£¬ĞŞ¸Ä[Service]½ÚµãÏÂÅäÖÃÎª£º(×÷ÓÃ£º¿ÉÒÔ¼àÌı·Ç±¾µØ¿Í»§¶Ë·ÃÎÊ)
+9ã€æ‰§è¡Œvim /lib/systemd/system/docker.serviceï¼Œä¿®æ”¹[Service]èŠ‚ç‚¹ä¸‹é…ç½®ä¸ºï¼š(ä½œç”¨ï¼šå¯ä»¥ç›‘å¬éæœ¬åœ°å®¢æˆ·ç«¯è®¿é—®)
 [Service] 
 ... 
 ExecStart=/usr/bin/dockerd -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375
 ...
 
-10¡¢ÖØÆôdockerÊØ»¤½ø³Ì£º
+10ã€é‡å¯dockerå®ˆæŠ¤è¿›ç¨‹ï¼š
 systemctl daemon-reload  &&  systemctl 	restart docker
 
 ==============================================================================================================
-docker³£ÓÃ»ù´¡ÃüÁî£º
-1¡¢docker version	²é¿´docker°æ±¾
-2¡¢docker images	²é¿´docker¾µÏñ
-3¡¢docker run		ÔËĞĞdocker¾µÏñ
-4¡¢docker ps		²é¿´µ±Ç°ÔËĞĞµÄ¾µÏñ
-5¡¢docker stop		Í£Ö¹ÈİÆ÷
-6¡¢docker exec		Ö´ĞĞÈİÆ÷ÖĞµÄÃüÁî£¬¿ÉÒÔÍ¨¹ıËü½øÈëÈİÆ÷
-7¡¢docker rm		É¾³ıÈİÆ÷
-8¡¢docker rmi		É¾³ı¾µÏñ
-9¡¢docker logs		²é¿´ÈİÆ÷ÈÕÖ¾
-10¡¢docker build	Ê¹ÓÃdockerfile¹¹½¨¾µÏñ
-11¡¢docker search	Ñ°ÕÒ¾µÏñ(Ä¬ÈÏÔÚdocker hub)
-12¡¢docker pull		À­È¡¾µÏñ
-13¡¢docker push		ÍÆËÍ¾µÏñ(ĞèÒªÏÈ½øĞĞµÇÂ¼ÑéÖ¤)
+dockerå¸¸ç”¨åŸºç¡€å‘½ä»¤ï¼š
+1ã€docker version	æŸ¥çœ‹dockerç‰ˆæœ¬
+2ã€docker images	æŸ¥çœ‹dockeré•œåƒ
+3ã€docker run		è¿è¡Œdockeré•œåƒ
+4ã€docker ps		æŸ¥çœ‹å½“å‰è¿è¡Œçš„é•œåƒ
+5ã€docker stop		åœæ­¢å®¹å™¨
+6ã€docker exec		æ‰§è¡Œå®¹å™¨ä¸­çš„å‘½ä»¤ï¼Œå¯ä»¥é€šè¿‡å®ƒè¿›å…¥å®¹å™¨
+7ã€docker rm		åˆ é™¤å®¹å™¨
+8ã€docker rmi		åˆ é™¤é•œåƒ
+9ã€docker logs		æŸ¥çœ‹å®¹å™¨æ—¥å¿—
+10ã€docker build	ä½¿ç”¨dockerfileæ„å»ºé•œåƒ
+11ã€docker search	å¯»æ‰¾é•œåƒ(é»˜è®¤åœ¨docker hub)
+12ã€docker pull		æ‹‰å–é•œåƒ
+13ã€docker push		æ¨é€é•œåƒ(éœ€è¦å…ˆè¿›è¡Œç™»å½•éªŒè¯)
 ===============================================================================================================
-³£ÓÃ¾µÏñ²Ö¿âµØÖ·£º
-1¡¢Docker Hub£ºhttps://hub.docker.com/
-2¡¢°¢ÀïÔÆµØÖ·£ºhttps://account.aliyun.com/	µÇÂ¼ºóµã->¡°²úÆ··ÖÀà¡±->¡°ÔÆ¼ÆËã»ù´¡¡±->¡°ÈİÆ÷¾µÏñ·şÎñ¡±->¡°¹ÜÀí¿ØÖÆÌ¨¡±
-3¡¢YooliË½ÓĞ¾µÏñ²Ö¿â£ºhttps://harbor-master.yooli-me.com  (²âÊÔ²Ö¿âµØÖ·£¬ÓÃ»§Ãû£ºdeploy_test   ÃÜÂë£ºLoFkO73THnV9byQC)
+å¸¸ç”¨é•œåƒä»“åº“åœ°å€ï¼š
+1ã€Docker Hubï¼šhttps://hub.docker.com/
+2ã€é˜¿é‡Œäº‘åœ°å€ï¼šhttps://account.aliyun.com/	ç™»å½•åç‚¹->â€œäº§å“åˆ†ç±»â€->â€œäº‘è®¡ç®—åŸºç¡€â€->â€œå®¹å™¨é•œåƒæœåŠ¡â€->â€œç®¡ç†æ§åˆ¶å°â€
+3ã€Yooliç§æœ‰é•œåƒä»“åº“ï¼šhttps://harbor-master.yooli-me.com  (æµ‹è¯•ä»“åº“åœ°å€ï¼Œç”¨æˆ·åï¼šdeploy_test   å¯†ç ï¼šLoFkO73THnV9byQC)
 
 
 
