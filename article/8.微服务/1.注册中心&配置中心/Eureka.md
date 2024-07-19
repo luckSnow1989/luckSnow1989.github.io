@@ -213,10 +213,10 @@ eureka.server.eviction.interval-timer-in-ms=60000
 1. registry，一级缓存，就是最底层的注册表，实时更新，UI界面的数据来源；
    - 类型：ConcurrentHashMap
    - 实现类：AbstractInstanceRegistry
-2. readWriteCacheMap，二级缓存，实时更新，缓存时间180秒；
+2. ReadWriteCacheMap，二级缓存，实时更新，缓存时间180秒；
    - 类型：Guava Cache（LoadingCache）
    - 实现类：ResponseCacheImpl
-3. readOnlyCacheMap，三级缓存，Eureka Client查询应用的接口读取该数据。默认每30s从二级缓存readWriteCacheMap中同步数据更新；
+3. ReadOnlyCacheMap，三级缓存，Eureka Client查询应用的接口读取该数据。默认每30s从二级缓存readWriteCacheMap中同步数据更新；
    - 类型：ConcurrentHashMap	
    - 实现类：ResponseCacheImpl	
    
@@ -342,6 +342,102 @@ public class DefaultEurekaServerContext implements EurekaServerContext {
 }
 ```
 
+### 3.5.客户端启动
+ 
+客户端启动时，主要是读取配置、注册服务(可以不注册)、启动健康检查、启动定时查询增量注册表任务、启动定时续约心跳任务等。
+
+核心组件：com.netflix.discovery.DiscoveryClient。主要用于与Eureka服务注册中心进行交互，所有的核心逻辑都在这里。
+1. 服务注册（Service Registration）：服务启动时，向Eureka Server注册自己，包括服务的元数据信息（如服务名、IP地址、端口号、健康检查URL等）。
+2. 服务发现（Service Discovery）：服务消费者在调用服务时，会先通过DiscoveryClient向Eureka Server发送查询请求，获取到所有可用的服务提供者（Provider）的地址列表。
+   然后，服务消费者会根据负载均衡策略（如Ribbon），从列表中选择一个服务提供者进行调用。
+3. 健康检查（Health Check）：定期向Eureka Server发送心跳（Heartbeat），实现注册的续约逻辑。
+4. 元数据管理（Metadata Management）：服务的元数据信息（如版本、环境等）会随服务注册时一起提交给Eureka Server，并可以通过DiscoveryClient进行更新。其他服务在发现该服务时，可以通过元数据信息进行路由、负载均衡决策等。
+5. 服务状态变更通知（Service Status Change Notifications）：同时获得服务状态，如果发生变化（如上线、下线、故障等）时，Eureka Server会将这些变更信息推送给所有订阅了该服务状态的客户端。
+
+#### 3.5.1.启动流程
+@EurekaClientEnable 高版本中已经没有作用了。Eureka客户端启动 会自动加载 spring.factories 中的 EurekaClientAutoConfiguration 和 EurekaDiscoveryClientConfiguration。
+
+作用是读取配置文件，创建客户端相关组件。
+1. EurekaClientAutoConfiguration#eurekaInstanceConfigBean()。读取配置文件，将配置封装为 EurekaInstanceConfigBean。
+2. EurekaClientAutoConfiguration#eurekaApplicationInfoManager()。创建客户端应用实例信息管理器 ApplicationInfoManager。
+    - 内部维护 EurekaInstanceConfigBean 和 InstanceInfo等信息。
+    - ApplicationInfoManager实例全局唯一，这也是为什么eureka一个客户端服务，同时只能连接一个eureka server的原因。
+    - 内部维护客户端实例状态，如果状态变更就发送事件 StatusChangeEvent。
+3. EurekaDiscoveryClientConfiguration#discoveryClient。创建客户端实例 EurekaDiscoveryClient。
+   - EurekaDiscoveryClient是spring提供的客户端，功能很少，主要作用是代理netflix提供的DiscoveryClient。
+4. EurekaClientAutoConfiguration#eurekaAutoServiceRegistration。上面4个组件创建完成后，创建自动注册实例EurekaAutoServiceRegistration。
+
+1~4都是创建对象。核心对象是EurekaAutoServiceRegistration，他现了SmartApplicationListener，接收spring两种事件：
+1. WebServerInitializedEvent。web服务初始化完成事件，执行EurekaAutoServiceRegistration#start()
+2. ContextClosedEvent。服务关闭事件，执行EurekaAutoServiceRegistration#stop()。取消注册、发送事件InstanceStatus.DOWN。
+
+EurekaAutoServiceRegistration#start() 调用链：
+-> EurekaServiceRegistry#register
+-> DiscoveryClient#registerHealthCheck 
+-> InstanceInfoReplicator#onDemandUpdate 
+-> InstanceInfoReplicator#run
+
+InstanceInfoReplicator#run是核心逻辑：
+1. 调用discoveryClient.refreshInstanceInfo 刷新实例信息
+2. 调用discoveryClient.register 进行注册
+3. 调用sheduler.shedule 30s后再执行run方法。
+
+#### 3.5.2.健康检查
+
+InstanceInfoReplicator#run中核心逻辑就是监控检查，默认30s执行一次。
+
+为什么要定时检查吗？
+1. 因为本服务的信息可能发生变化，需要定期检查，并重新注册到注册中心上。例如数据中心、服务名称、ip地址、续期相关配置等
+2. 健康检查。检查本服务是否正常，如果存在问题，会自动取消注册信息，防止问题节点被别人调用到。
+
+HealthCheckHandler 提供了两个实现类。
+1. HealthCheckCallbackToHandlerBridge。默认采用。就是判断下本地实例的状态值。
+2. EurekaHealthCheckHandler。如果引入actuator组件会引入配置类，自动注入EurekaHealthCheckHandler。
+
+加载过程：EurekaClientAutoConfiguration自动配置
+```java
+@ConditionalOnClass(Health.class) //org.springframework.boot.actuate.health.Health 
+protected static class EurekaHealthIndicatorConfiguration {
+    @Bean
+    @ConditionalOnEnabledHealthIndicator("eureka")
+    public EurekaHealthIndicator eurekaHealthIndicator(EurekaClient eurekaClient,
+            EurekaInstanceConfig instanceConfig, EurekaClientConfig clientConfig) {
+        return new EurekaHealthIndicator(eurekaClient, instanceConfig, clientConfig);
+    }
+}
+```
+
+EurekaHealthCheckHandler 是springcloud提供的，会从spring中查询所有actuator提供的HealthIndicator实例，
+内置了很多约27个 HealthIndicator（包括：数据库、网络、磁盘等各种检查工具），一旦这些指标出现问题，客户端就会取消注册。
+
+说白了就是使用actuator的监控数据进行判断。
+
+[数据库异常导致eureka注销问题排查](https://segmentfault.com/a/1190000023766801)
+Eureka-client定时通过所有的HealthIndicator的health方法获取对应的健康检查状态，如果有HealthIndicator检测结果为DOWN，
+那Eureka-client就会判定当前服务有问题，是不可用的，就会将自身状态设置为DOWN，并上报给Eureka-server。
+Eureka-server收到信息之后将该节点状态标识为DOWN，这样其他服务就无法从Eureka-server获取到该节点。
+
+#### 3.5.3.服务发现与续约
+
+启动过程中实例化EurekaDiscoveryClient的时候，他是DiscoveryClient的代理对象。
+而spring 将 netflix 提供的 DiscoveryClient 封装为 CloudEurekaClient。保存到EurekaDiscoveryClient中。
+
+DiscoveryClient在实例化的时候，会创建2个定时任务。
+1. HeartbeatExecutor 心跳/续约。 核心类 HeartbeatThread，每30s调用一次DiscoveryClient#renew。
+2. CacheRefreshExecutor 注册表缓存刷新。核心类 CacheRefreshThread，每30s调用一次DiscoveryClient#refreshRegistry。
+   根据条件有全量更新(/eureka/apps/) 和 增量更新(/eureka/apps/delta)两种。
+
+增量更新：
+- /eureka/apps/delta 接口是 Eureka 服务注册与发现框架中的一个重要接口，它主要用于提供服务的增量更新信息。
+- Eureka server 会提供近期注册表发生变化（比如有新的服务实例注册、服务实例下线、服务实例的元数据或状态发生变化等）的增量数据。
+- 这个数据包只包含自上次查询以来发生变化的那些服务实例的信息，而不是整个注册表的完整副本。
+- 目的：这样做的好处是显著减少了数据传输量，尤其是在服务实例数量庞大且频繁变化的场景下，能够有效降低网络带宽的消耗和客户端的处理压力。
+
+全量更新
+- 服务启动时全量更新
+- 如果客户端在一段时间内没有收到任何增量更新，或者由于某种原因（如网络问题）错过了增量更新。
+
+
 
 ## 4.最佳实践
 ### 4.1.注意事项
@@ -418,22 +514,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 }
 ```
 
-### 4.4.健康监测
-
-[数据库异常导致eureka注销问题排查](https://segmentfault.com/a/1190000023766801)
-
-Eureka-client定时通过所有的HealthIndicator的health方法获取对应的健康检查状态，如果有HealthIndicator检测结果为DOWN，
-那Eureka-client就会判定当前服务有问题，是不可用的，就会将自身状态设置为DOWN，并上报给Eureka-server。
-Eureka-server收到信息之后将该节点状态标识为DOWN，这样其他服务就无法从Eureka-server获取到该节点。
-
-### 4.5.实例ID
+### 4.4.实例ID
 
 ```properties
 # 推荐使用ip:port。默认规则 机器hostname:应用名称:端口
 eureka.instance.instance-id = ${spring.cloud.client.ip-address}:${server.port}
 ```
 
-### 4.6.性能优化
+### 4.5.性能优化
 
 eureka是去中心化的，对等星型同步架构，ap模型。所以对于每次变更(注册/心跳续约/状态变更等)都会生成相应的同步任务来用于所有实例数据的同步，
 这样一来同步作业量随着集群规模、实例数正相关同步上涨。 如果集群里注册的服务实例数过万，可能出现CPU占用率、负载都很高，时不时还会发生 Full GC 导致业务抖动。
@@ -442,7 +530,7 @@ eureka是去中心化的，对等星型同步架构，ap模型。所以对于每
 
 eureka官方提到：Eureka 的这种广播复制模型，不仅会导致它自身的架构脆弱性，也影响了集群整体的横向扩展性。
 
-### 4.7.全部配置
+### 4.6.全部配置
 
 ```properties
 ####################################################
@@ -620,22 +708,23 @@ eureka.instance.ip-address=
 eureka.instance.prefer-ip-address=false
 ```
 
-### 4.8.REST API
+### 4.7.REST API
 
-| 操作                      | API                                                                | 描述                                     |
-| --------------------------- | -------------------------------------------------------------------- | ------------------------------------------ |
-| 注册新的已用实例          | POST /eureka/apps/{appId}                                          | 输入json或xml格式的body，成功返回204     |
-| 注销应用实例              | DELETE /eureka/apps/{appId}/{instanceId}                           | 成功返回200                              |
-| 应用实例发送心跳          | PUT /eureka/apps/{appId}/{instanceId}                              | 成功返回200，如果instanceId不存在返回404 |
-| 查询所有实例              | GET /eureka/apps/                                                  | 成功返回200，输出json或xml格式。         |
-| 查询指定appId实例         | GET /eureka/apps/{appId}                                           | 成功返回200，输出json或xml格式。         |
+| 操作                   | API                                                               | 描述                                     |
+|----------------------|-------------------------------------------------------------------| ------------------------------------------ |
+| 注册新的已用实例             | POST /eureka/apps/{appId}                                         | 输入json或xml格式的body，成功返回204     |
+| 注销应用实例               | DELETE /eureka/apps/{appId}/{instanceId}                          | 成功返回200                              |
+| 应用实例发送心跳/续约          | PUT /eureka/apps/{appId}/{instanceId}                             | 成功返回200，如果instanceId不存在返回404 |
+| 查询所有实例               | GET /eureka/apps/                                                 | 成功返回200，输出json或xml格式。         |
+| 查询指定appId实例          | GET /eureka/apps/{appId}                                          | 成功返回200，输出json或xml格式。         |
 | 查询指定appId和instanceId | GET /eureka/apps/{appId}/{instanceId}                             | 成功返回200，输出json或xml格式。         |
-| 查询指定instanceId        | GET /eureka/instances/{instanceId}                                 | 成功返回200，输出json或xml格式。         |
-| 暂停应用实例              | PUT /eureka/apps/{appId}/{instanceId}/status?value=OUT_OF_SERVICE | 成功返回200，失败返回500。               |
-| 恢复应用实例              | DELETE /eureka/apps/{appId}/{instanceId}/status?value=UP          | 成功返回200，失败返回500                 |
+| 查询指定instanceId       | GET /eureka/instances/{instanceId}                                | 成功返回200，输出json或xml格式。         |
+| 暂停应用实例               | PUT /eureka/apps/{appId}/{instanceId}/status?value=OUT_OF_SERVICE | 成功返回200，失败返回500。               |
+| 恢复应用实例               | DELETE /eureka/apps/{appId}/{instanceId}/status?value=UP          | 成功返回200，失败返回500                 |
 | 更新元数据                | PUT /eureka/apps/{appId}/{instanceId}/metadata?key=value          | 成功返回200，失败返回500                 |
-| 根据vip地址查询           | GET /eureka/vips/{appId}/{vipAddress}                             | 成功返回200，输出json或xml格式。         |
-| 根据svip地址查询          | GET /eureka/svips/{appId}/{svipAddress}                           | 成功返回200，输出json或xml格式。         |
+| 根据vip地址查询            | GET /eureka/vips/{appId}/{vipAddress}                             | 成功返回200，输出json或xml格式。         |
+| 根据svip地址查询           | GET /eureka/svips/{appId}/{svipAddress}                           | 成功返回200，输出json或xml格式。         |
+| 增量查询注册表              | GET /eureka/apps/delta                            | 成功返回200，输出json或xml格式。         |
 
 注册实例请求案例 
 - PS：设置请求参数的类型为JSON。否则默认接受XML格式的请求。Accept:application/json
