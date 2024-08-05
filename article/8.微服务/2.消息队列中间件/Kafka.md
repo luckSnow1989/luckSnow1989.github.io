@@ -50,9 +50,10 @@ Kafka  是一种高吞吐量 的分布式发布订阅消息系统，有如下特
 
 以下案例以kafka_2.12-1.0.0进行（该版本支持jdk8） 安装过程：
 
-1. 下载解压。官网下载kafka，http://kafka.apache.org/
+1.下载解压。官网下载kafka，http://kafka.apache.org/
    解压到安装目录下 tar -xcvf
-2. 修改配置文件/usr/local/kafka/config/server.properties，修改如下内容
+
+2.修改配置文件/usr/local/kafka/config/server.properties，修改如下内容
 
 ```properties
 #broker.id属性在kafka集群中必须要是唯一
@@ -69,9 +70,12 @@ log.dir=/usr/local/data/kafka-logs
 zookeeper.connect=localhost:2181
 ```
 
-3. 修改完配置文件即可将整个文件夹传输到其他节点 scp -r 。。。。
-4. 传输完之后修改每个节点的broker.id的编号，递增。
-5. 启动zookeeper
+3.修改完配置文件即可将整个文件夹传输到其他节点 scp -r 。。。。
+
+4.传输完之后修改每个节点的broker.id的编号，递增。
+
+5.启动zookeeper
+
 ```shell
 ## 这边可以使用kafka自带的zookeeper，也可以使用自己安装的zookeeper。
 /app/zookeeper-3.4.6/bin/zkServer.sh start
@@ -80,7 +84,7 @@ zookeeper.connect=localhost:2181
 /app/zookeeper-3.4.6/bin/zkServer.sh status
 ```
 
-6. 常见命令
+6.常见命令
 
 ```shell
 启动kafka：./kafka-server-start.sh /usr/local/kafka/config/server.properties &
@@ -737,9 +741,11 @@ leader 收到的单个批次通常永远不会超过3条消息，那么我们知
 
 https://blog.csdn.net/qq_42616974/article/details/108490518
 
+只能一点点提升一致性，不能100%保障数据一致，而且性能会逐步降低，需要取舍。
+
 - producer 
   - cks=all（或者 request.required.acks=-1），同时发送模式为同步 producer.type=sync
-  - 设置失败重试。如果达到重试上限后，需要自己开发怎么处理。
+  - 设置失败重试。设置重试次数 retries，以及重试时间间隔retry.backoff.ms。如果达到重试上限后，需要自己开发怎么处理。
 - broker。该场景丢失数据主要是在leader挂了导致
   - topic级别，可以针对不同的topic设置不同的副本数量。设置副本数量 replication.factor>=3 
   - min.insync.replicas>=2；分区ISR队列集合中最少有多少个副本，默认值是1，这个值一般设置n/2+1

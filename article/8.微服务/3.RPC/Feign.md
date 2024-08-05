@@ -4,10 +4,11 @@ sort: 2
 # Feign
 
 ## 1.介绍
+
 Spring Cloud OpenFeign 的本质是一种声明式、模板化的HTTP客户端，而不是传统意义上的RPC，它简化了远程调用的编程体验。
 在Spring Cloud中使用OpenFeign，开发者可以像调用本地方法一样使用HTTP请求访问远程服务，而无需感知这是在调用远程方法。
 
-注意：OpenFeign只需要在调用方设置，服务提供方不需要。就是一个高级的http客户端。
+注意：OpenFeign只需要在调用方设置，服务提供方不需要，就是一个高级的http客户端。
 
 在项目启动阶段，OpenFeign 框架会自动的扫包流程，从指定的目录下扫描并加载所有被@FeignClient注解修饰的接口。
 OpenFeign会针对每一个FeignClient接口生成一个动态代理(JDK)对象，这个动态代理对象会被添加到Spring上下文中，并注入到对应的服务里。
@@ -17,12 +18,17 @@ OpenFeign缺点：所以 OpenFeign 只是表面体验好，实际上潜在分险
 2. 如果服务提供方提供@FeignClient代码，又会带来其他问题，例如fallback、config、Encoder、Decoder 等这些无法设置了。
 
 
-Spring Cloud OpenFeign引入后默认使用Ribbon做负载均衡。
+Ribbon是一个开源的、基于HTTP和TCP的客户端负载均衡工具，它提供了一个简单的、基于配置的负载均衡策略，其通过在客户端上运行来选择最佳的服务器。
+Ribbon提供了多种负载均衡策略，如随机、轮询、最少活跃调用等，可以根据实际需求选择合适的策略。
+当客户端连接到服务器后，Ribbon会根据服务器的响应速度、负载情况等因素进行评估，并动态调整选择的服务器。
+这种方式可以实现更灵活的负载均衡，提高系统的可用性和性能。
+
+Spring Cloud OpenFeign引入后默认使用Ribbon做负载均衡。高版本中剔除了ribbon，使用LoadBalancer
 Feign负责接口调用、请求处理等操作，而 Ribbon 负责实现负责均衡，并主动定时向本地缓存的注册表查询服务列表。
 
-## 原理
+## 2.原理
 
-### 启动流程
+### 2.1.启动流程
 
 @EnableFeignClients 注解开启Feign。并 import 配置类 FeignClientsRegistrar。
 
@@ -66,7 +72,7 @@ private void registerFeignClient(BeanDefinitionRegistry registry, AnnotationMeta
 }
 ```
 
-### 代理实例化流程
+### 2.2.代理实例化流程
 FeignClientFactoryBean#getObject 实例化流程
 1. 构建了一个FeignContext上下文。
 2. 构建Feign.Builder对象，实际上创建的是HystrixFeign.Builder
@@ -78,7 +84,7 @@ FeignClientFactoryBean#getObject 实例化流程
 - 将方法和 SynchronousMethodHandler 放到methodToHander中
 - 创建InvocationHandler, JDK创建动态代理
 
-### 接口调用流程
+### 2.3.接口调用流程
 
 - -> 调用代理对象的接口
 - -> FeignCircuitBreakerInvocationHandler 根据方法找到对应的SynchronousMethodHandler
@@ -156,9 +162,9 @@ public Server chooseServer(Object key) {
 }
 ```
 
-## 源码解析
+## 3.源码解析
 
-### NamedContextFactory
+### 3.1.NamedContextFactory
 
 NamedContextFactory的作用：NamedContextFactory 是Spring的子容器工程类，能够为其集合中的每个元素（如服务名称或客户端名称）创建独立的 ApplicationContext（应用上下文）。
 这种机制使得不同的服务或客户端能够拥有完全隔离的 Spring 容器和 Bean 实例，从而避免了不同服务间的配置和 Bean 相互干扰。
@@ -179,7 +185,7 @@ public abstract class NamedContextFactory<C extends NamedContextFactory.Specific
 }
 ```
 
-### 【ribbon】SpringClientFactory
+### 3.2.【ribbon】SpringClientFactory
 
 SpringClientFactory 是 NamedContextFactory 的子类。服务于RibbonClient。
 ```java
@@ -199,7 +205,7 @@ SpringClientFactory的作用：
 2. 向RibbonClient提供基础能力：SpringClientFactory提供了一系列方法，如getClient、getClientConfig、getLoadBalancer等。
 3. 支持动态配置和更新。因此支持对这些客户端进行动态配置和更新。当服务提供方发生变化，只需要变更该客户端的容器，而无需重启整个应用。
 
-#### PropertiesFactory
+#### 3.2.1.PropertiesFactory
 
 PropertiesFactory 全局只有一个，加载的时机是容器启动的时机，通过自动配置类RibbonAutoConfiguration注入到容器中。
 
@@ -252,7 +258,7 @@ public class PropertiesFactory {
 }
 ```
 
-#### RibbonClientConfiguration
+#### 3.2.2.RibbonClientConfiguration
 
 RibbonClientConfiguration是Spring Cloud中用于配置和初始化Ribbon客户端的重要配置类。
 它定义了一系列关键的Bean，以支持Ribbon的各种功能，并允许开发者通过自定义配置来满足特定的业务需求。
@@ -273,7 +279,7 @@ AnnotationConfigApplicationContext
 - 容器内保存的实例信息如下：全是和ribbon客户端相关的。
   ![](img/feign/002bffe2.png)
 
-### 【feign】FeignContext
+### 3.3.【feign】FeignContext
 
 与SpringClientFactory相似，SpringClientFactory 是ribbon的子容器管理类。FeignContext是feign子容器管理类。
 
@@ -287,7 +293,7 @@ public class FeignContext extends NamedContextFactory<FeignClientSpecification> 
 }
 ```
 
-#### FeignClientsConfiguration
+#### 3.3.1.FeignClientsConfiguration
 
 实例化时机：通过 FeignContext 为每个feign代理对象实例化子容器的时候，会去读FeignClientsConfiguration中的定义，
 为每个feign代理对象创建一个AnnotationConfigApplicationContext实例，里面主要的组件如下：
@@ -297,7 +303,7 @@ AnnotationConfigApplicationContext
 - 容器内保存的实例信息如下：全是和feign相关的。
 ![](img/feign/3d952bc3.png)
 
-### 定时更新服务列表
+### 3.3.2.定时更新服务列表
 负载均衡器是 ZoneAwareLoadBalancer，来自RibbonClientConfiguration，当feign接口第一次调用的时候，初始化 ZoneAwareLoadBalancer，并创建规则。
 
 在其被实例化的时候，会创建一个PollingServerListUpdater实例。
@@ -322,7 +328,7 @@ AnnotationConfigApplicationContext
 2024-07-17 16:35:41.350 DEBUG 20660 --- [erListUpdater-1] c.netflix.loadbalancer.BaseLoadBalancer  : LoadBalancer:  PingTask executing [2] servers configured
 ```
 
-## ribbon配置
+## 4.ribbon配置
 
 主要围绕 RibbonClientConfiguration。每个RibbonClient都有一套自己独立的配置。
 
@@ -340,7 +346,7 @@ AnnotationConfigApplicationContext
 3. 调用HttpClient发生请求。
 4. 【异步】IPing后台定时任务，检查服务可用性，并修改ServerList
 
-### 客户端配置
+### 4.1.客户端配置
 
 作用：设置全局的超时时间，以及开启gzip。默认使用DefaultClientConfigImpl，不需要修改
 ```properties
@@ -361,7 +367,7 @@ public IClientConfig ribbonClientConfig() {
 }
 ```
 
-### 负载均衡策略
+### 4.2.负载均衡策略
 
 ribbon内置了7种负载均衡算法
 1. RoundRobinRule。简单轮询服务列表来选择服务器
@@ -395,7 +401,7 @@ public IRule ribbonRule(IClientConfig config) {
 }
 ```
 
-### IPing
+### 4.3.IPing
 
 Ribbon的IPing机制主要用于检查服务节点（即服务实例）的存活状态，以确保负载均衡器只将请求分发给可用的服务实例。
 
@@ -436,7 +442,7 @@ public IPing ribbonPing(IClientConfig config) {
 }
 ```
 
-### ServerList
+### 4.4.ServerList
 
 服务实例列表（ServerList）为负载均衡器（Loadbalancer）提供服务的可用实例列表。
 
@@ -453,7 +459,7 @@ public IPing ribbonPing(IClientConfig config) {
    - 作用：通过Eureka的服务发现机制来实现ServerList。它会自动从Eureka注册中心获取服务实例列表，并根据Eureka的更新来动态地更新服务实例列表。
    - 适用场景：在Spring Cloud微服务架构中，当使用Eureka作为服务注册与发现中心时，DiscoveryEnabledNIWSServerList是首选的ServerList实现。它提供了高度的动态性和灵活性，能够自动地适应服务实例的增减和变化。
 
-### ServerListFilter
+### 4.5.ServerListFilter
 
 服务实例过滤器（ServerListFilter）为负载均衡器（Loadbalancer）提供从服务实例列表（ServerList）获取的服务实例过滤出符合要求的服务实例。
 类似于DNS的就近原则。找到最近的zone中的服务。
@@ -462,7 +468,7 @@ public IPing ribbonPing(IClientConfig config) {
 - ZonePreferenceServerListFilter   首选本地区域服务实例列表过滤器。默认策略，eureka中默认zone=us-east-1
 - ServerListSubsetFilter           服务实例数限制为所有服务实例的子集 筛选过滤器
 
-### ILoadBalancer
+### 4.6.ILoadBalancer
 
 在ribbon中只有一个实现类：ZoneAwareLoadBalancer
 
@@ -483,11 +489,11 @@ public IPing ribbonPing(IClientConfig config) {
    - 作用：ZoneAwareLoadBalancer在基本功能的基础上增加了区域感知（Zone Awareness）的能力。它可以根据服务的区域信息来优化负载均衡决策，比如优先选择与客户端处于同一区域的服务实例。
    - 特点：通过实现更复杂的负载均衡逻辑，如区域优先、服务器过滤等，来提高系统的可用性和性能。
 
-### HttpClient
+### 4.7.HttpClient
 
 ribbon和feign都提供了客户端设置功能，但是feign提供的功能会比较全，并支持连接池。所以推荐设置feign的客户端。
 
-### 饥饿加载
+### 4.8.饥饿加载
 我们在启动服务使用Ribbon发起服务调用的时候往往会出现找不到目标服务的情况，
 这是因为Ribbon在进行客户端负载均衡的时候并不是启动时就创建好的，而是在实际请求的时候才会去创建，
 所以往往我们在发起第一次调用的时候会出现超时导致服务调用失败，我们可以通过设置Ribbon的饥饿加载来改善此情况，
@@ -498,7 +504,7 @@ ribbon.eager-load.enabled=true #开启饥饿加载
 ribbon.eager-load.clients=user-server #针对于哪些服务需要饥饿加载
 ```
 
-### 案例
+### 4.9.案例
 
 ```yaml
 ribbon:
@@ -519,9 +525,9 @@ openfeign-provider:
     NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
 ```
 
-## feign配置
+## 5.feign配置
 
-### 客户端选择
+### 5.1.客户端选择
 
 其实开始ribbon的功能。通过配置 spring-cloud-openfeign-core 中的自动配置类 FeignLoadBalancerAutoConfiguration
 引入了4种可被选择的客户端，通过配置可以开启使用。他们创建的LB客户端都是LoadBalancerFeignClient
@@ -549,7 +555,7 @@ class OkHttpFeignLoadBalancedConfiguration {
 
 在创建feign代理对象的时候，从spring 容器中获得LoadBalancerFeignClient注入到SynchronousMethodHandler中。
 
-### 使用配置配
+### 5.2.使用配置配
 
 可以全局配置或者单个接口配置，也可以使用配置文件。
 
