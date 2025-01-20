@@ -13,18 +13,6 @@
 - [学习参考博客](https://www.liwenzhou.com/posts/Go/golang-menu/)
 - [案例](https://www.cnblogs.com/zhanchenjin/category/2166310.html?page=1)
 
-- (零)入门级日常开发 https://code2life.top/2018/08/01/0028-go-snippets-1 
-- (一)文本处理与编解码 https://code2life.top/2018/07/31/0028-go-snippets-2 
-- (二)数学计算与加解密 https://code2life.top/2018/07/30/0028-go-snippets-3 
-- (三)操作系统与进程操作 https://code2life.top/2018/07/29/0028-go-snippets-4 
-- (四)网络编程基础篇 https://code2life.top/2018/07/28/0028-go-snippets-5 
-- (五)网络编程框架篇 https://code2life.top/2018/07/27/0028-go-snippets-6 
-- (六)远程方法调用 https://code2life.top/2018/07/26/0028-go-snippets-7 
-- (七)数据库访问和操作 https://code2life.top/2018/07/25/0028-go-snippets-8 
-- (八)常用中间件使用 https://code2life.top/2018/07/24/0028-go-snippets-9 
-- (九)日志记录与链路追踪 https://code2life.top/2018/07/23/0028-go-snippets-10
-- (十)多编程语言交互 https://code2life.top/2018/07/22/0028-go-snippets-11
-
 实现原理：
 - Go 语言设计与实现[https://draveness.me/golang/](https://draveness.me/golang/)
 - golang 内存模型[https://go.dev/ref/mem](https://go.dev/ref/mem)
@@ -234,7 +222,7 @@ go build
 # 4.更新依赖项：这将更新您的依赖项到最新版本。
 go get -u
 
-# 5. 删除项目中未使用的依赖项
+# 5. 删除项目中未使用的依赖项（用go mod tidy 处理冲突的包）
 go mod tidy
 
 # 6. 这将列出所有当前使用的依赖项及其版本信息
@@ -445,6 +433,11 @@ go-torch -u http://localhost:6060 -t 30
 ### 7.4.内存泄漏排查
 - [golang 内存泄漏分析案例](https://www.cnblogs.com/zhanchenjin/p/17101573.html)
 - [golang 内存泄漏总结](https://www.cnblogs.com/zhanchenjin/p/17098100.html)
+
+### 7.5.监控
+
+golang提供的监控和性能分析工具，远不能提供全方面的监控能力，所以需要结合第三方工具实现。方式如下：
+1. SDK：嵌入到
 
 ## 8.内存模型与分配机制
 
@@ -681,7 +674,6 @@ type mheap struct {
 - 使用sync.Pool复用对象，避免重复生产销毁对象。
 - 尽量让chan传递较小的对象，所有chan传递的对象都会分配到堆上。
 
-
 ## 9.垃圾回收
 
 golang是高级计算机语言，可以自动实现heap的自动垃圾回收。
@@ -806,14 +798,18 @@ golang的垃圾回收器没有名字。通过下面分析，golang的GC发展也
 GOGC 决定了 GC CPU 和内存之间的权衡。不可能两边兼顾。
 
 1. 参数调优只有一个参数：GOGC。垃圾回收器的触发阈值，当已分配的内存达到 Target heap memory 的一定百分比时，垃圾回收将被触发，默认值是100。也就是100%
-2. runtime/debug 包 提供了一些设置gc的参数。
+2. Go 的 runtime/debug 包提供了一些用于调试、诊断和管理 Go 程序的功能。允许开发者控制内存管理、运行时参数以及获取当前运行时的一些状态信息
 ```golang
 package main
 
-import "runtime/debug"
+import (
+	"fmt"
+	"runtime"
+	"runtime/debug"
+)
 
 func main() {
-	// gc 频率 30s 一次
+	// 设置gc频率： 30s 一次
 	debug.SetGCPercent(30)
 
 	// 强制gc 将尽可能多的内存返回给操作系统
@@ -822,9 +818,14 @@ func main() {
 	// 设置最大堆大小, 2G
 	debug.SetMaxStack(1024 * 1024 * 2)
 
-	// 设置最大线程数
+	// 设置最大线程数：控制并发执行的最大 OS 线程数，主要用于限制并发线程的数量。
 	debug.SetMaxThreads(12)
+
+	//控制 Go 可以并行使用的最大逻辑处理器数量(不是物理核)，影响 goroutines 的调度和并行执行。
+	runtime.GOMAXPROCS(runtime.NumCPU())
+	fmt.Println("cpu num:", runtime.NumCPU())
 }
+
 ```
 
 ### 9.5.查看gc日志

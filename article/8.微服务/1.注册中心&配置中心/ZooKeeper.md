@@ -1,7 +1,7 @@
 ---
 sort: 2
 ---
-# zookeeper
+# ZooKeeper
 
 - 官方：[https://zookeeper.apache.org/](https://zookeeper.apache.org/)
 - 源码：[https://github.com/apache/zookeeper](https://github.com/apache/zookeeper)
@@ -1243,24 +1243,35 @@ autoRequeue()方法使放弃Leadership的Listener有机会重新获得Leadership
 
 ### 10.1.四字母监控
 
+[官网详细说明](https://zookeeper.apache.org/doc/r3.9.3/zookeeperAdmin.html#sc_zkCommands)
+
 ZooKeeper内置了一系列简短却实用的四字母命令，这些命令可通过TCP客户端连接ZooKeeper的服务端口（默认为2181）进行发送，从而实现对ZooKeeper服务器的基本监控与诊断。
 开发者们可以利用诸如telnet或nc（netcat）等工具与ZooKeeper进行交互，执行这些命令以获取服务器的关键状态信息。
 
+同样的，也可以使用内置的Jetty服务执行四字监控。例如： http://localhost:8080/commands/stat
+
 以下列举了几种常见的四字母命令及其功能：
+- conf 命令：用于输出ZooKeeper服务器当前所应用的配置详情，帮助运维人员确认配置是否符合预期。
+- cons ：列出连接到此服务器的所有客户端的完整连接/会话详细信息。包括接收/发送的数据包数量、会话id、操作延迟、上次执行的操作等信息。
+- crst:重置所有连接的连接/会话统计信息。
+- dump：列出未完成的会话和临时节点。
+- envi：打印服务环境的详细信息
 - stat 命令：用于揭示ZooKeeper服务的基本状态参数，包括当前的连接数、活跃会话数、节点总量等重要数据。
 - ruok 命令：用于检测ZooKeeper服务是否处于正常的运行状态，若服务运转正常，ZooKeeper将返回字符串“imok”。
-- conf 命令：用于输出ZooKeeper服务器当前所应用的配置详情，帮助运维人员确认配置是否符合预期。
 - srvr 命令：提供更为详尽的服务器状态报告，涵盖了更多有关ZooKeeper服务器内部状态的细节信息。
+- srst：重置服务器统计信息。
 - wchs 命令：展示ZooKeeper中当前已注册Watcher的整体数量。
 - wchc 命令：列举出所有已被客户端观察的ZooKeeper节点及其对应的路径。
-- wchp 命令：展示每个被观察节点的路径与其关联的Watcher数量。
+- wchp 命令：展示每个被观察节点的路径与其关联的Watcher数量。 
+- dirs:以字节为单位显示快照和日志文件的总大小 
+- mntr:输出可用于监视集群健康状况的变量列表。
 
-默认浙西指令都是关闭的，如果想要使用，需要修改zoo.cfg
+默认指令都是关闭的，如果想要使用，需要修改zoo.cfg
 ```properties
-4lw.commands.whitelist=stat,ruok,conf,srvr,wchs,wchc,wchp
+4lw.commands.whitelist=conf,cons,crst,dump,envi,stat,ruok,srvr,srst,wchs,wchc,wchp,dirs,mntr
 ```
 
-### 10.1.监控服务
+### 10.2.监控服务
 
 v3.5.0 引入内置 Jetty（AdminServer），该服务器提供了一个 HTTP 接口，用于执行四字命令。
 跟随zk服务一起启动，访问地址：http://localhost:8080/commands/
@@ -1321,6 +1332,8 @@ metricsProvider.exportJvmInfo=true
 
 ## 11.最佳实践
 
+<p style="color: red">ZooKeeper 避坑实践：如何调优 jute.maxbuffer</p>
+
 [ZooKeeper 避坑实践：如何调优 jute.maxbuffer](https://mp.weixin.qq.com/s/3xOvCWQanU5zBXX-atwrzg)
 
 客户端可以创建ephemeral 类型的zonde，当客户端session关闭时，这些被创建的ephemeral znode也会被删除。
@@ -1340,12 +1353,16 @@ CloseSessionTxn底层也是继承了BinaryInputArchive，这个类在序列化�
 3. jute.maxbuffer 不建议修改。容易出现非预期的问题。
 
 
+<p style="color: red">Zxid溢出导致选主</p>
 [Zxid溢出导致选主](https://mp.weixin.qq.com/s/NrIItUCGR5MCYTPK1MzmJQ)
 
 zxid 是64位，下32位是计数器，当事务超过32位（即0xffffffff）的时候，就会占用上32位，导致epoch被加一，zxid的机制就被破坏了。
 所以zk中如果发生溢出，会触发集群的强制选主过程，并重置zxid的低32位为0。
+
 解决方案:设置监控，leader中最新zxid中低32位的值预警后强制重启。
 
+
+<p style="color: red">ZooKeeper 3.6.4 版本 BUG 导致的数据不一致问题</p>
 
 [ZooKeeper 3.6.4 版本 BUG 导致的数据不一致问题](https://mp.weixin.qq.com/s/bhq9EMqPPYuNQYdXdsekog)
 注意不要将zk磁盘打满，使用过程要注意经常清理不使用的数据。最重要的是不要将zk集群当做大型存储。
@@ -1357,6 +1374,11 @@ zxid 是64位，下32位是计数器，当事务超过32位（即0xffffffff）�
 2. ZooKeeper 还提供了对 SASL（简单认证和安全层）身份认证模式的支持，该模式通过简单的服务器和客户端配置就能实现基于用户名和密码的认证机制。
    [ZooKeeper and SASL](https://cwiki.apache.org/confluence/display/ZOOKEEPER/ZooKeeper+and+SASL)
 3. ZooKeeper提供了SSL机制。 [ZooKeeper SSL User Guide](https://cwiki.apache.org/confluence/display/ZOOKEEPER/ZooKeeper+SSL+User+Guide)
+
+<p style="color: red">Zookeeper集群运维“避坑”指南</p>
+
+[Zookeeper集群运维“避坑”指南](https://zhuanlan.zhihu.com/p/48292507)
+
 
 ## 11.面试题
 

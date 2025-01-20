@@ -774,7 +774,7 @@ try_files是nginx中http_core核心模块所带的指令，主要是能替代一
 总结：当前服务器上文件不存在时，会进行反向代理
 ```
 
-### 5.4.tcp连接
+### 5.4.tcp参数优化
 
 [长连接优化](https://blog.51cto.com/u_15715098/5711234)
 
@@ -857,14 +857,16 @@ location / {
 2. TCP最大连接数【最大并发数】       echo 20000 > /proc/sys/net/core/somaxconn
 3. 不做TCP洪水抵御                net.ipv4.tcp_syncookies=0
 二、nginx设置
-1. worker_rlimit_nofile 文件打开数量，与ulimit -n一致
-2. worker_processes  子进程数量，保持与CPU核数一致
+1. worker_rlimit_nofile     文件打开数量，与ulimit -n一致
+2. worker_processes         子进程数量，保持与CPU核数一致
 3. worker_connections=20480     指定单个工作进程的最大并发连接数，所有工作进程的连接数之和需小于系统的最大句柄打开数ulimit -n
 	1).在作为反向代理时，根据经验值，预估最大连接数=worker_processes*worker_connections/4，各系统可参考此公式评估单机Nginx的最大承载并发
 	2).在作为http服务时，根据经验值，预估最大连接数=worker_processes*worker_connections/2，各系统可参考此公式评估单机Nginx的最大承载并发    
 4. 如果是后端服务器的nginx。禁止 keepalive_timeout，可以有效降低句柄占用数量
 5. use epoll。强制使用epool
 6. multi_accept on。 允许批量接收数据
+7. sendfile on。     开启零拷贝函数。sendfile_max_chunk  1m; 设置最大分片大小为1MB。
+8. listen 443 ssl http2;  启用HTTPS并启用HTTP/2协议支持功能。
 
 # 压测基本性能
 ab -c 10000 -n 150000 http://127.0.0.1/index.html    
@@ -872,12 +874,34 @@ ab -c 10000 -n 150000 http://127.0.0.1/index.html
 
 ### 5.6.配置热更新
 
-reload 并不是热更新，而是重启所有的worker进程。重启时会引起流量抖动，对长连接影响尤为明显。在网关的集群规模非常大时，更是不能随意的做 reload。
+reload 并不是热更新，而是关闭旧worker进程后启动新worker进程。过程中会引起流量抖动，对长连接影响尤为明显。在网关的集群规模非常大时，更是不能随意的做 reload。
 
 现在已经有很多主流应用选择采用长连接，HTTP 1.1 一般默认会使用 Keep-Alive 去保持长连接，后续 HTTP 2 以及 HTTP 3 也是如此，
 随着网络协议的发展，未来使用长连接会变得更加普遍。而配置热更新天然对长连接非常友好。
 
 如何解决这点呢？一是采用两层网关，即流量网关 + 业务网关；二是实现网关原生支持配置热更新
+
+### 5.7.缓存优化
+
+1.配置浏览器缓存时间。通过设置HTTP响应头中的Expires和Cache-Control字段，可以控制浏览器缓存的时间。
+
+```shell
+location ~* \.(jpg|jpeg|gif|png|css|js)$ {
+    add_header Cache-Control "public, max-age=31536000"; # 设置静态资源的缓存时间为1年（单位：秒）
+}
+```
+
+2.配置代理服务器缓存时间。如果Nginx作为反向代理服务器使用，可以通过设置proxy_cache_valid和proxy_cache_valid指令来控制代理服务器的缓存时间。
+
+```shell
+location / {
+    proxy_pass http://backend; # 将请求转发到后端服务器
+    proxy_cache mycache; # 启用缓存，命名为mycache
+    proxy_cache_valid 200 302 60m; # 设置缓存有效时间为60分钟（单位：秒）
+    proxy_cache_valid 404 1m; # 设置缓存有效时间为1分钟（单位：秒）
+}
+```
+
 
 ## 6.原理
 
@@ -935,3 +959,10 @@ events {
 
 总结：先启动新worker再关闭老worker来保证服务不中断的。新worker启动后就可以接受新连接，而老worker只有在处理完当前连接后再结束。
 本质就是TCP状态变化，但是什么是“处理完当前连接”，因为TCP数据交互没有明确的结束点，所以在TCP进入CLOSE_WAIT状态，等待后端响应。
+
+## 7.常见问题
+
+<p style="color: red">1. nginx被人诟病问题有什么？</p>
+
+1.  nginx转发到后端服务的时候，会缓存tcp到连接池中。通常nginx会启动多个worker进程，这时每个worker中都会产生连接池。
+导致连接复用率不高。当worker数量非常大的时候，不仅造成资源的浪费，也会增加创建连接的耗时，降低服务的吞吐量。

@@ -11,6 +11,9 @@ sort: 2
 - 基础介绍：[https://mp.weixin.qq.com/s/uX2058WQmZbfzDQFvM7w5A](https://mp.weixin.qq.com/s/uX2058WQmZbfzDQFvM7w5A)
 - MQ 消息丢失、重复、积压问题，如何解决[https://mp.weixin.qq.com/s/ZuDbrDf9pWKXy3QJjxOJeQ](https://mp.weixin.qq.com/s/ZuDbrDf9pWKXy3QJjxOJeQ)
 - RocketMQ 在小米的多场景灾备实践案例[https://mp.weixin.qq.com/s/85W-O18pcVKxvFGejFh90Q](https://mp.weixin.qq.com/s/85W-O18pcVKxvFGejFh90Q)
+- RocketMQ 5.0 快速入门 [https://blog.csdn.net/m0_46357847/article/details/131797149](https://blog.csdn.net/m0_46357847/article/details/131797149)
+
+
 ### 1.1.什么是rocketmq
 RcoketMQ 是一款低延迟、高可靠、可伸缩、易于使用的消息中间件。具有以下特性：
 - 支持发布/订阅（Pub/Sub）和点对点（P2P）消息模型

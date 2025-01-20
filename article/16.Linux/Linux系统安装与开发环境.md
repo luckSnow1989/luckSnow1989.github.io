@@ -462,11 +462,10 @@ ExecStart=/usr/bin/x11vnc -auth guess -forever -noxdamage -repeat -rfbauth  /etc
 [Install]
 WantedBy=multi-user.target  
 
-6. 配置好service之后还需要手动启动下，或者重启操作系统，这里我们选择手动启动。
+6. 配置好service之后还需要手动启动下【之后必须重启操作系统】
     sudo systemctl daemon-reload
     sudo systemctl enable x11vnc.service
     sudo systemctl start x11vnc.service
-
 
 7. 启动之后去看下状态，如果美有报错就是成功了，可以使用软件测试了。查看状态不需要sudo权限，普通权限就行了。
 
@@ -496,7 +495,7 @@ systemctl status x11vnc
 8. 远程访问
 在window上。下载vnc client 即可访问。
 ```
-<p style="color: red">远程服务器黑屏：有时间服务器是没有显示器的，所以显卡没有任何的输出，也就没有桌面，vnc等远程软件都没办法使用。</p>
+<p style="color: red">远程服务器黑屏：远程服务器是没有显示器的，所以显卡没有任何的输出，也就没有桌面，vnc等远程软件都没办法使用。</p>
 
 [ubuntu18.04服务器配置VNC解决去掉显示器之后黑屏大鼠标问题](https://blog.csdn.net/weixin_43878078/article/details/121754786)
 

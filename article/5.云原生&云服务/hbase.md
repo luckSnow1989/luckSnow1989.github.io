@@ -8,10 +8,14 @@ sort: 1
 Hbase安装完全分布式（1个master，3个regionserver）
 
 ### 1.1.下载
-url:http://archive.apache.org/dist/hbase/
+
+[http://archive.apache.org/dist/hbase/](http://archive.apache.org/dist/hbase/)
 
 HBase版本：0.90.5版本对应Hadoop版本：0.20.2
 
+[windows安装HBase](https://blog.51cto.com/u_16213689/8620624)
+
+[使用Docker安装HBase，并使用Java api连接详解](https://blog.csdn.net/wxy198/article/details/139470225)
 
 ### 1.2.解压缩HBase安装文件
 ```shell
