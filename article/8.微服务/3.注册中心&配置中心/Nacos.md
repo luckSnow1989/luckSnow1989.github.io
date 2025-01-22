@@ -16,6 +16,28 @@ sort: 4
 - 源码：[https://github.com/alibaba/nacos](https://github.com/alibaba/nacos)
 - 官方书籍：[https://developer.aliyun.com/ebook/36](https://developer.aliyun.com/ebook/36)
 
+- [nacos专题](https://www.jianshu.com/c/a43af0cc4698?order_by=added_at)
+- Nacos 实现原理详细讲解：[https://mp.weixin.qq.com/s/xk-1m5UVuwrObfoYwpi_DQ](https://mp.weixin.qq.com/s/xk-1m5UVuwrObfoYwpi_DQ)
+- 实现原理：[https://mp.weixin.qq.com/s/nbNEYn5YwK3rVo8CX4rb8A](https://mp.weixin.qq.com/s/nbNEYn5YwK3rVo8CX4rb8A)
+
+### 1.2.Nacos与Eureka
+
+- [https://blog.csdn.net/fly910905/article/details/100023415](https://blog.csdn.net/fly910905/article/details/100023415)
+- [https://www.cnblogs.com/skj0330insn/p/12057416.html](https://www.cnblogs.com/skj0330insn/p/12057416.html)
+- [https://blog.csdn.net/xc123_java/article/details/90200189](https://blog.csdn.net/xc123_java/article/details/90200189)
+
+相比eureka的对等星型同步AP模型，nacos虽然也保留了这种模型，自研的AP模型Distro协议，nacos对所有服务实例进行分片，
+将服务实例均匀分配到不同的server进行续约和数据同步（内部使用grpc维护），降低了整个集群的压力。
+
+总所周知：eureka在服务实例较大时，会产生较高的延迟。默认配置下最大可能产生180s的延迟，即使优化配置，也会产生几十秒的延迟。
+而nacos在2.0版本中，使用了grpc长连接，极大的降低了延迟，数据变更毫秒级推送生效；
+- 1w 级，SLA 承诺 1w 实例上下线 1s，99.9% 推送完成；
+- 10w 级，SLA 承诺 1w 实例上下线 3s，99.9% 推送完成；
+- 100w 级别，SLA 承诺 1w 实例上下线 9s 99.9% 推送完成。
+
+3节点集群支持的规模：十万级服务/配置，百万级连接。且具备很好的横向扩展的能力。
+例如：eureka、zk等注册中心，在性能达到瓶颈时，横向扩展并不会提升整体集群的性能，甚至会带来额外的性能损耗。
+
 ### 1.2.架构设计
 
 ![](img/nacos/2164c20a.png)
@@ -170,6 +192,7 @@ DataId尽可能的设置成能够明显的区分出项目和具体的配置类�
 
 ## 3.配置中心原理
 
+### 3.1.工作流程
 Nacos 并不是通过推的方式将服务端最新的配置信息发送给客户端的，而是客户端维护了一个长轮询的任务，
 定时去nacos拉取发生变更的配置信息，然后将最新的数据推送给 Listener 的持有者，也就是客户端。
 其中有个MD5值就是用来校验服务端的值是否与客户端的一直。
@@ -192,6 +215,8 @@ Nacos 并不是通过推的方式将服务端最新的配置信息发送给客�
      http进行数据通讯的，之所以有“推”的感觉，是因为服务端主动将变更后的数据通过 http 的 response 对象提前写入了。
 - nacos 2.x：SDK 与 服务端建立GRPC长连接，当配置变更后主动推送配置到SDK。
 [支持gRPC长链接，深度解读Nacos2.0架构设计及新模型](https://baijiahao.baidu.com/s?id=1688267648806940996&wfr=spider&for=pc)
+
+### 3.2.动态刷新配置 
 
 ## 4.注册中心原理
 
@@ -346,7 +371,6 @@ nacos同时支持AP和CP两种模型，所以需要对于的一致性算法支�
    - 永久节点：Nacos优先保证一致性，采用CP模型。
 2. 配置中心：采用的CP模型
 
-
 ### 5.2.Distro
 
 Distro 协议是 Nacos 社区自研的一种 AP 分布式协议，是面向临时实例设计的一种分布式协议，其保证了在某些 Nacos 节点宕机后，整个临时实例处理系统依旧可以正常工作。
@@ -383,13 +407,7 @@ Nacos的CP实现是基于Raft算法来实现的。
    任意一个节点写入数据后，先持久化到数据库，然后再通知其他节点从数据库拉取最新的配置，并通知客户端拉取最新配置。
 2. SDK与节点间：为了保证配置中心的高可用，并未采用raft算法，而是通过对比MD5来实现，如果不一致SDK就拉取节点中的最新配置。
 
-## 6.原理
-
-- [nacos专题](https://www.jianshu.com/c/a43af0cc4698?order_by=added_at)
-- Nacos 实现原理详细讲解：[https://mp.weixin.qq.com/s/xk-1m5UVuwrObfoYwpi_DQ](https://mp.weixin.qq.com/s/xk-1m5UVuwrObfoYwpi_DQ)
-- 实现原理教材：[https://mp.weixin.qq.com/s/nbNEYn5YwK3rVo8CX4rb8A](https://mp.weixin.qq.com/s/nbNEYn5YwK3rVo8CX4rb8A)
-
-### 6.1.通讯通道
+### 5.4.通讯通道
 
 Nacos 1.x 版本 Config/Naming 模块各自的推送通道都是按照自己的设计模型来实现的。
 
@@ -407,19 +425,114 @@ Nacos 2.x 版本，Config/Naming 都采用了 gRPC 作为通讯通道。可以�
 1. 低成本的服务快速感知。
 2. 网络防抖。合理的重试机制，通过逐步递增的重试时间，以期待服务恢复。
 
-## Nacos与Eureka
+## 6.最佳实践
 
-- [https://blog.csdn.net/fly910905/article/details/100023415](https://blog.csdn.net/fly910905/article/details/100023415)
-- [https://www.cnblogs.com/skj0330insn/p/12057416.html](https://www.cnblogs.com/skj0330insn/p/12057416.html)
-- [https://blog.csdn.net/xc123_java/article/details/90200189](https://blog.csdn.net/xc123_java/article/details/90200189)
+官方最佳实践[https://nacos.io/blog/case-cmdb/](https://nacos.io/blog/case-cmdb/)
 
-相比eureka的对等星型同步AP模型，nacos虽然也保留了这种模型，自研的AP模型Distro协议，nacos对所有服务实例进行分片，
-将服务实例均匀分配到不同的server进行续约和数据同步（内部使用grpc维护），降低了整个集群的压力。
+### 6.1.NacosSync
 
-总所周知：eureka在服务实例较大时，会产生较高的延迟。默认配置下最大可能产生180s的延迟，即使优化配置，也会产生几十秒的延迟。
-而nacos在2.0版本中，使用了grpc长连接，极大的降低了延迟，数据变更毫秒级推送生效；
-- 1w 级，SLA 承诺 1w 实例上下线 1s，99.9% 推送完成；
-- 10w 级，SLA 承诺 1w 实例上下线 3s，99.9% 推送完成；
-- 100w 级别，SLA 承诺 1w 实例上下线 9s 99.9% 推送完成。
+NacosSync 是⼀个支持多种注册中心的同步组件。可以单独部署，支持nacos与其他注册中心相互同步数据。
+这里支持的服务类型
 
-3节点集群支持的规模：十万级服务/配置，百万级连接
+目前已支持的同步类型：
+- Nacos 数据同步到 Nacos
+- Nacos 数据同步到 Zookeeper：同步dubbo服务
+- Zookeeper 数据同步到 Nacos：同步dubbo服务
+- Eureka 数据同步到 Nacos：同步spring cloud服务。Eureka本身存储的服务信息非常少。
+- Consul 数据同步到 Nacos
+
+### 6.2.插件机制
+
+案例：https://github.com/nacos-group/nacos-examples/tree/master/nacos-cmdb-plugin-example
+
+Nacos从2.1.0版本开始，支持通过SPI的方式注入鉴权相关插件，并在nacos的application.properties配置文件中选择某一种插件实现。
+
+插件单独开发完成后，打包为jar放入到nacos根目录下的plugins中（需要手动创建）
+
+1. 鉴权插件。Nacos自带的弱鉴权体系，默认不开启，允许用户自定义实现，将鉴权信息主要抽象为身份信息，资源和操作类型3类。
+2. 配置信息加密。Nacos 默认提供 AES 的实现。用户也可以自定义加解密的实现方式。
+3. 轨迹追踪。Nacos 的轨迹主要目的是追踪和记录一些Nacos的相关操作，如服务注册、注销、推送、状态变更等，并非追踪微服务间的相互访问链路。
+   插件中订阅并处理追踪事件，并按照您期望的方式进行处理（如打日志，写入存储等）。
+4. 自定义环境变量处理器。自定义配置处理。例如nacos的数据库密码配置文件中是加密的，需要启动时进行解密。
+5. 反脆弱。对访问服务端的某种资源的频率和次数达到一定程度时进行的限制访问的策略，用于保护服务端在高压情况下能快速拒绝请求，防止过多的资源访问导致服务端资源耗尽引起的大面积不可用。
+6. 配置变更监听。当配置中心中的配置发生变更的时候，能够接收到变更事件，从而通知一些特定系统，用于发送记录、警告等审计功能
+
+### 6.3.就近访问
+
+在服务进行多机房或者多地域部署时，跨地域的服务访问往往延迟较高，⼀个城市内的机房间的典型网络延迟在 1ms 左右，而跨城市的网络延迟，例如上海到北京大概为 30ms 。
+此时自然而然的⼀个想法就是能不能让服务消费者和服务提供者进行同地域访问。
+
+为了实现就近访问，Nacos提供的一系列SPI帮助企业进行扩展。
+1. CMDB：在服务发现组件中，对接 CMDB，然后通过配置的访问规则，来实现服务消费者到服务提供者的同地域优先。
+2. Selector：拿到 CMDB 的数据之后，就可以运用 CMDB 数据的强大威力来实现多种灵活的负载均衡策略了
+
+#### 6.3.1.CMDB
+
+CMDB 在企业中，⼀般用于存放与机器设备、应用、服务等相关的元数据。⼀般当企业的机器及应用达到⼀定规模后就需要这样⼀个系统来存储和管理它们的元数据。
+有⼀些广泛使用的属性例如机器的 IP、主机名、机房、应用、region 等，这些数据⼀般会在机器部署时录入到 CMDB，
+运维或者监控平台会使用这些数据进行展示或者相关的运维操作。其中重要的概念如下：
+
+1. 实体（Entity）：CMDB核心数据，⼀个实体可以指⼀个 IP、应用或者服务。而这个实体会有很多属性，例如 IP 的机房信息，服务的版本信息等。 
+2. 实体类型（Entity Type）：Entity中的一个属性，用于设置实体是 IP、应用或者服务，针对服务发现的实体类型是 IP。 
+3. 标签（Label）：Entity中的一个属性，用于描述 Entity 属性的 K-V 键值对，用于Selector实现负载均衡。
+   ⼀个常见的 Label 的例子是 IP 的机房信息，机房（site）是 Label 的 key，而机房的集合（site1, site2, site3）是 Label 的value，
+   这个 Label 的定义就是：site: {site1, site2, site3}。 
+4. 实体事件（Entity Event）：实体的标签的变更事件。当 CMDB 的实体属性发生变化，需要有⼀个事件机制来通知所有订阅方。
+   为了保证实体事件携带的变更信息是最新准确的，这个事件里只会包含变更的实体的标识以及变更事件的类型，不会包含变更的标签的值。
+
+对接cmdb需要实现nacos提供的spi:CmdbService，接口主要的方法如下:
+- getLabelNames()
+  - 描述：获取存储在CMDB中的所有标签名。
+  - 返回值：一个包含字符串的Set集合，每个字符串代表一个标签名。
+- getEntityTypes()
+  - 描述：获取CMDB中所有可能的实体类型。
+  - 返回值：一个包含字符串的Set集合，每个字符串代表一个实体类型。
+- getLabel(String labelName)
+  - 描述：根据标签名获取标签信息。
+  - 参数：labelName - 目标标签的名称。
+  - 返回值：一个Label对象，包含标签的详细信息。
+- getLabelValue(String entityName, String entityType, String labelName)
+  - 描述：根据实体名、实体类型和标签名获取标签值。
+  - 参数：
+    - entityName - 实体的名称。
+    - entityType - 实体的类型。
+    - labelName - 目标标签的名称。
+  - 返回值：一个字符串，表示标签的值。
+- getLabelValues(String entityName, String entityType)
+  - 描述：根据实体名和实体类型获取该实体的所有标签值。
+  - 参数：
+    - entityName - 实体的名称。
+    - entityType - 实体的类型。
+  - 返回值：一个Map，键为标签名，值为对应的标签值。
+- getAllEntities()
+  - 描述：导出CMDB中的所有实体。
+  - 返回值：一个Map，外层键为实体类型，内层键为实体名，值为Entity对象，代表具体的实体。
+- getEntityEvents(long timestamp)
+  - 描述：查询大于这段时间发现的cmdb变化。
+  - 参数：timestamp - 生成事件的开始时间。
+  - 返回值：一个List，包含EntityEvent对象，每个对象代表一个实体事件。
+- getEntity(String entityName, String entityType)
+  - 描述：根据实体名和实体类型获取单个实体。
+  - 参数：
+    - entityName - 实体的名称。
+    - entityType - 实体的类型。
+  - 返回值：一个Entity对象，代表具体的实体。
+
+nacos修改配置，加载插件开关。application.properties
+```properties
+nacos.cmdb.loadDataAtStart=true
+```
+
+#### 6.3.2.Selector
+Selector是对于CMDB数据进行的负载均衡策略。一般不需要实现。而是在管理后台的页面中配置相关的策略即可。
+
+![](img/nacos/4a75161c.png)
+
+表达式：
+```properties
+1. 左右两边依次是生产者与消费者。固定格式
+2. 过滤的条件类型为：label。目前仅支持label，后续会支持cluster、health、enable等。
+3. 便签的名称。例如beijing
+CONSUMER.label.labelName = PROVIDER.label.labelName
+```
+

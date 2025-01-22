@@ -35,9 +35,10 @@ sort: 2
 
 zk作为早期应用Paxos协议的中间件，实现了CAP中的CP，被许多中间件使用（hadoop、kafka、dubbo等），但是也存在一些缺点导致一些中间件逐渐放弃使用它。
 
-1. 选举时间长。由于故障导致的选举，期间服务不可用，且时间较长。
-2. 写入性能差。虽然zk是基于内存的框架，但是需要和大多数节点达成共识，写入时完全依赖于全局的zxid，事务提交采用2PC，导致性能较差。
-3. 非典型场景，例如大事务、zxid溢出各种异常容易出现重新选主、选主无法成功等问题，导致服务不可用。
+1. 选举时间长。崩溃恢复的期间服务不可用，且时间较长。3.6.0增加了多服务器模式，每个节点可以设置一个备用节点，当服务异常后，可以切换到备用节点，尽可能避免选举。
+2. 写入性能差。虽然zk是基于内存的框架，但是每次写操作都需要和大多数节点达成共识，写入时完全依赖于全局的zxid，事务提交采用2PC，导致性能较差。
+3. 非典型场景。例如大事务、zxid溢出各种异常容易出现重新选主、选主无法成功等问题，导致服务不可用。
+4. 集群扩展性差。通常3、5个节点的集群。在继续增加节点并不会显著的提升性能。3.6.0版本增加了灾备节点。
 
 当前大部分场景需要的是可用性，AP模型更适合作为注册中心。作为其他分布式技术的协调工具也逐步被raft协议的工具所代替。
 
@@ -250,40 +251,25 @@ get /FirstZnode 1
 所以下列内容无效:“/a/b/./ c”或“c/a/b/../”。
 5. “zookeeper”是保留节点名，禁止创建。
 
-### 2.7.zoo.cfg配置信息
+### 2.6.zoo.cfg
 
 [官方配置说明](https://zookeeper.apache.org/doc/r3.9.2/zookeeperReconfig.html)
-- **tickTime**：zk节点之间或客户端与zk节点之间维持心跳的时间间隔。单位毫秒
-- **dataDir**：zk持久化保存数据的目录，默认情况下，Zookeeper将 事务日志 与 数据快照 都保存在这个目录里。
-- **dataLogDir**：zk保存 事务日志 的目录，可以单独设置事务日志目录。
-- **clientPort**：zk启动后会监听这个端口，接受客户端的访问请求。
-- **maxClientCnxns**：最大连接数，默认60。
-- **initLimit**：集群中的follower与leader之间 初始连接 时能容忍的最多心跳数（tickTime的数量），默认10
-- **syncLimit**：集群中的follower与leader之间 请求和应答 之间能容忍的最多心跳数（tickTime的数量），默认5
-- **server.A=B:C:D:E** ：集群配置
-  - A 是一个数字，表示这个是第几号服务器；例如server.1=192.168.3.11:
-  - B 是本服务的 ip 地址；
-  - C 与集群中的 Leader 服务器交换信息的端口；
-  - D 选举投票使用的端口。
-  - E 节点角色。目前有两种participant，参与投票和读写。observer不参与投票，只参与读写。
-- **autopurge.purgeInterval**：清理频率，单位是小时，默认是0，表示不开启自己清理功能。
-- **autopurge.snapRetainCount**：和上面的参数搭配使用，这个参数指定了需要保留的文件数目。默认是保留3个。
 
-配置案例
 ```properties
 # 服务器之间或客户端与服务器之间维持心跳的时间间隔，毫秒单位。
 tickTime=2000
 
-# 集群中的follower服务器(F)与leader服务器(L)之间的初始连接心跳数
+# initLimit：集群中的follower与leader之间 初始连接 时能容忍的最多心跳数（tickTime的数量），默认10次。
+# 大于10次就连接初始化超时。通常如果集群保存的数据量太大时，容易超时。可以适当增加。
 initLimit=10
 
-#集群中的follower服务器与leader服务器之间请求和应答之间能容忍的最多心跳数
+# 集群中的follower与leader之间 请求和应答 之间能容忍的最多心跳数（tickTime的数量），默认5次
 syncLimit=5
 
-# 快照保存目录：不要设置为/tmp，该目录重新启动后会被自动清除
+# 持久化数据的目录，保存 事务日志 与 数据快照。默认是/tmp，该目录重新启动后会被自动清除
 dataDir=D:/java/zookeeper-cluster/zookeeper-3.4.9-node1/dataDir
 
-# 日志保存目录
+# 保存 事务日志 的目录，可以单独设置事务日志目录。默认是dataDir
 dataLogDir=D:/java/zookeeper-cluster/zookeeper-3.4.9-node1/dataLogDir
 
 # 客户端连接端口
@@ -293,20 +279,26 @@ clientPort=2181
 # 生成快照文件的事务阈值
 snapCount=100
 
-# 客户端最大连接数。
-# 根据自己实际情况设置，默认为60个
-# maxClientCnxns=60
+# 客户端最大连接数。根据自己实际情况设置，默认为60个
+maxClientCnxns=60
 
-# 三个接点配置，格式为：server.服务编号=服务地址、LF通信端口、选举端口
+# 集群配置，格式为:server.num=A:B:C:D;E
+#   num 是一个数字，表示这个是第几号服务器；例如server.1
+#   A 服务的 ip 地址
+#   B 与集群中的 Leader 服务器交换信息的端口；
+#   C 选举投票使用的端口。
+#   D 节点角色。目前有两种：participant=参与投票和读写；observer=不参与投票，只参与读写。
+#   E 分号后面，可以设置客户端的ip和端口。默认不用配置。可以只配置端口，也可以ip和端口一起设置。
 server.1=127.0.0.1:2881:3881
 server.2=127.0.0.1:2882:3882
 server.3=127.0.0.1:2883:3883
+server.4=127.0.0.1:2884:3884:observer
 
-# 保留最近20个事务日志和快照，默认关闭该功能
-autopurge.snapRetainCount=20
-
-# 保留近24个小时内事务日志和快照，默认关闭该功能
+# 清理频率，单位是小时，默认是0，表示关闭自动清理功能。以下为保留近24个小时内事务日志和快照
 autopurge.purgeInterval=24
+
+# 保留日志数量，默认关闭该功能。和上面的参数搭配使用，保留最近20个事务日志和快照。
+autopurge.snapRetainCount=20
 
 # v3.5.0 新增的配置
 # 1. 单机运行模式标识，默认true。false表示分布式集群。
@@ -317,10 +309,10 @@ reconfigEnabled=true
 # 3. 可以动态修改的成员配置。也是server.A的格式
 dynamicConfigFile=/zookeeper/conf/zoo.cfg.dynamic
 
-# v3.6.0 新增的配置
+# v3.6.0 新增的配置方式。
 # 1. 指定多个服务器地址。设置多个服务为集群节点1，有助于提高可用性并为 ZooKeeper 增加网络级弹性。
-# 当节点故障后能够立刻切换到另一个节点。
-server.1=ip1:2888:3888|ip2:2888:3888;2181
+# ip2作为ip1的热备节点，当节点故障后能够立刻切换到另一个节点。提升节点的可用性，提升扩展能力。
+server.1=ip1:2888:3888|ip2:2888:3888:2181
 ```
 
 ## 3.集群部署
@@ -419,8 +411,10 @@ reconfig -remove 4
 ```
 
 ### 3.7.Zookeeper迁移方案
-- [Zookeeper 冷迁移方案](https://cloud.tencent.com/document/product/1364/90470)
-- [Zookeeper 热迁移方案【平滑迁移方案】](https://cloud.tencent.com/document/product/1364/86145)
+
+- 停服迁移，复制日志即可。[Zookeeper 冷迁移方案](https://cloud.tencent.com/document/product/1364/90470)
+- 依赖于公有云的功能。   [Zookeeper 热迁移方案【平滑迁移方案】](https://cloud.tencent.com/document/product/1364/86145)
+
 所有迁移方案，都需要zk修改配置重启服务。
 
 ## 4.基本概念
@@ -429,13 +423,25 @@ reconfig -remove 4
 
 ### 4.1.底层数据结构
 
-#### 4.1.1.DataTree
+#### 4.1.1.ZKDatabase
 
-DataTree是zk内存数据结构的核心。一个DataTree对象表示一个完成的数据结构。
+zk本质是内存型数据库，ZKDatabase就是zk的数据库核心，用于管理zk所有会话、DataTree存储、事务日志等。
+同时负责向磁盘序列化快照文件，以及在启动的时候通过事务日志与快照文件恢复zk全部的内存数据库
 
-#### 4.1.2.DataNode
+![image](img/zookeeper/media/image28.png)
 
-- DataNode是数据存储的最小单元。DataTree存储的数据主要就是DataNode。同时提供了对子节点操作的接口。
+其中FileTxnSnapLog提供了操作数据文件的接口
+
+![image](img/zookeeper/media/image29.png)
+
+
+#### 4.1.2.DataTree
+
+DataTree是zk内存数据结构的核心。一个zk中只有一个DataTree对象。
+
+#### 4.1.3.DataNode
+
+DataNode是数据存储的最小单元。DataTree存储的数据主要就是DataNode。同时提供了对子节点操作的接口。
 - DataNode parent: 父节点的对象引用
 - byte data[]：节点数据的字节数组。
 - Long acl：Datatree的ReferenceCountedACLCache中使用Map<Long, List<ACL>>缓存着所有DataNode的权限列表，
@@ -466,17 +472,6 @@ dataVersion：该节点数据被修改的次数
 dataLength：该节点数据长度
 numChildren：子节点数
 ```
-
-#### 4.1.3.ZKDatabase
-
-zk本质是内存型数据库，ZKDatabase就是zk的数据库核心，用于管理zk所有会话、DataTree存储、事务日志等。
-同时负责向磁盘序列化快照文件，以及在启动的时候通过事务日志与快照文件恢复zk全部的内存数据库
-
-![image](img/zookeeper/media/image28.png)
-
-其中FileTxnSnapLog提供了操作数据文件的接口
-
-![image](img/zookeeper/media/image29.png)
 
 ### 4.2.znode状态
 文件系统：Zookeeper维护一个类似文件系统的数据结构
@@ -588,25 +583,41 @@ zxid 下32位是计数器，当超过32位（即0xffffffff）的时候，就会�
 - 在zoo.cfg文件中，根据server id，配置了每个server的ip和相应端口。
   Zookeeper启动的时候，读取myid文件中的server id，然后去zoo.cfg 中查找对应的配置
 
-## 5.日志
+## 5.日志(介绍zk工具)
 
-### 5.2.事务日志
-
-#### 5.2.1.文件存储
-
-事务日志保存在dataDir目录下。我们也可以为事务日志单独存储在一个目录下：dataLogDir。
+事务日志和快照日志都保存在dataDir目录下。也可以为事务日志单独存储在一个目录下：dataLogDir。
 
 在日志的目录下，zk会创建一个version-2的目录。这个目录用来确认当前事务日志格式的版本号。
 当zk的事务日志的格式发生变化的时候，会自动生成version-3、version-4、version-5等目录。
-这些目录下的会跟着生成一些列大小一致的文件（64M）。
+目前只有version-2一种目录。
 
-#### 5.2.2.查看日志文件
+```shell
+D:\java\zookeeper-3.9.2\dataDir\version-2
+log.1               ## 事务日志，大小一致都是64MB
+log.2               ## 事务日志，大小一致都是64MB
+log.3               ## 事务日志，大小一致都是64MB
+snapshot.0          ## 快照，跟数据量有关
+snapshot.1          ## 快照，跟数据量有关
+snapshot.2          ## 快照，跟数据量有关
+```
 
-使用zk自带的工具查看日志: org.apache.zookeeper.server.LogFormatter
+### 5.1.事务日志
 
-使用方式：java -classpath zookeeper-3.4.9.jar;lib/* org.apache.zookeeper.server.LogFormatter ./dataDir/version-2/log.1
+#### 5.1.1.文件存储
 
-完成如下操作
+每个日志文件都以64MB风格，名称格式为log.version。version是日志的版本号。
+
+#### 5.1.2.查看日志文件
+
+使用方式：
+```shell
+3.5.0 版本以下：
+    java -classpath zookeeper-3.4.9.jar;lib/* org.apache.zookeeper.server.LogFormatter ./dataDir/version-2/log.1
+3.5.0 版本以上：
+    bash zkTxnLogToolkit.sh ../dataDir/version-2/log.1
+```
+
+完成如下操作:
 ```shell
 create /test_log v1
 set /test_log v2
@@ -615,7 +626,6 @@ delete /test_log/c
 ```
 
 可以看到如下日志:
-
 ```shell
 D:\java\zookeeper-3.4.9>java -classpath zookeeper-3.4.9.jar;lib/* org.apache.zookeeper.server.LogFormatter ./dataDir/version-2/log.5
 ZooKeeper Transactional Log File with dbid 0 txnlog format version 2
@@ -641,7 +651,7 @@ ZooKeeper Transactional Log File with dbid 0 txnlog format version 2
 EOF reached after 5 txns.
 ```
 
-#### 5.2.3.事务日志写入
+#### 5.1.3.事务日志写入
 
 FileTxnLog负责维护事务日志对外的接口，包括事务日志的写入和读取等。Zookeeper的事务日志写入过程大体可以分为如下6个步骤。
 1. 确定是否有事务日志可写：当Zookeeper服务器启动完成需要进行一次事务日志的写入，或是上一次事务日志写满时，都会处于与事务日志文件断开的状态。
@@ -653,31 +663,91 @@ FileTxnLog负责维护事务日志对外的接口，包括事务日志的写入�
 5. 写入事务日志文件流：将序列化后的事务头、事务体和Checksum写入文件流中，此时并为写入到磁盘上。
 6. 事务日志刷入磁盘：由于步骤5中的缓存原因，无法实时地写入磁盘文件中，因此需要将缓存数据强制刷入磁盘。
 
-#### 5.2.4.日志截断（异常日志处理）
+#### 5.1.4.日志截断（异常日志处理）
 
 在Zookeeper运行过程中，可能出现非Leader记录的事务ID比Leader上大，这是非法运行状态。
 此时，需要保证所有机器必须与该Leader的数据保持同步，即Leader会发送TRUNC命令给该机器，要求进行日志截断，follower收到该命令后，就会删除所有包含或大于该事务ID的事务日志文件。
 
-### 5.3.数据快照
+### 5.2.数据快照
 
 数据快照是Zookeeper数据存储中非常核心的运行机制，数据快照用来记录Zookeeper服务器上某一时刻的全量内存数据内容，并将其写入指定的磁盘文件中。
 
-#### 5.3.1.文件存储
+#### 5.2.1.文件存储
 
-与事务文件类似，Zookeeper快照文件也可以指定特定磁盘目录，通过dataDir属性来配置。
-若指定dataDir为/home/admin/zkData/zk_data，则在运行过程中会在该目录下创建version-2的目录，该目录确定了当前Zookeeper使用的快照数据格式版本号。
+名称格式为 snapshot.version。version是日志的版本号。
 
 生成快照文件的触发条件
 1. 事务日志记录次数达到设定值，snapCount参数控制两次快照间事务的次数阈值，默认10W
 2. 新Leader选举。新leader会生成快照文件
 
-#### 5.3.2.查看日志
+#### 5.2.2.查看日志
 
-使用zk自带的工具查看日志:  org.apache.zookeeper.server.SnapshotFormatter
+使用方式：
+```shell
+3.5.0 版本以下：
+    java -classpath zookeeper-3.4.9.jar;lib/*  org.apache.zookeeper.server.SnapshotFormatter ./dataDir/version-2/snapshot.501154259
+3.5.0 版本以上：
+    zkSnapShotToolkit.cmd ../dataDir/version-2/snapshot.0
+```
 
-使用方式：java -classpath zookeeper-3.4.9.jar;lib/*  org.apache.zookeeper.server.SnapshotFormatter ./dataDir/version-2/snapshot.501154259
+日志如下：
+```shell
+ZNode Details (count=5):
+----
+/
+  cZxid = 0x00000000000000
+  ctime = Thu Jan 01 08:00:00 CST 1970
+  mZxid = 0x00000000000000
+  mtime = Thu Jan 01 08:00:00 CST 1970
+  pZxid = 0x00000000000000
+  cversion = 0
+  dataVersion = 0
+  aclVersion = 0
+  ephemeralOwner = 0x00000000000000
+  dataLength = 0
+----
+/zookeeper
+  cZxid = 0x00000000000000
+  ctime = Thu Jan 01 08:00:00 CST 1970
+  mZxid = 0x00000000000000
+  mtime = Thu Jan 01 08:00:00 CST 1970
+  pZxid = 0x00000000000000
+  cversion = 0
+  dataVersion = 0
+  aclVersion = 0
+  ephemeralOwner = 0x00000000000000
+  dataLength = 0
+----
+/zookeeper/config
+  cZxid = 0x00000000000000
+  ctime = Thu Jan 01 08:00:00 CST 1970
+  mZxid = 0x00000000000000
+  mtime = Thu Jan 01 08:00:00 CST 1970
+  pZxid = 0x00000000000000
+  cversion = 0
+  dataVersion = 0
+  aclVersion = -1
+  ephemeralOwner = 0x00000000000000
+  dataLength = 0
+----
+/zookeeper/quota
+  cZxid = 0x00000000000000
+  ctime = Thu Jan 01 08:00:00 CST 1970
+  mZxid = 0x00000000000000
+  mtime = Thu Jan 01 08:00:00 CST 1970
+  pZxid = 0x00000000000000
+  cversion = 0
+  dataVersion = 0
+  aclVersion = 0
+  ephemeralOwner = 0x00000000000000
+  dataLength = 0
+----
+Session Details (sid, timeout, ephemeralCount):
+----
+Last zxid: 0x0
+```
 
-#### 5.3.3.数据快照
+#### 5.2.3.数据快照
 
 FileSnap负责维护快照数据对外的接口，包括快照数据的写入和读取等，将内存数据库写入快照数据文件其实是一个序列化过程。
 针对客户端的每一次事务操作，Zookeeper都会将他们记录到事务日志中，同时也会将数据变更应用到内存数据库中。
@@ -689,9 +759,21 @@ Zookeeper在进行若干次事务日志记录后，将内存数据库的全量�
 5. 生成快照数据文件名：Zookeeper根据当前已经提交的最大ZXID来生成数据快照文件名。
 6. 数据序列化：首先序列化文件头信息，然后再对会话信息和DataTree分别进行序列化，同时生成一个Checksum，一并写入快照数据文件中去
 
-### 5.4.系统日志
+### 5.3.日志自动清理
 
-配置实现自动清理日志：[https://blog.csdn.net/reblue520/article/details/52311314](https://blog.csdn.net/reblue520/article/details/52311314)
+提供自动清除日志的功能
+```properties
+# 清理频率，单位是小时，默认是0，表示关闭自动清理功能。以下为保留近24个小时内事务日志和快照
+autopurge.purgeInterval=24
+
+# 保留日志数量，默认关闭该功能。和上面的参数搭配使用，保留最近20个事务日志和快照。
+autopurge.snapRetainCount=20
+```
+
+### 5.4.其他工具
+
+1. zkSnapshotRecursiveSummaryToolkit：递归收集并显示选定节点的子节点数量和数据大小
+2. zkSnapshotComparer：它加载并比较两个具有可配置阈值和各种过滤器的快照，并输出有关增量的信息。
 
 ## 6.应用
 
@@ -827,12 +909,12 @@ Session的生命周期
 服务端分桶策略：为了有效的管理所有的session，服务端会根据每个Session的下次超时时间点（TickTime）将Session分配到不同的桶中。
 zk服务端内部进行超时检测时，服务端只需要扫描对应桶中的Session即可，大大提高了检测效率。
 
-客户端连接策略：客户端根据配置随机一个索引值 n (0<=n<节点数量)并阈值创建连接，如果连接中断或异常，则尝试连接索引是 n+1 的节点。
+客户端连接策略：客户端根据配置随机一个索引值 n (0<=n<节点数量)并开始建立连接，如果连接中断或异常，则尝试连接索引是 n+1 的节点。
 如果n+1大于节点数量，则重置为0。一直轮询着尝试连接，直到成功为止。
 
 ### 7.2.角色与状态
 
-Zk集群中有四种角色：在集群中，每个节点有且只能有一个角色。
+Zk集群中有三种角色：在集群中，每个节点有且只能有一个角色。
 - leader：负责处理客户端的写请求，发起并维护与各 Follwer 及 Observer 间的心跳
 - follower：连接客户端，处理读请求，负责将写请求转发到leader，并接收leader的决议（写请求），参与选举投票。
 - Observer：与follower一样，但是不参与选举，只是为了扩展系统，提升读取速度。
@@ -1378,7 +1460,6 @@ zxid 是64位，下32位是计数器，当事务超过32位（即0xffffffff）�
 <p style="color: red">Zookeeper集群运维“避坑”指南</p>
 
 [Zookeeper集群运维“避坑”指南](https://zhuanlan.zhihu.com/p/48292507)
-
 
 ## 11.面试题
 

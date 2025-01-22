@@ -1,7 +1,7 @@
 ---
-sort: 2
+sort: 8
 ---
-# 2.消息队列中间件
+# 8.负载均衡
 
 {% include list.liquid all=true %}
 

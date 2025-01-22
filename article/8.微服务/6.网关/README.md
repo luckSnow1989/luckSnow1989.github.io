@@ -1,7 +1,7 @@
 ---
 sort: 6
 ---
-# 6.链路追踪
+# 6.网关
 
 {% include list.liquid all=true %}
 

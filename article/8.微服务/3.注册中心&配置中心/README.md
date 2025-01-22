@@ -1,7 +1,7 @@
 ---
-sort: 4
+sort: 3
 ---
-# 4.网关
+# 3.注册中心&配置中心
 
 {% include list.liquid all=true %}
 
