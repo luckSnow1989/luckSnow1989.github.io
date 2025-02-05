@@ -30,7 +30,7 @@ Eureka 是Netflix开发的服务发现组件，使用REST提供服务。Spring C
 Eureka就是一个高可用、易于使用、扩展性强、配置灵活以及自我保护机制的注册表，没有使用任何共识算法（通过点对点同步实现），简单易于理解。
 非常适合，小型微服务架构、跨地域（内置region和zone概念）等场景。
 
-## 2.集群
+## 2.安装使用
 
 ### 2.1.集群架构
 
@@ -87,8 +87,7 @@ Eureka就是一个高可用、易于使用、扩展性强、配置灵活以及�
 
 简单来说，eureka为了保证高可用，只能实现数据的最终一致性（弱一致性，短时间内会出现数据不一致的问题）
 
-
-### 2.3.高可用方案
+### 2.3.高可用
 
 常用的高可用方案有两个
 1. 单数据中心内部，启动多个eureka实例，实例之间相互注册，实现集群搭建。
@@ -175,374 +174,7 @@ eureka.client.service-url.zone-3=http://ip7/eureka/,http://ip8/eureka/,http://ip
 eureka.instance.metadata-map.zone=zone-2
 ```
 
-### 2.4.自我保护机制
-
-#### 2.4.1.自我保护条件
-- 自我保护的条件： 一般情况下， 微服务在Eureka上注册后， 会每30秒发送心跳包，Eureka通过心跳来判断服务是否健康， 同时会定期删除超过90秒没有发送心跳服务。
-- 触发阀值：Eureka Server 在运行期间，会统计心跳失败的比例在 15 分钟内是否低于 85%这种算法叫做 Eureka Server 的自我保护模式
-
-Eureka Server收不到微服务的心跳：
-- 微服务自身的原因
-- 大规模服务上下线。
-- 网络故障，通常(微服务的自身的故障关闭)只会导致个别服务出现故障， 一般不会出现大面积故障， 而(网络故障)通常会导致Eureka Server在短时间内无法收到大批心跳。
-
-考虑到这个区别，Eureka设置了一个阀值， 当判断挂掉的服务的数量超过阀值时，Eureka Server 认为很大程度上出现了网络故障， 将不再删除心跳过期的服务。
-
-#### 2.4.2.为什么需要自我保护
-- 因为同时保留好数据与坏数据总比丢掉任何数据要更好， 当网络故障恢复后，这个 Eureka节点会退出自我保护模式。
-- Eureka还有客户端缓存功能(也就是微服务的缓存功能)。 即便 Eureka 集群中所有节点都宕机失效， 微服务的 Provider 和 Consumer都能正常通信。
-- 微服务的负载均衡策略会自动剔除死亡的微服务节点
-
-#### 2.4.3.关闭自我保护
-
-```properties
-#关闭自我保护:true 为开启自我保护， false 为关闭自我保护
-eureka.server.enableSelfPreservation=false
-
-## 自我保护触发的阈值，可以适当修改      
-eureka.server.renewal-percent-threshold: 0.85
-
-#清理间隔(从服务列表删除无用服务的时间间隔，单位:毫秒， 默认是 60*1000)
-eureka.server.eviction.interval-timer-in-ms=60000
-```
-
-#### 2.4.4.开启建议
-
-注册应用数量非常小，不建议开启。例如注册服务本身就3个，服务重启就会进入保护模式。
-
-## 3.原理
-
-### 3.1.客户端负载及故障转移
-
-[如何实现客户端请求负载及故障转移](https://mp.weixin.qq.com/s/LUx6nZASaRQMU8k3ufJtYQ)
-
-1. 客户端负载。应用启动时以应用ip作为随机因子，随机打乱eureka的顺序，并连接第一个节点。
-2. 故障转移。当出现节点异常时，也是异常访问重试2次任然失败后，依次连线列表中的eureka，实现故障的转移。
-
-### 3.2.三级缓存机制
-
-- [Eureka的缓存机制/三级缓存](https://blog.csdn.net/Saintmm/article/details/122335819)
-- [eureka延迟优化](https://www.cnblogs.com/ilovejaney/p/16356672.html)
-
-1. registry，一级缓存，就是最底层的注册表，实时更新，UI界面的数据来源；
-   - 类型：ConcurrentHashMap
-   - 实现类：AbstractInstanceRegistry
-2. ReadWriteCacheMap，二级缓存，实时更新，缓存时间180秒；
-   - 类型：Guava Cache（LoadingCache）
-   - 实现类：ResponseCacheImpl
-3. ReadOnlyCacheMap，三级缓存，Eureka Client查询应用的接口读取该数据。默认每30s从二级缓存readWriteCacheMap中同步数据更新；
-   - 类型：ConcurrentHashMap	
-   - 实现类：ResponseCacheImpl	
-   
-![](img/eureka/5bc2fca3.png)
-
-<p style="color: red">为什么使用三级缓存？</p>
-
-eureka作为注册中心，注册应用实例数量可以到达10~30K。这个量级的实例注册和查询，会导致 registry 频繁的锁竞争，降低服务性能。
-所以采用了类似于读取分离的设计。
-
-<p style="color: red">如果优化客户端发现延迟？</p>
-
-Eureka服务发现的速度其实是比较慢的，这也是ap模型的通病。
-
-延迟计算：通过上图可知，客户端获得实例变化存在延迟，极端情况可能是： 30(客户端拉取) +  30(二级缓存更新) = 60s。
-如果被调用方没有使用平滑升级，则可能是：30(客户端拉取) +  30(二级缓存更新) + 60 * 2(两次主动清除下线90没有心跳的应用)= 180s。
-
-服务端优化
-1. eureka.server.useReadOnlyResponseCache。是否使用三级缓存，可以关闭，让客户端直接读取readWriteCacheMap。
-2. eureka.server.responseCacheUpdateIntervalMs。三级缓存更新时间，默认30s，可以降低到10s。
-3. eureka.server.eviction-interval-timer-in-ms。清除失效服务的间隔时间，默认60s，可以降低到10s。
-
-客户端优化：
-1. eureka.client.registry-fetch-interval-seconds。从eureka服务器注册表中获取注册信息的时间间隔（s），默认为30秒，可以降低到10s。
-
-除此之外还有非常多的参数都可以进行优化，但是要根据自身情况，并且无论进行怎么优化，延迟都是存在的。
-
-### 3.3.数据同步机制
-
-[Eureka服务端集群数据同步原理](https://blog.csdn.net/guyue35/article/details/122442587)
-
-集群节点之间数据一致性是通过节点之间数据同步来实现的，数据同步采用的是Acceptor - Worker 模式的消息广播机制来完成的，整个过程大致就是：
-1. 某个节点收到客户端的消息（注册、心跳、下线、状态变更等）后，刷新本地注册信息（这里调用已经返回成功，下面步骤采用异步的方式进行）；
-2. 遍历所有的节点（会排除自己），将消息转发到其他节点；
-
-<p style="color: red">数据同步方式？</p>
-
-分为全量同步与增量同步。全量同步为客户端第一次启动时进行的，增量同步为运行过程中进行的。
-
-![](img/eureka/b507ecd3.png)
-
-过程：
-1. 先从一级缓存中获取
-    - 先判断是否开启了一级缓存
-    - 如果开启了则从一级缓存中获取，如果存在则返回，如果没有，则从二级缓存中获取
-    - 如果未开启，则跳过一级缓存，从二级缓存中获取
-2. 再从二级缓存中获取
-    - 如果二级缓存中存在，则直接返回；
-    - 如果二级缓存中不存在，则先将数据加载到二级缓存中，再从二级缓存中获取。
-3. 注意加载时需要判断是增量同步还是全量同步，
-    - 增量同步从recentlyChangedQueue中load
-    - 全量同步从registry中load。
-
-<p style="color: red">如何避免死循环？</p>
-假如：客户端对服务端A进行了下线操作，服务端A将操作同步到B、C、D其他3个服务端，当服务端B接收到同步过来的下线请求后，
-会不会再将该操作又同步到其他的服务端，从而使同步陷入死循环呢？
-
-答案是不会，Eureka会区分正常的客户端请求与服务端发起的数据同步请求，对于任何服务端发起的数据同步请求，Eureka不会再进行其他同步操作，从而避免数据同步出现死循环。
-
-具体的做法是Eureka在http请求头中加入特殊的标识，用来区分正常的客户端请求与数据同步请求。
-
-
-<p style="color: red">如何解决数据冲突？</p>
-
-1. 使用版本号解决数据冲突。一般我们给数据加一个版本号就行，如时间戳，只要有任何数据更新操作，就更新时间戳，最后更新数据的时间戳最大，
-   也就是最新的数据，上面讲Eureka中注册表中时间信息就是做此用途的。
-2. 客户端主动通过拉取服务端注册表数据，如果发现与本地数据存在冲突，则让有冲突的客户端从新执行注册操作
-
-### 3.4.服务启动
-
-使用@EnableEurekaServer作为标记。
-```java
-@Import(EurekaServerMarkerConfiguration.class)
-public @interface EnableEurekaServer {  }
-```
-
-springboot启动的时候，加载注解，发现了@import一个类EurekaServerMarkerConfiguration。
-```java
-public class EurekaServerMarkerConfiguration {
-	@Bean
-	public Marker eurekaServerMarkerBean() {
-		return new Marker();
-	}
-	class Marker { }
-}
-```
-
-我们发现这里只是创建了一个Marker对象。通过阅读注释发现，springcloud eureka使用spring.factories中有个自动配置类。
-启动条件为存在Marker的对象。这是一个spring config类，在spring启动过程会调用相关方法。
-```java
-@Import(EurekaServerInitializerConfiguration.class)
-@ConditionalOnBean(EurekaServerMarkerConfiguration.Marker.class)
-public class EurekaServerAutoConfiguration implements WebMvcConfigurer {   }
-```
-
-这个过程中会使用@Bean实例化很多个对象。这些了都似乎eureka本身的类。
-1. PeerAwareInstanceRegistry。eureka的注册表对象的实例
-2. PeerEurekaNodes。管理Eureka Server集群中的节点信息，确保节点之间能够相互复制数据。
-3. EurekaServerContext。维护 Eureka Server 启动的上下文信息，主要工作时启动服务
-4. EurekaServerBootstrap。负责初始化Eureka Server的环境变量与上下文。
-5. javax.ws.rs.core.Application。启动jersey，和spring mvc一样的restfull框架。用来单独暴露一些接口。
-
-服务启动。初始化EurekaServerContext接口的实现类DefaultEurekaServerContext
-```java
-@Singleton
-public class DefaultEurekaServerContext implements EurekaServerContext {
-    @PostConstruct
-    public void initialize() {
-        logger.info("Initializing ..."); 
-        peerEurekaNodes.start();          // 服务启动,调用PeerEurekaNodes
-        registry.init(peerEurekaNodes);   // 初始化注册表。调用PeerAwareInstanceRegistry
-        logger.info("Initialized");
-    }
-    @PreDestroy // 注册优雅关机
-    public void shutdown() {
-        logger.info("Shutting down ...");
-        registry.shutdown();
-        peerEurekaNodes.shutdown();
-        ServoControl.shutdown();
-        EurekaMonitors.shutdown();
-        logger.info("Shut down");
-    }
-}
-```
-
-### 3.5.客户端启动
- 
-客户端启动时，主要是读取配置、注册服务(可以不注册)、启动健康检查、启动定时查询增量注册表任务、启动定时续约心跳任务等。
-
-核心组件：com.netflix.discovery.DiscoveryClient。主要用于与Eureka服务注册中心进行交互，所有的核心逻辑都在这里。
-1. 服务注册（Service Registration）：服务启动时，向Eureka Server注册自己，包括服务的元数据信息（如服务名、IP地址、端口号、健康检查URL等）。
-2. 服务发现（Service Discovery）：服务消费者在调用服务时，会先通过DiscoveryClient向Eureka Server发送查询请求，获取到所有可用的服务提供者（Provider）的地址列表。
-   然后，服务消费者会根据负载均衡策略（如Ribbon），从列表中选择一个服务提供者进行调用。
-3. 健康检查（Health Check）：定期向Eureka Server发送心跳（Heartbeat），实现注册的续约逻辑。
-4. 元数据管理（Metadata Management）：服务的元数据信息（如版本、环境等）会随服务注册时一起提交给Eureka Server，并可以通过DiscoveryClient进行更新。其他服务在发现该服务时，可以通过元数据信息进行路由、负载均衡决策等。
-5. 服务状态变更通知（Service Status Change Notifications）：同时获得服务状态，如果发生变化（如上线、下线、故障等）时，Eureka Server会将这些变更信息推送给所有订阅了该服务状态的客户端。
-
-#### 3.5.1.启动流程
-@EurekaClientEnable 高版本中已经没有作用了。Eureka客户端启动 会自动加载 spring.factories 中的 EurekaClientAutoConfiguration 和 EurekaDiscoveryClientConfiguration。
-
-作用是读取配置文件，创建客户端相关组件。
-1. EurekaClientAutoConfiguration#eurekaInstanceConfigBean()。读取配置文件，将配置封装为 EurekaInstanceConfigBean。
-2. EurekaClientAutoConfiguration#eurekaApplicationInfoManager()。创建客户端应用实例信息管理器 ApplicationInfoManager。
-    - 内部维护 EurekaInstanceConfigBean 和 InstanceInfo等信息。
-    - ApplicationInfoManager实例全局唯一，这也是为什么eureka一个客户端服务，同时只能连接一个eureka server的原因。
-    - 内部维护客户端实例状态，如果状态变更就发送事件 StatusChangeEvent。
-3. EurekaDiscoveryClientConfiguration#discoveryClient。创建客户端实例 EurekaDiscoveryClient。
-   - EurekaDiscoveryClient是spring提供的客户端，功能很少，主要作用是代理netflix提供的DiscoveryClient。
-4. EurekaClientAutoConfiguration#eurekaAutoServiceRegistration。上面4个组件创建完成后，创建自动注册实例EurekaAutoServiceRegistration。
-
-1~4都是创建对象。核心对象是EurekaAutoServiceRegistration，他现了SmartApplicationListener，接收spring两种事件：
-1. WebServerInitializedEvent。web服务初始化完成事件，执行EurekaAutoServiceRegistration#start()
-2. ContextClosedEvent。服务关闭事件，执行EurekaAutoServiceRegistration#stop()。取消注册、发送事件InstanceStatus.DOWN。
-
-EurekaAutoServiceRegistration#start() 调用链：
--> EurekaServiceRegistry#register
--> DiscoveryClient#registerHealthCheck 
--> InstanceInfoReplicator#onDemandUpdate 
--> InstanceInfoReplicator#run
-
-InstanceInfoReplicator#run是核心逻辑：
-1. 调用discoveryClient.refreshInstanceInfo 刷新实例信息
-2. 调用discoveryClient.register 进行注册
-3. 调用sheduler.shedule 30s后再执行run方法。
-
-#### 3.5.2.健康检查
-
-InstanceInfoReplicator#run中核心逻辑就是监控检查，默认30s执行一次。
-
-为什么要定时检查吗？
-1. 因为本服务的信息可能发生变化，需要定期检查，并重新注册到注册中心上。例如数据中心、服务名称、ip地址、续期相关配置等
-2. 健康检查。检查本服务是否正常，如果存在问题，会自动取消注册信息，防止问题节点被别人调用到。
-
-HealthCheckHandler 提供了两个实现类。
-1. HealthCheckCallbackToHandlerBridge。默认采用。就是判断下本地实例的状态值。
-2. EurekaHealthCheckHandler。如果引入actuator组件会引入配置类，自动注入EurekaHealthCheckHandler。
-
-加载过程：EurekaClientAutoConfiguration自动配置
-```java
-@ConditionalOnClass(Health.class) //org.springframework.boot.actuate.health.Health 
-protected static class EurekaHealthIndicatorConfiguration {
-    @Bean
-    @ConditionalOnEnabledHealthIndicator("eureka")
-    public EurekaHealthIndicator eurekaHealthIndicator(EurekaClient eurekaClient,
-            EurekaInstanceConfig instanceConfig, EurekaClientConfig clientConfig) {
-        return new EurekaHealthIndicator(eurekaClient, instanceConfig, clientConfig);
-    }
-}
-```
-
-EurekaHealthCheckHandler 是springcloud提供的，会从spring中查询所有actuator提供的HealthIndicator实例，
-内置了很多约27个 HealthIndicator（包括：数据库、网络、磁盘等各种检查工具），一旦这些指标出现问题，客户端就会取消注册。
-
-说白了就是使用actuator的监控数据进行判断。
-
-[数据库异常导致eureka注销问题排查](https://segmentfault.com/a/1190000023766801)
-Eureka-client定时通过所有的HealthIndicator的health方法获取对应的健康检查状态，如果有HealthIndicator检测结果为DOWN，
-那Eureka-client就会判定当前服务有问题，是不可用的，就会将自身状态设置为DOWN，并上报给Eureka-server。
-Eureka-server收到信息之后将该节点状态标识为DOWN，这样其他服务就无法从Eureka-server获取到该节点。
-
-#### 3.5.3.服务发现与续约
-
-启动过程中实例化EurekaDiscoveryClient的时候，他是DiscoveryClient的代理对象。
-而spring 将 netflix 提供的 DiscoveryClient 封装为 CloudEurekaClient。保存到EurekaDiscoveryClient中。
-
-DiscoveryClient在实例化的时候，会创建2个定时任务。
-1. HeartbeatExecutor 心跳/续约。 核心类 HeartbeatThread，每30s调用一次DiscoveryClient#renew。
-2. CacheRefreshExecutor 注册表缓存刷新。核心类 CacheRefreshThread，每30s调用一次DiscoveryClient#refreshRegistry。
-   根据条件有全量更新(/eureka/apps/) 和 增量更新(/eureka/apps/delta)两种。
-
-增量更新：
-- /eureka/apps/delta 接口是 Eureka 服务注册与发现框架中的一个重要接口，它主要用于提供服务的增量更新信息。
-- Eureka server 会提供近期注册表发生变化（比如有新的服务实例注册、服务实例下线、服务实例的元数据或状态发生变化等）的增量数据。
-- 这个数据包只包含自上次查询以来发生变化的那些服务实例的信息，而不是整个注册表的完整副本。
-- 目的：这样做的好处是显著减少了数据传输量，尤其是在服务实例数量庞大且频繁变化的场景下，能够有效降低网络带宽的消耗和客户端的处理压力。
-
-全量更新
-- 服务启动时全量更新
-- 如果客户端在一段时间内没有收到任何增量更新，或者由于某种原因（如网络问题）错过了增量更新。
-
-## 4.最佳实践
-### 4.1.注意事项
-
-- 优雅停服：客户端如果使用kill -9，注册表被动发现心跳检查超时才下线服务，加大了调用方感知服务下线的时间。所以客户端需要使用优雅停服，帮助应用正常被下线。可以使用 actator 的shutdown接口
-- 密码认证：使用spring-boot-starter-security。也是基于base auth的简单认证。
-- 注册表隔离。需要二次开发，推进规范化命令，比如：系统名称-模块名称-运行环境。参数之间以中划线隔离，例如：myProject-myModel-dev
-- 租户：因为eureka天然的对应用的隔离性支持的不好，没有租户的概念。我们基于 spring-boot-starter-security 扩展用户认证。实现简单的多租户
-  [使用Spring Security实现单点登录](https://blog.csdn.net/m0_64714024/article/details/125549592)
-
-### 4.2.优雅停服
-
-客户端使用 actuator
-```text
-1.maven坐标
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-actuator</artifactId>
-</dependency>
-
-2.配置信息
-###### 优雅停服######
-##启用 shutdown
-management.endpoint.shutdown.enabled=true
-# 暴露所有端点
-management.endpoints.web.exposure.include=*
-#禁用密码验证
-management.endpoints.shutdown.sensitive=false
-
-3.post调用：http://127.0.0.1:9080/actuator/shutdown
-```
-
-### 4.3.密码认证
-
-[密码认证](https://developer.aliyun.com/article/971982)
-
-```text
-1.maven坐标
-<dependency>
-  <groupId>org.springframework.boot</groupId>
-  <artifactId>spring-boot-starter-security</artifactId>
-</dependency>
-
-2.Eureka Server配置
-#开启 http basic 的安全认证 没有用 需要通过下面方法来关闭或开启
-#spring.security.basic.enabled=true
-spring.security.user.name=user
-spring.security.user.password=123456
- # 修改访问集群节点的 url
-eureka.client.serviceUrl.defaultZone=http://user:123456@eureka2:8761/eureka/
-
-3.客户端配置
-spring.application.name=eureka-provider
-server.port=9090
-#设置服务注册中心地址， 指向另一个注册中心
-eureka.client.serviceUrl.defaultZone=http://user:123456@eureka1:8761/eureka/,http://user:123456@eureka2:8761/eureka/
-#启用 shutdown
-management.endpoints.shutdown.enabled=true
-#禁用密码验证
-management.endpoints.shutdown.sensitive=false
-
-4.关闭csrf认证
-Spring Cloud 2.0 以上的security默认启用了csrf检验，要在eurekaServer端配置security的csrf检验为false
-
-@EnableWebSecurity
-@Configuration
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable(); //关闭csrf
-        //开启认证  若注释掉，就关闭认证了
-        http.authorizeRequests().anyRequest().authenticated().and().httpBasic(); 
-    }
-}
-```
-
-### 4.4.实例ID
-
-```properties
-# 推荐使用ip:port。默认规则 机器hostname:应用名称:端口
-eureka.instance.instance-id = ${spring.cloud.client.ip-address}:${server.port}
-```
-
-### 4.5.性能优化
-
-eureka是去中心化的，对等星型同步架构，ap模型。所以对于每次变更(注册/心跳续约/状态变更等)都会生成相应的同步任务来用于所有实例数据的同步，
-这样一来同步作业量随着集群规模、实例数正相关同步上涨。 如果集群里注册的服务实例数过万，可能出现CPU占用率、负载都很高，时不时还会发生 Full GC 导致业务抖动。
-
-再加上eureka的二级队列发布模型，很容易造成同步队列任务积压，加剧服务发现的延迟，如果再遇到网络抖动，导致客户端切换eureka节点，就会引发同步任务的重试风暴，性能直接爆炸。
-
-eureka官方提到：Eureka 的这种广播复制模型，不仅会导致它自身的架构脆弱性，也影响了集群整体的横向扩展性。
-
-### 4.6.全部配置
+### 2.4.全部配置
 
 ```properties
 ####################################################
@@ -718,27 +350,32 @@ eureka.instance.instance-id=
 eureka.instance.ip-address=
 #该实例，相较于hostname是否优先使用IP
 eureka.instance.prefer-ip-address=false
+
+# 超时剔除的时间改为 9 秒，默认90s
+eureka.instance.lease-expiration-duration-in-seconds=9
+# 心跳间隔时间修改为 3 秒。默认30s
+eureka.instance.lease-renewal-interval-in-seconds=3
 ```
 
-### 4.7.REST API
+### 2.5.REST API
 
-| 操作                   | API                                                               | 描述                                     |
-|----------------------|-------------------------------------------------------------------| ------------------------------------------ |
-| 注册新的已用实例             | POST /eureka/apps/{appId}                                         | 输入json或xml格式的body，成功返回204     |
-| 注销应用实例               | DELETE /eureka/apps/{appId}/{instanceId}                          | 成功返回200                              |
-| 应用实例发送心跳/续约          | PUT /eureka/apps/{appId}/{instanceId}                             | 成功返回200，如果instanceId不存在返回404 |
-| 查询所有实例               | GET /eureka/apps/                                                 | 成功返回200，输出json或xml格式。         |
-| 查询指定appId实例          | GET /eureka/apps/{appId}                                          | 成功返回200，输出json或xml格式。         |
+| 操作                  | API                                                               | 描述                                     |
+|---------------------|-------------------------------------------------------------------| ------------------------------------------ |
+| 注册应用实例              | POST /eureka/apps/{appId}                                         | 输入json或xml格式的body，成功返回204     |
+| 注销应用实例              | DELETE /eureka/apps/{appId}/{instanceId}                          | 成功返回200                              |
+| 应用实例发送心跳/续约         | PUT /eureka/apps/{appId}/{instanceId}                             | 成功返回200，如果instanceId不存在返回404 |
+| 查询所有实例              | GET /eureka/apps/                                                 | 成功返回200，输出json或xml格式。         |
+| 查询指定appId实例         | GET /eureka/apps/{appId}                                          | 成功返回200，输出json或xml格式。         |
 | 查询指定appId和instanceId | GET /eureka/apps/{appId}/{instanceId}                             | 成功返回200，输出json或xml格式。         |
-| 查询指定instanceId       | GET /eureka/instances/{instanceId}                                | 成功返回200，输出json或xml格式。         |
-| 暂停应用实例               | PUT /eureka/apps/{appId}/{instanceId}/status?value=OUT_OF_SERVICE | 成功返回200，失败返回500。               |
-| 恢复应用实例               | DELETE /eureka/apps/{appId}/{instanceId}/status?value=UP          | 成功返回200，失败返回500                 |
-| 更新元数据                | PUT /eureka/apps/{appId}/{instanceId}/metadata?key=value          | 成功返回200，失败返回500                 |
-| 根据vip地址查询            | GET /eureka/vips/{appId}/{vipAddress}                             | 成功返回200，输出json或xml格式。         |
-| 根据svip地址查询           | GET /eureka/svips/{appId}/{svipAddress}                           | 成功返回200，输出json或xml格式。         |
-| 增量查询注册表              | GET /eureka/apps/delta                            | 成功返回200，输出json或xml格式。         |
+| 查询指定instanceId      | GET /eureka/instances/{instanceId}                                | 成功返回200，输出json或xml格式。         |
+| 暂停应用实例              | PUT /eureka/apps/{appId}/{instanceId}/status?value=OUT_OF_SERVICE | 成功返回200，失败返回500。               |
+| 恢复应用实例              | DELETE /eureka/apps/{appId}/{instanceId}/status?value=UP          | 成功返回200，失败返回500                 |
+| 更新元数据               | PUT /eureka/apps/{appId}/{instanceId}/metadata?key=value          | 成功返回200，失败返回500                 |
+| 根据vip地址查询           | GET /eureka/vips/{appId}/{vipAddress}                             | 成功返回200，输出json或xml格式。         |
+| 根据svip地址查询          | GET /eureka/svips/{appId}/{svipAddress}                           | 成功返回200，输出json或xml格式。         |
+| 增量查询注册表             | GET /eureka/apps/delta                            | 成功返回200，输出json或xml格式。         |
 
-注册实例请求案例 
+注册实例请求案例
 - PS：设置请求参数的类型为JSON。否则默认接受XML格式的请求。Accept:application/json
 - PS：如果server开启了security，就要设置请求头：Authorization:Basic cm9vdDpzRkFJZDcyaw== 。后面的内容就是 base64(账号:密码)
 
@@ -790,5 +427,402 @@ curl --location --request POST 'http://127.0.0.1:9001/eureka/apps/OPENFEIGN-PROV
     }
 }'
 ```
+
+## 3.原理
+
+### 3.1.客户端负载及故障转移
+
+[如何实现客户端请求负载及故障转移](https://mp.weixin.qq.com/s/LUx6nZASaRQMU8k3ufJtYQ)
+
+1. 客户端负载。应用启动时以应用ip作为随机因子，随机打乱eureka的顺序，并连接第一个节点。
+2. 故障转移。当出现节点异常时，也是异常访问重试2次任然失败后，依次连线列表中的eureka，实现故障的转移。
+
+### 3.2.三级缓存机制
+
+- [Eureka的缓存机制/三级缓存](https://blog.csdn.net/Saintmm/article/details/122335819)
+- [eureka延迟优化](https://www.cnblogs.com/ilovejaney/p/16356672.html)
+
+1. registry，一级缓存，就是最底层的注册表，实时更新，UI界面的数据来源；
+   - 类型：ConcurrentHashMap
+   - 实现类：AbstractInstanceRegistry
+2. ReadWriteCacheMap，二级缓存，实时更新，缓存时间180秒；
+   - 类型：Guava Cache（LoadingCache）
+   - 实现类：ResponseCacheImpl
+3. ReadOnlyCacheMap，三级缓存，Eureka Client查询应用的接口读取该数据。默认每30s从二级缓存readWriteCacheMap中同步数据更新；
+   - 类型：ConcurrentHashMap	
+   - 实现类：ResponseCacheImpl	
+   
+![](img/eureka/5bc2fca3.png)
+
+<p style="color: red">缓存读取流程</p>
+
+```java
+ResponseCacheImpl.java
+
+Value getValue(final Key key, boolean useReadOnlyCache) {
+  Value payload = null;
+  try {
+      // 1、是否开启三级缓存
+      if (useReadOnlyCache) {
+          // 1.1、先从三级缓存中获取，如果不存在再从二级缓存中获取
+          final Value currentPayload = readOnlyCacheMap.get(key);
+          if (currentPayload != null) {
+              payload = currentPayload;
+          } else {
+              // 1.2、三级缓存不存在，则从二级缓存中获取，并保存到三级缓存中
+              payload = readWriteCacheMap.get(key);
+              readOnlyCacheMap.put(key, payload);
+          }
+      } else {
+          // 2、未开启三级缓存，直接从二级缓存中获取
+          payload = readWriteCacheMap.get(key);
+      }
+      // 3、这里隐藏了一层查询。如果二级缓存未命中，则调用LoadingCache的build方法，从一级缓存中查询数据，并保存到二级缓存中。
+      
+  } catch (Throwable t) {
+      logger.error("Cannot get value for key : {}", key, t);
+  }
+  return payload;
+}
+```
+
+<p style="color: red">为什么使用三级缓存？</p>
+
+eureka作为注册中心，注册应用实例数量可以到达10~30K。这个量级的实例注册和查询，会导致 registry 频繁的锁竞争，降低服务性能。
+所以采用了类似于读取分离的设计。
+
+<p style="color: red">如果优化客户端发现延迟？</p>
+
+Eureka服务发现的速度其实是比较慢的，这也是ap模型的通病。
+
+延迟计算：
+1. 客户端获得实例变化存在延迟，极端情况可能是：30(客户端拉取) +  30(二级缓存更新) = 60s。
+2. 如果被调用方没有使用平滑升级(被动剔除服务)，极端情况可能是：30(客户端拉取) +  30(二级缓存更新) + 60 * 2(两次主动清除下线90没有心跳的应用)= 180s。
+
+服务端优化
+1. eureka.server.useReadOnlyResponseCache。是否使用三级缓存，可以关闭，让客户端直接读取readWriteCacheMap。
+2. eureka.server.responseCacheUpdateIntervalMs。三级缓存更新时间，默认30s，可以降低到10s。
+3. eureka.server.eviction-interval-timer-in-ms。清除失效服务的间隔时间，默认60s，可以降低到10s。
+4. eureka.instance.lease-expiration-duration-in-seconds。服务续约到期时间，默认90s。降低到65s。
+   客户端每30s续约一次，90s是3次未续约，可以降为2次，防止客户端采用默认配置导致服务经常被剔除。
+
+客户端优化：
+1. eureka.client.registry-fetch-interval-seconds。从eureka服务器注册表中获取注册信息的时间间隔（s），默认为30秒，可以降低到10s。
+
+经过以上优化，极端情况下延迟：10(客户端拉取) +  10(二级缓存更新) + 7 * 10(两次主动清除下线65没有心跳的应用)= 90s。
+
+除此之外还有非常多的参数都可以进行优化，但是要根据自身情况，并且无论进行怎么优化，延迟都是存在的。
+
+### 3.3.数据同步机制
+
+[Eureka服务端集群数据同步原理](https://blog.csdn.net/guyue35/article/details/122442587)
+
+集群节点之间数据一致性是通过节点之间数据同步来实现的，数据同步采用的是Acceptor - Worker 模式的消息广播机制来完成的，整个过程大致就是：
+1. 某个节点收到客户端的消息（注册、心跳、下线、状态变更等）后，刷新本地注册信息（这里调用已经返回成功，下面步骤采用异步的方式进行）；
+2. 遍历所有的节点（会排除自己），将消息转发到其他节点；
+
+<p style="color: red">数据同步方式？</p>
+
+分为全量同步与增量同步。全量同步为客户端第一次启动时进行的，增量同步为运行过程中进行的。
+
+![](img/eureka/b507ecd3.png)
+
+
+<p style="color: red">如何避免死循环？</p>
+假如：客户端对服务端A进行了下线操作，服务端A将操作同步到B、C、D其他3个服务端，当服务端B接收到同步过来的下线请求后，
+会不会再将该操作又同步到其他的服务端，从而使同步陷入死循环呢？
+
+答案是不会，Eureka会区分正常的客户端请求与服务端发起的数据同步请求，对于任何服务端发起的数据同步请求，Eureka不会再进行其他同步操作，从而避免数据同步出现死循环。
+
+具体的做法是Eureka在http请求头中加入特殊的标识(x-netflix-discovery-replication)，用来区分正常的客户端请求与数据同步请求。
+
+<p style="color: red">如何解决数据冲突？</p>
+
+1. 使用版本号解决数据冲突。一般我们给数据加一个版本号就行，如时间戳，只要有任何数据更新操作，就更新时间戳，最后更新数据的时间戳最大，
+   也就是最新的数据，上面讲Eureka中注册表中时间信息就是做此用途的。
+2. 客户端主动通过拉取服务端注册表数据，如果发现与本地数据存在冲突，则让有冲突的客户端从新执行注册操作
+
+### 3.4.服务启动
+
+使用@EnableEurekaServer作为标记。
+```java
+@Import(EurekaServerMarkerConfiguration.class)
+public @interface EnableEurekaServer {  }
+```
+
+springboot启动的时候，加载注解，发现了@import一个类EurekaServerMarkerConfiguration。
+```java
+public class EurekaServerMarkerConfiguration {
+	@Bean
+	public Marker eurekaServerMarkerBean() {
+		return new Marker();
+	}
+	class Marker { }
+}
+```
+
+我们发现这里只是创建了一个Marker对象。通过阅读注释发现，springcloud eureka使用spring.factories中有个自动配置类。
+启动条件为存在Marker的对象。这是一个spring config类，在spring启动过程会调用相关方法。
+```java
+@Import(EurekaServerInitializerConfiguration.class)
+@ConditionalOnBean(EurekaServerMarkerConfiguration.Marker.class)
+public class EurekaServerAutoConfiguration implements WebMvcConfigurer {   }
+```
+
+这个过程中会使用@Bean实例化很多个对象。这些了都似乎eureka本身的类。
+1. PeerAwareInstanceRegistry。eureka的注册表对象的实例
+2. PeerEurekaNodes。管理Eureka Server集群中的节点信息，确保节点之间能够相互复制数据。
+3. EurekaServerContext。维护 Eureka Server 启动的上下文信息，主要工作时启动服务
+4. EurekaServerBootstrap。负责初始化Eureka Server的环境变量与上下文。
+5. javax.ws.rs.core.Application。启动jersey，和spring mvc一样的restfull框架。用来单独暴露一些接口。
+
+服务启动。初始化EurekaServerContext接口的实现类DefaultEurekaServerContext
+```java
+@Singleton
+public class DefaultEurekaServerContext implements EurekaServerContext {
+    @PostConstruct
+    public void initialize() {
+        logger.info("Initializing ..."); 
+        peerEurekaNodes.start();          // 服务启动,调用PeerEurekaNodes
+        registry.init(peerEurekaNodes);   // 初始化注册表。调用PeerAwareInstanceRegistry
+        logger.info("Initialized");
+    }
+    @PreDestroy // 注册优雅关机
+    public void shutdown() {
+        logger.info("Shutting down ...");
+        registry.shutdown();
+        peerEurekaNodes.shutdown();
+        ServoControl.shutdown();
+        EurekaMonitors.shutdown();
+        logger.info("Shut down");
+    }
+}
+```
+
+### 3.5.客户端启动
+ 
+客户端启动时，主要是读取配置、注册服务(可以不注册)、启动健康检查、启动定时查询增量注册表任务、启动定时续约心跳任务等。
+
+核心组件：com.netflix.discovery.DiscoveryClient。主要用于与Eureka服务注册中心进行交互，所有的核心逻辑都在这里。
+1. 服务注册（Service Registration）：服务启动时，向Eureka Server注册自己，包括服务的元数据信息（如服务名、IP地址、端口号、健康检查URL等）。
+2. 服务发现（Service Discovery）：服务消费者在调用服务时，会先通过DiscoveryClient向Eureka Server发送查询请求，获取到所有可用的服务提供者（Provider）的地址列表。
+   然后，服务消费者会根据负载均衡策略（如Ribbon），从列表中选择一个服务提供者进行调用。
+3. 健康检查（Health Check）：定期向Eureka Server发送心跳（Heartbeat），实现注册的续约逻辑。
+4. 元数据管理（Metadata Management）：服务的元数据信息（如版本、环境等）会随服务注册时一起提交给Eureka Server，并可以通过DiscoveryClient进行更新。其他服务在发现该服务时，可以通过元数据信息进行路由、负载均衡决策等。
+5. 服务状态变更通知（Service Status Change Notifications）：同时获得服务状态，如果发生变化（如上线、下线、故障等）时，Eureka Server会将这些变更信息推送给所有订阅了该服务状态的客户端。
+
+#### 3.5.1.启动流程
+@EurekaClientEnable 高版本中已经没有作用了。Eureka客户端启动 会自动加载 spring.factories 中的 EurekaClientAutoConfiguration 和 EurekaDiscoveryClientConfiguration。
+
+作用是读取配置文件，创建客户端相关组件。
+1. EurekaClientAutoConfiguration#eurekaInstanceConfigBean()。读取配置文件，将配置封装为 EurekaInstanceConfigBean。
+2. EurekaClientAutoConfiguration#eurekaApplicationInfoManager()。创建客户端应用实例信息管理器 ApplicationInfoManager。
+    - 内部维护 EurekaInstanceConfigBean 和 InstanceInfo等信息。
+    - ApplicationInfoManager实例全局唯一，这也是为什么eureka一个客户端服务，同时只能连接一个eureka server的原因。
+    - 内部维护客户端实例状态，如果状态变更就发送事件 StatusChangeEvent。
+3. EurekaDiscoveryClientConfiguration#discoveryClient。创建客户端实例 EurekaDiscoveryClient。
+   - EurekaDiscoveryClient是spring提供的客户端，功能很少，主要作用是代理netflix提供的DiscoveryClient。
+4. EurekaClientAutoConfiguration#eurekaAutoServiceRegistration。上面4个组件创建完成后，创建自动注册实例EurekaAutoServiceRegistration。
+
+1~4都是创建对象。核心对象是EurekaAutoServiceRegistration，他现了SmartApplicationListener，接收spring两种事件：
+1. WebServerInitializedEvent。web服务初始化完成事件，执行EurekaAutoServiceRegistration#start()
+2. ContextClosedEvent。服务关闭事件，执行EurekaAutoServiceRegistration#stop()。取消注册、发送事件InstanceStatus.DOWN。
+
+EurekaAutoServiceRegistration#start() 调用链：
+-> EurekaServiceRegistry#register
+-> DiscoveryClient#registerHealthCheck 
+-> InstanceInfoReplicator#onDemandUpdate 
+-> InstanceInfoReplicator#run
+
+InstanceInfoReplicator#run是核心逻辑：
+1. 调用discoveryClient.refreshInstanceInfo 刷新实例信息
+2. 调用discoveryClient.register 进行注册
+3. 调用sheduler.shedule 30s后再执行run方法。
+
+#### 3.5.2.健康检查
+
+InstanceInfoReplicator#run中核心逻辑就是监控检查，默认30s执行一次。
+
+为什么要定时检查吗？
+1. 因为本服务的信息可能发生变化，需要定期检查，并重新注册到注册中心上。例如数据中心、服务名称、ip地址、续期相关配置等
+2. 健康检查。检查本服务是否正常，如果存在问题，会自动取消注册信息，防止问题节点被别人调用到。
+
+HealthCheckHandler 提供了两个实现类。
+1. HealthCheckCallbackToHandlerBridge。默认采用。就是判断下本地实例的状态值。
+2. EurekaHealthCheckHandler。如果引入actuator组件会引入配置类，自动注入EurekaHealthCheckHandler。
+
+加载过程：EurekaClientAutoConfiguration自动配置
+```java
+@ConditionalOnClass(Health.class) //org.springframework.boot.actuate.health.Health 
+protected static class EurekaHealthIndicatorConfiguration {
+    @Bean
+    @ConditionalOnEnabledHealthIndicator("eureka")
+    public EurekaHealthIndicator eurekaHealthIndicator(EurekaClient eurekaClient,
+            EurekaInstanceConfig instanceConfig, EurekaClientConfig clientConfig) {
+        return new EurekaHealthIndicator(eurekaClient, instanceConfig, clientConfig);
+    }
+}
+```
+
+EurekaHealthCheckHandler 是springcloud提供的，会从spring中查询所有actuator提供的HealthIndicator实例，
+内置了很多约27个 HealthIndicator（包括：数据库、网络、磁盘等各种检查工具），一旦这些指标出现问题，客户端就会取消注册。
+
+说白了就是使用actuator的监控数据进行判断。
+
+[数据库异常导致eureka注销问题排查](https://segmentfault.com/a/1190000023766801)
+Eureka-client定时通过所有的HealthIndicator的health方法获取对应的健康检查状态，如果有HealthIndicator检测结果为DOWN，
+那Eureka-client就会判定当前服务有问题，是不可用的，就会将自身状态设置为DOWN，并上报给Eureka-server。
+Eureka-server收到信息之后将该节点状态标识为DOWN，这样其他服务就无法从Eureka-server获取到该节点。
+
+#### 3.5.3.服务发现与续约
+
+启动过程中实例化EurekaDiscoveryClient的时候，他是DiscoveryClient的代理对象。
+而spring 将 netflix 提供的 DiscoveryClient 封装为 CloudEurekaClient。保存到EurekaDiscoveryClient中。
+
+DiscoveryClient在实例化的时候，会创建2个定时任务。
+1. HeartbeatExecutor 心跳/续约。 核心类 HeartbeatThread，每30s调用一次DiscoveryClient#renew。
+2. CacheRefreshExecutor 注册表缓存刷新。核心类 CacheRefreshThread，每30s调用一次DiscoveryClient#refreshRegistry。
+   根据条件有全量更新(/eureka/apps/) 和 增量更新(/eureka/apps/delta)两种。
+
+增量更新：
+- /eureka/apps/delta 接口是 Eureka 服务注册与发现框架中的一个重要接口，它主要用于提供服务的增量更新信息。
+- Eureka server 会提供近期注册表发生变化（比如有新的服务实例注册、服务实例下线、服务实例的元数据或状态发生变化等）的增量数据。
+- 这个数据包只包含自上次查询以来发生变化的那些服务实例的信息，而不是整个注册表的完整副本。
+- 目的：这样做的好处是显著减少了数据传输量，尤其是在服务实例数量庞大且频繁变化的场景下，能够有效降低网络带宽的消耗和客户端的处理压力。
+
+全量更新
+- 服务启动时全量更新
+- 如果客户端在一段时间内没有收到任何增量更新，或者由于某种原因（如网络问题）错过了增量更新。
+
+## 4.最佳实践
+### 4.1.注意事项
+
+- 优雅停服：客户端如果使用kill -9，注册表被动发现心跳检查超时才下线服务，加大了调用方感知服务下线的时间。所以客户端需要使用优雅停服，帮助应用正常被下线。可以使用 actator 的shutdown接口
+- 密码认证：使用spring-boot-starter-security。也是基于base auth的简单认证。
+- 注册表隔离。需要二次开发，推进规范化命令，比如：系统名称-模块名称-运行环境。参数之间以中划线隔离，例如：myProject-myModel-dev
+- 租户：因为eureka天然的对应用的隔离性支持的不好，没有租户的概念。我们基于 spring-boot-starter-security 扩展用户认证。实现简单的多租户
+  [使用Spring Security实现单点登录](https://blog.csdn.net/m0_64714024/article/details/125549592)
+
+### 4.2.优雅停服
+
+客户端使用 actuator，好处是主动注销实例，提升实例下线速度。
+但是actuator中的漏洞较多，很多公司可能不会安装。所以可以自定义服务注销代码，当服务接收到停止信号的时候触发。
+
+```text
+1.maven坐标
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+
+2.配置信息
+###### 优雅停服######
+##启用 shutdown
+management.endpoint.shutdown.enabled=true
+# 暴露所有端点
+management.endpoints.web.exposure.include=*
+#禁用密码验证
+management.endpoints.shutdown.sensitive=false
+
+3.post调用：http://127.0.0.1:9080/actuator/shutdown
+```
+
+### 4.3.密码认证
+
+[密码认证](https://developer.aliyun.com/article/971982)
+
+```text
+1.maven坐标
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+
+2.Eureka Server配置
+#开启 http basic 的安全认证 没有用 需要通过下面方法来关闭或开启
+#spring.security.basic.enabled=true
+spring.security.user.name=user
+spring.security.user.password=123456
+ # 修改访问集群节点的 url
+eureka.client.serviceUrl.defaultZone=http://user:123456@eureka2:8761/eureka/
+
+3.客户端配置
+spring.application.name=eureka-provider
+server.port=9090
+#设置服务注册中心地址， 指向另一个注册中心
+eureka.client.serviceUrl.defaultZone=http://user:123456@eureka1:8761/eureka/,http://user:123456@eureka2:8761/eureka/
+#启用 shutdown
+management.endpoints.shutdown.enabled=true
+#禁用密码验证
+management.endpoints.shutdown.sensitive=false
+
+4.关闭csrf认证
+Spring Cloud 2.0 以上的security默认启用了csrf检验，要在eurekaServer端配置security的csrf检验为false
+
+@EnableWebSecurity
+@Configuration
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable(); //关闭csrf
+        //开启认证  若注释掉，就关闭认证了
+        http.authorizeRequests().anyRequest().authenticated().and().httpBasic(); 
+    }
+}
+```
+
+### 4.4.实例ID
+
+```properties
+# 推荐使用ip:port。默认规则 机器hostname:应用名称:端口
+eureka.instance.instance-id = ${spring.cloud.client.ip-address}:${server.port}
+```
+
+### 4.5.性能优化
+
+eureka是去中心化的，对等星型同步架构，ap模型。所以对于每次变更(注册/心跳续约/状态变更等)都会生成相应的同步任务来用于所有实例数据的同步，
+这样一来同步作业量随着集群规模、实例数正相关同步上涨。 如果集群里注册的服务实例数过万，可能出现CPU占用率、负载都很高，时不时还会发生 Full GC 导致业务抖动。
+
+再加上eureka的二级队列发布模型，很容易造成同步队列任务积压，加剧服务发现的延迟，如果再遇到网络抖动，导致客户端切换eureka节点，就会引发同步任务的重试风暴，性能直接爆炸。
+
+eureka官方提到：Eureka 的这种广播复制模型，不仅会导致它自身的架构脆弱性，也影响了集群整体的横向扩展性。
+
+### 4.6.自我保护机制
+
+#### 4.6.1.自我保护条件
+- 自我保护的条件： 一般情况下， 微服务在Eureka上注册后， 会每30秒发送心跳包，Eureka通过心跳来判断服务是否健康， 同时会定期删除超过90秒没有发送心跳服务。
+- 触发阀值：Eureka Server 在运行期间，会统计心跳失败的比例在 15 分钟内是否低于 85%这种算法叫做 Eureka Server 的自我保护模式
+
+Eureka Server收不到微服务的心跳：
+- 微服务自身的原因
+- 大规模服务上下线。
+- 网络故障，通常(微服务的自身的故障关闭)只会导致个别服务出现故障， 一般不会出现大面积故障， 而(网络故障)通常会导致Eureka Server在短时间内无法收到大批心跳。
+
+考虑到这个区别，Eureka设置了一个阀值， 当判断挂掉的服务的数量超过阀值时，Eureka Server 认为很大程度上出现了网络故障， 将不再删除心跳过期的服务。
+
+#### 4.6.2.为什么需要自我保护
+- 因为同时保留好数据与坏数据总比丢掉任何数据要更好， 当网络故障恢复后，这个 Eureka节点会退出自我保护模式。
+- Eureka还有客户端缓存功能(也就是微服务的缓存功能)。 即便 Eureka 集群中所有节点都宕机失效， 微服务的 Provider 和 Consumer都能正常通信。
+- 微服务的负载均衡策略会自动剔除死亡的微服务节点
+
+#### 4.6.3.关闭自我保护【不建议】
+
+注册应用数量非常小，不建议开启。例如注册服务本身就3个，服务重启就会进入保护模式。
+
+```properties
+#关闭自我保护:true 为开启自我保护， false 为关闭自我保护
+eureka.server.enableSelfPreservation=false
+
+## 自我保护触发的阈值，可以适当修改      
+eureka.server.renewal-percent-threshold: 0.85
+
+#清理间隔(从服务列表删除无用服务的时间间隔，单位:毫秒， 默认是 60*1000)
+eureka.server.eviction.interval-timer-in-ms=60000
+```
+
+
+
+
+
 
 

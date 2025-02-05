@@ -31,6 +31,7 @@ markdown: kramdown
 highlighter: rouge
 kramdown:
   syntax_highlighter: rouge
+  converter: custom_html
 
 readme_index:
   with_frontmatter: true

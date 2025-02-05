@@ -1017,7 +1017,7 @@ FastLeaderElection 和 AuthLeaderElection 是类似的选举算法，唯一区�
 
 ```golang
 struct Vote {
-    logicClock  // 逻辑时钟，表示该服务器发起的第多少轮投票
+    logicalclock  // 逻辑时钟，表示该服务器发起的第多少轮投票
     state       // 当前服务器的状态 （LOOKING-不确定Leader状态 FOLLOWING-跟随者状态 LEADING-领导者状态 OBSERVING-观察者状态）
     self_myid   // 当前服务器的myid
     self_zxid   // 当前服务器上所保存的数据的最大zxid。已经包含了epoch
@@ -1032,7 +1032,7 @@ struct Vote {
 
 1. 启动后，所有节点的epoch=1，zxid=0，state=looking。组装选票，投票给自己，并广播给所有participant节点。
 2. 更新选票。当节点接收选票后开始更新自己的选票。以 Server1 为例通过以下流程判断Server3当前，则更新自己的选票。
-   1. logicClock比较，ZooKeeper规定所有有效的投票都必须在同一轮次中，如果发现自己的logicClock小，则更新自己的logicClock
+   1. logicalclock比较，ZooKeeper规定所有有效的投票都必须在同一轮次中，如果发现自己的logicalclock小，则更新自己的logicalclock
    2. Epoch比较，选票中的epoch最大的当选。
    3. 如果epoch都相同，则比较zxid，zxid最大的当选 
    4. 如果zxid都相同，则比较myid，myid最大的当选
