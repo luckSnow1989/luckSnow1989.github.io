@@ -1,5 +1,5 @@
-module Jekyll
-  class TargetBlankGenerator < Generator
+module Reading
+  class TargetBlankGenerator < Jekyll::Generator
     safe true
     priority :low
 
