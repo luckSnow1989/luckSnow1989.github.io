@@ -1465,3 +1465,36 @@ sudo docker run -it -d -p 50001:22 --privileged=true --name centos-node1 \
 - [Linux性能测试之性能测试指标详解](https://cloud.tencent.com/developer/article/1977987)
 
 [Linux服务器性能测试.xlsx](课件/Linux服务器性能测试.xlsx)
+
+### 9.5.Windows子系统
+
+安装window子系统
+
+1.开启功能：
+
+控制面板 >> 程序和功能 >> 启动或关闭Windows功能
+
+选择开启 虚拟机平台（可能是英文名称） 和 适用于 Linux 的 Windows 子系统
+
+
+2.cmd执行命令：``` wsl ``` 自动开始安装 适用于 Linux 的 Windows 子系统。
+
+3.重启电脑
+
+4.执行命令
+- 查看可以安装的子系统：wsl.exe --list --online
+- 安装window子系统：  wsl.exe --install Ubuntu
+- 启动子系统： 		wsl.exe -d Ubuntu
+- 关闭子系统： 		wsl.exe shutdown
+- 查询状态：			wsl.exe -l -v
+
+5.可视化界面
+
+试用命令安装后WSL Settings，可以在窗口看到入口。可以像虚拟机一样管理子系统。
+点击左下的启动，可以启动子系统，并打开一个shell终端。
+
+![](img/linux/034e52be.png)
+
+![](img/linux/7420d300.png)
+
+ 
