@@ -1,0 +1,27 @@
+# 1. 安装ruby
+
+[https://rubyinstaller.org/](https://rubyinstaller.org/)
+
+看本地教程,安装3.3以下版本。
+
+# 2. 安装 jekyll 和 bundler
+
+```shell
+gem install --user-install bundler jekyll
+```
+
+# 3. 安装依赖。提前删除Gemfile.lock
+
+```shell
+cd luckSnow1989.github.io
+bundle install
+```
+
+# 4. 启动项目
+
+```shell
+bundle exec jekyll serve --trace
+
+# -V 查看过程
+bundle exec jekyll serve -V --trace
+```

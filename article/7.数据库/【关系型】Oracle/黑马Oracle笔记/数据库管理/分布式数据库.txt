@@ -1,0 +1,90 @@
+1.什么是分布式数据库
+	数据物理上被存放在网络的多个节点上，逻辑上是一个整体。
+
+2.分布式数据库的独立性
+	分布数据的独立性指用户不必关心数据如何分割和存储，只需关心他需要什么数据
+
+3.Oracle分布式rdbms
+	分类：
+		(1)本地操作:sqlplus hr/4100107223@localhost:1521/orcl
+		(2)远程操作:sqlplus hr/4100107223@10.17.28.50:1521/orcl
+		(3)分布操作:
+			a.跨节点数据的创建和查询
+			b.跨节点数据更新
+			需要数据库链路：dblink(单向的)
+			
+4.创建数据库链路
+	1.权限：grant create database link to 用户名
+	2.使用Oracle net manager工具，创建一个网络节点（添加一个服务命名）
+	  或修改：C:\zhangxueIDE\oracle11g\product\11.2.0\dbhome_1\NETWORK\ADMIN目录下的
+	  tnsnames.ora增加：  				
+		NET_ORCL =
+		  (DESCRIPTION =
+			(ADDRESS = (PROTOCOL = TCP)(HOST = 10.28.17.50)(PORT = 1521))
+			(CONNECT_DATA =
+			  (SERVER = DEDICATED)
+			  (SERVICE_NAME = orcl)
+			)
+		)
+	3.创建链路：
+	create database link 链路名称 connect to 节点数据库用户名 identified by 节点数据库密码 using 'NET_ORCL'
+	
+	4.本地访问网络节点
+		select * from student@链路名称 
+	
+	5.*一般来说，我们本地会为这个表创建一个同义词，来用简化操作
+		create synonym net_student for student@链路名称
+	
+	6.创建网络节点的视图
+		create view v_net as 
+			(select * from student@链路名称)
+		使用：select * from v_net
+		
+	7.插入操作
+		insert into student@链路名称 values(....) 
+	
+	8.数据复制
+		create table student1 as select * from student@链路名称 
+	
+	
+5.跨节点更新
+	1.快照，用来维护关系表的异步副本，指的是主表修改后的指定时间内刷新新副本，用于主表修改少到频繁操作的表
+		也会是说：在某一个网络节点上的数据库中，一个不常修改的表，被修改了，而在主机上使用的是这个表的副本，
+		当这个表被修改后，可以设置主机数据也被修改的时间
+		create snapshot 快照名称
+		refresh start with sysdate
+		next next_day(sysdate,'Monday')
+		as select * from student@链路名称
+	
+	2.触发器,这个是同步完成的
+		例如：create or replace trigger syncsal
+			  after update 
+			  on emp
+			  for each row
+			  begin 
+				update emp@链路名称 set sal=:new.sal where empno=:new.empon;
+			  end;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

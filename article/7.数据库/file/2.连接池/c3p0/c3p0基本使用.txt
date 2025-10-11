@@ -1,0 +1,100 @@
+一、创建连接池的方法
+	1.直接在代码中创建数据源，例如C3p0General。
+	2.使用统的JDBC驱动建立一个无连接池的DataSource，然后转化为连接池的DataSource。例如：C3p0JDBC
+****3.使用xml配置。如：C3p0XML和SRC下的c3p0-config.xml，这是主流
+	
+	4.使用hibernate创建连接池,hibernate.cfg.xml
+****5.使用Spring代理创建连接池,applicationContext.xml
+
+二、使用时需要注意，c3p0无需刻意去关闭Connection,Statement,ResultSet等资源，c3p0会自动关闭的。
+
+三、Java 命名 和 目录 接口，是JavaEE13个技术规范中的一个，但是JavaEE服务器，Web服务器 Tomcat ，
+	却只实现了部分JavaEE技术规范，所以没有完全对JNDI进行支持。
+
+	对JNDI采用了部分支持----支持绑定和获取数据源
+
+	1.将c3p0绑定在Tomcat服务器中。 	 
+
+		(1).但数据源不能通过程序，而是通过Tomcat的配置 ,文件路径：Tomcat/conf/context.xml，添加如下配置
+		
+			  <Resource name="itcast" 
+				type="com.mchange.v2.c3p0.ComboPooledDataSource"
+				factory="org.apache.naming.factory.BeanFactory"
+				user="root" 
+				password="123" 
+				driverClass="com.mysql.jdbc.Driver"    
+				jdbcUrl="jdbc:mysql://127.0.0.1/mydb1"
+				acquireIncrement="1"
+				maxPoolSize="5"
+				initialPoolSize="3"/>
+
+		(2).要把“据库驱动”拷贝到Tomcat的的lib下
+		
+		(3).程序中调用JNDI接口，创建连接池
+			Context Context = new InitialContext();
+			context.lookup("itcast");
+
+
+	2.理解JNDI：		 
+
+		JavaEE服务器	 JBoss(开源) 
+		WebLogic
+		WebSphere
+
+
+		JBOSS：  选择default 模式部署
+		修改JBOSS中web服务器的端口号
+		server/default/deploy/jbossweb.sar/server.xml					 
+
+		JBOSS中部署的项目不能用数字开头
+
+
+		向jndi上绑定的对象必须是可序列化的
+
+
+		JBOSS配置数据源：
+
+			erver/default/deploy----项目部署到这个里面，后缀是war
+
+			docs/example/jca---目录mysql-ds.xml  考到上面的目录并修改
+
+			数据库驱动的jar文件考到server/default/lib下
+
+
+			修改jboss中web容器的端口---
+
+			server/default/deploy/jbossweb.sar/server.xml
+
+			java类中：
+
+			DataSource   ctx.lookup("java:/配的名字")
+
+
+四、使用JTA  ：
+
+	1、要用JTA控制事务，数据库链接必须用容器数据源方式
+	2、在DBUtil工具类中提供一个static方法，用来获取jndi的对象
+
+	public static Object getObject(String jndiName){
+		Object obj = null;
+		try{
+			Context ctx = new InitialContext();
+			obj = ctx.lookup(jndiName);
+		}catch(){
+		}
+		return obj;
+	}
+
+	3、业务层：
+
+	UserTransaction utx = (UserTransaction)DBUtil.getObject("java:/UserTransaction");
+
+	try{
+		utx.begin();-----事务开始
+		dao操作
+		dao操作
+		.....
+		utx.commit();
+	}catch(){
+	ut.rollback();
+	}

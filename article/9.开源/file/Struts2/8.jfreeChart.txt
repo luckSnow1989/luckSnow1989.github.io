@@ -1,0 +1,71 @@
+一、JFreeChart使用
+	1.所需jar包:
+		jfreechart-1.0.13.jar；
+		jcommon-1.0.16.jar；
+		struts2-jfreechart-plugin-2.1.8.1.jar
+	
+	2.动作类
+		public class GetChartAction extends ActionSupport {
+		
+			private static final long serialVersionUID = -7814290464584999876L;
+			private JFreeChart chart;
+		
+			public JFreeChart getChart() {
+				return chart;
+			}
+			public String execute(){
+				ValueAxis xAxis = new NumberAxis("年度");
+				ValueAxis yAxis = new NumberAxis("产值");
+				XYSeries xySeries = new XYSeries("绿豆");
+				xySeries.add(0,300);
+				xySeries.add(1,200);
+				xySeries.add(2,400);
+				xySeries.add(3,500);
+				xySeries.add(4,600);
+				xySeries.add(5,500);
+				xySeries.add(6,800);
+				xySeries.add(7,1000);
+				xySeries.add(8,1100);
+				
+				XYSeriesCollection xyDataset = new XYSeriesCollection(xySeries);
+				
+				XYPlot xyPlot = new XYPlot(xyDataset,xAxis,yAxis,new StandardXYItemRenderer(StandardXYItemRenderer.SHAPES_AND_LINES));
+				
+				chart = new JFreeChart(xyPlot);
+				
+				return SUCCESS;
+			}
+		}
+		
+	3.配置文件
+		<package name="p2" extends="jfreechart-default">
+			<action name="chart" class="wiva.struts2.train.action.GetChartAction">
+				<result type="chart">
+					<param name="width">600</param>
+					<param name="height">400</param>
+				</result>
+			</action>
+		</package>
+	
+	4.页面
+		<body>	
+			<s:url action="chart" var="url"></s:url>
+			<img src="<s:property value="url"/>" alt="hello" />
+		</body>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

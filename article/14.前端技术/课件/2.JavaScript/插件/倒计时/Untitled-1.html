@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+</head>
+
+<body>
+<script type="text/javascript">
+var time = setInterval("dao()",1000);
+var num = 5;
+window.onload = dao;
+function dao() {	
+	if(num == 0) {
+		location.href="http://www.baidu.com";	
+	} else {
+		var str = document.getElementById("dao_div");
+		str.innerHTML = num+"秒钟后跳转到百度搜索";
+		num--;
+	}
+}
+</script>
+</body>
+<div id="dao_div" style=" width:300px; height:150px; line-height:150px;margin:0 auto; text-align:center; font-size:24px;"></div>
+<p align="center"><a href="http://www.baidu.com">如果到时间没有跳转的话点击这里</a></p>
+</html>

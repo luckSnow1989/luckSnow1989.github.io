@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		
+		<script type="text/javascript">
+		/**
+		 *  prototype
+		 * 	1.每一个人属性中都有一个属性prototype;
+		 *  2.prototype也是一个对象;
+		 *  3.prototype是一个json格式的对象，可以动态添加属性
+		 *  4.根据构造器可以创建对象，这个对象就拥有prototype中的数据。
+		 */
+		function Person(){
+			
+		}
+		Person.prototype.name = function(){
+			alert("name");
+		}
+		Person.prototype.age = 5;
+		Person.prototype['sex'] = '男';
+		
+		
+		var p = new Person();
+		p.age = 6;
+		alert(p.age);
+		alert(p.sex);
+		p.name();
+		
+		
+		/**
+		 * 扩展，是另一个对象，拥有Person的全部prototype，也就是继承
+		 */
+		function supPerson(){
+		}
+		supPerson.prototype = Person.prototype;
+		var p1 = new supPerson();
+		alert(p1.age);
+		
+		</script>
+	</body>
+</html>

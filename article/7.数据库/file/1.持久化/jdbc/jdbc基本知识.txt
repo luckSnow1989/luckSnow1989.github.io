@@ -1,0 +1,634 @@
+1.jdbc 与 odbc
+	odbc（open database connectivity）,即开放数据库连接。两者很像，严格说来，jdbc是模仿odbc设计的。
+	但是jdbc比odbc使用更简单，配置更容易，使用更安全。且sun公司提供的jdbc-odbc桥 	驱动程序不是多线程的，不适合要求并发
+	访问的数据库项目中。
+	
+2.预编译
+	这是预编译的实际的运行方式。java代码是生成这样的执行语句，交给MySQL的预编译器进行预编译，
+	预编译器生成合法的sql语句进行执行。
+	PREPARE myfun FROM 'select * from t_province where name=?';
+	SET @str='北京';
+	EXECUTE myfun USING @str;
+
+3.执行“mysql -p 密码 -u 账号 -h 主机名” 命令，用于启动mysql命令行客户端。
+	在安装MySQL的时候，必须选择“include bin directory in windows path”复选框，才可以执行。
+	
+4.MySQL数据库常用的两种数据存储机制
+	(1)MyISAM:这是MySQL早期默认的储存机制，但是对事务的支持不好。
+	
+	(2)InnoDB:这是一个提供事务安全的存储机制。InnoDB是通过创建行级锁来保证事务的完整性，并以Oracle风格的共享锁处理
+	select语句。系统默认是启动InnoDB存储机制。
+	
+	系统默认是使用InnoDB，但是我们可以在创建表的时候指定使用某个存储机制：
+		create table (id int ) ENGING=InnoDB;
+
+5.ddl (data definition language),主要操作的是数据库对象，使用：create,drop,alter，truncate
+	(1)常见的数据库对象有
+		对象名称	|	对应的关键字	|	描述
+		------------------------------------
+		表		|	table		|存储数据的逻辑单元。
+		数据字典  |				|就是系统表，存储数据库相关信息，这些表通常是由数据库维护，通常情况下这些表不应该由程序去修改
+		约束		|	constraint	|执行数据校验的规则，用于保证数据完整性的规则
+		视图		|	view		|一个或多个表数据的逻辑显示，不存储数据。
+		索引		|	index		|用于提供查询性能的，相当于的书的目录。
+		函数		|	function	|用于完成一个特定的计算，有返回值。
+		存储过程	|	procedure	|用于完成一次完整的业务处理，没有返回值，但是通过传出的参数，将多个只传给调用环境
+		触发器	|	trigger		|相当于一个事件的监听器，当数据库发生特定的时间后，触发器被触发，完成相应的处理。
+	
+
+6.jdbc连接数据库
+	public class JDBCUtil {
+		private static final String CLASS_DRIVER = "com.mysql.jdbc.Driver";//oracle.jdbc.driver.OracleDriver
+		private static final String URL = "jdbc:mysql://127.0.0.1:3306/school?useUnicode=true&characterEncoding=utf-8";
+		//jdbc:oracle:thin:@127.0.0.1:1521:orcl
+		private static final String USER = "root";
+		private static final String PSD = "4100107223";
+		
+		public static Connection getConnection(){
+			try {
+				Class.forName(CLASS_DRIVER);
+				return DriverManager.getConnection(URL, USER, PSD);
+			} catch (ClassNotFoundException | SQLException e) {
+				e.printStackTrace();
+			} 
+			return null;
+		}
+		public static void close(Connection con ,Statement st, ResultSet res){
+			try {
+				if(con != null)
+					con.close();
+				if(st != null)
+					st.close();
+				if(res != null)
+					res.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+7.基本的增删改查
+	public class StudentDao {
+		//插入一条	
+		public boolean insert(int id, String name) {
+			Connection con = null;
+			Statement sta = null;
+			try {
+				con = MySQL.getConnection();
+				sta = con.createStatement();
+				int i = sta.executeUpdate("insert into students values (" + id + ",'" + name + "')");
+				return i == 1 ? true : false;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			} finally {
+				MySQL.close(con, sta, null);
+			}
+		}
+		//删除一条
+		public boolean delete(int id) {
+			Connection con = null;
+			Statement sta = null;
+			try {
+				con = MySQL.getConnection();
+				sta = con.createStatement();
+				int i = sta.executeUpdate("delete from students where id=" + id);
+				return i == 1 ? true : false;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			} finally {
+				MySQL.close(con, sta, null);
+			}
+		}
+		//修改一条
+		public boolean update(int id, String name) {
+			Connection con = null;
+			Statement sta = null;
+			try {
+				con = MySQL.getConnection();
+				sta = con.createStatement();
+				int i = sta.executeUpdate("update students set name='" + name + "' where id=" + id);
+				return i == 1 ? true : false;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			} finally {
+				MySQL.close(con, sta, null);
+			}
+		}
+		//查询一条
+		public Student getById(int id) {
+			Connection con = null;
+			Statement sta = null;
+			ResultSet res = null;
+			try {
+				con = MySQL.getConnection();
+				sta = con.createStatement();
+				res = sta.executeQuery("select * from students where id='" + id + "'");
+				Student s = null;
+				if (res.next())
+					s = new Student(res.getInt(1), res.getString(2));
+				return s;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			} finally {
+				MySQL.close(con, sta, res);
+			}
+		}
+	}
+8.sql预处理
+	预处理的好处:(1)预编译sql语句，性能更好;(2)无须拼接sql,编程更加灵活;(3)可以防止注入攻击，安全性更好;
+	public class StudentDao2 {
+		public boolean insert(int id, String name) {
+			Connection con = null;
+			PreparedStatement ps = null;
+			try {
+				con = MySQL.getConnection();
+				ps = con.prepareStatement("insert into students values (?,?)");
+				ps.setInt(1, id);
+				ps.setString(2, name);
+				int i = ps.executeUpdate();
+				return i == 1 ? true : false;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			} finally {
+				MySQL.close(con, ps, null);
+			}
+		}
+		public boolean delete(int id) {
+			Connection con = null;
+			PreparedStatement ps = null;
+			try {
+				con = MySQL.getConnection();
+				ps = con.prepareStatement("delete from students where id=?");
+				ps.setInt(1, id);
+				int i = ps.executeUpdate();
+				return i == 1 ? true : false;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			} finally {
+				MySQL.close(con, ps, null);
+			}
+		}
+		public boolean update(int id, String name) {
+			Connection con = null;
+			PreparedStatement ps = null;
+			try {
+				con = MySQL.getConnection();
+				ps = con.prepareStatement("update students set name=? where id=?");
+				ps.setInt(1, id);
+				ps.setString(2, name);
+				int i = ps.executeUpdate();
+				return i == 1 ? true : false;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			} finally {
+				MySQL.close(con, ps, null);
+			}
+		}
+		public Student getById(int id) {
+			Connection con = null;
+			PreparedStatement ps = null;
+			ResultSet res = null;
+			try {
+				con = MySQL.getConnection();
+				ps = con.prepareStatement("select * from students where id=?");
+				ps.setInt(1, id);
+				res = ps.executeQuery();
+				Student s = null;
+				if (res.next())
+					s = new Student(res.getInt(1), res.getString(2));
+				return s;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			} finally {
+				MySQL.close(con, ps, res);
+			}
+		}
+	}
+
+9.调用存储过程
+	public Integer cellProcedure(int a, int b){
+		Connection con = null;
+		try {
+			con = MySQL.getConnection();
+			CallableStatement cs = con.prepareCall("call add_pro(?,?,?)");
+			cs.setInt(1, a);
+			cs.setInt(2, b);
+			//注册CallableStatement第三个参数是int类型
+			cs.registerOutParameter(3, Types.INTEGER);
+			//执行存储过程
+			cs.execute();
+			//获得存储过程传出的参数的值
+			int c = cs.getInt(3);
+			return c;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+10.管理结果集
+	(1).可滚动的、可更新的。通过PreparedStatement获得的ResultSet是可滚动很更新的。
+		a.设置ResultSet的类型。
+			ResultSet.TYPE_FORWARD_ONLY//设置记录指针	只能向前移动。
+			ResultSet.TYPE_SCROLL_INSENSITIVE//设置记录指针可以自由移动，底层数据的改变不会影响ResultSet的内容
+			ResultSet.TYPE_SCROLL_SENSITIVE//设置记录指针可以自由移动，底层数据的改变会影响ResultSet的内容
+		b.设置ResultSet的并发类型。
+			ResultSet.CONCUR_UPDATABLE//只读的并发模式(默认)
+			ResultSet.CONCUR_READ_ONLY//可更新的并发模式
+		public Integer cellProcedure(int a, int b){
+			Connection con = null;
+			try {
+				con = MySQL.getConnection();
+				CallableStatement cs = con.prepareCall("call add_pro(?,?,?)");
+				cs.setInt(1, a);
+				cs.setInt(2, b);
+				//注册CallableStatement第三个参数是int类型
+				cs.registerOutParameter(3, Types.INTEGER);
+				//执行存储过程
+				cs.execute();
+				//获得存储过程传出的参数的值
+				int c = cs.getInt(3);
+				return c;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}	
+		
+	(2)对ResultSet记录指针的操作
+		res.last();//移动指针到最后
+		res.absolute(int i)//移动指针到指定的行数，从0开始。
+		res.previous();//移动指针到前一条
+		res.next();//移动指针到后一条
+
+	(3)对Blob类型的处理
+		注意：在MySQL中blob类型只能存储64kb以下的内容，所以一般使用mediumblob类型存储，可以存储16MB的内容。
+		或是：
+  		在my.ini中设置，在[mysqld]下添加max_allowed_packet=10M，例如：[mysqld] max_allowed_packet=64M
+		
+		//1.保存到数据库中
+		public boolean insertImg(String name,File img) throws IOException {
+			Connection con = null;
+			PreparedStatement ps = null;
+			try {
+				con = MySQL.getConnection();
+				ps = con.prepareStatement("insert into students values (null,?,?)");
+				ps.setString(1, name);
+				/**
+				 * 需要得到Blob
+				 * 1. 我们有的是文件，目标是Blob
+				 * 2. 先把文件变成byte[]
+				 * 3. 再使用byte[]创建Blob
+				 */
+				FileInputStream is = new FileInputStream(img);
+				byte[] b = new byte[is.available()];
+				is.read(b);
+				Blob blob = new SerialBlob(b);
+				ps.setBlob(2, blob);
+				int i = ps.executeUpdate();
+				is.close();
+				return i == 1 ? true : false;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			} finally {
+				MySQL.close(con, ps, null);
+			}
+		}
+		//2.从数据库中取出
+		public void getImg() throws IOException {
+			Connection con = null;
+			PreparedStatement ps = null;
+			ResultSet res = null;
+			try {
+				con = MySQL.getConnection();
+				ps = con.prepareStatement("select * from students where id=6 ");
+				res = ps.executeQuery();
+				Blob blob = null;
+				if(res.next())
+					blob = res.getBlob(3);
+				InputStream is = blob.getBinaryStream();
+				FileOutputStream os = new FileOutputStream("D:\\美女.jpg");
+				byte[] b = new byte[1024];
+				int len = 0;
+				while((len = is.read(b)) != -1) {
+					os.write(b);
+				}
+				os.close();
+				is.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				MySQL.close(con, ps, null);
+			}
+		}
+
+	(4)使用ResultSetMetaData分析结果集
+		MetaData意思是元数据，就是描述其他数据的数据。ResultSetMetaData封装了描述ResultSet对象的数据，以及DataBase的描述数据。
+		public void getDataBaseInfo() throws IOException {
+			Connection con = null;
+			PreparedStatement ps = null;
+			ResultSet res = null;
+			try {
+				con = MySQL.getConnection();
+				ps = con.prepareStatement("select * from students");
+				res = ps.executeQuery();
+				ResultSetMetaData meta = res.getMetaData();
+				
+				System.out.println("ResultSet列数量：" + meta.getColumnCount());
+				System.out.println("第2列的列名：" + meta.getColumnName(2));
+				System.out.println("第3列的数据类型：" + meta.getColumnType(3));
+				
+				List<Student> data = new ArrayList<>();
+				for (int i = 0; i < meta.getColumnCount(); i++) {
+					System.out.println("第"+(i+1)+"列列名："+meta.getColumnName(i+1));
+				}
+				while(res.next()) {
+					data.add(new Student(res.getInt(1), res.getString(2), res.getBlob(3)));
+				}
+				for (Student s : data) {
+					System.out.println(s);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				MySQL.close(con, ps, null);
+			}
+		}
+11.java 7 的RowSet 1.1
+	（1）RowSet继承了ResultSet的接口，子接口包括JdbcRowSet,CachedRowSet,FilteredRowSet,JoinRowSet和WebRowSet。
+	处理JdbcRowSet需要保存与数据库的连接外，其他的都是离线的RowSet，无需保持数据库的连接。
+	
+	（2）RowSet与ResultSet比较
+		1.直接获得RowSet，就是可滚动、可更新、可序列化的结果集，并且可以作为javabean使用。因此，网络传输更方便，多用于同步两端的数据。
+		2.程序在创建RowSet的时候，是报数据从底层数据库中读取到内存当中，因此可以更加充分的利用计算机的内存，达到降低数据库服务器的负载，提高程序性能。
+		
+	（3）实现的流程。
+		JdbcRowSet查询到数据到内存中，开始进行离线操作，再同步到数据库。
+	
+	（4）使用JdbcRowSet的坏处，因此，极度不推荐使用这个。
+		a.实现类与程序耦合，不利于后期的维护和扩展
+		b.不是一个公开的API，未来可能被删除，或修改。
+		public void getByAll() {
+			Connection con = null;
+			JdbcRowSetImpl rs = null;
+			try {
+				con = MySQL.getConnection();//获得数据库的连接
+				rs= new JdbcRowSetImpl(con);//创建JdbcRowSetImpl对象
+				rs.setCommand("select * from students");//设置sql语句
+				rs.execute();//执行查询
+				//封装对象
+				List<Student> ls = new ArrayList<>();
+				while (rs.next()) {
+					if(1 == rs.getInt(1)) {
+						rs.updateString(2, "改了");//指定修改这一列的值
+						rs.updateRow();//提交修改
+					}
+					Student s  = new Student(rs.getInt(1), rs.getString(2), rs.getBlob(3));
+					ls.add(s);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				MySQL.close(con, null, rs);
+			}
+		}
+	(5)为了避免出现上面的问题，所以1.7增加了RowSetProvider类和RowSetFactory接口，RowSetProvider可以创建RowSetFactory，用来创建RowSet
+		//配置数据库信息
+		Class.forName("com.mysql.jdbc.Driver");
+		RowSetFactory factory = RowSetProvider.newFactory();
+		JdbcRowSet jr = factory.createJdbcRowSet();
+		jr.setUrl("jdbc:mysql://localhost:3306/school");
+		jr.setUsername("root");
+		jr.setPassword("4100107223");
+		//设置要执行的sql
+		jr.setCommand("select * from students where id=?");
+		//设置预编译参数
+		jr.setInt(1, 1);
+		//执行sql
+		jr.execute();
+		//读取查询到的数据
+		if(jr.next())
+			System.out.println(jr.getInt(1) + "\t" + jr.getString(2));
+		//关闭流
+		jr.close();
+	
+	(6)离线使用RowSet
+			使用离线的ResultSet的时候，查询到数据后，需要立刻读取或处理数据，否则一旦Connection关闭了，再去读取ResultSet就会引发异常。
+			在web应用中，程序的架构分为两层，这时候，处理的方法有两种：第一种,ResultSet装换为Javabean的集合，但是这种方法操作复杂；
+		第二种，connection一直开启，但是这样也不安全。
+			因此RowSet，将数据封装为RowSet对象（CachedRowSet对象），其使用方法，与ResultSet一致，且为离线数据。
+		RowSetFactory factory = RowSetProvider.newFactory();
+		CachedRowSet cr = factory.createCachedRowSet();
+		cr.populate(jr);//将ResultSet填装到CachedRowSet中
+		
+		并且这个离线的RowSet可以修改。
+		cr.updateString(2, "名字");修改一条数据中的某个数据
+		cr.acceptChanges(Connection con);将数据同步到底层数据库
+	
+	(7)离线RowSet的查询分页
+		所谓的分页就是在某个时候，一次查询到的数据太大，占据大量的内存，甚至内存溢出。这时候使用分页就是，一次性只装载一部分数据到CachedRowSet
+		CachedRowSet cr = factory.createCachedRowSet();
+		//设置每页显示的数据条数
+		cr.setPageSize(int pageSize);
+		//设置第几条数据开始存储
+		cr.populate(ResultSet res,int num);
+	
+	
+	
+12.jdbc管理事务
+	mysql是默认关闭事务的（即打开自动提交），
+	编写sql，set autocommit=0;就是关闭自动提交，在执行DDL语句之后，需要执行commit;命令，才能提交事务
+	(1)全局回滚
+	con.setAutoCommit(false);
+	con.rollback();
+	
+	(2)回滚到Savepoint
+	con.setAutoCommit(false);
+	Savepoint point = con.setSavepoint();或Savepoint point = con.setSavepoint("no1");
+	con.rollback(point);
+	
+13.批量处理
+	public void bath() throws SQLException {
+		Connection con = null;
+		PreparedStatement ps = null;
+		try {
+			con = Jdbc.getConnection();
+			ps = con.prepareStatement("insert into user values(null,?,?)");
+			//1.查看时候支持批处理
+			DatabaseMetaData metaData = con.getMetaData();
+			boolean b = metaData.supportsBatchUpdates();
+			System.out.println("数据库是否支持批处理:" + b);
+			//2.关闭自动提交
+			con.setAutoCommit(false);
+			//3.创建批次
+			for (int i = 0; i < 10000; i++) {
+				ps.setString(1, "用户" + i);
+				ps.setInt(2, 1);
+				ps.addBatch();
+			}
+			//4.执行批次
+			ps.executeBatch();
+			//5.提交这次批处理
+			con.commit();
+		} catch (SQLException e) {
+			con.rollback();//6.出现异常后回滚
+			e.printStackTrace();
+		} finally {
+			Jdbc.close(con, ps, null);
+		}
+	}
+
+14.分析数据库信息
+	(1).使用DatabaseMetaData分析数据库
+	public void getDataBaseInfo() throws SQLException {
+		Connection con = Jdbc.getConnection();
+		//1.获取数据库元数据
+		DatabaseMetaData m = con.getMetaData();
+		//2.MySQL数据库支持的所有的表的类型
+		ResultSet r1 = m.getTableTypes();
+		printRes(r1);
+		//3.获取当前数据库中的所有的数据表
+		ResultSet r2 = m.getTables(null, null, "%", new String[]{"TABLE"});
+		printRes(r2);
+		//4.获取user表的主键
+		ResultSet r3 = m.getPrimaryKeys(null, null, "user");
+		printRes(r3);
+		//5.获得当前数据库中所有的存储过程
+		ResultSet r4 = m.getProcedures(null, null, "%");
+		printRes(r4);
+		//6.获得user表和dept表的外键约束
+		ResultSet r5 = m.getCrossReference(null, null, "dept", null, null, "user");
+		printRes(r5);
+		//7.获得user表列的信息
+		ResultSet r6 = m.getColumns(null, null, "user", "%");
+		printRes(r6);
+		
+		//8.底层数据库软件的相关信息
+		System.out.println("数据库产品的名称："+m.getDatabaseProductName());
+		System.out.println("数据库的版本："+m.getDatabaseProductVersion());
+		System.out.println("数据库驱动的名称："+m.getDriverName());
+		System.out.println("数据库驱动的版本："+m.getDriverVersion());
+		
+		Jdbc.close(con, null, null);
+	}
+	public static void printRes(ResultSet res) throws SQLException{
+		System.out.println("#########################################");
+		ResultSetMetaData rs = res.getMetaData();
+		for (int i = 0; i < rs.getColumnCount(); i++) {
+			System.out.print(rs.getColumnName(i + 1) + "\t");
+		}
+		System.out.println();
+		while(res.next()) {
+			for (int i = 0; i < rs.getColumnCount(); i++) {
+				System.out.print(res.getString(i + 1) + "\t");
+			}
+			System.out.println();
+		}
+		System.out.println("#########################################");
+	}	
+	(2)使用系统表来分析数据库
+		例如MySQL数据库，使用	information_schema 数据库来保存数据库。这些表只能查询，不能进行修改。
+		常用的系统表包括:
+			a.tables：所有表的信息；
+			b.schemata:所有数据库的信息；
+			c.views：所有视图的信息；
+			d.columns:所有列的信息；
+			e.triggers:所有触发器的信息；
+			f.routines:所有存储过程和函数的信息；
+			g.key_column_usage:所有具有约束的键的信息；
+			h.table_contraints:所有约束的表信息；
+			i.statistics:所有索引的信息；
+	
+	(3)两者的对比：
+		使用DatabaseMetaData具有更好的跨数据库特性，但是无法准确的获得数据库的更多的信息。
+		而使用系统表，则是将程序与底层的数据库过度的耦合了，无法很好的适应其他数据库。
+	
+15.数据库连接池
+	(1)DBCP是Apache软件基金组织下的开源的数据库连接池。
+		commons-dbcp-1.4.jar连接池实现库
+		commons-pool-1.5.6.jar连接池依赖库
+		
+		public static Connection dbcp() throws SQLException {
+			BasicDataSource ds = new BasicDataSource();
+			ds.setDriverClassName("com.mysql.jdbc.Driver");
+			ds.setUrl("jdbc:mysql://localhost:3306/user");
+			ds.setUsername("root");
+			ds.setPassword("4100107223");
+			//设置连接池初始连接数
+			ds.setInitialSize(5);
+			//设置做多可以有多少回个活跃的连接数
+			ds.setMaxActive(20);
+			//设置最少有2个空闲的连接
+			ds.setMinIdle(2);
+			return ds.getConnection();
+		}
+		
+	(2)C3P0与DBCP来比较，C3P0更好一些，hibernate推荐使用C3P0。
+		C3P0的优点：可以自动清理不在使用的Connection,Statement,ResultSet。
+		c3p0-0.9.2-pre1.jar连接池实现库
+		mchange-commons-0.2.jar连接池依赖库
+		c3p0-oracle-thin-extras-0.9.2-pre1.jar是它的扩展库，可以更好的支持oracle数据库，但不是必须的。
+		
+		public static Connection c3p0() throws SQLException, PropertyVetoException {
+			ComboPooledDataSource ds = new ComboPooledDataSource();
+			ds.setDriverClass("com.mysql.jdbc.Driver");
+			ds.setJdbcUrl("jdbc:mysql://localhost:3306/user");
+			ds.setUser("root");
+			ds.setPassword("4100107223");
+			//设置连接池初始连接数
+			ds.setInitialPoolSize(2);
+			//设置最大连接数
+			ds.setMaxPoolSize(20);
+			//设置最小连接数
+			ds.setMinPoolSize(5);
+			//设置最大Statement缓存数量
+			ds.setMaxStatements(180);
+			return ds.getConnection();
+		}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

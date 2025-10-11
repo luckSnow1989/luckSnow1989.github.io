@@ -1,0 +1,368 @@
+Oracle数据结构脚本DOSOS
+
+一、备份数据
+	1、获取帮助：
+		exp help=y
+	
+	2、导出一个完整数据库(这个完整的数据库是指user所能管理的所有的所有的表空间、表、视图等，例如user角色是DBA，
+	那他就导出的是所有角色的所有的数据，所以下面这个命令一般情况下是需要谨慎使用的。这个数据一般用来数据库的迁移)
+		 exp 用户账号/密码@全局数据库名称 file=文件保存路径 full=y  [例如exp ems/123456@orcl file=c:\ems.dmp full=y]
+	
+	3、导出一个或一组指定用户所属的全部表、索引和其他对象(使用的较多)
+		exp 用户账号/密码@全局数据库名称 file=文件保存路径 owner=用户名 full=y
+		exp 用户账号/密码@全局数据库名称 file=文件保存路径 owner=(用户名1,用户名2,用户名3,用户名4) full=y
+		[例如exp ems/123456@orcl file=c:\ems.dmp full=y owner=ems full=y] 
+		
+	4、导出一个或多个指定表
+		exp 用户账号/密码@全局数据库名称 file=文件保存路径 tables=(用户名1.表名1,用户名2.表名2) full=y
+		[例如exp ems/123456@orcl file=c:\ems.dmp tables=(ems.aqi_info) full=y]
+	
+	5、导出远程oracle数据库
+		exp 用户账号/密码@远程IP:端口号/全局数据库名称 file=文件保存路径 owner=用户名 full=y
+		exp ems/123456@10.28.17.50:1521/orcl file=D:\ems.dmp owner=ems full=y;
+	
+二、恢复数据
+	1. 获取帮助
+	imp help=y
+	2. 导入一个完整数据库
+	imp system/manager file=bible_db log=dible_db full=y ignore=y
+	3. 导入一个或一组指定用户所属的全部表、索引和其他对象
+	imp system/manager file=seapark log=seapark fromuser=seapark 
+	imp system/manager file=seapark log=seapark fromuser=(seapark,amy,amyc,harold)
+	4. 将一个用户所属的数据导入另一个用户
+	imp system/manager file=tank log=tank fromuser=seapark touser=seapark_copy
+	imp system/manager file=tank log=tank fromuser=(seapark,amy) touser=(seapark1, amy1)
+	5. 导入一个表
+	imp system/manager file=tank log=tank fromuser=seapark TABLES=(a,b)
+
+	
+利用Export可将数据从数据库中提取出来，利用Import则可将提取出来的数据送回Oracle数据库中去。       
+          1.   简单导出数据（Export）和导入数据（Import）     
+          Oracle支持三种类型的输出：       
+          （1）表方式（T方式），将指定表的数据导出。     
+          （2）用户方式（U方式），将指定用户的所有对象及数据导出。     
+          （3）全库方式（Full方式），将数据库中的所有对象导出。     
+          数据导出（Import）的过程是数据导入（Export）的逆过程，它们的数据流向不同。       
+
+附录一、exp help=y;命令获得的帮助
+		  
+	通过输入   EXP   命令和用户名/口令，您可以   
+	在用户   /   口令之后的命令:     
+	实例:   EXP   SCOTT/TIGER    
+	或者，您也可以通过输入跟有各种参数的   EXP   命令来控制“导出”   
+	的运行方式。要指定参数，您可以使用关键字:   
+		
+	格式:   EXP   KEYWORD=value   或   KEYWORD=(value1,value2,...,valueN)   
+	实例:   EXP   SCOTT/TIGER   GRANTS=Y   TABLES=(EMP,DEPT,MGR)   
+	或   TABLES=(T1:   P1,T1:   P2)，如果   T1   是分区表   
+		
+	USERID   必须是命令行中的第一个参数。   
+		
+	关键字   说明 (默认值)         关键字      说明 (默认值)
+	--------------------------------------------------------------------------
+	USERID   用户名/口令           FULL        导出整个文件 (N)
+	BUFFER   数据缓冲区大小        OWNER        所有者用户名列表
+	FILE     输出文件 (EXPDAT.DMP)  TABLES     表名列表
+	COMPRESS  导入到一个区 (Y)   RECORDLENGTH   IO 记录的长度
+	GRANTS    导出权限 (Y)          INCTYPE     增量导出类型
+	INDEXES   导出索引 (Y)         RECORD       跟踪增量导出 (Y)
+	DIRECT    直接路径 (N)         TRIGGERS     导出触发器 (Y)
+	LOG      屏幕输出的日志文件    STATISTICS    分析对象 (ESTIMATE)
+	ROWS      导出数据行 (Y)        PARFILE      参数文件名
+	CONSISTENT 交叉表的一致性 (N)   CONSTRAINTS  导出的约束条件 (Y)
+
+	OBJECT_CONSISTENT    只在对象导出期间设置为只读的事务处理 (N)
+	FEEDBACK             每 x 行显示进度 (0)
+	FILESIZE             每个转储文件的最大大小
+	FLASHBACK_SCN        用于将会话快照设置回以前状态的 SCN
+	FLASHBACK_TIME       用于获取最接近指定时间的 SCN 的时间
+	QUERY                用于导出表的子集的 select 子句
+	RESUMABLE            遇到与空格相关的错误时挂起 (N)
+	RESUMABLE_NAME       用于标识可恢复语句的文本字符串
+	RESUMABLE_TIMEOUT    RESUMABLE 的等待时间
+	TTS_FULL_CHECK       对 TTS 执行完整或部分相关性检查
+	TABLESPACES          要导出的表空间列表
+	TRANSPORT_TABLESPACE 导出可传输的表空间元数据 (N)
+	TEMPLATE             调用 iAS 模式导出的模板名
+
+	成功终止导出, 没有出现警告。
+********************
+********************************
+oracle导入导出命令详解（附数据库每天定时备份脚本）收藏
+新一篇: 关于oracle中纵向记录横向显示的问题举例说明 | 旧一篇: 监控数据库表空间使用情况
+一. 导出工具 exp
+1. 它是操作系统下一个可执行的文件 存放目录/ORACLE_HOME/bin
+   exp导出工具将数据库中数据备份压缩成一个二进制系统文件.可以在不同OS间迁移
+   
+   它有三种模式：
+       a. 用户模式： 导出用户所有对象以及对象中的数据；
+       b. 表模式： 导出用户所有表或者指定的表；
+       c. 整个数据库： 导出数据库中所有对象。
+2. 导出工具exp交互式命令行方式的使用的例子
+$exp test/test123@appdb
+Enter array fetch buffer size: 4096 > 回车
+Export file: expdat.dmp > m.dmp 生成导出的文件名 
+(1)E(ntire database), (2)U(sers), or (3)T(ables): (2)U > 3
+Export table data (yes/no): yes > 回车
+Compress extents (yes/no): yes > 回车
+Export done in ZHS16GBK character set and ZHS16GBK NCHAR character set
+About to export specified tables via Conventional Path ...
+Table(T) or Partition(T:P) to be exported: (RETURN to quit) > cmamenu 要导出的表名
+. . exporting table                        CMAMENU       4336 rows exported
+Table(T) or Partition(T:P) to be exported: (RETURN to quit) >要导出的表名n
+Table(T) or Partition(T:P) to be exported: (RETURN to quit) > 回车
+Export terminated successfully without warnings.
+3. 导出工具exp非交互式命令行方式的例子
+$exp scott/tiger tables=emp,dept file=/directory/scott.dmp grants=y
+说明:把scott用户里两个表emp,dept导出到文件/directory/scott.dmp
+$exp scott/tiger tables=emp query=\"where job=\'salesman\' and sal\<1600\" 
+
+file=/directory/scott2.dmp
+说明:在exp里面加上导出emp的查询条件job='salesman' and sal<1600
+    
+(但我个人很少这样用,还是把满足条件的记录生成临时表后,再exp会方便一些)
+$exp parfile=username.par file=/directory1/username_1.dmp,/directory1/username_2.dmp 
+
+filesize=2000M log=/directory2/username_exp.log
+参数文件username.par内容
+userid=username/userpassword
+buffer=8192000
+compress=n
+grants=y
+说明:username.par为导出工具exp用的参数文件,里面具体参数可以根据需要去修改
+     filesize指定生成的二进制备份文件的最大字节数
+     
+     (可用来解决某些OS下2G物理文件的限制及加快压缩速度和方便刻历史数据光盘等)
+4. 命令参数说明
+关键字 说明（默认）
+---------------------------------------------------
+USERID 用户名/口令
+FULL 导出整个文件 (N)
+BUFFER 数据缓冲区的大小
+OWNER 所有者用户名列表
+FILE 输出文件 (EXPDAT.DMP)
+TABLES 表名列表
+COMPRESS 导入一个范围 (Y)
+RECORDLENGTH IO 记录的长度
+GRANTS 导出权限 (Y)
+INCTYPE 增量导出类型
+INDEXES 导出索引 (Y)
+RECORD 跟踪增量导出 (Y)
+ROWS 导出数据行 (Y)
+PARFILE 参数文件名
+CONSTRAINTS 导出限制 (Y)
+CONSISTENT 交叉表一致性
+LOG 屏幕输出的日志文件
+STATISTICS 分析对象 (ESTIMATE)
+DIRECT 直接路径 (N)
+TRIGGERS 导出触发器 (Y)
+FEEDBACK 显示每 x 行 (0) 的进度
+FILESIZE 各转储文件的最大尺寸
+QUERY 选定导出表子集的子句
+下列关键字仅用于可传输的表空间
+TRANSPORT_TABLESPACE 导出可传输的表空间元数据 (N)
+TABLESPACES 将传输的表空间列表
+二.导入工具 imp
+1. 它是操作系统下一个可执行的文件 存放目录/ORACLE_HOME/bin
+imp导入工具将EXP形成的二进制系统文件导入到数据库中.
+   它有三种模式：
+       a. 用户模式： 导出用户所有对象以及对象中的数据；
+       b. 表模式： 导出用户所有表或者指定的表；
+       c. 整个数据库： 导出数据库中所有对象。
+       
+   只有拥有IMP_FULL_DATABASE和DBA权限的用户才能做整个数据库导入
+   
+   imp步骤：
+   (1) create table (2) insert data (3) create index (4) create triggers,constraints
+2.导入工具imp交互式命令行方式的例子
+$ imp
+Import: Release 8.1.6.0.0 - Production on 星期五 12月 7 17:01:08 2001
+(c) Copyright 1999 Oracle Corporation. All rights reserved.
+用户名: test
+口令:****
+连接到: Oracle8i Enterprise Edition Release 8.1.6.0.0 - 64bit Production
+With the Partitioning option
+JServer Release 8.1.6.0.0 - Production
+导入文件: expdat.dmp> /tmp/m.dmp
+输入插入缓冲区大小（最小为 8192 ) 30720>
+经由常规路径导出由EXPORT:V08.01.06创建的文件
+警告: 此对象由 TEST 导出, 而不是当前用户
+已经完成ZHS16GBK字符集和ZHS16GBK NCHAR 字符集中的导入
+只列出导入文件的内容(yes/no)：no>
+由于对象已存在, 忽略创建错误(yes/no)：no> yes
+导入权限(yes/no)：yes>
+导入表数据(yes/no)：yes>
+导入整个导出文件(yes/no)：no> yes
+. 正在将TEST的对象导入到 SCOTT
+. . 正在导入表                       "CMAMENU"       4336行被导入
+成功终止导入，但出现警告。
+ 
+3.导入工具imp非交互式命令行方式的例子
+$ imp system/manager fromuser=jones tables=(accts) 
+$ imp system/manager fromuser=scott tables=(emp,dept) 
+$ imp system/manager fromuser=scott touser=joe tables=emp 
+$ imp scott/tiger file = expdat.dmp full=y 
+$ imp scott/tiger file = /mnt1/t1.dmp show=n buffer=2048000 ignore=n commit=y grants=y full=y 
+
+log=/oracle_backup/log/imp_scott.log
+$ imp system/manager parfile=params.dat 
+params.dat 内容 
+file=dba.dmp show=n ignore=n grants=y fromuser=scott tables=(dept,emp)
+4.导入工具imp可能出现的问题
+(1) 数据库对象已经存在
+一般情况, 导入数据前应该彻底删除目标数据下的表, 序列, 函数/过程,触发器等; 
+数据库对象已经存在, 按缺省的imp参数, 则会导入失败
+如果用了参数ignore=y, 会把exp文件内的数据内容导入
+如果表有唯一关键字的约束条件, 不合条件将不被导入
+如果表没有唯一关键字的约束条件, 将引起记录重复
+(2) 数据库对象有主外键约束
+      不符合主外键约束时, 数据会导入失败 
+      解决办法: 先导入主表, 再导入依存表
+disable目标导入对象的主外键约束, 导入数据后, 再enable它们
+(3) 权限不够
+如果要把A用户的数据导入B用户下, A用户需要有imp_full_database权限
+(4) 导入大表( 大于80M ) 时, 存储分配失败
+      默认的EXP时, compress = Y, 也就是把所有的数据压缩在一个数据块上.
+      导入时, 如果不存在连续一个大数据块, 则会导入失败.
+      导出80M以上的大表时, 记得compress= N, 则不会引起这种错误.
+(5) imp和exp使用的字符集不同
+      如果字符集不同, 导入会失败, 可以改变unix环境变量或者NT注册表里NLS_LANG相关信息.
+      导入完成后再改回来.
+(6) imp和exp版本不能往上兼容
+imp可以成功导入低版本exp生成的文件, 不能导入高版本exp生成的文件
+根据情况我们可以用
+$ imp username/password@connect_string
+说明: connect_string 是在/ORACLE_HOME/network/admin/tnsnames.ora
+   定义的本地或者远端数据库的名称
+5.命令参数说明
+关键字 说明（默认）   
+----------------------------------------------
+USERID 用户名/口令
+FULL 导入整个文件 (N)
+BUFFER 数据缓冲区大小
+FROMUSER 所有人用户名列表
+FILE 输入文件 (EXPDAT.DMP)
+TOUSER 用户名列表
+SHOW 只列出文件内容 (N)
+TABLES 表名列表
+IGNORE 忽略创建错误 (N)
+RECORDLENGTH IO 记录的长度
+GRANTS 导入权限 (Y)
+INCTYPE 增量导入类型
+INDEXES 导入索引 (Y)
+COMMIT 提交数组插入 (N)
+ROWS 导入数据行 (Y)
+PARFILE 参数文件名
+LOG 屏幕输出的日志文件
+CONSTRAINTS 导入限制 (Y)
+DESTROY 覆盖表空间数据文件 (N)
+INDEXFILE 将表/索引信息写入指定的文件
+SKIP_UNUSABLE_INDEXES 跳过不可用索引的维护 (N)
+ANALYZE 执行转储文件中的 ANALYZE 语句 (Y)
+FEEDBACK 显示每 x 行 (0) 的进度
+TOID_NOVALIDATE 跳过指定类型 id 的校验
+FILESIZE 各转储文件的最大尺寸
+RECALCULATE_STATISTICS 重新计算统计值 (N)
+下列关键字仅用于可传输的表空间
+TRANSPORT_TABLESPACE 导入可传输的表空间元数据 (N)
+TABLESPACES 将要传输到数据库的表空间
+DATAFILES 将要传输到数据库的数据文件
+TTS_OWNERS 拥有可传输表空间集中数据的用户
+三. unix下oracle数据库定时备份脚本（按用户备份）
+以下命令可以用crontab方式每天夜里2点定时执行，脚本最多分30个文件，每个文件大小最大1G的形式将数据库导出，
+如果数据库数据量很大，多于30G，则会导出不成功，此时只需根据数据量大小调整变量num的值即可。该脚本将数据库导出后用gzip进行压缩，然后保存到系统/data/expfiles，导出之前，会将前一天的备份移
+ 
+到/data/expfiles_bak，
+此种备份方式可以保存最近两天的数据备份。
+outfile=`date +%Y%m%d_%H%M`
+num=30
+i=1
+files=
+if [ ! -d /data/expfiles ]; then
+mkdir /data/expfiles
+fi
+if [ ! -d /data/expfiles_bak ]; then
+mkdir /data/expfiles_bak
+fi
+dfile=`ls -1 /data/expfiles_bak/|awk '{if ( NR < 2 ) {print $1}}'`
+prefix=`echo | awk '{print substr("'"${dfile}"'",1,13)}'`
+rm -f /data/expfiles_bak/${prefix}*
+ 
+dfile=`ls -1 /data/expfiles/|awk '{if ( NR < 2 ) {print $1}}'`
+prefix=`echo | awk '{print substr("'"${dfile}"'",1,13)}'`
+mv /data/expfiles/${prefix}* /data/expfiles_bak
+ 
+while [ $i -lt $num ]
+do
+files=$files/data/expfiles/${outfile}_$i.dmp,
+i=` expr $i + 1 `
+done
+files=$files/data/expfiles/${outfile}_$i.dmp
+#echo $files
+exp userid=user/passwd@acct FILE=$files filesize=1024M grants=N 2>>exp_rpt.log
+gzip /data/expfiles/${outfile}*
+四.综合示例
+为了操作方便我写了两个bat文件，分别用于导入dmp文件和备份数据库为dmp文件
+export.bat(备份)
+上边已经说过，关于导出也就是备份的操作很简单，如我的文件叫做export.bat,文本内容为
+exp sljx/sljx@orcl file=c:\sljx.dmp owner=sljx
+pause;
+为什么要加上pause;是因为如果不加的话DOS窗口会一闪而过，执行的过程看不见，pause起了执行结束暂停窗口的作用
+import.bat(导入)
+上边也讲过，关于oracle导入dmp文件是有一些问题的，就是如果数据库表或者视图等已经存在那么就会出现导入失败的现象，为了避免，我们不妨在导入之前，先删除该用户下的所有数据库表以及视图。这里我的导入文件叫做import.bat,具体文本内容如下
+sqlplus sljx/sljx@orcl<abc.txt
+imp sljx/sljx@orcl file=c:\sljx.dmp fromuser=sljx ignore=y
+pause;
+至于上边为什么要加上一个小括号后面又指向一个文本文件。这是因为imp指令是在非SQL区域中执行的，也就是你不需要先连接数据库再导出，而对于删除数据库表视图的命令必须是先连接数据库，必须在SQL区域中完
+ 
+成，如果直接写到一个文本文件中会出错（具体错误就是只链接进入了数据库，导入操作没执行），利用DOS通道的知识，指向一个文本文件，这样语句就都可以执行了
+abc.txt的内容为
+DROP TABLE T_DATABASE_BACKUP CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_DBUPDATE_LOG CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_DEPARTMENT CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_DUTY_BOOK CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_DUTY_CHGAPP CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_DUTY_CHGAPP_DTL CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_DUTY_CHGAPP_SEND CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_DUTY_CHGAPP_TARGET CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_DUTY_CHGAPP_TARGET_DTL CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_DUTY_SENDAPP CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_DUTY_SENDAPP_DTL CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_DUTY_STATE CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_DUTY_TARGET CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_DUTY_TARGET_DTL CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_DUTY_TIME CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_EXAM_LEVEL CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_EXAM_OBJECT CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_EXAM_OBJECT_SCORE_INPUT CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_EXAM_OBJECT_SENDAPP CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_EXAM_OBJECT_SENDAPP_DTL CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_EXAM_OBJECT_TARGET CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_EXAM_OBJECT_TARGET_DTL CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_FUNCTION_LIST CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_PROJECT CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_PROJECT_TARGET CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_PROJECT_TARGET_DTL CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_PROJECT_TARGET_TEMPLATE CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_PROJECT_TARGET_TEMPLATE_DTL CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_RECON CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_RECON_DTL CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_RECON_SEND CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_SYSTEM_DICT CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_TARGET CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_TARGET_SCORELEVEL CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_USER CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_USER_FUNC_DEF CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_WORK_LOG CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_WORK_LOG_SENDAPP CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_WORK_LOG_SENDAPP_DTL CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_WORK_LOG_TARGET CASCADE CONSTRAINTS PURGE;
+DROP TABLE T_WORK_LOG_TARGET_DTL CASCADE CONSTRAINTS PURGE;
+DROP VIEW  T_DUTY_EXAM_VIEW;
+DROP VIEW  T_EXAM_LEVEL_VIEW;
+DROP VIEW  VIEW_T_EXAM_PERSONAL_PROJECT;
+DROP VIEW  VIEW_T_PROJECT_TARGET;
+DROP VIEW  VIEW_T_PROJECT_TARGET_DTL;
+DROP VIEW  VIEW_T_PROJECT_TARGET_TDTL;
+DROP VIEW  VIEW_T_PROJECT_TARGET_TEMPLATE;
+DROP VIEW  VIEW_TARGET_LEVEL;

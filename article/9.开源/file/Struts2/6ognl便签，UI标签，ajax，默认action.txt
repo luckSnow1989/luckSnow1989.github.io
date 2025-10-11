@@ -1,0 +1,187 @@
+一、关于tomcat字符集的处理，
+	1.post
+		在处理post请求的时候使用，使用
+		request.setCharacterEncoding("utf-8");
+	与response.setContentType(text/html;charset=utf-8);就可以解决中文乱码的问题。
+	2.get
+		(1).处理请求
+		但是对于get方法，需要使用处理new String(request.getParameter("userName").getBytes("ISO-8859-1"),"UTF-8");
+		(2).转向页面
+		这是解决来自请求的中文处理；而在向页面输出时，也需要处理
+		判断浏览器
+		if(agent.contains("Firefox")){//   火狐
+			fileName = "=?UTF-8?B?"+new BASE64Encoder().encode(fileName.getBytes("utf-8"))+"?=";
+			response.setHeader("Content-Disposition", "attachment;filename="+fileName);
+		} else {//IE等其他浏览器	
+			response.setHeader("Content-Disposition", "attachment;filename="+URLEncoder.encode(fileName,"UTF-8"));
+		}	
+	3.对于某些来自服务器本地的信息，如文件名，路径等，可能出现中文，这时，利用上面的处理就不可以，所以可以对tomcat
+	进行操作，在/conf/service.xml中， 
+		<Connector port="8080" 	protocol="HTTP/1.1" 
+								URIEncoding="utf-8"    <!-- 加入这句  -->
+								connectionTimeout="20000" 
+								redirectPort="8443" />
+
+
+
+二、OGNL   struts2标签：
+	1.页面间的传值(尽可能不要传递中文，需要进行编码，和解码。)
+	页面之间传值：如<a href="show.jsp?msg=message">页面间传值</a>
+	在另一个页面上取值的方法
+	(1)	JAVA脚本页面间取值:<%=request.getParameter("msg") %><br/>
+	(2)	EL页面间取值:${param.msg }
+	(3)	struts2标签获得:<s:property value="#parameters.msg"/>
+	
+	2.常见用法的使用
+	(1)#  用法
+
+		1 访问OgnlContext中值    #request.   #attr.  	#parameters.
+			<s:property value="#parameters.msg"/>
+		
+		2 集合投影  ?#筛选出符合条件的全部元素   ^#筛选出符合条件的第一个元素   $#筛选出符合条件的最后一个元素
+			全部遍历：
+			<s:iterator value="#request.ul" var="user">
+				<s:property value="#user.id"/>--<s:property value="name"/>--<s:property value="sex"/>
+			</s:iterator><br/>
+			
+			部分信息的遍历：
+			<s:iterator value="#request.ul.{name}">
+				<s:property />
+			</s:iterator><br/>
+			
+			筛选遍历：
+			<s:iterator value="#request.ul.{?#this.name=='吕布'}">
+				<s:property value="name"/>
+			</s:iterator><br/>
+		
+		3 构造Map #{"key1":"value1","key2":"value2"}
+			自建map
+			<s:iterator value='#{"key1":"value1","key2":"value2"}'>
+				<s:property value="key"/>=<s:property value="value.name"/><s:property value="value.age"/>
+			</s:iterator>
+			request中的map
+			<s:iterator value="#request.map">
+				<s:property value="key"/>=<s:property value="value"/>
+			</s:iterator>
+		4.创建list
+			<s:iterator value='{1,3,2,4,8}'>
+			</s:iterator>
+		
+	(2)%  用法  <s:textfield value ="%{#request.ul.{name}[0]}"></s:textfield>
+
+			 %{expression}  			 
+			 在 有些标签中    会把ognl表达式当成 字符串  --- 为了不让标签把ognl表达式当成字符串
+				  所以把表达式放在  %{} 中
+
+
+	(3)$  用法	
+			$有两个主要的用途-----这些都是从action的成员变量中获取的值，必须有get方法
+			  *  用于在国际化资源文件中，引用OGNL表达式    
+				在properties中user.token = ${userName} is error
+			  *  在Struts 2配置文件中，引用OGNL表达式      
+				xml中，${fileName}
+
+
+
+
+三、struts2	的普通标签：	  
+     <s:fielderror>     取 addFieldError
+
+     <s:actionerror>        addActionError
+
+     <s:debug>          调试
+
+     <s:text>           取properties文件中内容 ---- <s:text name="user.name">;注意，单独使用时只能去配置好的资源文件中的值
+
+     <s:property>       取值 
+
+     <s:i18n>           指定取哪个properties-----主要用于去没有配置成资源文件的属性文件中的值
+			<s:i18n name="com.project.properties.message">
+				<s:text name="user.name" ></s:text>	注意，这两个配合使用才能获取这个值
+			</s:i18n>
+
+     <s:token>          防止表单重复提交
+四、struts2的UI标签
+	以form表单为主的一系列标签
+	注意：(1) 属性id在不去定义时，默认为下划线+name值：_username;_hobby
+		  (2) UI标签默认使用的主题，位置在xhtml中，修改的方法是：
+			-----全局修改，在struts.xml中，添加<constant name="struts.ui.theme" value="simple"></constant>
+			-----局部修改，在页面上添加属性<s:form action="" method="" enctype="" theme="simple">，但是label不能使用了
+		  (3) UI标签的优点：在一些信息提交出错，如：重复提交，信息错误。这时页面刷新返回到提交页，一般的HTML页面信息已经丢失，需要再填
+							而UI标签，则不会丢失。
+	常见代码：
+	<s:form action="" method="" enctype="" >
+		<s:hidden name="" id=""></s:hidden>
+		<s:textfield name="username" id="username" label="username" value="input username"></s:textfield>
+		<s:password name="password" id="password" label="password"></s:password>		
+		<s:checkboxlist list="#{'1':'体育','2':'吃','3':'看书' }" name="hobby" label="hobby" value="'1'"></s:checkboxlist>
+		<s:radio list="#{'male':'男','female':'女' }" name="sex" value="'male'" label="sex"></s:radio>
+		<s:select list="#{'1':'北京','2':'上海','3':'广州' }" name="city" value="'3'"></s:select>		
+		<s:submit value="提交"></s:submit><s:reset value="充填"></s:reset>
+	</s:form>
+
+//==========================================================
+五、struts2中使用ajax	
+	1 拿response  通过流 需要json的五个jar包
+		(1) 配置xml,不需要返回结果
+			<package name="show" extends="struts-default">
+				<action name="AjaxAction" class="com.project.web.action.AjaxAction"></action>
+			</package>
+		(2) action 返回类型必须是null,返回到页面一个json字符串
+			public String getName(String name) throws Exception {
+				List<User> ul = new ArrayList<User>();
+				ul.add(new User(1, "赵云",18));
+				ul.add(new User(2, "吕布",20));
+				ul.add(new User(3, "曹操",25));
+				
+				JSONObject json = new JSONObject();
+				json.put("ul", JSONArray.fromObject(ul));
+				ServletActionContext.getResponse().getWriter().print(json.toString());
+				
+				return null;
+			}
+	2 配置方式，需要struts2-json-plus.jar
+		(1) 配置xml ---继承的package是json-default
+			<package name="show" extends="json-default">
+				<action name="AjaxAction" class="com.project.web.action.AjaxAction">
+					<result type="json"></result>
+				</action>
+			</package>
+		(2) action 返回到页面一个json字符串,
+			注意：这个json是将name,dataMap等有get方法的成员变量自动转化
+			转化后的格式是：{name:'',dataMap:{ul:[{1, "赵云",18},{2, "吕布",20},{3, "曹操",25}]}};
+			其次：可以指定某个成员变量转化json，是在xml中，添加：	
+						<result type="json">
+							<param name="root">dataMap</param>
+						</result>
+						
+			private String name;
+			private Map dataMap = new HashMap();
+			//get&&set
+			public String getName(String name) throws Exception {
+				
+				List<User> ul = new ArrayList<User>();
+				ul.add(new User(1, "赵云",18));
+				ul.add(new User(2, "吕布",20));
+				ul.add(new User(3, "曹操",25));		
+				dataMap.put("ul", ul);				
+				return SUCCESS;
+			}
+--------------------------------
+六、DefaultAction默认action，实际开发中都在使用的一个小知识点		 
+		 
+	<package name="first" extends="struts-default">   
+		
+		<default-action-ref name="MyDefaultAction"></default-action-ref>    默认节点    
+		
+		<action name="MyDefaultAction" class="com.zrgk.web.action.MyDefaultAction">
+			<result name="success">/index.jsp</result>
+		</action>   
+    </package>	 
+		 
+当访问的Action不存在时，就会去执行 default-action-ref 所指向的Action，避免了浏览器出现默认的404错误
+		 
+		 
+		 
+		 
+		 

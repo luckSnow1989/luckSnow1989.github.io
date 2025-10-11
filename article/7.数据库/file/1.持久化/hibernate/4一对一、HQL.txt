@@ -1,0 +1,293 @@
+一、一对一：(实际开发中较少遇到)
+	例如：	 
+	husband   wife
+	husband是主控方，wife是被控方，wife的主键id是husband的主键。
+	1。创建实体类
+	Husband ---id，name, wife;
+	Wife 	---id, name, husband;
+	
+	2。配置映射
+
+	主控方：
+	<class name="Husband" table="husband">
+		<id name="id" column="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="name" column="name"></property>
+		
+		<one-to-one name="wife" class="Wife" ></one-to-one>
+	</class>
+
+	被控方：
+	<class name="Wife" table="wife">		
+		<id name="id" column="id">
+			<generator class="foreign">
+				<param name="property">husband</param>
+			</generator>
+		</id>		
+		<property name="name" column="name"></property>
+		
+		<one-to-one name="husband" class="Husband" constrained="true"></one-to-one>
+	</class>
+	3。	操作
+	(1)	增加：save-update失效
+		
+		无级联：
+			----在被控方增加时，只保存被控方的时候，主控方也会被保存，无需建立级联关系。
+			----在主控方增加时，只保存主控方的时候，被控方不会被保存。需要级联关系。
+		
+		有级联：
+			----在被控方增加时，只保存被控方的时候，主控方也会被保存，无需建立级联关系。
+			----在主控方增加时，只保存主控方的时候，双方都不会增加。save-update失效。		
+	
+	(2) 删除：
+		
+		无级联：
+			----在被控方删除时，主控方不会被删除。
+			----在主控方删除时，如有被控方，则不会被删除
+		
+		有级联：
+			----在被控方删除时，主控方会被级联删除；
+			----在主控方删除时，被控方会被级联删除；
+
+	(3)查询：
+		----主控方：对关联对象使用---迫切的左外连接---的方式查询，lazy是失效的，不能使用延迟加载的方式查询
+		----被控发：默认关联对象延迟加载。
+		
+二、唯一外键(开发中可能用到)
+	例如：
+	每个人只能有唯一一个身份证号
+	
+	1.创建实体类
+		Person--id,name,idCard;
+		IdCard--id,num,person;
+
+	2。配置映射
+
+	主控方：
+	<class name="Person" table="Person">
+		<id name="id" column="id">
+			<generator class="native"></generator>
+		</id>
+		<property name="name" column="name"></property>
+		
+		<one-to-one name="idCard" class="IdCard" property-ref="person" ></one-to-one>
+		property-ref="person"----对方存我方的属性值
+	</class>
+
+	被控方：
+	<class name="IdCard" table="IdCard">		
+		<id name="id" column="id">
+			<generator class="native"></generator>
+		</id>		
+		<property name="num" column="num"></property>
+		
+		<many-to-one name="person" class="Person" column="person_id" unique="true"></many-to-one>
+		unique="true"是原本是多对一的一方设置为唯一约束
+	</class>			
+				
+	3。	操作
+		
+		(1)增加：从主控方做级联保存（建立关系是从主控方建立的），被控方会被级联保存，但外键不会有值，如果要级联保存成功，要双方建立关系		 
+			  从被控方建立关系 级联保存，  可以保存  			
+		
+		(2)	删除：
+			----在被控方删除时，主控方会被级联删除；
+			----在主控方删除时，被控方会被级联删除；
+				
+		(3)查询：
+			----主控方：对关联对象使用---迫切的左外连接---的方式查询，lazy是失效的，不能使用延迟加载的方式查询
+			----被控发：默认关联对象延迟加载。		
+				
+三、封装Dao的超类，主要针对数据库的DDL语句操作的封装
+	
+	1.创建超类的接口
+	public interface BaseDao<T , PK extends Serializable> {
+		boolean insert(T t);
+		boolean delete(T t);
+		boolean update(T t);
+		T getById(PK pk);	
+	}
+	
+	2.实现超类的接口
+	public class BaseDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK> {
+
+		protected Class entityClass;
+		//增加
+		public boolean insert(T t) {
+			Session se = HibernateUtil.getSession();
+			Transaction tr = null;
+			try {
+				tr = se.beginTransaction();
+				se.save(t);
+				tr.commit();
+			} catch (Exception e) {
+				tr.rollback();
+				return false;
+			} finally {
+				if (se != null)
+					se.close();
+			}
+			return true;
+		}
+		//删除
+		public boolean delete(T t) {
+			Session se = HibernateUtil.getSession();
+			Transaction tr = null;
+			try {
+				tr = se.beginTransaction();
+				se.delete(t);
+				tr.commit();
+			} catch (Exception e) {
+				tr.rollback();
+				return false;
+			} finally {
+				if (se != null)
+					se.close();
+			}
+			return true;
+		}
+		//修改
+		public boolean update(T t) {
+			Session se = HibernateUtil.getSession();
+			Transaction tr = null;
+			try {
+				tr = se.beginTransaction();
+				se.update(t);
+				tr.commit();
+			} catch (Exception e) {
+				tr.rollback();
+				return false;
+			} finally {
+				if (se != null)
+					se.close();
+			}
+			return true;
+		}
+		//id查询
+		public T getById(PK pk) {
+			Session se = HibernateUtil.getSession();
+			Transaction tr = null;
+			try {
+				tr = se.beginTransaction();
+				T t = (T) se.get(this.entityClass, pk);
+				tr.commit();
+				return t;
+			} catch (Exception e) {
+				tr.rollback();
+				return null;
+			} finally {
+				if (se != null)
+					se.close();
+			}
+		}
+	}
+	
+	3.创建底层接口，如User的持久层。继承BaseDao接口
+	public interface UserDao extends BaseDao<User, Integer> {
+	
+		/*
+		 * BaseDao中的方法已经存在
+		 */
+		
+		/*
+		 * 自己需要的其他方法
+		 */
+	
+	}
+	4.持久层的实现类
+	public class UserDaoImpl extends BaseDaoImpl<User, Integer> implements UserDao {
+	
+		public UserDaoImpl() {
+			this.entityClass = User.class;//替换BaseDao中的泛型的类
+		}
+		
+		实现持久层接口的方法；
+	}
+	
+四、hibernate中的查询：
+	1.用于的查询方法
+    (1)	OID查询	  get  load
+
+    (2)	HQL   Hibernate  Query  Language
+
+    (3)	QBC
+
+    (4) QBE
+	 
+	(5) SQL
+	
+	2.HQL查询
+		
+        SQL   ----- HQL
+
+        表名        类名
+
+        字段名      属性名	
+
+		不要做投影
+	3.常用HQL语句：
+		(1)	全查：from User
+		(2)	条件查询：from User where name=? and age=?
+				条件的绑定:
+					
+					方法1：query.setString(0,name);	query.setInteger(1,age);	
+					
+					方法2：query.setParameter(0,name);
+						   如果HQL是："from User where name=:myname",则写成query.setParameter("myname",name);
+					
+					方法3：如果HQL是："from User where name=:name",  则写成query.setProperties(user);要求 :后的别名必须与Use的成员变量相同
+						   如果HQL是："from User where name=:myname",则写成query.setProperties("myname",user.name);
+		
+		(3)	like查询： from User where name like:condition -------query.setParameter("condition","%"+name+"%")
+		(4)	唯一查询： from User where name=:condition -------query.setParameter("condition",name);-------User user = (User)qu.uniqueResult();
+			返回唯一的一个结果，没有找到，或是找到多个，会产生运行时异常，利用这个异常可以捕捉到查询的结果，常用在登录中；
+		(5) 使用别名： from User u where u.name=:name and u.age=:age
+		(6) 排序：from User order by 3 desc;		
+		
+		(7)	分页查询：from User-->Query qu = se.createQuery(hql);
+							   -->qu.setFirstResult(0);从0开始计数；
+							   -->qu.setMaxResults(5);	返回最多的信息条数；
+		
+		(8)	使用xml中配置好的HQL语句：在class外面配置
+				<query name="findUserByNameInXML">
+				<![CDATA[
+					from User where name like :name
+				]]>				
+				</query>
+		
+			使用时：Query q = session.getNamedQuery("findUserByNameInXML");q.setParameter("name", "%"+name+"%");
+		
+		(9)	使用数据库的函数：
+			String hql = "select count(*) from User";		
+			Query q = session.createQuery(hql);		
+			long temp = (Long)q.uniqueResult();	
+			int num = (int)temp;		
+
+		(10)使用投影查询(一般用于连接查询的时候，返回的数据没有实体类封装)
+				String hql = "select name,age from User";	// 只要做了投影，查询结果将不会被封装成 对象   而是  Object[]			
+				Query q = session.createQuery(hql);
+				List<Object[]> list = q.list();		
+			
+			或是：
+				String hql = "select new User(name,age) from User";
+				List<User> list = q.list();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

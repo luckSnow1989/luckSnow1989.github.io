@@ -1,0 +1,210 @@
+二、Web开发的基本概念
+	服务器上的WEB资源：
+	静态资源：基本不变的。比如html、css、js
+	动态资源：根据不同环境而不同，动的。动态资源生成静态资源。比如：JSP、ASP
+
+三、Web开发需要的服务器
+	
+	JavaEE:是13种技术的总称。Servlet/JSP属于JavaEE技术的一种
+	
+	常用的服务器：
+		WebLogic:支持JavaEE规范。称之为JavaEE容器：即实现了什么规范的服务器就叫做什么容器。属于重量级服务器。
+		WebSpheres（Application Server）：支持JavaEE规范
+		Jboss：支持JavaEE规范。免费
+		Tomcat：支持Servlet/JSP规范。轻量级服务器。
+		jetty: 支持Servlet/JSP规范。比Tomcat更轻量的服务器
+
+	Java相关规范（接口和抽象类）都是SUN制定
+
+
+四、Tomcat的安装与启动遇到的问题(目标：TOmcat能启动)
+
+	1、注意：不要把Tocmat装到有中文或空格的目录中。
+	
+	2、验证Tomcat是否成功
+		a、进入Tomcat\bin，执行startup.bat
+		b、启动过程中没有出错。最好还要打开浏览器：http://localhost:8080看到猫说明OK
+		
+	3、启动Tomcat遇到的问题：
+		***a、无法启动：配置系统环境变量JAVA_HOME=你的JDK的安装目录
+		
+		Tips:
+			HTTP协议规定，Web应用的默认端口是80
+			把Tomcat使用的默认端口8080改为Web应用的默认端口80？			
+			在TOmcat\conf目录中有一个server.xml
+			找到8080改为80，就可以使用默认端口了。
+	
+	4、配置环境变量：Catalina_home=Tomcat的安装目录（不建议使用）
+		
+五、Tomcat的目录结构（服务器厂商自定义的）
+	
+	CATALINA_HOME：
+		*bin:运行Tomcat的相关命令
+		*conf：Tomcat的配置信息所在
+		*lib：Tomcat运行需要的jar包
+		*logs:TOmcat的运行日志
+		temp：存放临时文件的
+		*webapps:Web应用的存放目录。该目录中的每个目录都代表一个应用。
+		work：Tomcat的工作目录
+	
+六、JavaWeb应用的目录结构（SUN制定的，有严格要求）必须记住
+	MyApp:(目录，应用的名称)
+		1.html
+		css
+			a.css
+		WEB-INF:此目录必须有，且大小必须完全一致。该目录中的资源，用户无法直接访问到。（非常重要）
+			classes:存放Java类的字节码
+			lib:存放本应用需要的jar包
+			web.xml:本应用的配置文件
+
+七、如何“部署”自己的应用到Tomcat中
+	方式一：把你的应用拷贝到Tomcat\webapps目录下。
+	方式二：把自己的应用打包成war包，再拷贝到Tomcat\webapps目录下
+		进入你的应用目录
+		执行：jar -cvf MyApp.war .
+	
+八、Tomcat组成部分详解：
+	
+	1、创建虚拟目录：
+		
+		方式一：冷部署（不建议使用，原因就是需要重新启动）
+			1、修改Tomcat\conf\server.xml，找到<Host name="localhost"/>元素
+			2、在其中增加一个子元素，内容如下：
+				<Context path="/haha" docBase="E:\MyApp"/>
+				path:虚拟目录的名称。给用户来访问的
+				docBase:实际应用的存放目录
+			3、重新启动Tomcat
+			4、访问资源：http://localhost:8080/haha/1.html就是访问E盘下MyApp目录中的1.html
+		
+		方式二：热部署
+			在Tomcat\conf\[enginename]\[hostname]目录下建立一个特殊的文件，文件扩展名为xml；
+			文件的主文件名就是映射的虚拟路径（即<Context path="/haha" docBase="E:\MyApp"/>中的path）
+			增加以下内容：注意xml的名称，必须和项目的名称相同，如MyApp.xml
+			<?xml version="1.0"?>
+			<Context docBase="E:\MyApp"/>
+			
+		可以修改tomcat默认的web应用（tomcat默认的web就是manager，用来管理tomcat的）就作业	
+		
+		
+	2、创建虚拟主机：
+		在一个计算机上面可能有多个web应用，且他们在网络上有各自的域名，如www.itcast.cn和www.itheima.com ，但是他们的ip确实一个。
+		在Tomcat中，一个服务器可以配置多个具有各自域名的文本应用。这就是tomcat的虚拟主机功能。
+		在TOmcat\conf目录中有一个server.xml
+		
+		tomcat自己的主机：appBase是存放多个项目的文件夹，autoDeploy自动部署，name访问的名称，unpackWARs加压war包
+			<Host appBase="webapps" autoDeploy="true" name="localhost" unpackWARs="true">	
+		我们要配置的：
+			<Host appBase="itcastapps" autoDeploy="true" name="www.itcast.cn" unpackWARs="true">
+			<Host appBase="itheimaapps" autoDeploy="true" name="www.itheima.cn" unpackWARs="true">
+			配置的主机(网站www.itcast.cn)要想被外部访问，必须在DNS服务器或windows系统中注册。	
+
+
+九、用Tomcat的管理平台管理Web应用的生命周期
+	Tomcat的管理平台是Tomcat本身的一个Web应用，管理平台对应manager应用，它位于Tomcat安装目录/webapps/manager目录下。
+	manager应用会对用户进行安全验证。它要求用户具有manager角色。因此，应该先在Tomcat中添加具有manager角色的用户信息，
+	方法为打开Tomcat安装目录/conf/tomcat-users.xml文件，在其中增加以下内容：
+	<tomcat-users>
+		<role rolename=”manager”/>
+		<user username=”tomcat” password=”tomcat” roles=”manager”/>
+	</tomcat-users>
+
+			
+十、在Tomcat中配置SSL
+	
+	1.什么是SSL
+		在网络上，信息由源主机到目标主机的传输过程会经过其他计算机，网络上的信息有可能被非法分子监听，从而导致个人隐私泄露。随着电子商务的发展，
+		对信息安全的要求越来越高，于是Netscape公司提出了SSL(Server Socket Layer)协议，旨在达到在开放网络(Internet)上安全、保密地传输信息的目的。
+
+		SSL是一种保证网络上的两个节点进行安全通信的协议，建立在SSL协议上的HTTP被称为HTTPS协议。HTTPS使用的默认端口是443。SSL采用加密技术来实现安全通信，
+		保证通信数据的保密性和完整性，并且保证通信双方可以验证对方的身份。
+		
+		加密技术的基本原理是：数据从一端发送到另一端，发送者先对数据加密，然后再把它发送给接受者。这样，在网络上传输的是经过加密的数据，
+		如果有人非法截获了这批数据，由于没有解密的密钥，就无法获得真正的原始数据。接收者收到加密的数据后，先对数据解密，然后再处理。	
+		SSL通过安全证书来证明客户或服务器的身份。当客户通过安全的连接和服务器通信时，服务器会先向客户出示它的安全证书，
+		而每一个证书在世界范围内都是唯一的。
+		为了扩大用户群，一些服务器向客户出示证书后，并不要求客户出示安全证书，但在某些情况下，服务器也会要求客户出示安全证书，
+		以便核实该客户的身份。	
+		
+		安全证书的获得有两种方式：
+		1、从权威机构获得证书
+			Certificate Authority,CA和VeriSign和Thawte，它们保证了证书的可信性。申请证书时，需要付费，且一个证书只针对一个IP有效。
+		2、创建自我签名的证书
+			如果只关心数据在网络上的安全传输，而不需要对方身份验证，可以创建自我签名的证书。与权威机构颁发的证书采用的加密技术是一样的。
+	
+	2、如何在tomcat中配置：
+		可以根据安全需要，为Tomcat配置SSL，它包含以下两个步骤：
+		(1)、准备安全证书
+		(2)、配置Tomcat的SSL连接器(Connector)
+		
+		(1)创建自我签名的证书。
+			SUN公司提供了制作证书的工具keytool。在JDK1.4以上版本中都包含了这一工具。
+			通过这个工具生成证书的命令为:keytool -genkey -alias tomcat -keyalg RSA
+			以上命令将生成包含一对非对称密钥和自我签名的证书，这个命令中参数的意思
+			-genkey：生成一对非对称密钥。
+			-alias：指定密钥对的别名，该别名是公开的。
+			-keyalg：指定加密算法，此处采用通用的RSA算法。
+			以上命令将在操作系统的用户目录下生成名为”.keystore”的文件。
+			如果希望生成的keystore文件放在其他目录中，可以使用-keystore参数
+			keytool -genkey -alias tomcat -keyalg RSA -keystore d:\.keystore
+		
+		(2)、配置SSL连接器
+			在Tomcat的servlet.xml文件中，已经提供了现成的配置SSL连接器的代码，只要把注释去掉即可
+			<Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true" maxThreads="150" scheme="https" 
+				secure="true"  clientAuth="false" sslProtocol="TLS" />
+			其他属性：
+			keystoreFile：指定keystore文件的存放位置，可以指定绝对路经。如果此项没有设定，在默认情况下，
+						  Tomcat将从当前操作系统用户的用户名目录下读取名为”.keystore”的文件。
+			keystorePass:指定keystore的密码，如果此项没有设定，在默认情况下，Tomcat将使用”changeit”密码。
+
+		(3)、访问支持SSL的Web站点
+			https://localhost:8443当Tomcat接收到这一HTTPS请求后，会向客户的浏览器发送服务器的安全证书，IE浏览器接收到证书后，将向客户显示安全警报
+		
+	3、出现问题
+		在配置tomcat的SSL双向握手中，由于6.0.33版本中默认启用了APR（APR是通过JNI访问的可移植库，可以提高Tomcat的性能和伸缩性），
+		所以采用传统的配置方式（如下）会报异常；解决方法是如下的配置
+		
+		<Connector port="8443" protocol="org.apache.coyote.http11.Http11Protocol"
+			maxThreads="150" SSLEnabled="true" scheme="https" secure="true" clientAuth="true" sslProtocol="TLS" 
+			keystoreFile="conf/keystore/testpsira.jks" keystorePass="123456"
+			truststoreFile="conf/keystore/testpsira.jks" truststorePass="123456"/>
+		将protocol="org.apache.coyote.http11.Http11Protocol"替换为protocol="HTTP/1.1"
+
+
+
+
+		
+练习：配置E盘上的MyApp作为默认应用
+		1、在Tomcat\conf\[enginename]\[hostname]目录下建立一个特殊的文件，文件名ROOT.xml；
+		2、由于默认应用特殊，也需要重新启动Tomcat
+		访问MyApp下的1.html
+		http://locahost:8080/1.html			
+（作业）案例:默认端口\默认应用\默认主页
+1.默认端口：
+		修改conf/service.xml  8080---->80
+	 <Connector connectionTimeout="20000" port="8080" protocol="HTTP/1.1" redirectPort="8443"/>
+
+2.默认应用：
+	方式一，添加：C:\apache-tomcat-7.0.64\conf\Catalina\localhost\ROOT.xml
+	<Context docBase="E:\ROOT"/>
+	
+	方式二，添加webapps下某个应用为默认应用。项目文件夹名称为account, 访问方式为更目录(http://127.0.0.1:8080/),热部署
+	<Context docBase="account" path="/" reloadable="true"/>
+	
+3.默认主页：
+	修改应用中的web.xml文件
+	根元素下增加以下内容：
+		<welcome-file-list>
+			<welcome-file>1.html</welcome-file>
+		</welcome-file-list>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

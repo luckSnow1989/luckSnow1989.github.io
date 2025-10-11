@@ -1,0 +1,147 @@
+http://blog.csdn.net/huoyunshen88/article/details/9077245
+http://www.iteye.com/topic/1135085
+
+http://www.cnblogs.com/zhaosk/p/4361516.html
+
+
+3.Hadoop错误1_Hadoop分布式及伪分布式下DataNode不能启动的问题
+http://blog.csdn.net/wang_zhenwei/article/details/47420377
+
+4.window运行hadoop run
+http://www.cnblogs.com/hyl8218/p/5492450.html
+
+5.搭建Hadoop2.6.0+Eclipse开发调试环境
+http://www.linuxidc.com/Linux/2015-08/120943.htm
+
+一。datanode无法启动
+ERROR org.apache.hadoop.hdfs.server.datanode.DataNode: Incompatible namespaceIDs ...datanode namespaceID...
+用三台centos操作系统的机器搭建了一个hadoop的分布式集群。启动服务后失败，查看datanode的日志，
+提示错误：ERROR org.apache.hadoop.hdfs.server.datanode.DataNode: java.io.IOException: Incompatible namespaceIDs in 
+/var/lib/hadoop-0.20/cache/hdfs/dfs/data: namenode namespaceID = 240012870; datanode namespaceID = 1462711424 .
+
+　　问题：Namenode上namespaceID与datanode上namespaceID不一致。
+
+　　问题产生原因：每次namenode format会重新创建一个namenodeId,而tmp/dfs/data下包含了上次format下的
+	id,namenode format清空了namenode下的数据,但是没有清空datanode下的数据,所以造成namenode节点上的namespaceID与datanode节点上的namespaceID不一致。启动失败。
+	每次namenode服务器的重启，format的文件都会被删除掉。
+	方法一：
+	　　(1)停掉集群服务
+
+	　　(2)在出问题的datanode节点上删除data目录，data目录即是在hdfs-site.xml文件中配置的dfs.data.dir目录，本机器上那个是
+		/var/lib/hadoop-0.20/cache/hdfs/dfs/data/ (注：我们当时在所有的datanode和namenode节点上均执行了该步骤。以防删掉后不成功，可以先把data目录保存一个副本).
+
+	　　(3)格式化namenode.
+
+	　　(4)重新启动集群。
+
+	　　问题解决。
+
+	　　这种方法带来的一个副作用即是，hdfs上的所有数据丢失。如果hdfs上存放有重要数据的时候，不建议采用该方法。
+	方法二：
+		(1)停掉集群服务
+		(2)在namenode节点上的/tmp/hadoop-zhngxue/dfs/current/VERSION文件，在第一次生成的时候，就将hadoop-zhngxue文件夹全部内容保存起来。
+		(3)服务器重启之后，将hadoop-zhngxue文件夹保存到/tmp/文件夹下，即可使用之前的format文件了。
+		
+	方法三：（推荐）
+	修改hdfs-site.xml,修改元文件的保存路径
+	<!-- nodenode元数据文件存储目录 -->
+	<property>
+		<name>dfs.name.dir</name>
+		<value>/home/zhangxue/hadoop-0.20.2/name/</value>
+	</property>
+	
+二、safemode
+	bin/hadoop fs -put ./input input
+	put: org.apache.hadoop.hdfs.server.namenode.SafeModeException: Cannot create directory /user/root/input. Name node is in safe mode.
+	hadoop dfsadmin -safemode leave		
+		
+	解决方法：
+	NameNode在启动的时候首先进入安全模式，如果datanode丢失的block达到一定的比例（1-dfs.safemode.threshold.pct），则系统会一直处于安全模式状态即只读状态。
+
+	dfs.safemode.threshold.pct（缺省值0.999f）表示HDFS启动的时候，如果DataNode上报的block个数达到了元数据记录的block个数的0.999倍才可以离开安全模式，
+	否则一直是这种只读模式。如果设为1则HDFS永远是处于SafeMode。
+
+	下面这行摘录自NameNode启动时的日志（block上报比例1达到了阀值0.9990）
+
+	The ratio of reported blocks 1.0000 has reached the threshold 0.9990. Safe mode will be turned off automatically in 18 seconds.
+
+	有两个方法离开这种安全模式
+
+	（1）修改dfs.safemode.threshold.pct为一个比较小的值，缺省是0.999。
+
+	（2）Hadoop dfsadmin -safemode leave命令强制离开
+		用户可以通过dfsadmin -safemode value  来操作安全模式，参数value的说明如下：
+		enter – 进入安全模式
+		leave – 强制NameNode离开安全模式
+		get -  返回安全模式是否开启的信息
+		wait – 等待，一直到安全模式结束。		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

@@ -1,0 +1,20 @@
+spring-cloud 作为一个新兴的高级框架。
+	目前版本的更迭非常的迅速。
+	
+
+这里推荐两个学习的资源：
+	1. https://gitee.com/didispace
+		http://blog.didispace.com/
+			
+	
+	2.https://gitee.com/itmuch/
+		http://www.itmuch.com/
+		
+	这两个资源都计较好。
+	
+spring cloud 中文网：
+	https://springcloud.cc/
+	
+	
+Spring Cloud 常见面试题（2020最新版）
+	https://mp.weixin.qq.com/s/KarDuf0Jro7F2w9dAG-wJg

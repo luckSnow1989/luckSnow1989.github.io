@@ -1,0 +1,338 @@
+一、jdbc连接 	
+		MySQL    jdbc:mysql://localhost:3306/db1      （localhost:3306可以省略）
+
+		Oracle   jdbc:oracle:thin:@localhost:1521:orcl	
+二、oracle的基本概念
+							 
+	什么是数据库？   用来管理数据的软件			 
+
+	在数据库软件 中 什么是一个数据库
+
+	一组的 数据文件 (.dbf)   控制文件(.ctl)  日志文件 (.log)
+				 
+	oracle	实例  	所谓一个oracle实例  就是一组的进程和内存
+					多个实例可以操作同一个数据库	 
+					
+二、oracle结构
+
+	1.	oracle的物理存储结构，所在目录：{安装路径}\admin\oradata\orcl,该目录下只有三种文件
+	
+		数据文件(*.DBF)----存储数据库的所有数据信息（用户数据和系统数据）--
+					 一个表空间对应一个数据文件
+
+		重做日志文件(*.LOG)：--记录了所有数据变化，当系统活介质故障时，提供恢复机制
+
+		控制文件(*.CTL)--数据库启动时引用的文件，查找数据库的位置和重做日志  用来保持数据库的完整性
+
+		跟踪文件和警告日志   记载后台进程遇到的重大事件信息（表空间的创建 重做日志的转换
+															 数据库的建立等）			 
+				 
+				 
+	2.	oracle的逻辑存储结构
+		数据块-->区-->段-->表空间-->数据库
+		数据库中：
+			一系列连续块构成一个区
+			一个或多个区构成一个段
+			一个或多个段构成一个表空间
+			若干个表空间构成一个数据库
+			通常一个数据库对象只拥有一个段, 一个段至少包含一个区.
+			
+		（1）表空间
+			A.表空间分为系统表空间和非系统表空间，见本文件目录下的图。
+			小文件表空间: 即系统默认的表空间. System表空间, sysaux表空间
+			大文件表空间: 是为超大型数据库设计的, 只包含一个大数据文件, 该文件的大小为128KB<size<128TB.
+						  可以简化数据文件的管理, 减少SGA的需求, 减少控制文件.
+
+			B.表空间的管理包括:
+				创建表空间
+				修改表空间
+				表空间的备份
+				大文件表空间的管理
+				
+			C.扩展表空间的方式有哪些?
+
+				1).为表空间添加数据文件
+					SQL > ALTER TABLESPACE ORCLTBS1 ADD DATAFILE
+					'D:\ORACLE\PRODUCT\10.2.0\ORADATA\ORCL\ORCLTBS1_2.DBF' SIZE10M;
+					为ORCL数据库中表空间名为ORCLTBS1添加一个大小为10MB的新数据文件.
+
+				2).改变数据文件的大小
+					SQL > ALTER DATABASE DATAFILE
+					'D:\ORACLE\PRODUCT\10.2.0\ORADATA\ORCL\ORCLTBS1_2.DBF' RESIZE20M;
+					将ORCL数据库中表空间名为ORCLTBS1的数据文件ORCLTBS1_2.DBF增加到20MB.
+
+				3).允许数据文件自动扩
+					SQL > ALTER DATABASE DATAFILE
+					'D:\ORACLE\PRODUCT\10.2.0\ORADATA\ORCL\ORCLTBS1_2.DBF'
+					AUTOEXTEND ON NEXT5M MAXSIZE100M;
+
+			D.修改表空间的可用性
+				SQL > ALTER TABLESPACE ... OFFLINE|ONLINE;
+				SQL > ALTER TABLESPACE ORCLTBS1 OFFLINE;
+				将表空间ORCLTBS1设置为OFFLINE状态
+				SQL > ALTER TABLESPACE ORCLTBS1 ONLINE;
+				将表空间ORCLTBS1设置为ONLINE状态
+
+			E.给表空间重命名:
+				ALTER TABLESPACE ORCLTBS1 RENAME TO ORCLTBS1_NEW;
+
+			F.表空间的备份
+				SQL > ALTER TABLESPACE ORCLTBS1 BEGIN BACKUP;
+					复制ORCLTBS1表空间的数据文件ORCLTBS1_1.dbf和ORCLTBS1_2.dbf到目标位置.
+				SQL > ALTER TABLESPACE ORCLTBS1 END BACKUP;
+
+			G.删除表空间
+				1).除了system表空间和sysaux表空间外, 其他表空间都可以删除.
+				2).一旦表空间被删除, 该表空间中的所有数据将永久性丢失.
+				3).如果表空间中的数据正在被使用, 或表空间中包含未提交事务的回滚信息, 则该表空间不能删除
+				SQL > DROP TABLESPACE ORCLTBS1 INCLUDING CONTENTS;
+
+			H.大文件表空间的操作
+				由于大文件表空间只含有一个数据文件, 因此可以通过对表空间的操作, 实现对数据文件的透明操作.
+				改变表空间的大小或扩展性  è  改变数据文件的大小及扩展性的目的
+
+				1).改变数据文件的大小
+					SQL > ALTER TABLESPACE ORCLTBS1 RESIZE20M;
+					将ORCL数据库中表空间名为ORCLTBS1的数据文件ORCLTBS1_2.DBF增加到20MB.		 
+
+				2).允许数据文件自动扩展
+					SQL > ALTER TABLESPACE ORCLTBS1 AUTOEXTEND ON NEXT5M MAXSIZE UNLIMITED;
+
+		(2).数据块
+			1).输入输出的最小单位
+			2).是数据库中最小的逻辑存储单元, 也是数据库执行输入/输出操作的最小单位, 由一个或多个操作系统块构成.
+
+		(3).区
+			区: 是由一系列连续的数据块构成的逻辑存储单元, 是存储空间分配与回收的最小单位.			 
+			区的管理主要指的是: 分配与回收
+			当创建一个数据库对象时, oracle为对象分配若干个区, 以构成一个段来为对象提供初始的存储空间.
+
+			A.区的分配
+				1).区分配采用自动扩展方式进行
+					SQL > CREATE TABLESPACE ORACLTBS6 DATAFILE
+					'D:\ORACLE\PRODUCT\10.2.0\ORADATA\ORCL\ORCLTBS1_2.DBF' SIZE20M
+					EXTENT MANAGEMENT LOCAL AUTOALLOCATE;
+					本地管理方式, 自动扩展
+
+				2).区分配采用固定大小, 每个区5MB
+					SQL > CREATE TABLESPACE ORACLTBS7 DATAFILE
+					'D:\ORACLE\PRODUCT\10.2.0\ORADATA\ORCL\ORCLTBS1_2.DBF' SIZE10M
+					EXTENT MANAGEMENT UNIFORM SIZE 5M;
+
+			B.区的回收
+				通常分配给段的区将一直保留在段中, 不论区中的数据块是否被使用. 只有当段所属的对象被删除时, 段中所有的区才会被回收.
+
+
+		(4).段
+			段是由一个或多个连续或不连续的区组成的逻辑存储单元. 段是表空间的组成单位, 代表特定数据类型的数据存储结构.
+			通常一个数据库对象只拥有一个段, 一个段至少包含一个区.		 
+			1).数据段
+			2).索引段
+			3).临时段
+			4).回滚段: 用于数据被修改之前的值.
+			可以实现事务回滚, 数据库恢复, 数据库的读一致性和闪回查询等
+
+	3.	oracle的内存结构
+
+		(1)系统全局区（SGA  system global area）
+			共享池--包括库高速缓存（存储当前最新使用的sql语句、执行计划等）
+					数据字典高速缓存（表的定义、用户名和权限等）
+					共享池的大小影响数据库的性能
+
+			数据库缓冲区高速缓存   当用户提交一个查询时，先查找数据库缓冲区高速缓存（存储最近使用的块）
+
+		(2)重做日志缓冲区   数据进行所有的更改都存储在重做日志缓冲区，这些记录以后会拷贝
+						   到重做日志文件中
+
+
+		(3)程序全局区（PGA） 是包含一个单个服务器进程数据的内存区域。由排序区域  会话信息
+																  游标状态和堆栈空间组成
+				PGA在一个进程尅是时进行分配，进程终止时释放。
+
+三、表空间(Tablespace)    通常  一个表空间对应一个数据文件(.dbf)
+
+	--创建临时表空间
+	create temporary tablespace test_temp
+	tempfile 'E:\oracle\product\10.2.0\oradata\testserver\test_temp01.dbf'
+	size 32m
+	autoextend on
+	next 32m maxsize 2048m
+	extent management local;
+	 
+	--创建数据表空间
+	create tablespace test_data
+	logging
+	datafile 'E:\oracle\product\10.2.0\oradata\testserver\test_data01.dbf'
+	size 32m
+	autoextend on
+	next 32m maxsize 2048m
+	extent management local;
+	 
+	--创建用户并指定表空间
+	create user username identified by password
+	default tablespace test_data
+	temporary tablespace test_temp;
+
+	创建表空间 :  只能通过语句  
+			 			
+	create tablespace J1506 datafile 'D:\oracle\oradata\orcl\J1506.dbf'
+	size 10M autoextend on next 5M permanent online
+
+    永久表空间
+    临时表空间	 
+			     
+四	Oracle中的用户和权限
+    创建用户 	 
+	分配权限：    角色权限    (connect  resource)
+	              系统权限    
+				  对象权限
+
+    使用PowerDesigner  反向工程查看hr用户下的表结构
+	
+	PLSQL Developer 导入导出表
+
+   
+五、Oracle中常用的数据类型：
+	
+	    字符串：varchar2(变长)  最多4000   	省空间
+            	char(定长)          	   	效率高,但是占有更多的资源。		  
+
+        数字：  number   					可以是整数或浮点数
+	            number(6)	   	最多六位  
+				number(6,2)   	最多六位   	小数点后两位 整数部分最多4位
+				 
+		MySQL中 date  datetime  timestamp		 
+    
+		oracle日期类型 date   timestamp
+		
+		大字段：  Clob(字符型大字段)   Blob(字节型大字段) 
+	 
+六、数据库的完整性：
+	    1 实体完整性  ------- 主键约束
+		2 参照完整性  ------- 外键约束
+		3 用户自定义完整性 ---检查约束
+
+	数据库约束：
+        1 主键约束      用来唯一标识一条数据    非空唯一
+        2 外键约束      满足参照完整性
+        3 唯一性约束
+        4 非空约束
+        5 检查约束	（MySQL不支持）	 
+	   
+	Oracle中没有自增字段，可以定义序列实现相同的功能
+
+
+七、DQL 语言：
+    select * from student;
+	 
+	select id,name from student;  投影列
+	 
+	select id,name,age,birthday,email,class_id from student;	 
+	 
+	employees   commission_pct  佣金比率 
+	 
+				员工应得的佣金  =  年工资 *  佣金比率 
+				 
+				 
+		员工的last_name  和年收入		 
+
+     select * from employees where hire_date = '30-1月-04'
+	 
+注意：oracle的查询时，查询时间类型的格式不能直接使用'2004/1/30',这一点不同于MySQL，
+
+	常用的时间查询方法:
+	1.select * from employees where hire_date = to_date('2004-01-30','yyyy-MM-dd')
+
+	2.select * from employees where to_char(hire_date,'yyyy-MM-dd')='2004-01-30'
+
+
+	3.select * from employees where hire_date ='30-1月-2004'
+	
+
+
+八、oracle表空间查询语句
+	--1、查看表空间的名称及大小 
+		SELECT t.tablespace_name, round(SUM(bytes / (1024 * 1024)), 0) ts_size 
+		FROM dba_tablespaces t, dba_data_files d 
+		WHERE t.tablespace_name = d.tablespace_name 
+		GROUP BY t.tablespace_name; 
+
+	--2、查看表空间物理文件的名称及大小 
+		SELECT tablespace_name, 
+		file_id, 
+		file_name, 
+		round(bytes / (1024 * 1024), 0) total_space 
+		FROM dba_data_files 
+		ORDER BY tablespace_name; 
+
+	--3、查看回滚段名称及大小 
+		SELECT segment_name, 
+		tablespace_name, 
+		r.status, 
+		(initial_extent / 1024) initialextent, 
+		(next_extent / 1024) nextextent, 
+		max_extents, 
+		v.curext curextent 
+		FROM dba_rollback_segs r, v$rollstat v 
+		WHERE r.segment_id = v.usn(+) 
+		ORDER BY segment_name; 
+
+	--4、查看控制文件 
+		SELECT NAME FROM v$controlfile; 
+
+	--5、查看日志文件 
+		SELECT MEMBER FROM v$logfile; 
+
+	--6、查看表空间的使用情况 
+		SELECT SUM(bytes) / (1024 * 1024) AS free_space, tablespace_name 
+		FROM dba_free_space 
+		GROUP BY tablespace_name; 
+		SELECT a.tablespace_name, 
+		a.bytes total, 
+		b.bytes used, 
+		c.bytes free, 
+		(b.bytes * 100) / a.bytes "% USED ", 
+		(c.bytes * 100) / a.bytes "% FREE " 
+		FROM sys.sm$ts_avail a, sys.sm$ts_used b, sys.sm$ts_free c 
+		WHERE a.tablespace_name = b.tablespace_name 
+		AND a.tablespace_name = c.tablespace_name; 
+
+	--7、查看数据库库对象 
+		SELECT owner, object_type, status, COUNT(*) count# 
+		FROM all_objects 
+		GROUP BY owner, object_type, status; 
+
+	--8、查看数据库的版本　 
+		SELECT version 
+		FROM product_component_version 
+		WHERE substr(product, 1, 6) = 'Oracle'; 
+
+	--9、查看数据库的创建日期和归档方式 
+		SELECT created, log_mode, log_mode FROM v$database; 
+
+
+
+		--1G=1024MB 
+		--1M=1024KB 
+		--1K=1024Bytes 
+		--1M=11048576Bytes 
+		--1G=1024*11048576Bytes=11313741824Bytes 
+		SELECT a.tablespace_name "表空间名", 
+		total "表空间大小", 
+		free "表空间剩余大小", 
+		(total - free) "表空间使用大小", 
+		total / (1024 * 1024 * 1024) "表空间大小(G)", 
+		free / (1024 * 1024 * 1024) "表空间剩余大小(G)", 
+		(total - free) / (1024 * 1024 * 1024) "表空间使用大小(G)", 
+		round((total - free) / total, 4) * 100 "使用率 %" 
+		FROM (SELECT tablespace_name, SUM(bytes) free 
+		FROM dba_free_space 
+		GROUP BY tablespace_name) a, 
+		(SELECT tablespace_name, SUM(bytes) total 
+		FROM dba_data_files 
+		GROUP BY tablespace_name) b 
+		WHERE a.tablespace_name = b.tablespace_name 
+
+
+				 
+	 

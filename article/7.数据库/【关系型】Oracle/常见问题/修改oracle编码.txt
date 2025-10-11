@@ -1,0 +1,29 @@
+[oracle@gpdb ~]$ sqlplus /nolog
+
+conn /as sysdba;
+
+select userenv('language') from dual;
+
+SHUTDOWN IMMEDIATE
+
+STARTUP MOUNT
+
+ALTER SYSTEM ENABLE RESTRICTED SESSION;
+
+ALTER SYSTEM SET JOB_QUEUE_PROCESSES=0;
+
+ALTER SYSTEM SET AQ_TM_PROCESSES=0;
+
+ALTER DATABASE OPEN;
+
+ALTER DATABASE CHARACTER SET INTERNAL_USE ZHS16GBK;
+
+SHUTDOWN IMMEDIATE;
+
+STARTUP;
+
+select userenv('language') from dual;
+
+常见的Oracle字符集有ZHS16GBK、AL32UTF8、US7ASCII等
+
+（我自己推荐ZHS16GBK，这个用的多）

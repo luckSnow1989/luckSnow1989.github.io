@@ -1,0 +1,318 @@
+一、触发器
+1.定义：是特定事件出现的时候，自动执行的代码块。
+类似于存储过程，但是用户不能直接调用他们。
+
+2.功能：
+	(1)允许/限制对表的修改
+	(2)自动生成派生列，比如自增字段;
+	(3)强制数据一致性;
+	(4)提供审计和日志记录;
+	(5)防止无效的事务处理;
+	(6)启用复杂的业务逻辑;
+	(7)极大地提高了数据的安全性、避免了外界非法操作对数据库的影响;
+	
+	例：
+	create trigger biufer_employees_department_id
+		before insert or update
+		of department_id
+		on employees
+		referencing old as old_value
+		new as new_value
+		for each row
+		when (new_value.department_id<>80 )
+	begin
+		:new_value.commission_pct :=0;
+	end;
+	
+
+二、触发器的组成部分：
+	(1)触发器名称
+		create trigger biufer_employees_department_id
+		命名习惯：
+		biufer（before insert update for each row）
+		employees 表名
+		department_id 列名
+	
+	(2)触发语句
+		比如：表或视图上的dml语句、ddl语句
+		数据库关闭或启动,startup shutdown 等等
+		before insert or update
+		of department_id
+		on employees
+		referencing old as old_value
+		new as new_value
+		for each row
+
+	(3)触发器限制
+		when (new_value.department_id<>80 )
+		限制不是必须的。此例表示如果列department_id不等于80的时候，触发器就会执行。
+		其中的new_value是代表跟新之后的值。
+	
+	(4)触发操作
+		是触发器的主体
+		begin
+			:new_value.commission_pct :=0;
+		end;
+		主体很简单，就是将更新后的commission_pct列置为0
+
+	触发：
+	insert into employees(employee_id,
+	last_name,first_name,hire_date,job_id,email,department_id,salary,commission_pct )
+	values( 12345,'chen','donny', sysdate, 12, ‘donny@hotmail.com',60,10000,.25);
+
+	select commission_pct from employees where employee_id=12345;
+
+	触发器不会通知用户，便改变了用户的输入值。
+
+
+三、触发器类型：
+	(1)语句触发器
+	(2)行触发器
+	(3)instead of 触发器
+	(4)系统条件触发器
+	(5)用户事件触发器
+
+1、 语句触发器
+        是在表上或者某些情况下的视图上执行的特定语句或者语句组上的触发器。
+	能够与insert、update、delete或者组合上进行关联。但是无论使用什么样的组合，
+	各个语句触发器都只会针对指定语句激活一次。比如，无论update多少行，也
+	只会调用一次update语句触发器。
+
+(1)	例1：
+	需要对在表上进行dml操作的用户进行安全检查，看是否具有合适的特权。
+	create table foo(a number);
+	
+	create trigger biud_foo
+		before insert or update or delete
+		on foo
+	begin
+		if ( user not in ('HR') )then
+		raise_application_error(-20001, 'you don't have access to modify this table.');
+		end if;
+	end;
+	触发器启动之后的结果是：即使sys，system用户也不能修改foo表
+
+(2)	例2：
+	某一个用户对指定的表进行DML操作时，会将修改表的时间、人物进行日志记录。
+
+	建立试验表(复制一个表)
+	create table employees_copy as select *from hr.employees
+	
+	建立日志表
+	create table employees_log(
+		who varchar2(30),
+		when date);
+
+	在employees_copy表上建立语句触发器，在触发器中填充employees_log 表。
+	create or replace trigger biud_employee_copy
+		before insert or update or delete
+		on employees_copy
+	begin
+		insert into employees_log(
+		who,when)
+		values( user, sysdate);
+	  
+	end;
+	测试
+	update employees_copy set salary= salary*1.1;
+
+	select *from employess_log;
+
+注意:确定是哪个语句起作用？
+	即是insert/update/delete中的哪一个触发了触发器？
+	可以在触发器中使用inserting / updating / deleting 条件谓词，作判断：
+	begin
+		if inserting then
+	   -----
+		elsif updating then
+	   -----
+		elsif deleting then
+	   ------
+		end if;
+	end;
+
+	if updating('col1') or updating('col2') then
+	  ------
+	end if;
+
+(3) 例3：
+	修改日志表
+	alter table employees_log
+	  add (action varchar2(20));
+	  
+	修改触发器，以便记录语句类型。
+	create or replace trigger biud_employee_copy
+		before insert or update or delete
+		on employees_copy
+	declare
+		l_action employees_log.action%type;
+	begin
+		if inserting then
+			l_action:='insert';
+		elsif updating then
+			l_action:='update';
+		elsif deleting then
+			l_action:='delete';
+		else
+			raise_application_error(-20001,'you should never ever get this error.');
+
+		insert into employees_log(who,action,when)
+		values( user, l_action,sysdate);
+	 end;
+
+	测试
+	insert into employees_copy( employee_id, last_name, email, hire_date, job_id)
+		values(12345,'chen','donny@hotmail',sysdate,12);
+
+	select *from employees_log
+
+	update employees_copy set salary=50000 where employee_id = 12345;
+
+2、 行触发器
+	是指为受到影响的各个行激活的触发器，定义与语句触发器类似，有以下两个例外：
+	(1)定义语句中包含for each row子句
+	(2) 在before……for each row触发器中，用户可以引用受到影响的行值。
+(1)	例1：
+	update user set age=22 where name='Tom';
+	定义：
+	update employees_copy set department_id=80,commission_pct=.3 where employee_id=101; 
+	
+	create trigger biufer_employees_department_id
+		before insert or update
+		of department_id
+		on employees_copy
+		referencing old as old_value
+		new as new_value
+		for each row
+		when (new_value.department_id<>80 )
+	begin
+		:new_value.commission_pct :=0;
+	end;
+
+注意：referencing 子句：
+	执行dml语句之前的值的默认名称是 :old ,之后的值是 :new
+	insert 操作只有:new
+	delete 操作只有 :old
+	update 操作两者都有
+
+	referencing子句只是将new 和old重命名为new_value和old_value，目的是避免混淆。比如操作一个名为new的表时。
+	作用不很大。
+	
+(2)	例2：
+	为主健生成自增序列号
+
+	drop table foo;
+	
+	create table foo(id number, data varchar2(20));
+	
+	create sequence foo_seq;
+
+	create or replace trigger bifer_foo_id_pk
+		before insert on foo
+		for each row
+	begin
+		select foo_seq.nextval into :new.id from dual;
+	end;
+
+	insert into foo(data) values(‘donny');
+	insert into foo values(5,'chen');
+	select * from foo;
+
+3、 instead of 触发器更新视图
+	例1：
+	create or replace view company_phone_book as
+		select first_name||', '||last_name name, email, phone_number,
+		employee_id emp_id
+		from hr.employees;
+	
+	尝试更新email和name
+	update hr.company_phone_book
+		set name='chen1, donny1'
+		where emp_id=100
+
+	create or replace trigger update_name_company_phone_book
+		instead of
+		update on hr.company_phone_book
+	begin
+		update hr.employees
+		set employee_id=:new.emp_id,
+		first_name=substr(:new.name, instr(:new.name,',')+2),
+		last_name= substr(:new.name,1,instr(:new.name,',')-1),
+		phone_number=:new.phone_number,
+		email=:new.email
+		where employee_id=:old.emp_id;
+	end;
+
+ 
+
+4、 系统事件触发器
+	系统事件：数据库启动、关闭，服务器错误
+
+	create trigger ad_startup
+	after startup
+	on database
+	begin
+		-- 执行操作
+	end;
+	/
+	before shutdown
+	on database
+
+
+5、 用户事件触发器
+	用户事件：用户登陆、注销，create / alter / drop / analyze / audit / grant / revoke / rename / truncate / logoff
+
+	例子：记录删除对象
+	1. 日志表
+	create table droped_objects(
+		object_name varchar2(30),
+		object_type varchar2(30),
+		dropped_on date);
+
+	2．触发器
+	create or replace trigger log_drop_trigger
+		before drop on donny.schema
+	begin
+		insert into droped_objects values(
+		ora_dict_obj_name,  -- 与触发器相关的函数
+		ora_dict_obj_type,
+		sysdate);
+	end;
+	/
+
+
+	3. 测试
+	create table drop_me(a number);
+	create view drop_me_view as select *from drop_me;
+	drop view drop_me_view;
+	drop table drop_me;
+
+	select *from droped_objects
+
+
+	禁用和启用触发器
+	alter trigger <trigger_name> disable;
+	alter trigger <trigger_name> enable;
+
+	事务处理：
+	在触发器中，不能使用commit / rollback
+	因为ddl语句具有隐式的commit，所以也不允许使用
+
+	视图：
+	dba_triggers
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

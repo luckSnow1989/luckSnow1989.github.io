@@ -1,0 +1,165 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    
+
+    <properties>
+        <!--docker插件定义参数start-->
+		<docker.image.repositories>harbor-master.yooli-me.com</docker.image.repositories>
+		<harbor.account>deploy_test</harbor.account>
+		<harbor.passwd>LoFkO73THnV9byQC</harbor.passwd>
+		<project.group>tmp</project.group>
+		<bind.server.port>8080</bind.server.port>
+		<serverModuleName>loanweb</serverModuleName>
+		<serverModuleRootPath>.</serverModuleRootPath>
+		<server.publish.name>loanweb</server.publish.name>
+		<local.docker.host>172.16.4.147:2377</local.docker.host>
+		<healthCheck4Dev>http://ipAddress:${bind.server.port}/</healthCheck4Dev>
+		<log.root.volume>/data/home/www/yooli/logs</log.root.volume>
+		<localDockerFileDir>${project.basedir}/docker</localDockerFileDir>
+		<assemblyFile>${project.basedir}/docker/assembly.xml</assemblyFile>
+		<serverJar>maven/${serverModuleRootPath}/target/${serverModuleName}.war</serverJar>
+		<profile.branch>none</profile.branch>
+		<!--docker插件定义参数end-->
+
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>0.30.0</version>
+                    <inherited>true</inherited>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+		
+            <!--获取时间戳-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <configuration>
+                    <timestampFormat>yyyyMMdd_HHmmss</timestampFormat>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>create-timestamp</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <inherited>false</inherited>
+            </plugin>
+            <!--获取时间戳-->
+            <!--Docker maven plugin-->
+            <plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<configuration>
+				  <!--docker主机地址-->
+				  <dockerHost>tcp://${local.docker.host}</dockerHost>
+				  <!--远程仓库地址-->
+				  <registry>${docker.image.repositories}</registry>
+				  <!--停止后是否保留容器-->
+				  <keepContainer>false</keepContainer>
+				  <!--打印构建过程-->
+				  <verbose>true</verbose>
+				  <!--权限验证-->
+				  <authConfig>
+					<push>
+					  <username>${harbor.account}</username>
+					  <password>${harbor.passwd}</password>
+					</push>
+				  </authConfig>
+				  <images>
+					<image>
+					  <!--镜像别名，用于启动容器时引用-->
+					  <alias>${server.publish.name}-v${project.version}-${timestamp}</alias>
+					  <!--镜像名称:tag-->
+					  <name>${docker.image.repositories}/${project.group}/${server.publish.name}-${profile.branch}:v${project.version}-${timestamp}</name>
+					  <build>
+						<!--不使用maven缓存-->
+						<noCache>true</noCache>
+						<!--指定dockerfile位置-->
+						<dockerFileDir>${localDockerFileDir}</dockerFileDir>
+						<!--如果是多模块项目且需要在根目录下面打包，则需要在这里定义assembly-->
+						<assembly>
+						  <descriptor>${assemblyFile}</descriptor>
+						</assembly>
+						<!--为镜像添加一个latest标签-->
+						<tags><tag>latest</tag></tags>
+						<!--向dockerfile传参-->
+						<args>
+						  <JAR_FILE>${serverJar}</JAR_FILE>
+						  <EXPOSE_PORT>${bind.server.port}</EXPOSE_PORT>
+						  <LOG_ROOT_VOLUME>${log.root.volume}</LOG_ROOT_VOLUME>
+						  <PROJECT_ARTIFACTID>${serverModuleName}</PROJECT_ARTIFACTID>
+						  <SERVER_PUBLISH_NAME>${server.publish.name}</SERVER_PUBLISH_NAME>
+						</args>
+					  </build>
+					  <run>
+						<!--该参数在0.29.0版本以后才被加入-->
+						<autoRemove>true</autoRemove>
+						<!--容器名称，引用上面的别名-->
+						<namingStrategy>alias</namingStrategy>
+						<ports>
+						  <port>${bind.server.port}:${bind.server.port}</port>
+						  <!--远程debug的端口，一般不需要改动-->
+						  <port>7474:7474</port>
+						</ports>
+						<volumes>
+						  <bind>
+							<!--日志本地存储-->
+							<volume>${log.root.volume}/${server.publish.name}:${log.root.volume}/${server.publish.name}</volume>
+						  </bind>
+						</volumes>
+						<wait>
+						  <http>
+							<url>${healthCheck4Dev}</url>
+						  </http>
+						  <time>10000</time>
+						</wait>
+						<log>
+						  <prefix>Container @ ${project.name}-v${project.version}-${timestamp} log：</prefix>
+						  <date>default</date>
+						</log>
+					  </run>
+					</image>
+				  </images>
+				</configuration>
+				<dependencies>
+				  <dependency>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+					<version>1.11</version>
+				  </dependency>
+				</dependencies>
+			</plugin>
+            <!--Docker maven plugin-->
+			
+        </plugins>
+
+    </build>
+	
+	<!--多模块项目务必在每个子模块pom中添加以下内容，单模块无视-->
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+					<skipBuild>true</skipBuild>
+					<skipPush>true</skipPush>
+					<skipSave>true</skipSave>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+    
+</project>

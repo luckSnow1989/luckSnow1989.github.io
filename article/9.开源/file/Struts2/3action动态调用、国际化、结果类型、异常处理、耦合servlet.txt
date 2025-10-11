@@ -1,0 +1,273 @@
+细节操作：
+	1.开启struts2的开发者模式；开启之后，每次修改web.xml,等一些非编译型的文件时，
+		框架就会自动发不到服务器中，去掉繁琐的重启服务器的操作。
+		在src的struts.xml文件中配置：
+		<constant name="struts.devMode" value="true"></constant>
+
+一、动态方法调用(一个action内的多个方法，被多个页面分别使用)
+	方式1(这是struts框架实现的底层方法，开发中不使用，知道即可)
+		<action name="" class="" method="方法名"> 用method属性来指定调用action中的哪个方法	
+
+	方式2(这是框架实现的中层方法，可能还在开发中使用，会用即可)
+		<action name="Test2Action_*" class="com.zrgk.web.action.Test2Action" method="{1}">
+		Test2Action_add   add会替代*   替代*的字符将会替代{1}  所以就执行到了add方法	
+
+	方式3(开发中使用的高层应用，开发中必用)不使用method属性
+		<action name="Test2Action" class="com.zrgk.web.action.Test2Action" > 
+
+		在页面上使用：Test2Action!要调用的方法名
+
+	注意：方式3，在struts2中不是所有版本都直接开启动态方法调用
+		有的版本 需要手动开启，开启的方法是，增加属性文件：		
+		框架属性在：default.properties
+		创建新属性文件：添加struts.enable.DynamicMethodInvocation = true
+		配置struts.xml:<constant name="struts.custom.i18n.resources" value="com.zrgk.config.massage"></constant> 
+===========================================================================
+二、struts2的国际化：   i18n
+	按照作用范围分为：
+		全局资源文件、包范围资源文件、动作类的资源文件
+		
+	全局资源文件：放到WEB-INF/classes目录下
+	
+	包范围资源文件：服务于Java类中的包下的动作类的。 取名：package_语言_国家.properties
+	
+	动作类的资源文件:放到与动作类相同的包中。 取名：动作类名_语言_国家.properties
+	  
+1.获得本地化的信息，国家和语种
+	语言    国家
+	zh      CN
+	en      US
+
+	在servlet中获得客户端本地信息：
+	Locale locale = request.getLocale();
+	获得语种
+	String language = locale.getLanguage();
+	获得国家
+	String country = locale.getCountry();
+	
+ISO组织制定的规则
+2.实现国际化
+	哪些需要国际化：  
+    (1) 提示信息
+		
+		步骤一、创建一组属性文件
+			格式如下：  language.properties;		其中的内容是：user.login.error=username or password is worng!
+					  language_zh_CH.properties;其中的内容是：用户名或密码错误！
+					  language_en_US.properties;其中的内容是：user.login.error=username or password is worng!
+		
+		步骤二、将属性文件配置在struts.xml中
+			<constant name="struts.custom.i18n.resources" value="com.zrgk.config.language"></constant> 
+	    
+		步骤三、action中提取提示信息
+			例如：addFieldError("username",getText(user.login.error))------getText("资源文件中的key")
+					
+	(2) 页面信息
+		
+		步骤一、创建一组属性文件(与(1)中是同一个文件)
+			格式如下：  language.properties;		其中的内容是：user.welcome=welcome my blogs!
+					  language_zh_CH.properties;其中的内容是：user.welcome=欢迎来到我的博客！
+					  language_en_US.properties;其中的内容是：user.welcome=welcome my blogs!
+		
+		步骤二、将属性文件配置在struts.xml中
+			<constant name="struts.custom.i18n.resources" value="com.zrgk.config.language"></constant> 
+	    
+		步骤三、页面提取提示信息
+			原来在页面上是： <span>欢迎来到我的博客！</span>
+			现在替换成：	 <span><s:text name="user.welcome"></s:text></span>
+					   或是：<span><s:property value="getText('user.welcome')"/></span>
+	     
+	(3) 图片 
+		步骤一、创建一组文件夹：
+		例如:国旗	image/CH/flag.jpg
+						 /US/flag.jpg
+		图片的名称必须相同		 
+	 
+		步骤二、页面读取图片
+		${pageContext.request.locale.country}
+		例如获得图片： <image src="image/${pageContext.request.locale.country }/flag.jpg"></image>
+===========================================================================
+	
+三、异常处理：
+	常见的方法如下：    
+	
+1.	方法一、配置web.xml，只能处理全局异常，如404.503等，
+			以及针对具体某一个异常进行处理,如java.lang.NullPointerException
+        <error-page>
+		    <error-code>500</error-code>
+			<location>/error.jsp</location>
+		</error-page>
+		 
+		<error-page>
+		    <exception-type>java.lang.Exception</exception-type>
+			<location>/error.jsp</location>
+		</error-page>
+		 
+2.	方法二、配置struts.xml,不能处理404等异常
+	(1)局部异常处理：只处理这个action内出现的异常，一般是exception="java.lang.Exception"
+		<action name="ShowAction" class="......">
+			<exception-mapping result="exce1" exception="java.lang.NullPointerException"></exception-mapping>
+			<result name="exce1">/exception.jsp</result>
+		</action>
+
+	(2)全局异常处理：针对全局的Exception处理，这个全局指的是package内部。
+       <global-results>
+          <result name="globalException">/globalexception.jsp</result>
+       </global-results>
+   
+       <global-exception-mappings>
+           <exception-mapping result="globalException" exception="java.lang.Exception"></exception-mapping>
+       </global-exception-mappings>
+		
+		如果想对其他package起作用，   则其他package继承global_package即可
+		<package name="global_package" extends="struts-default">
+			<global-results>
+				<!-- 全局处理返回值 error -->
+				<result name="error" type="dispatcher">/error.jsp</result>
+			</global-results>
+		</package>
+==============================================================
+四、结果类型：
+	框架中设置的结果类型在struts-default.xml中，下面是全部的结果类型
+	
+	<result-types>
+            <result-type name="chain" class="com.opensymphony.xwork2.ActionChainResult"/>
+            <result-type name="dispatcher" class="org.apache.struts2.dispatcher.ServletDispatcherResult" default="true"/>
+            <result-type name="freemarker" class="org.apache.struts2.views.freemarker.FreemarkerResult"/>
+            <result-type name="httpheader" class="org.apache.struts2.dispatcher.HttpHeaderResult"/>
+            <result-type name="redirect" class="org.apache.struts2.dispatcher.ServletRedirectResult"/>
+            <result-type name="redirectAction" class="org.apache.struts2.dispatcher.ServletActionRedirectResult"/>
+            <result-type name="stream" class="org.apache.struts2.dispatcher.StreamResult"/>
+            <result-type name="velocity" class="org.apache.struts2.dispatcher.VelocityResult"/>
+            <result-type name="xslt" class="org.apache.struts2.views.xslt.XSLTResult"/>
+            <result-type name="plainText" class="org.apache.struts2.dispatcher.PlainTextResult" />
+    </result-types>
+	(1)将指定页面的源代码发送到页面
+		<result name="input" type="plainText">
+			<param name="location">/index.jsp</param>
+			<param name="charSet">UTF-8</param>
+		</result>
+	(2)全局结果类型的设置，方法：在Struts.xml中定义
+		<package name="base" extends="struts-default">
+			<global-results >
+				<result name="success">/index.jsp</result>
+			</global-results>
+		</package>
+	这样别的package只要extends这个package，那这个包中的action默认的数据传递方式就是全局的
+		<package name="demo" extends="base">
+			<action name="showTime" class="com.web.action.showAction"></action>
+		</package>
+	
+1.  常见的集中结果类型  
+	(1)	dispatcher(转发)    	只能转发到视图层action---->jsp
+	(2)	redirect(重定向)    	只能重定向到视图层action---->jsp
+	(3)	chain           	普通的转发到某个动作名称,  action---->action
+							-----可以携带参数params={"msg","1024000"}，必须有msg属性，getter/setter
+	(4)	redirectAction      Action重定向到Action
+	(5)	stream  : 文件下载时使用
+	(6) plainText：以纯文本的形式输出JSP内容
+		
+	使用时：<action name="" class="">
+				<result name="" type="">/index.jsp</result>
+			</action>
+	其中的type指定结果类型
+	
+2.	在不同的package、namespace下
+	例如在两个<package>中，action之间的相互跳转
+
+    <package name="p1" namespace="/namespace1" extends="struts-default">
+		<action name="a2">
+			<result type="dispatcher" name="success">/3.jsp</result>
+		</action>
+	</package>
+	<package name="p2" namespace="/namespace2" extends="struts-default">
+		<action name="a1">
+			<result type="chain" name="success">
+				<param name="namespace">/namespace1</param>
+				<param name="actionName">a2</param>
+			</result>
+		</action>
+	</package> 
+	   
+	
+
+====================================================================
+五、struts2 使用(耦合)servlet API：主要是为了使用session，Cookies与application等
+	常见的3种使用方法：
+	
+	1.struts2 官方最建议使用的方式(直接就可使使用)--------非侵入式引用，避开了servlet
+	注意：(1)Servlet是单例的，在第一次访问之后，在服务器端创建一个实例，
+		而多个人使用的时候，是开启新的线程，使用这个servlet，因此，在
+		servlet中，创建成员变量是错误的。
+		(2)struts2的Action不是单例的，避免了上面创建成员变量的问题，
+		但是消耗内存更多了
+				
+		ActionContext ac = ActionContext.getContext();
+		Map<String, Object> session = ac.getSession();
+		Map<String, Object> application = ac.getApplication();
+		HttpServletRequest request = (HttpServletRequest)ac.get(StrutsStatics.HTTP_REQUEST);
+		HttpServletResponse response = (HttpServletResponse)ac.get(StrutsStatics.HTTP_RESPONSE);
+	
+	2.实际开发中使用最多的方式(直接就可使使用)--------侵入式引入，直接使用servlet
+		
+		HttpServletRequest request = ServletActionContext.getRequest();
+		HttpServletResponse response = ServletActionContext.getResponse();
+		HttpSession session = request.getSession();
+		ServletContext application = ServletActionContext.getServletContext();
+	
+	3.很少用的方式   实现接口的方式(IOC)一般实现在一个util类中，调用即可
+		例:
+		public class Test3Action extends ActionSupport implements ServletRequestAware,ServletResponseAware,ServletContextAware {
+	  
+		//实现接口的方式
+				
+		HttpServletRequest request;
+		HttpServletResponse response;
+		ServletContext application;
+		
+		@Override
+		public void setServletRequest(HttpServletRequest arg0) {
+			  request = arg0;			
+		}
+		
+		@Override
+		public void setServletResponse(HttpServletResponse arg0) {
+			 response = arg0;
+		}
+		
+		
+		@Override
+		public void setServletContext(ServletContext arg0) {
+			 application = arg0;
+		}
+
+注意：
+	(1)关于session，session的创建是在客户端访问这个站点的时候被创建，这个session有一个id,id被保存到一个
+	临时的cookie中，返回到客户端，	这就是服务器能识别客户端的依据，而当客户端关闭的时候，这个cookie被销毁，
+	造成客户端再次访问的时候，获得不了这个id,只能创建新的session。
+	(2)如果客户端屏蔽所有的session，和Cookies，那这个站点可能无法正常使用。
+	(3)session的生命周期因服务器不同而不同，tomcat默认是30min,修改需要去tomcat/config/web.xml中,
+	   它的生命周期不会因为客户端的关闭而被销毁，而我们每次对网站的操作时，都会对session进行更新，这是
+	   一种session生命周期延续的技术，在tomcat 5.0以后的版本中出现
+	(4)一切非正常的关闭服务器，都会造成session的销毁，而正常的方法(只有一种 stop service)关闭后
+		服务器端当前的session都会被服务器序列化，保存在，tomcat/work/项目名      中，
+		这些数据会在服务器开启时反序列化，到服务器中。
+		
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+		  

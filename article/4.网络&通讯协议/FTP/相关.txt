@@ -1,0 +1,5 @@
+FileZilla_3.16_win64是ftp的客户端，用来连接ftp站点和上传/下载文件
+
+FileZilla_Server是ftp的服务器端，可以用来创建ftp站点，以及ftp的上登录用户等，并且可以管理日志。
+
+注意：使用前需要打开ftp相关的服务，在Windows的服务管理器中打开。

@@ -1,0 +1,368 @@
+代码案例：
+	https://gitee.com/luckSnow/spring-boot-example/tree/master/lab_040_auth_shiro
+	
+
+shiro:是一个强大且易用的Java安全框架,执行身份验证、授权、密码学和会话管理。使用Shiro的易于理解的API,您可以快速、轻松地获得任何应用程序,
+从最小的移动应用程序到最大的网络和企业应用程序。
+
+三个核心组件：Subject, SecurityManager 和 Realms。
+	Subject：即“当前操作用户”。但是，在Shiro中，Subject这一概念并不仅仅指人，也可以是第三方进程、后台帐户（Daemon Account）或其他类似事物。
+		它仅仅意味着“当前跟软件交互的东西”。但考虑到大多数目的和用途，你可以把它认为是Shiro的“用户”概念。Subject代表了当前用户的安全操作，
+		SecurityManager则管理所有用户的安全操作。
+　　SecurityManager：它是Shiro框架的核心，典型的Facade模式，Shiro通过SecurityManager来管理内部组件实例，并通过它来提供安全管理的各种服务。
+　　
+	Realm： Realm充当了Shiro与应用安全数据间的“桥梁”或者“连接器”。也就是说，当对用户执行认证（登录）和授权（访问控制）验证时，
+		Shiro会从应用配置的Realm中查找用户及其权限信息。从这个意义上讲，Realm实质上是一个安全相关的DAO：它封装了数据源的连接细节，
+		并在需要时将相关数据提供给Shiro。当配置Shiro时，你必须至少指定一个Realm，用于认证和（或）授权。配置多个Realm是可以的，但是至少需要一个。
+　　		Shiro内置了可以连接大量安全数据源（又名目录）的Realm，如LDAP、关系数据库（JDBC）、类似JNI的文本配置资源以及属性文件等。
+		如果缺省的Realm不能满足需求，你还可以插入代表自定义数据源的自己的Realm实现。
+		
+	
+一、shiro案例
+
+	1.用户验证(只能用来测试，实际开发中不可能使用)
+		shiro.ini：
+			[users]
+			zx=123456
+			tom=123	
+			
+		ShiroTest.java：
+			public boolean go(String username, String password) {
+				//读取配置文件
+				Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro.ini");
+				//获取SecurityManager实例
+				SecurityManager securityManager = factory.getInstance();
+				//绑定SecurityManager
+				SecurityUtils.setSecurityManager(securityManager);
+				//得到当前执行的用户(每一个用户在登录时都会创建一个)
+				Subject currentUser = SecurityUtils.getSubject();
+				//创建一个令牌，用户名/密码
+				//UsernamePasswordToken token = new UsernamePasswordToken("zx", "1213456");
+				UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+				//登录（身份认证）
+				try {
+					currentUser.login(token);
+					return true;
+				} catch (AuthenticationException e) {
+					return false;
+				} finally {
+					currentUser.logout();
+				}
+			}
+	
+	2.realm用户认证
+		jdbc_realm.ini:
+			[main]//以下是对JdbcRealm类中变量的设置
+			jdbcRealm=org.apache.shiro.realm.jdbc.JdbcRealm
+			dataSource=com.mchange.v2.c3p0.ComboPooledDataSource
+			dataSource.driverClass=com.mysql.jdbc.Driver
+			dataSource.jdbcUrl=jdbc:mysql://127.0.0.1:3306/db_maven
+			dataSource.user=root
+			dataSource.password=4100107223
+			jdbcRealm.dataSource=$dataSource
+			#查询密码的sql
+			jdbcRealm.authenticationQuery=select password from t_user where username = ? 
+			#查询角色名称的sql
+			jdbcRealm.userRolesQuery=select role_name from user_roles where username = ?
+			#查询权限的sql
+			jdbcRealm.permissionsQuery=select permission from roles_permissions where role_name = ?
+			securityManager.realms=$jdbcRealm
+	
+	RealmTest.java:
+		public static void main(String[] args) {
+			//读取配置文件
+			Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:jdbc_realm.ini");
+			//获取SecurityManager实例
+			SecurityManager securityManager = factory.getInstance();
+			//绑定SecurityManager
+			SecurityUtils.setSecurityManager(securityManager);
+			//得到当前执行的用户(每一个用户在登录时都会创建一个)
+			Subject currentUser = SecurityUtils.getSubject();
+			//创建一个令牌，用户名/密码
+			UsernamePasswordToken token = new UsernamePasswordToken("java1234", "123456");
+			//登录（身份认证）
+			try {
+				currentUser.login(token);
+				System.out.println("认证成功");
+			} catch (AuthenticationException e) {
+				System.out.println("认证失败");
+			} finally {
+				currentUser.logout();
+			}
+		}
+
+二、Subject  认证主体
+	Subject 认证主体包含两个信息：
+	Principals：身份，可以是用户名，邮件，手机号码等等，用来标识一个登录主体身份；
+	Credentials：凭证，常见有密码，数字证书等等；
+
+三、Realm和JDBC Realm
+	Realm：意思是域，Shiro 从 Realm 中获取验证数据；
+	Realm 有很多种类，例如常见的 jdbc realm，jndi realm，text realm
+	
+	1.权限认证核心要素
+		权限认证，也就是访问控制，即在应用中控制谁能访问哪些资源。
+		在权限认证中，最核心的三个要素是：权限，角色和用户；
+		权限，即操作资源的权利，比如访问某个页面，以及对某个模块的数据的添加，修改，删除，查看的权利；
+		角色，是权限的集合，一中角色可以包含多种权限；
+		用户，在 Shiro 中，代表访问系统的用户，即 Subject。
+		
+	2.授权
+		(1).编程式授权
+			a.基于角色的访问控制
+			b.基于权限的访问控制
+			
+		(2)注解式授权
+			@RequiresAuthentication 要求当前 Subject 已经在当前的 session 中被验证通过才能被访问或调用。
+			
+			@RequiresGuest 要求当前的 Subject 是一个"guest"，也就是说，他们必须是在之前的 session 中没有被验证或被记住才
+			能被访问或调用。
+			
+			@RequiresPermissions("account:create") 要求当前的 Subject 被允许一个或多个权限，以便执行注解的方法。
+			
+			@RequiresRoles("administrator") 要求当前的 Subject 拥有所有指定的角色。如果他们没有，则该方法将不会被执行，而
+			且 AuthorizationException 异常将会被抛出。
+			
+			@RequiresUser RequiresUser 注解需要当前的 Subject 是一个应用程序用户才能被注解的类/实例/方法访问或调用。一个“应
+			用程序用户”被定义为一个拥有已知身份，或在当前 session 中由于通过验证被确认，或者在之前 session 中的'RememberMe'
+			服务被记住。
+	
+		(3)Jsp 标签授权
+			<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
+			Guest 标签：用户没有身份验证时显示相应信息，即游客访问信息；
+			User 标签：用户已经身份验证/记住我登录后显示相应的信息；
+			Authenticated 标签：用户已经身份验证通过，即 Subject.login 登录成功，不是记住我登录的。
+			notAuthenticated 标签：用户没有身份验证通过，即没有调用 Subject.login 进行登录，包括记住我自动登录
+			的也属于未进行身份验证。
+			principal 标签 显示用户身份信息，默认调用 Subject.getPrincipal()获取，即 Primary Principal。
+			hasRole 标签 如果当前 Subject 有角色将显示 body 体内容。
+			lacksRole 标签 如果当前 Subject 没有角色将显示 body 体内容。
+			hasAnyRoles 标签 如果当前 Subject 有任意一个角色（或的关系）将显示 body 体内容。
+			hasPermission 标签 如果当前 Subject 有权限将显示 body 体内容。
+			lacksPermission 标签 如果当前 Subject 没有权限将显示 body 体内容。
+	
+	3。Permissions  对权限深入理解
+		（1）单个权限 query
+			单个资源多个权限 user:query user:add 多值 user:query,add
+			单个资源所有权限 user:query,add,update,delete user:*
+			所有资源某个权限 *:view
+		
+		（2）实例级别的权限控制
+			单个实例的单个权限 printer:query:lp7200 printer:print:epsoncolor
+			所有实例的单个权限 printer:print:*
+			所有实例的所有权限 printer:*:*
+			单个实例的所有权限 printer:*:lp7200
+			单个实例的多个权限 printer:query,print:lp7200
+	
+		
+四。web简单集成
+	第一节：Shiro  集成 Web  配置（需要注意这里使用的控制器是servlet）
+		<listener>
+			<listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
+		</listener>
+		
+		<filter>
+			<filter-name>ShiroFilter</filter-name>
+			<filter-class>org.apache.shiro.web.servlet.IniShiroFilter</filter-class>
+		</filter>
+
+	第二节：Shiro  集成 Web  具体使用
+		1.Url 匹配方式
+			? ：表示匹配一个字符。如： /admin? 可以匹配/admin1、/admin2，但是不能匹配/admin12、/admin（就是必须后面有一个字符的）
+			
+			* ：表示匹配零个或者一个或者多个字符。如： /admin*，可以匹配/admin、/admin1、/admin12，但是不能匹配/admin/abc。
+			
+			**：表示匹配零个或者多个路径。如： /admin/**，可以匹配/admin、/admin/a、/admin/a/b。
+			
+	第三节：Shiro  标签使用
+		1.导入tab库
+		<%@ taglib uri="http://shiro.apache.org/tags" prefix="shiro"%>
+		
+		2.判断是否有某个角色
+		<shiro:hasRole name="admin">admin</shiro:hasRole>
+		<shiro:hasRole name="teacher">teacher</shiro:hasRole>
+		
+		3.判断是否有某个权限
+		<shiro:hasPermission name="user:add">user:add</shiro:hasPermission><br/>
+		<shiro:hasPermission name="user:select">user:select</shiro:hasPermission><br/>
+		<shiro:hasPermission name="user:update">user:update</shiro:hasPermission><br/>
+		<shiro:hasPermission name="user:delete">user:delete</shiro:hasPermission><br/>
+		
+		4.登录人的账号
+		<shiro:principal></shiro:principal><br/>
+	
+	第四节：Shiro  会话机制
+		Shiro默认情况下是读取web容器里面session。Shiro的操作是在容器的session中进行的。
+		
+		如：
+		Subject subject = SecurityUtils.getSubject();
+		Session session = subject.getSession();
+		String sessionId = session.getId();
+		String hostIp = session.getHost();
+		long timeOut = session.getTimeout();
+		session.setAttribute("aaa", "233");
+		Object a = session.getAttribute("aaa");
+	
+	第五节：自定义 Realm
+	1.自定义realm（查询数据库中的用户角色权限）
+		public class MyRealm extends AuthorizingRealm {
+			private UserDao ud = new UserDaoImpl();
+			private RoleDao rd = new RoleDaoImpl();
+			private PermissionDao pd = new PermissionDaoImpl();
+			/**
+			 * 为当前登录的用户授予角色和权限
+			 */
+			@Override
+			protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+				String userName = (String)principals.getPrimaryPrincipal();
+				SimpleAuthorizationInfo authInfo = new SimpleAuthorizationInfo();
+				try {
+					//按照用户名查询用户
+					User userInfo = ud.getByUserName(userName);
+					//查询这个用户的所有的角色
+					List<Role> roles = rd.getByUserId(userInfo.getId());
+					//查询这个用户所有的权限
+					List<Permission> permissions = pd.getByUserId(userInfo.getId());
+					
+					Set<String> roleNames = new HashSet<String>();
+					for (Role r : roles) {
+						roleNames.add(r.getRoleName());
+					}
+					
+					Set<String> permissionNames = new HashSet<String>();
+					for (Permission p : permissions) {
+						permissionNames.add(p.getPermissionName());
+					}
+					//将该用户的角色和权限信息保存起来
+					authInfo.setRoles(roleNames);
+					authInfo.setStringPermissions(permissionNames);
+					
+					return authInfo;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+			
+			/**
+			 * 登录认证
+			 */
+			@Override
+			protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+				String userName = (String)token.getPrincipal();
+				try {
+					//按照用户名查询用户
+					User userInfo = ud.getByUserName(userName);
+					
+					if(userInfo != null) {
+						//校验信息，第三个参数无意义
+						AuthenticationInfo authInfo = new SimpleAuthenticationInfo(userInfo.getUserName(), userInfo.getPassword(),"xx");
+						return authInfo;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+		}
+		
+	2.在WEB-INF下定义shiro.ini
+		[main]
+		authc.loginUrl=/login
+		roles.unauthorizedUrl=/unauthorized.jsp
+		perms.unauthorizedUrl=/unauthorized.jsp
+		myRealm=com.zx.realm.MyRealm
+		securityManager.realms=$myRealm
+		
+		[urls]
+		/login=anon
+		
+		/admin=authc
+		/teacher=authc
+		
+		/admin=roles["管理员"]
+		/teacher=roles["老师"]
+		/student=perms["student:select"]
+		
+	第六节：加密。
+	由shiro提供的加密便捷工具
+		import org.apache.shiro.codec.Base64;
+		import org.apache.shiro.crypto.hash.Md5Hash;
+		
+		public class CryptographyUtil {
+			/**
+			 * base64加密
+			 * @param str
+			 * @return
+			 */
+			public static String encBase64(String str) {
+				return Base64.encodeToString(str.getBytes());
+			}
+			
+			/**
+			 * base64解密
+			 * @param str
+			 * @return
+			 */
+			public static String decBase64(String str) {
+				return Base64.decodeToString(str);
+			}
+			
+			/**
+			 * md5加密
+			 * @param str	加密的内容
+			 * @param salt	盐
+			 * @return
+			 */
+			public static String md5(String str, String salt) {
+				return new Md5Hash(str, salt).toString();
+			}
+		}
+
+五、Shiro的支持特性
+	1、Web支持
+	
+	2、缓存支持(caching)
+	
+	3、并发支持(concurrency & multithreading)
+	
+	4、测试支持(testing)
+	
+	5、“RunAs ”支持(custom subjects)
+	
+	6、“Remember Me ”支持(cooking)
+		保存客户信息到cooking中。不建议使用
+		if(subject.isRemembered()) {
+			System.out.println("这个用户已经被记住了");
+		} else {
+			token.setRememberMe(true);
+		}
+
+
+六、集成spring
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

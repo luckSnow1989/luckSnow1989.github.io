@@ -1,0 +1,223 @@
+一、oracle其他对象
+
+	1.序列  sequence   
+   
+	oracle中 没有自动增长的列   用序列可以实现自动增长的功能
+	
+		(1)创建序列：一般都是使用第三方工具创建
+		
+		create sequence seq_mysequence
+		minvalue 1
+		maxvalue 9999999999999999999999999999
+		start with 1
+		increment by 1
+		cache 20;
+	   
+	   (2)使用
+			JDBC：
+			String sql = "insert into teacher values (student_seq.nextval,?)"
+			ps.setObejct(1,'abcd') 
+		不要试图用 序列去绑定问号
+
+	2.同义词，其实就是定义好的表的别名，用处不大 
+
+	3.索引，极大地提高查询的效率，但是同样的降低了增删改的效率。但还是利大于弊
+		(1)创建索引
+			
+			A: 自动创建   当在一个列上添加了主唯一性约束，数据库就会在这个列上添加一个索引
+			B: 手动添加	  create index 索引名称 on 表名(要创建索引的字段)
+					
+		(2)删除索引
+			drop index 索引名称
+
+
+--------------------------------------------------------------------------
+二、DCL
+
+		grant     赋予
+		revoke    撤销
+
+		权限：	
+			 角色权限
+			 系统权限
+			 对象权限
+
+		创建用户：		
+			create user username identified by password
+			
+		给用户赋权限
+			grant 权限名 to 用户名
+									
+	GRANT create session, create table,
+	create sequence, create view
+	TO   scott;		
+			
+			revoke 权限名 from 用户名		
+			
+	REVOKE create session, create table,
+	create sequence, create view
+	FROM   scott;		
+									
+		创建角色   给角色赋权限    把用户指定成这个角色	
+				
+	创建角色	  
+		create role  角色名
+
+	给角色赋权限
+
+		grant 权限 to 角色	
+		
+	把角色赋给用户
+
+		grant 角色 to 用户	
+
+	修改用户密码：
+
+		 alter user 用户名 identified by 新密码	
+
+	赋对象权限 和赋系统权限不同
+
+		grant  权限  on  数据库对象  to  用户 角色  PUBLIC（表示赋给所有用户）
+	 
+	撤销对象权限
+
+		revoke 权限 on 对象 from  用户 角色  PUBLIC（表示赋给所有用户）
+				
+三、集合运算	
+
+    集合操作 的  两端  投影个数 和 类型必须匹配
+
+    union
+	 
+	联合 (UNION) 运算从两个查询返回除去重复值后的结果
+	 
+    union all
+	 
+	不去除重复结果
+
+    intersect   交集
+
+    minus	     差集
+		
+	先联合再排序
+		ORDER BY 子句：
+		只能出现在语句的最后
+		从第一个 SELECT 语句接收列名、别名 ，或者位置记号
+		
+		
+	(select employee_id emp_id,job_id j_id from employees order by employee_id desc) 
+	 union (select employee_id ,job_id from job_history order by employee_id desc)
+	 
+	 这个SQL 不能执行   union中 不能在两个查询中都使用order by
+	 
+	 
+	(select employee_id emp_id,job_id j_id from (select * from employees) order by employee_id desc) 
+	 union (select employee_id ,job_id from (select * from job_history) order by employee_id desc) 
+		
+	先排序再联合？？？？
+
+
+
+
+
+四、分级取回数据 （Oracle 特有的）
+
+    分级查询：
+	
+	   SELECT [LEVEL], column, expr...
+       FROM   table
+       [WHERE condition(s)]
+       [START WITH condition(s)]
+       [CONNECT BY PRIOR condition(s)] 
+	   
+
+找出  'Lorentz' 的所有上级	   
+
+
+CONNECT BY PRIOR column1 = column2
+
+从顶向下  
+
+Column1 = Parent Key
+Column2 = Child Key
+
+从底向上 
+
+Column1 = Child Key
+Column2 = Parent Key
+
+select last_name from employees start with last_name='Lorentz' 
+connect by prior manager_id = employee_id
+====================================================================
+
+
+五、索引的高级操作
+
+	1.创建索引
+
+	2.查询索引
+		select index_name ,status  from user_indexes;
+		status = VALID表示索引正常使用
+		status = UNUSABLE表示索引失效，使用“alter index  索引名称 rebuild；”解决
+		
+		
+	(1)创建重建索引的存储过程，语句如下：
+
+		create or replace procedure p_rebuild_all_index
+		(tablespace_name in varchar2,--这里是表空间名，如果不改变表空间，可以传入null
+		only_unusable in boolean)    --是否仅对无效的索引操作
+		as
+		sqlt varchar(200);
+		begin
+		--只取非临时索引
+		for idx in (select index_name, tablespace_name, status from user_indexes where temporary = 'N') loop
+			--如果是如重建无效的索引，且当索引不是无效时，则跳过
+			if only_unusable = true and idx.status <> 'UNUSABLE' then
+			   goto continue;
+			end if;
+
+			if (tablespace_name is null) or idx.status = 'UNUSABLE' then
+			   --如果没有指定表空间，或索引无效，则在原表空间重建
+			   sqlt := 'alter index ' || idx.index_name || ' rebuild ';
+			elsif upper(tablespace_name) <> idx.tablespace_name then
+			   --如果指定的不同的表空间，则在指定表空间待建索引
+			   sqlt := 'alter index ' || idx.index_name || ' rebuild tablespace ' || tablespace_name;
+			else
+			   --如果表空间相同，则跳过
+			   goto continue;
+			end if;
+
+			dbms_output.put_line(idx.index_name);
+			EXECUTE IMMEDIATE sqlt;
+			<<continue>>
+			null;
+		 end loop;
+		end;
+	(2) 创建执行重建的存储过程
+
+		CREATE OR REPLACE PROCEDURE EXEC_REBUILD_PROC AS
+		v_err_num  NUMBER;  --ORA错误号
+		v_err_msg  VARCHAR2(100); --错误描述
+		BEGIN
+		--10代表创建10天的分区，tablespace代表表空间名
+		p_rebuild_all_index(NULL,true);
+		COMMIT;
+		EXCEPTION
+		WHEN OTHERS THEN
+		v_err_num := SQLCODE;
+		v_err_msg := SUBSTR(SQLERRM, 1, 100);
+		dbms_output.put_line('EXEC_REBUILD_PROC执行出现异常,错误码='|| v_err_num || '错误描述=' || v_err_msg);
+		END EXEC_REBUILD_PROC;        		 
+
+
+
+
+
+
+
+
+
+
+
+
+	

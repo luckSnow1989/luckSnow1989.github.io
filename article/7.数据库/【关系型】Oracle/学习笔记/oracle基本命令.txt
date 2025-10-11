@@ -1,0 +1,101 @@
+1.Linux下 切换至oracle用户： su - oracle
+
+2.登录
+	>  sqlplus /nolog
+	>  conn /as sysdba   （或conn system/123456 as sysdba）
+
+3.启动oracle数据库
+	1)Startup （open 模式）启动实例加载并打开数据库。
+	2)Startup nomount  （nomount模式）启动实例不加载数据库。创建新数据库实例和重建控制文件的时候使用这种模式。
+	3)Startup mount （mount模式）启动实例加载数据库但不打开数据库。
+		重命名数据文件， 添加、删除和重命名重做日子文件，执行数据库完全恢复操作，改变数据库的归档模式等操作时使用。
+	4)切换模式	Alter database mount(nomount模式)—〉alter database open(mount 模式)—〉（open模式）
+	
+4.关闭oracle数据库
+	1）正常关闭 shutdown
+	2) 立即关闭 shutdown immediate
+	3) 关闭事务 shutdown transactional
+	4) 强行关闭 shutdown abort(当然谁都不想碰到这种情况）。
+	
+5.启动和关闭监听
+	启动监听：lsnrctl start 
+	查看监听：lsnrctl status 
+	停止监听：lsnrctl stop 
+	
+6.创建用户与授权 
+create user 用户名 identified by "密码"
+	default tablespace 表空间名
+	temporary tablespace TEMP
+	profile DEFAULT;
+
+	grant dba to 用户名;
+
+	grant unlimited tablespace to 用户名;
+	
+7.导出导入数据
+	1）导出数据库实例：exp 用户账号/密码@全局数据库名称 file=文件保存路径 full=y
+	2）导出用户：exp 用户账号/密码@全局数据库名称 file=文件保存路径 owner=用户名
+	3）导出表：exp ems/123456@orcl file=c:\ems.dmp tables=(aqi_info) full=y
+	4）导入一个完整数据库imp system/manager file=bible_db log=dible_db full=y ignore=y
+	5）导入一个或一组指定用户所属的全部表、索引和其他对象 
+	imp system/manager file=seapark log=seapark fromuser=(seapark,amy,amyc,harold)	
+	6）将一个用户所属的数据导入另一个用户
+	imp system/manager file=tank log=tank fromuser=(seapark,amy) touser=(seapark1, amy1)	
+	7）导入一个表
+	imp system/manager file=tank log=tank fromuser=seapark tables=(a,b)
+	
+8.忘记system/sys的密码： 
+	删掉E:oracle/product/10.2.0/db_1/database/PWDorcl.ora; 
+	使用命令：orapwd file=d:PWDorcl.ora password=admin1 entries=10;将密码设置为admin1； 
+	或则： 
+	sqlplus /@testdb as sysdba 
+	alter user sys identified by 新密码; 
+	alter user system identified by 新密码; 
+	
+8.逻辑模型
+	block（块） extend（盘区） segment（段） tablespace（表空间） 
+
+9.创建和启动database control 
+	emctl start dbconsole启动EM console服务，使用前需要先设置ORACLE_SID环境变量
+
+	emctl stop dbconsole停止EM console服务，使用前需要先设置ORACLE_SID环境变量
+
+	使用命令行工具emca可以创建，修改，重建或者删除dbcontrol的配置。
+	而使用命令行工具emctl可以启动/停止EM console服务，察看服务状态等。
+
+	emca常用命令语法：
+
+	emca -repos create创建一个EM资料库
+
+	emca -repos recreate重建一个EM资料库
+
+	emca -repos drop删除一个EM资料库
+
+	emca -config dbcontrol db配置数据库的 Database Control
+
+	emca -deconfig dbcontrol db删除数据库的 Database Control配置
+
+	emca -reconfig ports 重新配置db control和agent的端口
+
+	注：通过查看$ORACLE_HOME/install/portlist.ini 文件可以知道当前dbcontrol正在使用的端口，
+	默认dbcontrol http端口1158，agent端口3938。如果要重新配置端口，可以使用如下命令：
+
+	emca -reconfig ports -dbcontrol_http_port 1159
+
+	emca -reconfig ports -agent_port 3939
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

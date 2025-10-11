@@ -1,0 +1,22 @@
+1. spring-boot 生产环境项目启动参数
+
+nohup java -Xmx4096M -Xms4096M -Xmn640M -XX:MetaspaceSize=1024M -XX:MaxMetaspaceSize=1024M -Xss256K -XX:+DisableExplicitGC -XX:SurvivorRatio=8 -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+UseCMSCompactAtFullCollection -XX:CMSFullGCsBeforeCompaction=0 -XX:+CMSClassUnloadingEnabled -XX:LargePageSizeInBytes=128M -XX:+UseFastAccessorMethods -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=80 -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+PrintClassHistogram -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintHeapAtGC -Xloggc:/data/home/www/yooli/logs/${proname}/${proname}.gc.${datename}.log -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintGCApplicationStoppedTime -jar /data/home/www/yooli/${proname}/${proname}.jar --spring.config.location=/data/home/www/yooli/${proname}/application-prd.properties >$logfile 2>&1 &
+
+
+2. spring-boot 测试环境项目启动参数
+nohup java -Xms500m -Xmx500m -Xmn100m -XX:PermSize=64m -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:CMSFullGCsBeforeCompaction=0 -XX:CMSInitiatingOccupancyFraction=70 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=1986 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -jar task-web.war --spring.profiles.active=test --datasource.druid.url=jdbc:mysql://127.0.0.1:3306/task --datasource.druid.username=root --datasource.druid.password=root &
+
+
+3. Tomcat 生产环境项目启动参数
+-Djava.util.logging.config.file=/usr/local/nplm-server/conf/logging.properties 
+-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager -Xms4096M -Xmx4096M -Xmn1024M -XX:MetaspaceSize=512M -XX:MaxMetaspaceSize=512M -Xverify:none -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=7 -XX:GCTimeRatio=19 -XX:+DisableExplicitGC -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSPermGenSweepingEnabled -XX:+UseCMSCompactAtFullCollection -XX:CMSFullGCsBeforeCompaction=0 -XX:+CMSClassUnloadingEnabled -XX:-CMSParallelRemarkEnabled -XX:CMSInitiatingOccupancyFraction=70 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/nplm-server/logs -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintHeapAtGC -XX:+PrintGCApplicationStoppedTime -Xloggc:/usr/local/nplm-server/logs/nplm-server.gc.20181226222640.log -XX:CompileCommandFile=.hotspot_compiler 
+-Djdk.tls.ephemeralDHKeySize=2048 
+-Djava.protocol.handler.pkgs=org.apache.catalina.webresources 
+-Dcom.sun.management.jmxremote 
+-Dcom.sun.management.jmxremote.port=10054 
+-Dcom.sun.management.jmxremote.authenticate=false 
+-Dcom.sun.management.jmxremote.ssl=false 
+-Djava.rmi.server.hostname=192.168.4.87 -javaagent:/usr/local/nplm-server/tingyun/tingyun-agent-java.jar 
+-Dcatalina.base=/usr/local/nplm-server 
+-Dcatalina.home=/usr/local/nplm-server 
+-Djava.io.tmpdir=/usr/local/nplm-server/temp

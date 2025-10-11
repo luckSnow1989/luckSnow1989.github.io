@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE TVSCHEDILE SYSTEM "instance.dtd">
+<TVSCHEDILE NAME="111">
+	<CHANNEL CHAN="222">
+		<BANNER></BANNER>
+		<DAY>
+			<DATE>aaaa</DATE>
+			<PROGRAMSLOT>
+				<TIME>111</TIME>
+				<TITLE>111</TITLE>
+				<DESCRIPTION>111</DESCRIPTION>
+			</PROGRAMSLOT>
+		</DAY>
+	</CHANNEL>
+</TVSCHEDILE>

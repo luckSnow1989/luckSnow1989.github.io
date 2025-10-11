@@ -1,0 +1,166 @@
+一、数据库的优化(代码)
+	select * from student;
+	select id,name,age,birthday,email,class_id from student  
+
+
+	数据库优化： 1 SQL语句级别,书写原生sql语句，编写时要注意大小写统一，一条语句中要么都大写，要么都小写。
+				 2 表级别（创建索引...） 
+				 3 数据库软件级别，如使用更高效的数据库引擎。
+				 4 硬件级别，如IBM的小型机就比普通电脑的主机运算速度上高百倍以上。
+				
+	这些是从高到低的顺序梳理优化的顺序，由此产生的成本呈几何增长，从编写习惯、编写内容，到存储容器等。
+	至于更细的sql级优化，见本文件目录下的：oracle提高查询效率的34条方法.txt
+   
+二、oracle常见语法
+
+	1.null的处理，下面提到使用nvl(erp1,erp2)
+	employees表中    commission_pct   佣金比率 
+                佣金 = 年薪*佣金比率   			 
+	查询年收入	  
+    null 和任何值做任何计算结果都是null,所以我们在创建表的时候，要将这number类型的字段，设置默认值，如：0等。
+	也是为了方便之后的处理。
+
+    MySQL 中 ifnull 函数
+	2. between and    左右都是闭区间[]
+
+    3.like    
+     _ 任意一个字符
+	 % 任意多个字符
+
+三、单行函数
+	1.字符函数：
+		 
+	(1)	lower(column|expression)		全部显示为小写
+	(2)	upper(column|expression)		全部显示为大写
+	(3)	initcap(column|expression)  	首字母变大写
+
+	(4)	concat(column1|expression1,column2|expression2)	
+										连接第一个字符值到第二个字符值；等价于连接运算符 (||)
+	(5)	substr  (column|expression,m[,n]) 
+										从第m个截取到第n个，  没有n的时候是截取到最后
+										
+	(6)	length(column|expression) 		返回表达式中的字符个数
+		
+	(7)	insert(column|expression,'varchar', [,m], [n] )
+										返回一个命名串的数字位置。在指定的内容中，查询是否包含varchar，
+										并返回发现未知，m是开始查询的位置，n是指定第几次发现。m.n的默认值都是1
+										
+	(8)	lpad(column|expression, n,'varchar')
+		rpad(column|expression, n,'varchar')
+										指定column|expression的长度是n,要是长度不够n则向左、右使用字符串填充
+										
+	(9)	replace(column|expression, search_string,replacement_string)
+										从字符串查找一个文本表达式，如果找到，用指定的置换串代替它
+
+	(10)trim('varchar' from column|expression ) 去掉开头或末尾的varchar
+	
+	(11)reverse() 反转字符串
+
+	2.数字函数
+		abs() 求绝对值；select abs(n1) from t_number where id=1;
+		round() 四舍五入：select round(n1,2) from t_number where id=1;
+		ceil() 向上取整：select ceil(n1) from t_number where id=2;
+		floor 向下取整：select floor(n1) from t_number where id=2;
+		Mod()取模：select mod(5,3) from dual;
+		Sign()正负性：select sign(n1) from t_number where id=1;
+		Sqrt() 求平方根：select sqrt(9) from dual;
+		Power()求乘方：select power(2,3) from dual;
+		Trunc()截取：select trunc(123.456,2) from dual;
+		To_char() 格式化数值：常见的字符匹配有 0、9、，、$、FM、L、C
+		
+		例如：
+		round(45.926, 2) 	45.93   四舍五入
+		round(45.926, -1)  	50     -1 小数点前一位
+		round(44.926, -1)  	40
+		trunc(45.926, 2) 	45.92   截断，就是不去四舍五入，直接放弃后面的小数部分
+		mod(1600, 300)   	返回除法的余数
+
+
+	3.时间函数			
+		(1)sysdate  	系统当前时间		select hire_date,(sysdate-hire_date) from employees
+						两个日期相减 等到的是 日期之间的天数 
+	
+		(2)months_between(date1,date2)    两个日期之间的月数
+		
+		(3)add_months(date,n)        加n个日历月到日期
+		
+		(4)next_day (date,'varchar')         下个星期几是几号 
+			select next_day(sysdate,'星期一') from dual;
+			select next_day(sysdate,1) from dual;    1  星期日
+													 7  星期六
+	 
+		last_day(date) 		指定月的最后一天
+		round             	四舍五入日期
+		trunc             	截断日期
+		select trunc(to_date('28-2月-04'),'month') from dual   得到这个月的第一天
+
+	4.转换函数
+
+		to_number
+		to_date
+		select to_date('2000-10-10 10:10:10','yyyy-mm-dd hh:mi:ss') from dual
+		to_char
+		select to_char(sysdate,'yyyy"年"mm"月"dd"日"') from dual
+
+		nvl(erp1,erp2) 当erp1是null 时 转换成exp2
+		select last_name,commission_pct,nvl(commission_pct,0) from employees
+
+		nvl2(erp1,erp2,exp3)
+		如果 erp1是null 转换成 erp3   不是null 转换成erp2
+
+		NULLIF(erp1,erp2) 函数比较两个表达式， 如果相等， 函数返回空， 如果不相等， 函数返回第
+		一个表达式
+		
+		COALESCE (expr1, expr2, ... exprn) 返回第一个不是null的表达式
+		在语法中：
+		expr1 如果它非空，返回该表达式
+		expr2 如果第一个表达式为空并且该表达式非空，返回该表达式
+		exprn 如果前面的表达式都为空，返回该表达式
+
+		CASE 表达式
+		DECODE 函数  ******
+
+
+四、连接查询
+	  等值连接（非等值连接）
+	  
+	  外连接
+	  
+			左外连接  left outer join  on
+			   左表数据全部显示 ， 右表显示和左表有关联的数据
+				
+			 
+			右外连接  right outer join on
+			 
+			   右表数据全部显示 ， 左表显示和右表有关联的数据
+			 
+			全外连接  full outer join on（MySQL中不支持）
+
+			两个表的数据都显示  
+
+五、聚合函数：   忽略空值
+
+			  count
+			  max
+			  min
+			  avg
+			  sum
+			  
+
+六、group by
+
+	出现在投影中的列一定要出现在group by中  出现在聚合函数中的列除外
+
+	having   用来做条件过滤的    
+
+		 条件过滤可以使用where  也可以使用 having
+		 
+		 但当过滤条件中有聚合函数时，一定要使用having
+
+
+
+
+
+
+	 
+    

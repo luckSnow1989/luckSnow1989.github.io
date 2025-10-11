@@ -1,0 +1,201 @@
+=============================================================================
+一、Jquery插件：
+	Jquery.validate.js   jQuery提供的，基于jQuery框架的，用来验证信息的轻量级框架
+	使用jquery的插件 在页面中一定要先导入 jquery.js，再导入插件，无法单独使用；
+	
+	1.  自定义验证方法，和验证信息的时候注意：
+		(1)建议一般写在additional-methods.js文件中
+
+	2.	在messages_cn.js文件添加：isZipCode: "只能包括中文字、英文字母、数字和下划线",
+		调用前要添加对additional-methods.js文件的引用。
+
+	3.	jQuery.validate的optional(element)，用于表单控件的值不为空时才触发验证。
+		当element为空时this.optional(element)=true，用于在该控件为非必填项目时可以通过验证，
+		及条件可以不填但是不能填错格式。
+	
+===========================================================================
+一导入js库
+	<script src="../js/jquery.js" type="text/javascript"></script>
+	<script src="../js/jquery.validate.js" type="text/javascript"></script>
+
+二、默认校验规则
+	(1)required:true                必输字段
+	(3)email:true                   必须输入正确格式的电子邮件
+	(4)url:true                     必须输入正确格式的网址
+	(5)date:true                    必须输入正确格式的日期 日期校验ie6出错，慎用
+	(6)dateISO:true                 必须输入正确格式的日期(ISO)，例如：2009-06-23，1998/01/22
+										只验证格式，不验证有效性
+	(7)number:true                	必须输入合法的数字(负数，小数)
+	(8)digits:true                  必须输入整数
+	(9)creditcard:                  必须输入合法的信用卡号
+	(10)equalTo:"#field"          	输入值必须和#field相同
+	(11)accept:                     输入拥有合法后缀名的字符串（上传文件的后缀）
+	(12)maxlength:5               	输入长度最多是5的字符串(汉字算一个字符)
+	(13)minlength:10              	输入长度最小是10的字符串(汉字算一个字符)
+	(14)rangelength:[5,10]      	输入长度必须介于 5 和 10 之间的字符串")(汉字算一个字符)
+	(15)range:[5,10]               	输入值必须介于 5 和 10 之间
+	(16)max:5                       输入值不能大于5
+	(17)min:10                      输入值不能小于10
+
+ 
+
+三、默认的提示
+	messages: {
+		required: "This field is required.",
+		remote: "Please fix this field.",
+		email: "Please enter a valid email address.",
+		url: "Please enter a valid URL.",
+		date: "Please enter a valid date.",
+		dateISO: "Please enter a valid date (ISO).",
+		dateDE: "Bitte geben Sie ein g眉ltiges Datum ein.",
+		number: "Please enter a valid number.",
+		numberDE: "Bitte geben Sie eine Nummer ein.",
+		digits: "Please enter only digits",
+		creditcard: "Please enter a valid credit card number.",
+		equalTo: "Please enter the same value again.",
+		accept: "Please enter a value with a valid extension.",
+		maxlength: $.validator.format("Please enter no more than {0} characters."),
+		minlength: $.validator.format("Please enter at least {0} characters."),
+		rangelength: $.validator.format("Please enter a value between {0} and {1} characters long."),
+		range: $.validator.format("Please enter a value between {0} and {1}."),
+		max: $.validator.format("Please enter a value less than or equal to {0}."),
+		min: $.validator.format("Please enter a value greater than or equal to {0}.")
+	},
+
+	如需要修改，可在js代码中加入：
+
+	jQuery.extend(jQuery.validator.messages, {
+	  required: "必选字段",
+	  remote: "请修正该字段",
+	  email: "请输入正确格式的电子邮件",
+	  url: "请输入合法的网址",
+	  date: "请输入合法的日期",
+	  dateISO: "请输入合法的日期 (ISO).",
+	  number: "请输入合法的数字",
+	  digits: "只能输入整数",
+	  creditcard: "请输入合法的信用卡号",
+	  equalTo: "请再次输入相同的值",
+	  accept: "请输入拥有合法后缀名的字符串",
+	  maxlength: jQuery.validator.format("请输入一个 长度最多是 {0} 的字符串"),
+	  minlength: jQuery.validator.format("请输入一个 长度最少是 {0} 的字符串"),
+	  rangelength: jQuery.validator.format("请输入 一个长度介于 {0} 和 {1} 之间的字符串"),
+	  range: jQuery.validator.format("请输入一个介于 {0} 和 {1} 之间的值"),
+	  max: jQuery.validator.format("请输入一个最大为{0} 的值"),
+	  min: jQuery.validator.format("请输入一个最小为{0} 的值")
+	});
+
+	推荐做法，将此文件放入messages_cn.js中，在页面中引入
+	<script src="../js/messages_cn.js" type="text/javascript"></script>
+
+四、radio和checkbox、select的验证
+	 
+	1.radio的required表示必须选中一个
+	<input  type="radio" id="gender_male" value="m" name="gender" />
+	<input  type="radio" id="gender_female" value="f" name="gender"/>
+	
+	2.checkbox的required表示必须选中
+	<input type="checkbox" class="checkbox" id="agree" name="agree" class="{required:true}" />
+
+	checkbox的minlength表示必须选中的最小个数,maxlength表示最大的选中个数,rangelength:[2,3]表 示选中个数区间
+
+	<input type="checkbox" class="checkbox" id="spam_email" value="email" name="spam[]"  />
+	<input type="checkbox" class="checkbox" id="spam_phone" value="phone" name="spam[]" />
+	<input type="checkbox" class="checkbox" id="spam_mail" value="mail" name="spam[]" />
+
+	3.select的required表示选中的value不能为空
+	<select id="jungle" name="jungle" title="Please select something!" >
+		<option value=""></option>
+		<option value="1">Buga</option>
+		<option value="2">Baga</option>
+		<option value="3">Oi</option>
+	</select>	 
+
+	select的minlength表示选中的最小个数（可多选的select）,maxlength表示最大的选中个 数,rangelength:[2,3]表示选中个数区间
+	<select id="fruit" name="fruit" title="Please select at least two fruits"  multiple="multiple">
+		<option value="b">Banana</option>
+		<option value="a">Apple</option>
+		<option value="p">Peach</option>
+		<option value="t">Turtle</option>
+	</select>
+
+五、自定义校验规则
+	// 字符验证
+	jQuery.validator.addMethod(“stringCheck”, function(value, element) {
+	return this.optional(element) || /^[u0391-uFFE5w]+$/.test(value);
+	}, ”只能包括中文字、英文字母、数字和下划线”);
+
+	// 中文字两个字节
+	jQuery.validator.addMethod(“byteRangeLength”, function(value, element, param) {
+	var length = value.length;
+	for(var i = 0; i < value.length; i++){
+		if(value.charCodeAt(i) > 127){
+			length++;
+		}
+	}
+	return this.optional(element) || ( length >= param[0]&&length <= param[1] );
+	}, ”请确保输入的值在3-15个字节之间(一个中文字算2个字节)”);
+
+	// 身份证号码验证
+	jQuery.validator.addMethod(“isIdCardNo”, function(value, element) {
+	return this.optional(element) || isIdCardNo(value);
+	}, ”请正确输入您的身份证号码”);
+
+	// 手机号码验证
+	jQuery.validator.addMethod(“isMobile”, function(value, element) {
+	var length = value.length;
+	var mobile = /^(((13[0-9]{1})|(15[0-9]{1}))+d{8})$/;
+	return this.optional(element) || (length == 11 && mobile.test(value));
+	}, ”请正确填写您的手机号码”);
+
+	// 电话号码验证
+	jQuery.validator.addMethod(“isTel”, function(value, element) {
+	var tel = /^d{3,4}-?d{7,9}$/; //电话号码格式010-12345678
+	return this.optional(element) || (tel.test(value));
+	}, ”请正确填写您的电话号码”);
+
+	// 联系电话(手机/电话皆可)验证
+	jQuery.validator.addMethod(“isPhone”, function(value,element) {
+	var length = value.length;
+	var mobile = /^(((13[0-9]{1})|(15[0-9]{1}))+\d{8})$/;
+	var tel = /^d{3,4}-?d{7,9}$/;
+	return this.optional(element) || (tel.test(value) || mobile.test(value));
+
+	}, ”请正确填写您的联系电话”);
+
+	// 邮政编码验证
+	jQuery.validator.addMethod(“isZipCode”, function(value, element) {
+	var tel = /^[0-9]{6}$/;
+	return this.optional(element) || (tel.test(value));
+	}, ”请正确填写您的邮政编码”);
+	**************************************************************************************
+六、注意：
+	1.要在additional-methods.js文件中添加或者在jquery.validate.js添加
+	建议一般写在additional-methods.js文件中
+
+	2.在messages_cn.js文件添加：isZipCode: "只能包括中文字、英文字母、数字和下划线",
+
+	调用前要添加对additional-methods.js文件的引用。
+
+
+	------------------------
+
+	jQuery.validate的optional(element)，用于表单控件的值不为空时才触发验证。
+	当element为空时this.optional(element)=true，用于在该控件为非必填项目时可以通过验证，及条件可以不填但是不能填错格式。
+
+	errorPlacement: function(error, element) {
+		if ( element.is(":radio") )
+			error.appendTo( element.parent().next().next() );
+		else if ( element.is(":checkbox") )
+			error.appendTo ( element.next() );
+		else
+			error.appendTo( element.parent().next() );
+
+	使用class="{}"的方式，必须引入包：jquery.metadata.js
+
+	可以使用如下的方法，修改提示内容：
+	class="{required:true,minlength:5,messages:{required:'请输入内容'}}"
+
+	在使用equalTo关键字时，后面的内容必须加上引号，如下代码：
+	class="{required:true,minlength:5,equalTo:'#password'}"
+	
+	

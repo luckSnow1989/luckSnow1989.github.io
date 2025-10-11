@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<!-- 自定义kv-->
+	<substitutionProperty name="collection-front_log.base" value="/data/home/www/yooli/logs/collection-front"/>
+
+	<!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+	<property name="fileLayoutPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{0} %line - %msg%n" />
+	<property name="consoleLayoutPattern" value="%date{HH:mm:ss.SSS} %-5level [%thread] %logger{36} %line - %msg%n" />
+	
+	<property name="operationLayoutPattern" value="%msg%n" />
+
+	<!-- info log  -->
+	<appender name="info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${collection-front_log.base}/collection-front.log</File>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>${fileLayoutPattern}</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${collection-front_log.base}/collection-front.%d{yyyy-MM-dd}.log</FileNamePattern>
+		</rollingPolicy>
+	</appender>
+
+	<!-- error log -->
+	<appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${collection-front_log.base}/collection-front_error.log</File>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>${fileLayoutPattern}</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${collection-front_log.base}/collection-front_error.%d{yyyy-MM-dd}.log</FileNamePattern>
+		</rollingPolicy>
+	</appender>
+
+	<!-- monitor log, 将日志单独拆分出来的 -->
+	<appender name="monitor" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${collection-front_log.base}/collection-front_monitor.log</File>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern></pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${collection-front_log.base}/collection-front_monitor.%d{yyyy-MM-dd}.log</FileNamePattern>
+		</rollingPolicy>
+	</appender>
+	
+	<!-- operation log, 将日志单独拆分出来的 -->
+	<appender name="operation" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${collection-front_log.base}/collection-front-operation.log</File>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>${operationLayoutPattern}</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${collection-front_log.base}/collection-front-operation.%d{yyyy-MM-dd}.log</FileNamePattern>
+		</rollingPolicy>
+	</appender>
+
+	<!-- console log， 控制台输出 -->
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>${consoleLayoutPattern}</pattern>
+		</encoder>
+	</appender>
+
+	<!-- safeLog log, 安全操作日志，将日志单独拆分出来的 -->
+	<appender name="safeLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${collection-front_log.base}/sl-yooli-collectionFront.log</File>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>${operationLayoutPattern}</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${collection-front_log.base}/sl-yooli-collectionFront-%d{yyyyMMdd}.log</FileNamePattern>
+		</rollingPolicy>
+	</appender>
+
+
+	<!-- safeLog log, 指定包 -->
+	<logger name="com.yooli.cbs.api.consumer.front.springmvc.interceptor.SecurityLogFilter">
+		<appender-ref ref="safeLog"/>
+	</logger>
+	
+	<!-- operation log, 指定包 -->
+	<logger name="com.yooli.cbs.api.consumer.front.common.LogUtil">
+		<appender-ref ref="operation"/>
+	</logger>
+	
+	<!-- rollingFile log, 指定包 -->
+	<logger name="com.yooli.collection.front" level="INFO">
+		<appender-ref ref="rollingFile" />
+	</logger>
+	
+	<!-- 监控日志, 指定包 -->
+	<logger name ="monitor">
+		<appender-ref ref="monitor" />
+	</logger>
+
+	<logger name="org.apache.ibatis" level="INFO">
+		<appender-ref ref="console" />
+	</logger>
+	
+	<logger name="java.sql" level="INFO">
+		<appender-ref ref="console" />
+	</logger>
+	
+	<logger name="org.apache.coyote.http11" level="ERROR">
+		<appender-ref ref="console" />
+	</logger>
+	
+	<root level="INFO">
+		<appender-ref ref="console" />
+		<appender-ref ref="info" />
+		<appender-ref ref="error" />
+	</root>
+
+</configuration>

@@ -1,0 +1,131 @@
+关联关系：
+	
+	多对一   一对多
+		 		 
+	多对多
+		 			 
+	一对一
+0.创建使用类：	
+	操作思路：在创建实体类中，一端存集合，多端存对象：
+	例如： 项目类--project，需求类--demand,一个项目中包含了多个需求，一般在hibernate中使用的集合都是set集合，
+	list集合的使用需要特殊配置，比较麻烦。而在需求中包含一个自己所属的项目的对象。	 
+
+一.	多对一   Many2One		 
+	
+	1。映射配置		
+	<many-to-one name="存放的一方的属性名" column="外键列名" class="一方的类型"></many-to-one>
+	如：在demand.hbm.xml
+	<many-to-one name="pro" column="pro_id" class="Project" ></many-to-one>	
+	
+	2。级联操作 就是在操作一个表数据的时候，同时对其他的，具有主外建关系的表进行操作	
+	(1)cascade
+		none        默认值
+        save-update 级联保存------------------一般使用这个操作
+		delete      级联删除------------------使用时慎用，在一对多中可能使用，例如：删除项目的时候，删除下属的需求
+		all 		上面第二个和第三个
+					
+		如：在project的映射配置中，加入cascade="save-update,delete"，这在对project表进行操作时，同时操作demand。
+			主要应用是：删除一个project，就要删除下属的所有的demand
+			
+			而在demand中要加入cascade="save-update,delete"的话，增加demand的时候，如果这个demand携带的project是持久化的，那就只增加
+			demand，如果project是瞬时的或是脱管的，就会新增加一个project。这也就是将demand与project建立关联关系。基本操作是
+			
+			Project pro = (Project)session.get(Project.class,1);//查询需要建立关联的project
+			Demand dem = new Demand();//创建新的demand
+			dem.setPro(pro);//将查询到的持久化对象，注入demand中
+			session.save(dem);//增加demand，同时建立关联关系
+			
+			删除这个demand的时候，对应的project会被删除，但是被删除的这个project对应的其他的demand的外键pro_id就会为空，变成孤儿。
+			这是delete在 N:1 和 1:N 中的区别.
+		            
+	(2)	延迟加载    lazy	  
+        proxy				默认使用	第一次访问关联对象的非主键值时，发送sql,查询相关对象
+		no-proxy			实际使用时，和proxy没有区别
+		false				关闭延迟加载
+	
+	(3) 解除关联关系
+		
+		例如：要解除某一个demand与project的关联关系
+		Demand dem = (Demand)session.get(Demand.class ,1);//获得要解除关联的持久化对象
+		dem.setPro(null);//将这个对象携带的project置空，即可
+
+
+
+二、一对多   One2Many
+	1。映射配置
+		<set name="存放的多方集合的属性名">
+			<key column="外键列名" ></key>
+			<one-to-many class="集合中元素的类型" />
+		</set>
+	   
+	2。 级联操作 
+	(1) cascade
+		none        		默认值
+		save-update 		级联保存
+		delete      		级联删除
+		all 				上面第二个和第三个
+		delete-orphan		删除孤儿，例如,project中没有delete级联关系，所有删除project的时候，对应的demand的外键就会为空，单不会被删除
+									       所以在project中加入delete-orphan，就会将这些外键为空的demand删除
+		all-delete-orphan	上面第四个和第五个
+		
+		建立关联关系：
+		Project pro = new Project();//创建需要建立关系的对象		
+		pro.setProName("AB");
+		
+		Demand d1 = new Demand();//创建或查询要建立关联的需求
+		Demand d2 = new Demand();
+		d1.setDemName("AA");
+		d2.setDemName("BB");
+		
+		pro.getDemSet().add(d1);//将需求增加到project的集合中
+		pro.getDemSet().add(d2);
+		
+		se.save(pro);//保存时建立关系，
+	
+	(2)延迟加载----lazy
+		true----------默认使用
+		extra---------延迟加载
+		false---------立级加载
+
+
+   (3)inverse     
+		false  默认值
+		true   放弃外键的维护，如果属性中加有inverse，值为true则cascade就失去了作用
+	
+	(4)order by 排序
+		order-by = "pro_id"      默认是升序
+		order-by = "pro_id desc" 降序
+			
+	(5)解除关联关系
+	例如：要解除某一个project下属的某个demand的关联关系
+	
+		Project pro = (Project)session.get(Project.class,1);//获得要解除关联的持久化对象
+		Demand dem = (Demand)session.get(Demand.class ,1);//获得要解除关联的持久化对象
+		pro.getDemSet().remove(dem);//去除这个需求
+	
+三、多对多：在数据库中会存在一个中间表，但是在创建实体类的时候，可以不创建中间表。
+	在两个表的映射文件中添加
+	<set name="集合属性名" table="中间表表名">
+        <key column="中间表中指向我方的外键"></key>
+        <many-to-many class="集合中元素的类型" column="中间表中指向对方的外键列名" ></many-to-many>
+    </set>
+	   
+四、关于数据库事务的处理：回滚
+	
+	在进行添加时，途中出现异常，添加会被终止，这一条无效的数据，会被数据库回收处理。
+	但是例如自增的主键，会跳过这一条异常的数据。例如，本来应该增加的是主键值是：3；但是增加这条时，出现了
+	异常，虽然事务回滚到了事务开启之前的状态，但是主键实际上是已将增加了一次，之后又被删除了，而在下次增加
+	时，如果没有异常，则增加的主键值就是4了。
+
+
+
+
+
+
+
+
+
+
+
+
+	 

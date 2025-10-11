@@ -1,0 +1,72 @@
+一.配置Tomcat服务器目录下的：conf/context.xml文件;
+1.连接MySQL；
+<Context>
+   <Resource name="news"   auth="Container"  type="javax.sql.DataSource"	maxActive="100"
+    maxIdle="30"  maxWait="10000"   username="root"   password="4100107223"       
+    driverClassName="com.mysql.jdbc.Driver"       url="jdbc:mysql://localhost:3306/BookManager"/>
+</Context>
+2.连接Oracle;
+<Context>   
+	<Resource name="jdbc/news"        auth="Container"type="javax.sql.DataSource"  maxActive="100"         maxIdle="30" 		maxWait="10000"   username="sa"   password=“sa"       driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"       		url="jdbc:sqlserver://localhost:5545;DatabaseName=NewsManager"/>
+</Context>
+3.属性对应的作用
+name	指定Resource的JNDI名称，随便起。用于找到文件
+auth	指定管理Resource的Manager
+type	指定Resource所属的Java类
+maxActive	指定连接池中处于活动状态的数据库连接的最大数目
+maxIdle	指定连接池中处于空闲状态的数据库连接的最大数目
+maxWait	指定连接池中的连接处于空闲的最长时间
+
+
+
+
+二.向Tomcat服务器目录下的lib文件夹内复制一个连接mysql的jar包，并配置Tomcat服务器目录下的：conf/web.xml中配置
+<resource-ref>
+    <res-ref-name> news </res-ref-name>         //这个name是步骤一中的Resource name="news"
+    <res-type> javax.sql.DataSource </res-type>
+    <res-auth> Container </res-auth>
+</resource-ref>
+
+三、编写访问数据源的BaseDao类
+
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;import javax.sql.DataSource;
+
+public class BaseDao {      
+	public Connection getConnection () {
+        	Context ctx;         
+		try {              
+			ctx = new InitialContext();	
+			//获取与逻辑名相关联的数据源对象	
+			DataSource ds=(DataSource)ctx.lookup("java:comp/env/news");
+			conn=ds.getConnection();
+		} catch (SQLException exception) { 
+                	exception.printStackTrace();           
+		} catch (NamingException namingException) {
+                        namingException.printStackTrace();		}      	
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

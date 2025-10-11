@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.project.entity">
+	<class name="Project" table="project">
+		<id name="proId" column="pro_id">
+			<generator class="native"></generator>
+		</id>
+		<property name="proName" column="pro_name"></property>
+		<!-- 1:N -->
+		<set name="demSet"  cascade="save-update" >
+			<key column="pro_id"></key>
+			<one-to-many class="Demand"  />
+		</set>
+	</class>
+</hibernate-mapping>

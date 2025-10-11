@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+"http://struts.apache.org/dtds/struts-2.1.7.dtd">
+<struts>
+	
+	<package name="surveyParkPkg" namespace="/" extends="struts-default">
+		<!-- logAction -->
+		<action name="UserAction_*" class="userAction" method="{1}">
+			<result name="user">/user.jsp</result>
+			<result name="userList">/userList.jsp</result>
+			<result name="userListAction" type="redirect">/UserAction_findAllUser</result>
+			<result name="updateUserUI" >/updateUser.jsp</result>
+		</action>
+	</package>
+</struts>

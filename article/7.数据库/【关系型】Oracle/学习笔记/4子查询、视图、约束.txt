@@ -1,0 +1,210 @@
+一、子查询：
+
+     select e1.last_name,e1.salary from employees e1, employees e2
+	 where e1.salary>e2.salary and e2.last_name='Abel'
+	 
+	 select last_name,salary from employees
+	 where salary>(select salary from employees where name='Abel')
+	 
+
+	单行子查询使用单行运算符
+	
+    多行子查询使用多行运算符
+    IN
+    ANY     >any    大于其中任何一个都可以    大于最小的 
+         	<any                              小于最大的
+    ALL	
+	        >all     大于最大的
+			<all     小于最小的
+			
+二、DDL语言
+     DDL   Data  Definition Language  数据定义语言   create  drop alter
+	 
+     DML   Data Manipulation Language  数据操纵语言 insert update delete
+     DCL   Data Control Language  grant ...
+     DQL   Data Query Language
+     DTL   Data Transaction Language   commit  rollback 
+	 
+	
+	
+三、DML语言 
+  
+    create table 表名(	    
+	    列名   数据类型 default ,
+        列名   数据类型,
+        ...
+        列名   数据类型			 
+	 )	
+	 
+     数据字典：  由数据库负责创建和维护的表
+	             user_tables
+				 user_objects
+				 user_catalog
+				 user_constraints
+								 
+	alter table :
+
+          add(列名  数据类型)	
+          modify(列名  数据类型)   修改列的数据类型 不能修改列名
+		  drop(列名)
+
+
+    rename 原表名 to 新表名
+	
+	
+	truncate table  表名   截断表
+	
+四、约束
+	创建约束的方式：
+	1.创建表的时候与字段一并创建
+	create table teacher(
+		id number primary key,==============主键
+		name varchar2(100) not null,========非空
+		email varchar2(100) unique,=========唯一
+		dept_id number references dept(id)==外键
+	)
+	
+	2.创建表单时候，最后声明字段为约束
+	create table teacher(
+	  id number,
+	  name varchar2(100) constraint name_nn not null,
+	  email varchar2(200),
+	  dept_id number,
+	  age number,
+	  constraint teacher_pk primary key(id),========================主键
+	  constraint email_un unique(email),============================唯一
+	  constraint teacher_fk foreign key(dept_id) references dept(id),外键
+	  constraint age_check check(age>0)==============================检查
+	)
+	
+	3.创建表之后，将约束添加到表中
+	create table teacher(
+	  id number,
+	  name varchar2(100) ,
+	  email varchar2(200),
+	  dept_id number,
+	  age number
+	 )
+
+	--alter table teacher add constraint teacher_pk primary key(id)
+	--alter table teacher add constraint teacher_fk foreign key(dept_id) references dept(id)
+	--alter table teacher add constraint teacher_un unique(email)
+	--alter table teacher add constraint teacher_age_check1 check(age>0 and age<200)
+		
+	删除约束
+	alter table 表名 drop constraint 约束名
+
+五、视图
+   
+	视图(view)： 视图也是一个数据库对象  (表  视图)，由一个表或多个表的部分数据所组成的数据库对象，
+	视图产生的根本原因还是为了简化复杂的查询，通过创建视图时的一次查询，是之后每次查询都和单表查询一样简单
+    
+	1.创建视图
+	create or replace view emp_dept80 as
+	(select employee_id id,last_name name from employees where department_id=80)
+
+    为什么使用视图：
+		限制数据访问(安全性)
+		使得复杂的查询容易
+				   
+		改变形成视图的表的数据，视图中的数据也会变化
+
+        对视图（简单视图）进行 DML操作 形成视图的表的数据 也会变化 		 
+				   
+    简单视图
+    复杂视图  复杂视图不能做DML操作	
+	create view v_emp_avg_sal as select department_id ,avg(salary) avg_sal from employees group by department_id
+
+    update v_emp_avg_sal set avg_sal=10000 where department_id=80
+		会报错		   
+				   
+				   
+	删除视图：
+             drop view ...	
+
+	2.内建视图：  
+
+         内建视图就是一个子查询
+
+         在where 条件中的子查询 通常叫 子查询
+		 
+         跟在from 后的子查询通常叫做  内建视图	
+
+    from 表名
+    from 视图名
+    from (select .........)	 内建视图
+	
+	内建视图不是，数据库对象，是认为的将子查询抽象出来的
+	
+	select t.* from (select employee_id,first_name,last_name,salary from employees) t	
+	
+	3.只读视图
+		Create view 视图名称 as 查询语句 with read only ;
+	
+六、TOP-N:主要用于信息的分页，和筛选信息
+
+    MySQL         limit
+	 
+	SQL Server    top()
+	 
+	oracle        rownum(伪列)
+	 
+	 
+伪列：  rowid     表示的是 一条数据在 数据文件中的偏移量
+
+                    根据rowid 的查询效率比根据主键的效率还要高
+					
+        rownum     查询结果的每个列的序号  
+
+	前10条
+	select rownum,e.* from employees e where department_id = 80 and rownum<=10		  
+
+
+	5到10条	
+
+	select rownum,e.* from employees e 
+	where department_id = 80 and rownum between 5 and 10(没结果)
+
+	select t.* from (select rownum rn,e.* from employees e) t
+	where t.rn between 5 and 10
+
+
+
+
+	select rownum,e.* from  employees e order by salary desc
+	这样查询 rownum就乱序了  为什么？？？
+
+	因为先执行的rownum  后排序
+
+	--查询工资排在前5位的员工姓名和工资？？？？
+
+	select rownum,t.* from (select last_name,salary from employees order by salary desc) t
+	where rownum<=5
+
+	查询工资5到10位
+
+	select tt.last_name,tt.salary from
+	(select rownum rn,t.* from (select last_name,salary from employees order by salary desc) t) tt
+	where tt.rn between 5 and 10
+
+
+	MySQL分页
+
+	select  *  from table where ....  limit (页数-1)*每页条数, 每页条数
+
+
+	oracle 分页 sql
+
+	select tt.* from (select rownum rn ,t.*  from table t where ....) tt 
+	where tt.rn between (页数-1)*每页条数+1 and 页数*每页条数  
+
+
+   
+   
+
+
+
+
+
+
+		  

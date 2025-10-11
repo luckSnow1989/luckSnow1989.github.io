@@ -1,0 +1,10 @@
+.header {
+  color: $theme-white;
+  background: $theme-green2;
+
+  input {
+    border-radius: 50px;
+    border: 1px solid $theme-green2;
+    font-size: 80%;
+  }
+}

@@ -1,0 +1,33 @@
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+
+
+
+今天出现了一个很奇怪的异常：java.lang.OutOfMemoryError: GC overhead limit exceeded ，超出了GC开销限制。科普了一下，这个是JDK6新添的错误类型。是发生在GC占用大量时间为释放很小空间的时候发生的，是一种保护机制。一般是因为堆太小，导致异常的原因：没有足够的内存。 
+
+Sun 官方对此的定义：超过98%的时间用来做GC并且回收了不到2%的堆内存时会抛出此异常。
+
+为什么会出现这个问题呢？经过反复测试发现，下载数据时文件大小超过某一峰值是会报这个错误。原因是在页面点击下载时，在数据库查询了很庞大的数据量，导致内存使用增加，才会出现这个问题。
+
+ 
+
+解决办法：
+
+1，查看项目中是否有大量的死循环或有使用大内存的代码，优化代码。
+
+2，JVM给出这样一个参数：-XX:-UseGCOverheadLimit  禁用这个检查，其实这个参数解决不了内存问题，只是把错误的信息延后，替换成 java.lang.OutOfMemoryError: Java heap space。
+
+3，增大堆内存 set JAVA_OPTS=-server -Xms512m -Xmx1024m -XX:MaxNewSize=1024m -XX:MaxPermSize=1024m  
+
+这些值可根据实际情况修改
+--------------------- 
+作者：破茧重生Lys 
+来源：CSDN 
+原文：https://blog.csdn.net/qq_40162735/article/details/81775828 
+版权声明：本文为博主原创文章，转载请附上博文链接！

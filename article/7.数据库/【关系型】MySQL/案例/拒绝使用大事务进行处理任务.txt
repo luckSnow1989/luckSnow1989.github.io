@@ -1,0 +1,142 @@
+前话： 不要迷恋事务，大事务会拖垮你的用户！
+
+相信很多应用都需要进行一些后台任务的处理，这时候应对的，往往是大批量的数据。比如：对数据进行汇总结算,需要全表扫描,更新; 对用户订单状态进行更新,需要全表扫描,进行更新; 对用户的会员有效期处理,也需要全表扫描,更新！
+
+应对这样的场景，就是定时任务job的职责范畴了。
+
+那么问题来了，这样的场景需要进行事务控制吗？ 我觉得这个得看业务需求，比如这个状态不是很重要，那么可以不用进行事务控制。但是更多时候，我们希望是有事务的，因为往往更新不会是单表的。
+
+在spring中，有一个简单的注解，即可以帮忙实现事务的控制。
+
+@Transactional(readOnly = false, rollbackFor = Throwable.class, isolation = Isolation.REPEATABLE_READ)
+
+一个事务搞定！但是问题来了，这里报错了。
+
+java.lang.Exception:
+### Error updating database.  Cause: java.sql.SQLException: Lock wait timeout exceeded; try restarting transaction
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### Cause: java.sql.SQLException: Lock wait timeout exceeded; try restarting transaction
+; SQL []; Lock wait timeout exceeded; try restarting transaction; nested exception is java.sql.SQLException: Lock wait timeout exceeded; try restarting transaction
+
+究其原因，就是mysql 锁等待超时。这里的等待超时有两种情况，
+
+是该定时任务后执行，是在等待别的客户端释放锁，而迟迟未得到从而超时。
+是其他客户端在操作时，由于被该定时任务长时间的占有锁，从而导致其等待超时。
+
+当然，更多的可能是第二种。为什么呢？ 因为定时任务往往需要处理大量的数据，这时，如果使用了一个最外围的事务，那么相当于整个脚本都是运行在该事务中，只要该脚本还未运行完成，那么事务就不会提交，也就不会释放他占有的锁资源。所以，问题就在这里了。所以，我们得避免进行大事务的形成就很有必要了。
+
+事实上，事务的目的是为了保证数据的原子性，准确性，那么也就是说，只要你需要保证的数据做到了，就可以进行事务提交了。所以，可以将大事务拆小，即保证最小事务的执行即可。如：更新一个用户的会员状态，那么只需要查出相关信息，更改状态，写入相应记录，该事务即可提交。
+
+将大事务拆小后，就可以做到快速释放锁的作用，从而避免了其他客户端的锁等待超时问题了。 
+
+样例： 更新用户的账单状态，步骤为： 查询出所有需要更新的账单数量 >> 定稿job执行开始记录 >> 更新每个订单状态 >> 写入job执行结束标识 >> 完成！
+
+该过程，主要耗时是在对每个用户的账单更新，因此，可以将该处作为事务拆小的依据，具体代码如下：
+
+主事务进行总体控制
+
+// 使用新线程进行具体执行功能，需另起事务控制或接收原有事务
+    @Override
+    public Integer updateBorrowStatus(JobParamBean jobParamBean) {
+        String method = "updateBorrowStatus";
+        logger.info("enter {} method, jobParamBean:{}", method, jobParamBean);
+        // 更新数据库
+        Integer result = null;
+        Map<String, Object> cond = new HashMap<>();
+        //borrowApplyTimeStart, borrowApplyTimeEnd, borrowStatusList, pageStart, perPageNum
+//        cond.put("borrowApplyTimeStart", jobParamBean.getStartTime());
+//        cond.put("borrowApplyTimeEnd", jobParamBean.getEndTime());
+        cond.put("shouldRepayTimeStart", jobParamBean.getStartTime());
+        cond.put("shouldRepayTimeEnd", jobParamBean.getEndTime());
+ 
+        List<String> borrowStatusList = new ArrayList<>();
+        borrowStatusList.add("3");
+        cond.put("borrowStatusList", borrowStatusList);
+ 
+        Integer totalUpdate = borrowMapper.countUsersBorrowListByMap(cond);
+        String dubboConsumerIp = jobParamBean.getDubboConsumerIp();
+        String myServerIp = "127.0.0.1";
+        try {
+            myServerIp = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            logger.error("get local server ip error:{}", e);
+        }
+ 
+        Date now = new Date();
+        JobExecRecordEntity recordEntity = new JobExecRecordEntity();
+        BeanUtils.copyProperties(jobParamBean, recordEntity);
+        recordEntity.setJobName("autoUpdateBorrowStatus");
+        recordEntity.setExecDateStart(jobParamBean.getEndTime());           // 结束时间为最近时间
+        recordEntity.setExecDateEnd(jobParamBean.getStartTime());
+        recordEntity.setTotalAffectNum(totalUpdate);
+        recordEntity.setReqParams(JSONObject.toJSONString(jobParamBean));
+        recordEntity.setJobParams(JSONObject.toJSONString(cond));
+        recordEntity.setExecServerIp(myServerIp);
+        recordEntity.setReqServerIp(dubboConsumerIp);
+        recordEntity.setJobEndTime(DateUtils.convert(now, "yyyy-MM-dd HH:mm:ss.S"));
+        Integer recordAffectNum = jobExecRecordMapper.addJobExecRecord(recordEntity);
+        Long recordId = recordEntity.getId();
+ 
+        Integer realUpdateNum = 0;
+        if(totalUpdate != null && totalUpdate > 0) {
+            Integer pageStart = 0;
+            Integer perPageNum = 10;
+            String nowDateStr = DateUtils.convert(now, "yyyy-MM-dd");      //当前时间
+            for(int i = 0; i < totalUpdate; i += perPageNum) {
+                pageStart = i;
+                cond.put("pageStart", pageStart);
+                cond.put("perPageNum", perPageNum);
+                Integer thisAffectNum = platformAssistantBusiness.pieceUpdateBorrowStatus(cond, nowDateStr);　　    // 使用辅助类进行小事务的拆分
+                realUpdateNum += thisAffectNum;
+                recordEntity.setCurrentAffectNum(perPageNum);
+                recordEntity.setRealAffectNum(thisAffectNum);
+                recordEntity.setStatus("1");
+                jobExecRecordMapper.updateJobExecRecord(recordEntity);
+            }
+        }
+        recordEntity.setStatus("5");
+        recordEntity.setCurrentAffectNum(0);
+        recordEntity.setRealAffectNum(0);
+        String jobEndTime = DateUtils.convert(new Date(), "yyyy-MM-dd HH:mm:ss.S");
+        recordEntity.setJobEndTime(jobEndTime);
+        jobExecRecordMapper.updateJobExecRecord(recordEntity);
+ 
+        result = totalUpdate;
+        logger.info("exit {} method, result:{}", method, result);
+        return result;
+    }
+
+小事务放在另一方法中，以确保事务生效！
+
+@Override
+    @Transactional(readOnly = false, rollbackFor = Throwable.class, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRES_NEW)
+    public Integer pieceUpdateBorrowStatus(Map<String, Object> cond, String nowDateStr) {
+        String shouldRepayDate = "";
+        Long lateDays = 0L;
+        String borrowStatus;
+        Integer thisAffectNum = 0;
+        List<UsersBorrowEntity> pageList1 = borrowMapper.getUsersBorrowListByMap(cond);
+        for(UsersBorrowEntity borrowEntity1 : pageList1) {
+            UsersBorrowEntity updateBorrowEntity = new UsersBorrowEntity();
+            updateBorrowEntity.setId(borrowEntity1.getId());
+            updateBorrowEntity.setUserId(borrowEntity1.getUserId());
+            shouldRepayDate = borrowEntity1.getShouldRepayTime();
+            lateDays = DateUtils.getDayDiff(shouldRepayDate, nowDateStr);
+            if(lateDays != null && lateDays >= 0 && !"8".equals(borrowEntity1.getBorrowStatus())) {
+                if(lateDays == 0) {
+                    borrowStatus = "5";
+                } else {
+                    borrowStatus = "6";
+                }
+                updateBorrowEntity.setBorrowStatus(borrowStatus);
+                updateBorrowEntity.setRepayStatus(CommonUtil.getRepayStatusByBorrowStatus(borrowStatus));
+                updateBorrowEntity.setLateDays(lateDays.intValue());
+                Integer affectNum = usersBorrowMapper.updateUsersBorrow(updateBorrowEntity);
+                thisAffectNum += affectNum;
+            }
+        }
+        return thisAffectNum;
+    }
+
+这样就保证了，执行的完整性，然后，每10个小事务就进行提交一次。从而解决锁超时问题了。

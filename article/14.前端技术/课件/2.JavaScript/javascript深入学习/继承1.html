@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			/**
+			 * extend 继承
+			 */
+			
+			/**
+			 * 1.类工厂
+			 */
+			function createClass(jsonObj){
+				/**
+				 * 任意类为F
+				 */
+				function F(){
+					alert("创建了一个对象");
+				}
+				/**
+				  *动态添加属性 
+				  */
+				for (var name in jsonObj) {
+					var value = jsonObj[name];
+					F.prototype[name] = value;
+				}
+				return F;
+			}
+			
+			/**
+			 * 2.一个json对象
+			 */
+			var json = {
+				id:1,
+				name:'张三',
+				getAge:function(){
+					var year = new Date().getFullYear();
+					return year - 1989;
+				}
+			};
+			
+			/**
+			 * 3.使用工厂创建一个类
+			 */
+			var Person = createClass(json);
+			
+			/**
+			 * 4.使用这个类创建一个对象
+			 */
+			var p = new Person();
+			
+			alert(p.id);
+			alert(p.name);
+			alert(p.getAge());
+			
+		</script>
+	</body>
+</html>

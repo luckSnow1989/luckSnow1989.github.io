@@ -1,0 +1,208 @@
+һ��Ecma�ɶ���Ķ���
+
+	1.Object
+		Object���������ж���ĳ���. Object�е����Ժͷ���,�����ж���.
+		toString����.
+	
+	2.Function
+		
+		(1)������ʽ����:
+			function fun1(a,b){alert(a+b);}
+			var fun2 = new Function("a","b","alert(a+b);");
+			var fun3 = function (a,b){alert(a+b);};
+		
+		(2)�����ĵ��õ�����:����ʱ ֻ����������, ������û�й�ϵ.
+		
+		(3)�����е����ö���:
+					arguments ==> ��������ʱ��ʵ�ʲ����б�
+					arguments.length ==> ���ʵ�ʲ�������
+					arguments[n] ==> ĳ��ʵ�ʲ���
+		
+		(4)���ö����Ӧ��: ʹ��arguments �������
+		
+		(5)����return�ؼ���:
+			1.�������ؽ��.
+			2.������ǰ��������.
+			
+		(6)�����:void()
+			���ط�������ֵ.
+	
+	3.String
+		����:
+			length ==> �����ַ�������
+		����:
+			(1).û���õ�
+				anchor
+				big
+				sup
+				
+			(2).��Ҫ��
+				charAt
+				charCodeAt
+				indexOf
+				lastIndexof
+				subString  ��ȡ�ַ���
+				slice       Ҳ�ǽ�ȡ�ַ���. ֧�ָ���.
+			(3).�������ϵ�
+				match  
+				search
+				split
+				replace
+				
+	4.��������
+		�������������� ��Ӧ����ԭʼ���͵İ�װ����. 
+		����ԭʼ������α����, ����ֱ��ʹ�ö�Ӧ��װ����ķ���.
+		��������װ����Ĺ��췽����������������ת��.
+		Number
+		Boolean
+		instanceof ==>  �����ж� �������ھ����ĸ����͵�
+	����:
+		alert(xxx instanceof String); // true / false
+		
+����Ecma����ķ���. ���ض���(native object) �� ��������(host object)
+			
+	���ض���(native object)����һ��������Ķ���
+		�ڽ�����(build in object). �ص���: ����Ҫ����ʵ��.ֱ��ʹ�ü���.
+	
+	1.Global (build in object)ȫ�ֶ���
+		����:
+			encodeURI  ���ַ������б��� ֻ�����Ľ��б��� .
+			decodeURI  ���ַ������н��� 
+			encodeURIComponent ���ַ������б��� ��Χ��encodeURIҪ��.����һЩ�ض��ַ� ����  / , : , ? , &
+			decodeURIComponent
+			escape �ѹ�ʱ
+			unescape 
+			
+			eval  ==> �Բ����е�String����js����. ����: eval("alert('aaa');");
+			isNaN ==> ��ĳ�����������ж�.�Ƿ���NaN. ��ΪNaN == NaN ==> false
+			parseInt ==> ���ַ���������(����)ת��  
+			parseFloat ==> ���ַ���������(С��)ת��  ������ת��,��ת��ʱ�Ǵ�����Ѱ�ҿ��Ա�ת�����ַ�����ת��.����: 123abc ==parseInt ==> 123
+		�ܽ�: �ַ���������ת�������ַ�ʽ
+				1. +
+				2.new Number(str);
+				3.parseInt/ parseFloat
+		
+		
+	2.Math (build in object)
+		����:
+			PI Բ����
+		����:
+			random ���0~1֮��������
+			round ��������ȡ��
+			min/max �������������е���С/���ֵ
+			pow ��ò���1�Ĳ���2�η���ֵ.
+	3.Date
+		1.new Date() ��ȡ��ǰʱ��
+		2.getFullYear() ��ȡ���
+		3.getMonth() ��ȡ�·�ע�� 1�·ݽ��Ϊ0
+		4.getHours() Сʱ
+		5.getDate() ����
+		6.getMinutes() ����
+		7.getSeconds() ��ȡ��
+		8.getTime()  ��ȡ����ֵ.
+		9. toLocaleString () ��ȡ���ص�ʱ���ʽ�ַ���.
+	
+	4.Array
+		������ʽ3��
+		var arr1 = [1,2,3,4]; //��ʼ��Ԫ��
+		var arr2 = new Array(1,2,3,4);//��ʼ��Ԫ��
+		var arr3 = new Array(3); //���캯��ֻ��һ���������������ֵĻ�,�������������ĳ�ʼ������
+		����:
+			length ����ĳ���
+		����:
+			concat
+			join ���ղ��������ӷ�����Ԫ�ط������Ӻ���ַ���.
+			pop �������������һ��Ԫ��
+			push ������ĩβ���һ��Ԫ�ز�������������³���
+			reverse ������Ԫ�ط�ת
+			sort ���������� Ĭ����������� �����ַ����Ƚ�. ���ϣ���Զ���ȽϹ��� 
+			join('')�������е�Ԫ��Ӵ''���ӳ��ַ���
+			��Ҫ׼��һ���Ƚ���(����).����Ƚ����ֵıȽ���:
+				function abc(a,b){
+					return a-b;
+				}
+	5.RegExp
+		������ʽ2��:
+			var reg1 = new RegExp("������ʽ","gi"); ����1:������ʽ  ����2:ƥ��ģʽ  g ȫ��ƥ�� i ƥ���Ǻ��Դ�Сд.
+			var	reg2 = /������ʽ/gi;		
+		����: 
+			test(); ==>  ��������Ĺ���ƥ��ĳ���ַ���. ƥ����ȷ����true ���󷵻�false
+		��string��ϵ�4������;
+		
+����BOM�ж���Ķ���  �ص�: ��Global ��Math ����. ����Ҫ�����ֶ���������, ֻ��ֱ��ʹ�ü���;
+	
+	1.window
+		һ��window�������һ��html�ĵ�.
+		����:
+			alert 
+			confirm  ȷ�Ͽ�  ����ֵ�� true / false
+			prompt(�õĲ���)   ��ʾ�����  ����ֵ�� �û������ֵ
+			
+			open ���´��� ����1: �´��ڵĵ�ַ. ����2(�õıȽ���): �´��ڵ�����.  ����3 : �´��ڴ�ʱ��һЩ����(���ڵĿ� �� ��û�й�����, ��ַ��,�ɷ������С)
+			close �رյ�ǰwindow����(�رյ�ǰ����);
+			
+			setInterval   ���ö�ʱ������(ѭ��ִ��)  ����1: Ҫִ�еĺ��� ����2 : ������¼� (����) . ����ֵ�Ƕ�ʱ����ID
+			clearInterval  ֹͣһ����ʱ��. ����: Ҫֹͣ�Ķ�ʱ����ID
+			
+			setTimeout   ���ö�ʱ������(ִֻ��һ��)  ����1: Ҫִ�еĺ��� ����2 : ������¼� (����) . ����ֵ�Ƕ�ʱ����ID
+			clearTimeout ֹͣһ����ʱ��. ����: Ҫֹͣ�Ķ�ʱ����ID
+			
+		����: һ��5�����Զ���window���͵�.
+			self : �Լ������ڴ��ڵ�window����
+			parent: ָ���Լ������ڵ�window����
+			top: ָ���Լ����㴰�ڵ�window����
+			
+			frames:��������Լ��Ӵ��ڵ�window��������.
+				���磺��ҳ�棬��ҳ�����iframeҳ��ķ���
+				<iframe id="iframe_html" src="demo2.html"></iframe>
+				<input id="input_text"/>
+				<input type="button" value="�ύ" onclick="fun()"/><br>
+				<script type="text/javascript">
+					function fun(){
+						var text = document.getElementById('input_text').value;
+						document.getElementById("iframe_html").contentWindow.setText(text);��ʽһ
+						//window.frames.iframe_html.contentWindow.setText(text);��ʽ��
+						//window.frames['iframe_html'].contentWindow.setText(text)��ʽ��
+					}
+				</script>
+				
+				��ҳ��
+					<h1 id="demo2_h1"></h1>
+					<script type="text/javascript">
+						function setText(text){
+							document.getElementById('demo2_h1').innerHTML = text;
+						}
+					</script>
+			
+			
+			
+			opener: ���һ��������ʹ��window.open�����򿪵�,��ô���´򿪵Ĵ����� Ҫ��ô��Լ����ڵ�window����ʹ�ø�����.
+				���磺
+				��ҳ�棺�������µ�ҳ��
+				<input type="button" value="��ҳ��" onclick="window.open('demo3.html','','width=800,height=400'); "/><br>
+				<script type="text/javascript">
+					function fun2(str){
+						alert(str);
+					}
+				</script>
+				
+				��ҳ��ֻ��һ����ť�� <input type="button" value="���ø��෽��" onclick="window.opener.fun2('�����������')"/>
+				
+				�����ҳ��İ�ť����ø�ҳ���fun2����
+				
+			
+			
+	2.history
+		����
+			length �ô��ڷ��ʹ��� ҳ�����
+		����:
+			back  ����
+			forward ǰ��
+			go ��ת ��������һ������. 0����ǰҳ��,1������һ�� ,-1������һ��.
+	
+	3.location
+		����:
+			href ��ǰ���ڵ� ��ַ.������������ת
+		����:
+			reload ���¼��ص�ǰҳ��  .ˢ��.
+			

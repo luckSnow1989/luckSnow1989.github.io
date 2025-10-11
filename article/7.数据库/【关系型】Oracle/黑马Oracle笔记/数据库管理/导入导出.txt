@@ -1,0 +1,16 @@
+导入导出只是数据的流动，并不是数据备份
+1.window下：
+	导出：
+		(1)表的方式：
+			exp ems/123456@10.17.28.50:1521/orcl file=d:/ems.dmp log=d:/ems.log tables=(table1,table2...);
+		
+		(2)用户方式
+			exp ems/123456@10.17.28.50:1521/orcl file=d:/ems.dmp log=d:/ems.log ower=用户名
+			
+		(3)全部方式
+			exp ems/123456@10.17.28.50:1521/orcl file=d:/ems.dmp log=d:/ems.log full=y
+
+			
+2.Linux
+	(1)root用户下首先切换到oracle用户 命令：su - oracle
+	(2)导出命令格式如下：exp user/pwd@SID file=path/sth.dmp

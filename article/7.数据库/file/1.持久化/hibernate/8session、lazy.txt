@@ -1,0 +1,153 @@
+一、session:
+   1、session的产生
+   2、session的缓存  一级缓存
+   
+二、session的产生
+   1、sessionFactory.openSession()，这个session只能处理简单的，单一的业务操作。
+		private SessionImpl openSession(Connection connection,boolean autoClose,long timestamp,
+			Interceptor sessionLocalInterceptor) {
+				
+			return new SessionImpl( connection, this, autoClose, timestamp,
+				        sessionLocalInterceptor == null ? interceptor : sessionLocalInterceptor,
+				        settings.getDefaultEntityMode(),
+				        settings.isFlushBeforeCompletionEnabled(),
+				        settings.isAutoCloseSessionEnabled(),
+				        settings.getConnectionReleaseMode()
+					);
+		}
+		
+
+	2、sessionFactory.getCurrentSession();这个session可以对复杂业务进行事务管理。
+		private static final ThreadLocal context = new ThreadLocal();
+		private static Session existingSession(SessionFactory factory) {
+			Map sessionMap = sessionMap();
+			if ( sessionMap == null ) {
+				return null;
+			}
+			else {
+				return ( Session ) sessionMap.get( factory );
+			}
+		}
+		public final Session currentSession() throws HibernateException {
+			Session current = existingSession( factory );
+			if (current == null) {
+				current = buildOrObtainSession();
+				// register a cleanup synch
+				current.getTransaction().registerSynchronization( buildCleanupSynch() );
+				// wrap the session in the transaction-protection proxy
+				if ( needsWrapping( current ) ) {
+					current = wrap( current );
+				}
+				// then bind it
+				doBind( current, factory );
+			}
+			return current;
+		}
+		以上是源码，意思是：一个数据库的只有一个sessionfactory，sessionfactory只有一个ThreadLocal，
+		ThreadLocal保存当前的session，在获得session的时候，(1)查看当前线程的session是否存在，(2)存在的话就取出session
+		(3)不存在就创建一个session，并保存在ThreadLocal中(4)用户从ThreadLocal中取得session；   
+ 
+ 
+ 
+ 	缓存常见的问题：
+	   1、缓存的生命周期：生命周期就是session的生命周期
+			
+	   2、数据库的数据是怎么样放入到缓存中的：
+	   		一级缓存是session级别的，把session存放在threadlocal中，不同的线程(也就是不同的session)是不能访问的，
+	   		所以保证了数据的安全性。
+	   		利用session.save/update/load/get方法都可以存放在一级缓存中，
+	   		
+	   3、缓存中的数据是怎么样放入到数据库中的：
+	   	   session.flush
+        	在session的缓存内部，会去检查所有的持久化对象
+           	1、如果一个持久化对象没有ID值，则会发出insert语句
+           	2、如果一个持久化对象有ID值，则会去检查快照进行对比，如果一样，则什么都不做，如果不一样，则发出update语句
+           	3、检查所有的持久化对象是否有关联对象
+		                检查关联对象的级联操作
+		                检查关联对象的关系操作
+		                
+	   4、客户端怎么样从缓存中把数据取出来：
+	   		利用session.get/load方法可以把数据从一级缓存中取出(有缓存则取，没有则查询数据库)
+	   
+	   5、客户端怎么样把一个数据放入到缓存中：
+	   		利用session.save/update/load/get方法都可以存放在一级缓存中
+	   		session.evict方法可以把一个对象从一级缓存中清空
+	   
+	   6、怎么样把一个对象从缓存中取出：
+	   		利用session.get/load方法可以把数据从一级缓存中取出(有缓存则取，没有则查询数据库)	
+	   
+	   7、把缓存中所有的数据清空：
+	  	 	利用session.clear方法可以把session中的所有的数据清空
+ 		
+		8、页面缓存
+ 
+ 
+二、懒加载
+
+	1、类的懒加载
+        1、利用session.load方法可以产生代理对象
+        2、在session.load方法执行的时候并不发出sql语句
+        3、在得到其一般属性的时候发出sql语句
+        4、只针对一般属性有效，针对标示符属性是无效的
+        5、默认情况就是懒加载
+   
+   2、集合的懒加载
+        false  当session.get时，集合就被加载出来了
+        true   在遍历集合的时候才加载
+        extra
+             针对集合做count,min,max,sum等操作
+   
+   3、单端关联的懒加载(多对一)
+        <many-to-one lazy="false/no-proxy/proxy">  no-porxy 默认值  true
+        根据多的一端加载一的一端，就一个数据，所以无所谓
+
+
+	总结：懒加载主要解决了一个问题：类、集合、many-to-one在时候发出SQL语句，加载数据
+	 
+ 
+	5、性能：
+	   发出的sql语句越少，性能越高
+	   方法：
+	      1、懒加载
+	      2、抓取策略
+	      3、缓存策略
+	      4、HQL语句
+ 
+	6、抓取策略：
+	   1、研究的主要是set集合如何提取数据
+	   2、在Classes.hbm.xml文件中
+	       <set fetch="join/select/subselect">
+	            join        左外连接
+	               如果把需求分析翻译sql语句，存在子查询，这个时候用该策略不起作用
+	            select      默认
+	               先查询一的一端，再查询多的一端
+	            subselect   子查询
+	               如果需要分析翻译成sql语句存在子查询，这个时候用该策略效率最高
+	
+	7、懒加载和抓取策略结合：研究对象是set集合
+    fetch         lazy                          sql            什么时候发出sql                     说明    
+    join          false                      存在子查询         当查询classes时把
+                                                            classes和student全部查询出来         这种情况下join没有用
+    join          true                       存在子查询        当遍历student时发出查询student    join没用
+    join          true                       不是子查询     在session.get(classes)时全部查询出来  这时，lazy没有用
+    subselect     true/false                 存在子查询     发出两条sql语句                       如果lazy为true,在遍历集合，如果lazy为false,在一开始就发出
+    select        true/false                                发出n+1条sql                         如果lazy为true,在遍历集合，如果lazy为false,在一开始就发出
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

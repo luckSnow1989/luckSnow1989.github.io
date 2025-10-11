@@ -1,0 +1,227 @@
+	
+	hibernate核心
+				configuration(核心控制类)
+					  |
+				SessionFactory(interface)
+					  |		
+				 session(interface)          		
+		    |			 	 |			    |
+		Transaction  		Query     	  Criteria
+       (interface)       (interface) 	(interface) 
+	   
+	注意：在创建实体类的时候，数据类型必须是应用类型，如，Integer,Byte,Long,Character,Double,Float;
+	
+一、QBC    Query By Criteria  (Hibernate最建议使用的方式)
+Criteria是一中完全面向对象的持久层处理，但却实际开发中使用最多的还是HQL;
+	常用方法：
+	1，全查：Criteria cri = session.createCriteria(User.class);---->List<User> li = cri.list();
+	
+	2，添加查询条件：cri.add(),
+		(1)=值--->cri.add(Restrictions.eq("name","张三"));
+		(2)like-->cri.add(Restrictions.like("name","%"+name+"%"));
+		(3)大于-->cri.add(Restrictions.gt("name","张三")); 		大于等于-->cri.add(Restrictions.ge("name","张三"));
+		(4)小于-->cri.add(Restrictions.lt("name","张三"));		小于等于-->cri.add(Restrictions.le("name","张三"));
+		(5)不是-->cri.add(Restrictions.not(Restrictions.eq("age",new Integer(18))))
+		(6)为空-->cri.add(Restrictions.isNull("name"));
+		(7)忽略大小写：cri.add(Restrictions.isNull("name").ignoreCase());
+	3，返回唯一值：User user = (User)uniqueResult();
+	
+	4，多个条件的添加：cri.add(Restrictions.eq("name",name)).add(Restrictions.gt("age",20));
+	
+	5，or的使用
+			
+			c.add(Restrictions.or(
+				Restrictions.eq("name", name), Restrictions.gt("age", 25)
+				));
+			
+			c.add(Restrictions.or(	
+				Restrictions.eq("name", name), Restrictions.or(
+						Restrictions.eq("sex", "男"), Restrictions.ge("age", 25)
+				)
+			));
+	6，排序：c.addOrder(Order.desc("name"));
+	
+	
+	7，分页：c.setFirstResult(0);	c.setMaxResults(3);
+	
+	8，使用投影：注意：返回的类型是Object的数组
+	
+		(1)查询中只有一个投影		
+			c.setProjection(Projections.count("name"));	---------->使用函数
+			c.setProjection(Projections.sum("age"));	---------->
+			c.setProjection(Projections.rowCount());	---------->相当于：select count(*) from 
+			c.setProjection(Projections.groupProperty("id"));----->按属性分组
+		
+		(2)查询中有多个投影---->上面的这些投影只能单独使用，后面的投影会覆盖前面的投影，要在一条查询中使用多个投影的话
+			c.setProjection(Projections.projectionList()
+				.add(Projections.count("name"))
+				.add(Projections.groupProperty("id"))
+				);
+				
+	9，between;	c.add(Restrictions.between("age",new Integer(15),new Integer(25)));
+	
+	10，in;		
+	String[] names = {"张三","李四"};
+	c.add(Restrictions.in("name",names));
+
+二、QBE：  Query By Example(限制的条件很多，只能使用=和like,不能使用>,<,or等)		开发中极少使用	
+	使用的原理是：将user对象中不为空的属性进行查询，全是空的话，查询全部
+	
+	Criteria c = se.createCriteria(User.class);
+	c.add(Example.create(user));
+	List<User> li = c.list();
+
+
+三、SQL：直接使用SQL语句进行查询，但是返回的类型是Object的数组,		开发中极少使用	
+	
+	Query q = se.createSQLQuery("select * from user where name like:name");
+	q.setParameter("name", "%"+name+"%");
+	List<Object[]> list = q.list();
+
+四、分页：下面是HQL的查询，QBC的查询见具体的代码例子
+	
+	步骤一：创建page实体类
+		
+		public class Page {
+			private Integer currentPage;//当前页数
+			private Integer totalPage;//总页数
+			private Integer countInfo;//信息总条数
+			//每页显示的条数在一个工具类中；public final static Integer NUM_PER_PAGE = 3;
+			private List list;//用于存储数据
+		}
+	
+	步骤二：将分页的超类封装到BaseDao中；
+		public Page getPageByHQL(int currentPage, String className, String where) {
+			Session session = HibernateUtil.getSession();
+			Page page = new Page();
+			// 1.查询信息总条数---计算总页数
+			String countHQL="select count(*) from "+className+" "+where;
+			Query q = session.createQuery(countHQL);
+			long temp = (Long)q.uniqueResult();
+			// 查询到的信息总条数
+			page.setCountInfo((int)temp);
+			// 计算总页数
+			int totalPage = (page.getCountInfo()+Constants.NUM_PER_PAGE-1)/Constants.NUM_PER_PAGE;
+			page.setCurrentPage(currentPage);
+			page.setTotalPage(totalPage);				
+			// 2.查询数据
+			String dataHQL = "from "+className+" "+where;
+			q = session.createQuery(dataHQL);		
+			q.setFirstResult((currentPage-1)*Constants.NUM_PER_PAGE);
+			q.setMaxResults(Constants.NUM_PER_PAGE);		
+			List li = q.list();
+			page.setList(li);
+			return page;
+		}
+    步骤三：具体实现类中的使用
+		public Page getUserPageByHQL(int currentPage, User user) {
+			String className = "User";//指定类名
+			StringBuffer where = new StringBuffer(" where 1=1 ");
+			if(!user.getName().isEmpty() && user.getName().length()!=0 ) {
+				where.append(" and name like '%"+user.getName()+"%'");
+			}
+			if(user.getAge() > 0) {
+				where.append(" and age="+user.getAge()+"");
+			}			
+			return this.getPageByHQL(currentPage, className, where.toString());
+		}
+	步骤四：数据的使用，因为在page中封装的list是Object类型的，所以需要强制转化。
+		UserDao ud = new UserDaoImpl();
+		User user = new User(0, "", 0, null);
+		Page page = ud.getUserPageByHQL(1, user);
+		for(Object obj :page.getList()) {
+			User u = (User)obj;
+			System.out.println(u.getId()+"	"+u.getName()+"	"+u.getBirthday());
+		}
+	  
+五、Hibernate中的缓存：
+
+	1 一级缓存  session 的缓存  自动开启 不能关闭
+
+	2 二级缓存  SessionFactory的缓存  所有Session共享的ehcache，oscache，jbosscache，swamchache
+        (1).适用场合
+	        1、数据不能频繁更新
+	        2、数据能公开，私密性不是很强
+		(2).二级缓存存在sessionFactory中，项目启动的时候加载到内存中。
+		(3).生命周期：与sessionFactory保持一致
+        
+	3 查询缓存（三级缓存）
+	
+	4.二级缓存：使用步骤
+
+        1 需要手动开启		 
+		hibernate.cfg.xml 中开启
+				<property name="hibernate.cache.use_second_level_cache">true</property>
+
+        2  hibernate中二级缓存都是依赖第三方缓存工具
+			一般的缓存工具是：EHCache,OSCache,JBoss TreeCache;使用最多的是EHCache---可以存到内存和硬盘中;					  
+		    hibernate.cfg.xml指定缓存提供商
+			<property name="hibernate.cache.provider_class">
+				org.hibernate.cache.EhCacheProvider
+			</property>
+
+		3 导入 ehcache.jar 
+		       commons-logging.jar
+				
+		4 在src下创建 ehcache.xml  
+
+                 这个文件中定义就是缓存规则		 
+
+        <defaultCache
+			maxElementsInMemory="10000"   //内存中缓存对象的最大个数
+			eternal="false"                // 是否是永久的
+			timeToIdleSeconds="120"       // 最大空闲时间
+			timeToLiveSeconds="120"        //最大存活时间
+			overflowToDisk="true"         // 当缓存对象的个数超过  maxElementsInMemory 是否存到磁盘上
+        />
+		
+		
+		
+		5 指定哪些类的对象会被放入二级缓存
+		 
+		    两种指定方式：
+			
+			            1 在hibernate.cfg.xml中指定----usage包括：read-only;read-write;transtraction
+						region是缓存规则，为空的时候使用默认规则	
+							<class-cache usage="read-write" class="com.project.entity.User" region="sampleCache1"/>
+						
+						2 在 映射配置文件中指定，同上：
+							<cache usage="read-only" region=""/>
+							
+		注意：什么样的数据适合放入二级缓存   经常被查询，很少修改的
+		         二级缓存的监测	
+		
+	5. 大量数据的处理
+	将数据保存到磁盘上。
+	<diskStore path="C:\\TEMP1"/>
+    <defaultCache
+            maxElementsInMemory="12"
+            eternal="false"
+            timeToIdleSeconds="120"
+            timeToLiveSeconds="120"
+            overflowToDisk="false"
+            maxElementsOnDisk="10000000"
+            diskPersistent="false"
+            diskExpiryThreadIntervalSeconds="120"
+            memoryStoreEvictionPolicy="LRU"
+            />	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

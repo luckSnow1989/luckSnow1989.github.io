@@ -1,0 +1,54 @@
+这只是struts2关于ajax使用的一种最简单的方法，此外的用法请参考，课件
+
+1、导入ajax核心jar包，struts2-json-plugin
+	下载地址：http://code.google.com/p/jsonplugin/downloads/list
+
+2、struts.xml添加专为ajax使用的package
+	<package name="ajax" extends="json-default">
+        <action name="ajaxRequest" class="org.david.struts2.HelloWorld">
+            <result type="json"></result>
+        </action>
+    </package>
+	
+3、helloworld.jsp
+    <SCRIPT type="text/javascript" src="js/jquery-1.2.6.min.js"></script>
+        <SCRIPT type="text/javascript">
+            function clickButton() {    
+                var url = 'ajaxRequest.action';
+                var params = {
+                        name:$('#name').attr('value')
+                };
+                jQuery.post(url, params, callbackFun, 'json');
+            }
+            function callbackFun(data) {
+                alert(data.result);//对应HelloWorld类的message属性
+                    //获取数据后渲染页面
+            }
+        </SCRIPT>
+
+        <input id="name" type="text">
+        <input type="button" value="ok" onclick="javascript:clickButton();">
+4、HelloWorld.java
+package org.david.struts2;
+
+public class HelloWorld {
+
+    private String name;
+    private String result;
+    
+	// ajax请求参数赋值
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    // ajax返回结果
+    public String getResult() {
+        return result;
+    }
+
+    public String execute() {
+        this.result = "Hello! " + this.name + ".";
+        return "success";
+    }
+
+}

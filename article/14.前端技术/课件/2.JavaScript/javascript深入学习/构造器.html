@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		
+		<script type="text/javascript">
+		/**
+		 * function
+		 * 	1.在js中,一切皆对象
+		 *  2.在js中,对象均有一个属性为constructor,constructor同样也是一个function对象
+		 *  3.在js中，凡是函数都是构造器函数
+		 *  4.在js中，一个对象(这个对象不能为null)可以动态的添加属性
+		 *  5.在js中，任何一个对象都有可能成为任何一个对象的属性，例如扩展
+		 */
+		//函数1的第一种表达方式
+		function aa(){
+		}
+		//函数的第二种表达方式
+//		var aa = function(){
+//		}
+		//函数的第三种表达方式
+//		var aa = new Function("5","6","var c = a+b");
+		//给aa添加一个属性
+		aa.b = 5;
+		//alert(aa.b);
+		aa.bb=aa;
+		//alert(aa.bb);
+		
+		
+		/**
+		 * 扩展
+		 */
+		function person(){
+			
+		}
+		function A(){
+			alert("A");
+		}
+		function B(){
+			alert("B");
+		}
+		person.a = A;//添加person对象，一个属性值a,该属性值为一个函数
+		person.a.b=B;//添加person.a对象，一个属性值b,该属性值为一个函数
+		//person对象的a属性函数
+		person.a();
+		//person.a对象的b属性函数
+		person.a.b();
+		</script>
+	</body>
+</html>

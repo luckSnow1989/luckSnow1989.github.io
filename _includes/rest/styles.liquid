@@ -1,0 +1,6 @@
+{% comment %}theme.min.scss是cdn资源，目前没有cdn账号，就先使用本地资源了{% endcomment %}
+{% comment %}<link rel="stylesheet" href="{{ base }}/assets/css/theme{% if site.debug.dist != false %}.min{% endif %}.css">{% endcomment %}
+
+{%- if extra_scss.size > 0 -%}
+    <style>{{ extra_scss | scssify | strip_newlines }}</style>
+{%- endif -%}

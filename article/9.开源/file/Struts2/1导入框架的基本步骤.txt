@@ -1,0 +1,365 @@
+一、常见的框架：
+	struts2(表现层)
+	hibernate(持久层)
+	spring()
+	MyBatis(持久层)
+	SpringMVC(表现层)
+
+	为什么要使用框架？
+		1 代码重用
+		2 模式重用
+	
+二、web层（表现层）框架	：
+    官网：struts.apache.org
+    struts1比较早的项目中常见(与struts2相比，可以说是完全不同的两种框架)
+	struts2
+	webwork:与struts2相似的框架，是struts2的核心技术，结合了struts1的优点
+	springMVC，现在使用的非常的多，对于基于注解的web项目有很好的兼容性
+	typestry
+	JSF(采用的原理与struts完全不同)
+	 ...
+	 
+版本：  struts1      1.3.10	 
+      struts2      2.0.11   2.1.8(*)   2.2   2.3.7(*)  2.3.16   2.3.20
+		
+		
+三、Struts2的优点
+1.	servlet主要完成哪些工作：
+    (1) 处理数据
+			处理域对象的基本操作是servlet，一般使用filter处理编码异常采集
+    (2) 调用后台代码
+    (3) 产生视图----页面的跳转
+    (4)异常处理----一般不使用这个，代码太过冗余，实际开发中，最常用的是在web.xml中添加error-page
+	(5) 国际化------是一些国际化大公司采用的动态信息技术
+	
+2.Struts2与Struts相比的优点
+	(1) struts2可以不依赖于servlet API 与 Struts API,Struts2是无侵入式的设计，而1是侵入式的设计。
+	(2) 通过提供的拦截器，经行AOP编程，实现的权限的拦截功能
+	(3) 通过类型转换器，可以把特殊的请求参数转换成需要的类型，1中虽然也有相同的功能但却是依赖于底层实现BeanUtil去注册类型转换器才行。
+	(4)	支持多种表现出技术，如：jsp,freeMarker,	Velocity
+	(5) 提供了更全面的输入验证，可以针对方法可以检验。
+	(6)	提供了全局范围、包范围和action范围的国际化资源文件管理实现
+	(7)
+	关于过滤器如何拦截转发
+	提示：默认过滤器，可以拦截请求，而重定向的时候也是请求的方式，同样被拦截
+  	 
+    到官方网站下载jar包	  struts.apache.org
+	 
+	struts2.3.7-all
+	    apps         部署到服务器中可以运行的项目示例
+		docs         帮助文档
+		src          源文件
+		lib          jar包
+	 
+	 
+四、struts的创建步骤	 
+	使用struts2   完成 HelloWorld     
+   
+	需求：在页面上填写用户名，点击提交。 再跳转回这个页面，页面上显示 
+                   "Hello,Tom"	 
+	步骤1:导入jar包  9 个核心包   ---- 从  struts-blank.war中找到 除asm开头的所有包
+	 	核心包介绍
+		commons-fileupload-1.2.2.jar================文件上传组件，2.1.6之后加入
+		commons-io-2.0.1.jar		================文件上传组件的依赖包，虽然不加也可以，但是加入的话可以提高框架的稳定性
+		commons-lang3-3.1.jar		================Java的系统工具包
+		freemarker-2.3.19.jar		================ui标签的模板使用freeMarker编写，定义了struts2的可视组件主题
+		javassist-3.11.0.GA.jar		================Java工具助手
+		ognl-3.0.5.jar				================对象图导航语言(object group navigation language),对象通过这个组件读取对象的属性
+		struts2-core-2.3.7.jar		================Struts2框架的核心类库
+		xwork-core-2.3.7.jar		================webwork核心类库
+		commons-logging-1.1.1.jar 	================ASF出品的日志包，框架使用这个来支持log4j,与jdk1.4+的日志记录
+		 
+		 
+		 
+	步骤2:配置核心控制器(主控制器  前端控制器)  MVC model 2
+	 
+		在web.xml下添加代码进行平配置：
+			<filter>
+				<filter-name>struts2</filter-name>
+				<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+			</filter>
+  
+			<filter-mapping>
+				<filter-name>struts2</filter-name>
+				<url-pattern>/*</url-pattern>	<!--对所有请求进行控制--!>
+			</filter-mapping>
+					
+			StrutsPrepareAndExecuteFilter(2.1.3以后)
+			FilterDispatcher(旧版的核心控制器，现在也能使用)
+	 
+	 
+	步骤3:在src下 创建一个 struts.xml文件，这是整个项目的核心，起到了web.xml的作用
+		
+		<!DOCTYPE struts PUBLIC
+			"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+			"http://struts.apache.org/dtds/struts-2.3.dtd">
+						
+	    (1)在没有网络的条件下，采用MyEclipse，引文本地dtd,暂代public dtd???????
+		   window-->preferences-->myeclipse-->files and editors-->xml-->xml catalog
+				 
+			点击add			 
+			location  : dtd文件在磁盘上的位置
+			key type  : uri
+			key       : http://struts.apache.org/dtds/struts-2.3.dtd
+	 	 
+	步骤4:创建页面：
+		<form action="user/login" method="post">
+	    	name:<input type="text" name="name" /><br/>
+	    	password:<input type="password" name="password" /><br/>
+	    	<input type="submit" value="go" />${msg }<!-- <span style='color:red;'>账号或密码错误</span> -->
+	    </form>
+	    
+	步骤5:创建控制器：  
+		注意：(1)不是servlet，而是Action    
+			 (2)struts2 控制器可以是一个普通java类(POJO   Plain Old Java Object)
+	 	
+	 	案例：
+	 	public class UserAction extends ActionSupport {
+			private UserDao ud = new UserDaoImpl();
+			private String name;
+			private String password;
+			public String login(){
+				HttpServletRequest request = ServletActionContext.getRequest();//获得request			
+				User user = ud.login(name, password);
+				if(user == null){
+					request.setAttribute("msg", "<span style='color:red;'>账号或密码错误</span>");
+					return ERROR;
+				}
+				request.setAttribute("user", user);
+				return SUCCESS;
+			}
+	 
+	    1 在控制器中获得客户端提交的数据？？？？
+			做成员变量，和页面的input的name保持一致  提供setter/getter获得和请求中的参数的名称一样：?username=zx&pwd=zx
+							 
+		2 定义Action 中执行的方法	 
+			public String execute()
+							
+		3 把username拼上一个 Hello 返回给客户端				  
+			要使用成员变量
+							 
+		4 跳转回index.jsp	
+
+
+        5 如何让一个POJO作为struts2的action?????
+			需要在步骤3创建出来的struts.xml中对这个POJO进行配置
+			配置struts.xml
+			<package name="user" namespace="/user" extends="struts-default" abstract="">
+			 	<action name="login" class="com.zx.action.UserAction" method="login">
+					<result name="success" type="dispatcher">/index.jsp</result>
+					<result name="error">/login.jsp</result>
+			 	</action>
+			</package>
+			
+			1.
+				pageckage:方便管理动作元素,
+				name：必须有。包的名称，配置文件中必须保证唯一。如:login
+				namespace：该包的名称空间，一般是以"/"开头,如:/user
+				extends:集成的父包的名称。struts-default名称的包是struts2框架已经命名好的一个包。
+						（在struts2-core.jar中有一个struts-default.xml中）
+				abstract：是否是抽象包。没有任何action元素的包就是抽象包（java类）,如:true或是false
+				
+			2. 
+				action:代表一个请求动作
+				name：同包中必须唯一。动作的名称,对应方法中返回值
+				class:负责处理的JavaBean的类全名
+				method：JavaBean中的对应处理方法。（动作方法：特点是，public String 方法名(){}）
+				
+			3 . 
+				result:结果类型
+				name:动作方法返回的字符串
+				type:结果类型，默认是转发：dispatcher，详细看：3 action动态调用、国际化、结果类型、异常处理、耦合servlet.txt
+				主体内容：View的具体地址
+	
+	注意： name的默认值是success   如： <result>/index.jsp</result>      
+		  abstract属性是抽象包，值默认是false，如果值为true的话，那这个包就只能被继承，内部无法包含action，可以有拦截器
+		  struts-default就是一个抽象包，内含struts定义好的拦截器
+
+		一些细节：<package> 为什么要extends struts-default	
+	
+	步骤6：部署，发布，访问
+		关于action的访问路径，
+		例如：/demo/error/MassageAcrion,访问这个路劲的时候，如果先从error包找这个action，如果包不存在，这区找下一个demo包，如果这些包都没有
+		找到，甚至连包都不存在的时候，框架就会从namespace="/" 或是没有写namespace的package中，去寻找action，直到找到为止，且action的后缀没有，
+		或是action都不妨碍寻找这个action，只是这个访问的顺序的不一样罢了
+		访问helloworld动作的方式：http://localhost:8080/struts2day01/test/helloworld   应用名称/包的名称空间/动作的名称
+		默认情况下：访问动作名helloworld，可以直接helloworld，或者helloworld.action
+		
+	http://localhost:8080/struts2day01/test/a/b/c/helloworld
+		/test/a/b/c:名称空间.namespace
+		helloworld：动作名称
+		
+		搜索顺序：名称空间
+					/test/a/b/c  没有helloworld
+					/test/a/b	 没有helloworld
+					/test/a      没有helloworld
+					/test        有了，调用执行
+	
+五、登录(模拟登录)：ActionSupport抽象类的使用
+		
+1.虽然在struts2中 POJO可以作为 Action(控制器)
+	但通常情况下创建Action 不使用POJO
+	
+	(1)常用的方法有两个：		
+		implements Action
+		extends ActionSupport (最常用)   方便开发
+				
+	(2)使用ActionSupport时，注意
+		A:可以覆盖父类的execute
+		B:return 可以使用常量    (常量来自于Action接口)
+		
+		以下常量经常作为返回值，作为struts.xml中的标识，
+		public static final java.lang.String SUCCESS = "success";//作为响应正常，在struts.xml中默认，可以不写		
+		public static final java.lang.String NONE = "none";	  	 
+		public static final java.lang.String ERROR = "error";//作为提示或错误的信息	  	  
+		public static final java.lang.String INPUT = "input"//作为返回到送出请求的页面的标识	  	  
+		public static final java.lang.String LOGIN = "login";//作为登录后的标识
+				     					 
+		C:向页面发送提示信息，这些方法都可以携带多条信息，
+		  但是一般返回一条信息是addActionMessage，而多条信息使用addFieldError
+			this.addActionError(anErrorMessage);
+			this.addActionMessage(aMessage);(常用)
+			this.addFieldError(fieldName, errorMessage);(常用)
+			
+			而在页面上用EL表达式,是取不到的,必须使用struts2的标签
+			步骤1：导入标签库
+				<%@ taglib prefix="s" uri="/struts-tags" %>
+			步骤2：提取数据
+				<s:fielderror></s:fielderror> 取到addFieldError所有
+				<s:fielderror fieldName="aaa"></s:fielderror> 取到单个  
+				
+				<s:actionerror/>取到addActionMessage所有
+		注意:struts2.1 开始提供的方式
+			 2.0 没有 fieldName属性    要这样做
+			 <s:fielderror>
+				 <s:param>aaa</s:param>
+			 </s:fielderror>
+						  
+六、在使用struts2标签库的时候，可以设置样式的主题，但是都有一些特殊的样式
+	如：<s:fielderror></s:fielderror>在页面上的显示，是在<ul></ul>中的，
+	在不需要这些样式的时候，我们的解决方法有：
+	
+	(1)利用css方式(知道即可，不建议使用，现的太业余了，还不能从根本上解决开发中的问题)
+	<style>
+         #errorMessage ul{
+            list-style: none
+         }   
+         #errorMessage ul li{
+            list-style:none
+         }
+     </style>
+	 
+	(2) 修改模版的方式(实际上是常见新的模板文件，代替旧文件的)	 
+	    struts2的标签在产生视图时，会选择一个主题
+		 
+		struts默认提供了 4种主题 
+			
+		archive
+		css_xhtml
+		simple
+		xhtml
+				
+				
+		<s:fielderror> 默认使用的是  simple这个主题	
+		
+        找到  fielderror.ftl 文件
+		
+		修改这个文件中的内容，不应该使用修改源文件的方式
+		
+		在src下 创建  template\simple\fielderror.ftl
+
+        去掉文件中的 所有ul 和 li					
+				
+	
+七、	关于action的访问路径   
+	
+	    其实就是  <action name=""  >   name属性的值
+		   
+		从struts2.1 开始  访问action时， 可以省略 后缀
+
+        struts2.0 访问action要加  后缀       .action	
+
+八、  在学习struts2时，除了要关注自己的配置文件   struts.xml
+
+        还要关注struts2 提供的两个配置文件
+        struts-default.xml
+        default.properties
+
+        因为这两个文件 存放的都是struts2的初始配置
+
+
+        如何修改 default.properties文件中的内容
+        两个方式：
+              1  在struts.xml 中
+                <constant name=""  value="" >	
+
+              2  在src下  创建  struts.properties	
+              			
+九、开发中配置文件的更改，在访问时让框架自动重新加载：(热部署)
+	struts.devMode = false（default.properties）
+	利用strutx.xml中的constant元素来覆盖掉default.properties默认行为
+	<struts>
+		<constant name="struts.devMode" value="true"></constant>
+	</struts>
+
+十、关于框架中的private static final long serialVersionUID = 1L;
+			  
+实现java.io.Serializable这个接口是为序列化,serialVersionUID 用来表明实现序列化类的不同版本间的兼容性。如果你修改了此类, 要修改此值。否则以前用老版本的类序列化的类恢复时会出错。
+
+实现后如果你用的是工具的话会出来警告,他会提示你,可以自动生成private static final long serialVersionUID = 1L; 
+为了在反序列化时，确保类版本的兼容性，最好在每个要序列化的类中加入private static final long serialVersionUID这个属性，具体数值自己定义.　　 
+在JDK中，可以利用JDK的bin目录下的serialver.exe工具产生这个serialVersionUID，如对于Test.class可执行如下命令：serialver Test。 
+
+这样，即使某个类在与之对应的对象已经序列化出去后做了修改，该对象依然可以被正确反序列化。否则，如果不显式定义该属性，这个属性值将由JVM根据类的相关信息计算，而修改后的类的计算结果与修改前的类的计算结果往往不同,从而造成对象的反序列化因为类版本不兼容而失败。 
+
+不显式定义这个属性值的另一个坏处是，不利于程序在不同的JVM之间的移植。因为不同的编译器实现该属性值的计算策略可能不同，从而造成虽然类没有改变，但是因为JVM不同，出现因类版本不兼容而无法正确反序列化的现象出现。 
+当我们的系统不太经常需要序列化类时，可以去掉这些警告，做如下设置：Window-->Preferences-->Java，将serializable class without serialVersionUID的设置由warning改为Ignore。然后Eclipse会重新编译程序，那些警告信息也就消失了。
+
+最后的建议是，如果我们开发大量需要序列化的类的时候，我们最好还是还原为原来的设置。这样可以保证系统的性能和健壮。
+
+关于serialVersionUID的解释 
+
+serialVersionUID作用： 
+序列化时为了保持版本的兼容性，即在版本升级时反序列化仍保持对象的唯一性。 
+
+你可以随便写一个，在Eclipse中它替你生成一个，有两种生成方式：
+一个是默认的1L，比如：private static final long serialVersionUID = 1L;
+一个是根据类名、接口名、成员方法及属性等来生成一个64位的哈希字段，比如：private static final long serialVersionUID = -8940196742313994740L;之类的。 
+Eclipse提示The serializable class XXX does not declare a static final serialVersionUID field of type long 
+那是Eclipse提供这个提示功能给你吧.
+你点它warning的icon两下Eclipse就会自动给定.
+如果你不喜欢,可以把它关掉,
+windows -> preferences -> compiler -> Error/Warnings
+-> Potential Programming problems
+将Serializable class without serialVersionUID的warning改成ignore.
+
+其实如果你没有考虑到兼容性问题时,那就把它关掉吧.
+其实有这个功能是好的.
+只要任何类别实作了Serializable这个介面,
+如果没有加入serialVersionUID,Eclipse都会给你warning提示,
+这个serialVersionUID为了让该类别Serializable後兼容.
+
+考虑一下,如果今天你的类Serialized存到硬碟里,
+可是後来你却更改了类别的field(增加或减少或改名).
+当你Deserialize时,就会出现Exception.这样就会做成不兼容性的问题.
+
+但当serialVersionUID相同时,它就会将不一样的field以type的预设值Deserialize.
+这个可以避开不兼容性的问题.
+
+异常状态：
+The serializable class XXX does not declare a static final serialVersionUID field of type long
+		   
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+						  
+	 
+	 

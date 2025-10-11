@@ -1,0 +1,84 @@
+Jquery工作常用实例--ajaxStart与ajaxStop(ajaxComplete)
+
+
+
+
+
+ajaxStart与ajaxStop
+
+Jquery中当一个Ajax请求启动时，并且没有其他未完成的Ajax请求时，将调用ajaxStart()方法。同样，ajaxStop()方法则是在所有Ajax请求都完成时调用。这些方法的参数都是一个函数，这个函数将在事件发生时被调用。
+使用这些方法的每一步是获取一个页面元素的引用。然后就可以在这个元素上调用ajaxStart()和ajaxStop()方法。
+
+使用语法：
+
+("#loading").ajaxStart(function(){  $(this).show(); //callback })：当一个当Ajax请求开始时将把id为"loading"的内容显示；
+
+("#loading").ajaxStop(function(){  $(this).hide(); //call })：当一个当Ajax请求结束时将把id为"loading"的内容隐藏；
+
+在开发的过程当中，我一般会用它们来做页面等待进度图片的显示，即所有用ajax加载又不能很快加载完成的（有时页面很慢半天没显示），那么将自动调用ajaxStart显示一个等待的图片出来（我一般会用Wbox做弹出一个透明的层），等页面所有内容ajax加载完成，再关闭该层；
+
+为了便于大家的理解，我举个简单的例子，希望对大家有帮助：
+
+先把需要的说一下，jquery库，图片一张（等待进度的就可以，网上很多），OK，可以开始了：
+
+index.php文件内容如下：
+
+<script src="jquery.js"></script>
+<a href="#" id="o">o</a><br />
+<a href="#" id="p">p</a><br />
+<a href="#" id="q">q</a><br />
+<div id="loading" style="display:none;"><img src="loading.gif" /></div>
+<div id="content"></div>
+
+<script>
+ $(document).ready(function(){
+
+  $("#loading").ajaxStart(function(){
+   $(this).show();
+  }).ajaxStop(function(){//ajaxStop改为ajaxComplete也是一样的
+   $(this).hide();
+  });
+  
+  $("#o").click(function(){
+   $.post("for.php?id=o",function(data){
+    $("#content").html(data);
+   });
+  })
+
+  $("#p").click(function(){
+   $.post("for.php?id=p",function(data){
+    $("#content").html(data);
+   });
+  })
+
+  $("#q").click(function(){
+   $.post("for.php?id=q",function(data){
+    $("#content").html(data);
+   });
+  })
+
+ })
+</script>
+
+for.php内容如下：
+
+<?php
+ if($_GET['id'])
+ {
+  for($i=0;$i<3;$i++)
+  {
+   sleep(4);//为了模仿我们平时打开页面很慢，使用sleep函数，让ajax加载时等待12秒；
+   echo $_GET['id'];
+  }
+ }
+
+?>
+
+OK，把该两个文件和jquery库，图片放于你根目录下的同一目录，访问index.php后，点o或p或q，你先会看到等待进度图片，加载完成在<a>的下面层显示ajax加载的内容ooo或ppp或qqq并关闭等待加载的图片，详细的大家可以试试，用多了自然能体会到它的好处，呵呵···
+
+最后要提醒的是，ajaxStart与ajaxStop都是全局方法，无论创建他们的代码放在何处，只要有ajax执行，他们都会执行。如果在此页面的其他地方也使用了ajax，该全局函数同样执行，因为他们是全局的。如果想使某个ajax不受全局方法的影响，那么可以在$.ajax(options)方法中，将参数中的global设置为false,如：
+
+$.ajax({
+ url:"test.html",
+ global:false
+});

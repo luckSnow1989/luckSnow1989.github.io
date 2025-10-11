@@ -1,0 +1,123 @@
+一、jQuery针对Ajax的封装
+	在js中的Ajax技术，是围绕核心对象XMLHttpRequest构成的。
+1.	在其中需要进行如下的操作：
+=====================js中的Ajax代码====================
+	var xmlHttp = null;
+	// 1、添加兼容性
+	function getAjax(){
+		try{
+			xmlHttp = new XMLHttpRequest;//IE7.0、chrome以及ff,等上兼容
+		} catch(e){
+			try{			
+				xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");//IE6.0兼容
+			}catch(e){
+				try{
+					xmlHttp=new ActiveXObect("Microsoft.XMLHTTP");//更早以前的版本
+				}catch(e){
+					return false;//这就不是兼容性的问题了
+				}
+			}
+		}
+	};
+	// 2、创建核心方法  地址 发送内容 回调函数
+	function sendRequest(url,poster,callback){
+		getXMLRequest();//获得核心对象
+		//在实际开发中，大多采用get请求，提交的信息都以？的形式放在URL后面
+		//这样获得跟快的响应速度，减小服务器的压力，也是符合开发Ajax技术的
+		//初衷。
+		if(poster==null){
+			xmlHttp.onreadystatechange=callback;
+			xmlHttp.open("GET",url,true);
+			xmlHttp.send(null);
+		}else{
+			xmlHttp.onreadystatechange=callback;
+			xmlHttp.open("POST",url,true);
+			xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded;");
+			xmlHttp.send(poster);
+		}
+	};
+	// 3、设置回调函数	
+	function callback() {
+		if(xmlhttp.readyState==4) {/*状态：	0.XMLHttpRequest对象未完成初始化
+											1.XMLHttpRequest对象开始发送请求 
+											2.XMLHttpRequest对象请求发送完成
+											3.XMLHttpRequest对象开始接收响应，但未结束 
+											4.XMLHttpRequest对象接收响应完毕*/
+			if(xmlhttp.status==200) {//200是服务器响应正常
+				var msg = xmlhttp.responseText;//获得响应的文本信息
+				document.getElementById("importance_div").innerHTML=msg;//将获得的文本信息输出
+			}
+		}
+	}
+=======================================================
+以上是源代码：为了简化开发难度，jQuery进行了如下的封装：
+2.jQuery中的Ajax技术
+
+(1) 对于Ajax底层的初级封装，需要录入的参数还是很多
+	$.ajax({
+		url://请求地址
+		type://请求方式：get or post
+		data:{}//请求内容，例如：{name:$('#name')[0].val(),...};	 
+		success:function(data){//回调函数  
+			var str = data;//获得服务器返回的字符串
+			var obj = eval(" ( " + data + " ) ");//如果返回的字符串可以执行的代码，或是JSON
+	   }
+	})
+	
+(2)	以下几种方法都是Ajax的高级封装，同样也是实际开发中经常使用的
+
+	$.get(url[,data][,function(data){
+	}]);
+
+(3)	$.post(url[,data][,function(data){
+	
+	}]);
+	//--------------------------------------
+(4)	$.getJSON(url,[,data][,function(data){
+	
+	}]);
+
+	是get请求
+	服务器端相应的数据必须是JSON字符串格式  "{}"
+	data 不需要 eval函数的转换，直接就是 {}
+ 
+
+二、JSON 与 GSON
+
+1.JSON
+	List list = .......
+
+	JSONObject json = new JSONObject();
+  
+	json.put("key",JSONArray.fromObject(list));
+  
+	out.print(json.toString())
+
+
+2.GSON  (google)但是每次只能返回一个对象;	
+
+	Gson  gson = new Gson()
+	  
+	String str = gson.toJSON(list)
+	  
+	out.print(str);
+
+无论使用JSON  或GSON 对于有关联关系的对象，进行转换时，都会有异常；
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+

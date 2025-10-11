@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-cn"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title>leaflet开源地图库源码研读（一）——简介&amp;Demo初体验(by vczero) - 'vczero - 博客园</title>
+<link type="text/css" rel="stylesheet" href="leaflet%E5%BC%80%E6%BA%90%E5%9C%B0%E5%9B%BE%E5%BA%93%E6%BA%90%E7%A0%81%E7%A0%94%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E4%BB%8B&amp;Demo%E5%88%9D%E4%BD%93%E9%AA%8C%28by%20vczero%29%20-%20%27vczero%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="leaflet%E5%BC%80%E6%BA%90%E5%9C%B0%E5%9B%BE%E5%BA%93%E6%BA%90%E7%A0%81%E7%A0%94%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E4%BB%8B&amp;Demo%E5%88%9D%E4%BD%93%E9%AA%8C%28by%20vczero%29%20-%20%27vczero%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/bundle-ThinkInside.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/vczero/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/vczero/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/vczero/wlwmanifest.xml">
+<script src="leaflet%E5%BC%80%E6%BA%90%E5%9C%B0%E5%9B%BE%E5%BA%93%E6%BA%90%E7%A0%81%E7%A0%94%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E4%BB%8B&amp;Demo%E5%88%9D%E4%BD%93%E9%AA%8C%28by%20vczero%29%20-%20%27vczero%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/encoder.js" type="text/javascript"></script><script src="leaflet%E5%BC%80%E6%BA%90%E5%9C%B0%E5%9B%BE%E5%BA%93%E6%BA%90%E7%A0%81%E7%A0%94%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E4%BB%8B&amp;Demo%E5%88%9D%E4%BD%93%E9%AA%8C%28by%20vczero%29%20-%20%27vczero%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/jquery.js" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'vczero', cb_enable_mathjax=false;</script>
+<script src="leaflet%E5%BC%80%E6%BA%90%E5%9C%B0%E5%9B%BE%E5%BA%93%E6%BA%90%E7%A0%81%E7%A0%94%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E4%BB%8B&amp;Demo%E5%88%9D%E4%BD%93%E9%AA%8C%28by%20vczero%29%20-%20%27vczero%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/blog-common.js" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="http://www.cnblogs.com/vczero/"><img id="blogLogo" src="leaflet%E5%BC%80%E6%BA%90%E5%9C%B0%E5%9B%BE%E5%BA%93%E6%BA%90%E7%A0%81%E7%A0%94%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E4%BB%8B&amp;Demo%E5%88%9D%E4%BD%93%E9%AA%8C%28by%20vczero%29%20-%20%27vczero%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/logo.gif" alt="返回主页"></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/vczero/">vczero</a></h1>
+<h2><div>专注于前端 &amp; Node.js</div></h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="MyLinks1_HomeLink" class="menu" href="http://www.cnblogs.com/">博客园</a></li>
+<li><a id="MyLinks1_MyHomeLink" class="menu" href="http://www.cnblogs.com/vczero/">首页</a></li>
+<li><a id="MyLinks1_NewPostLink" class="menu" rel="nofollow" href="http://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+<li><a id="MyLinks1_ContactLink" class="menu" rel="nofollow" href="http://msg.cnblogs.com/send/%26%2339%3Bvczero">联系</a></li>
+<li><a id="MyLinks1_Syndication" class="menu" href="http://www.cnblogs.com/vczero/rss">订阅</a>
+<!--<a id="MyLinks1_XMLLink" class="aHeaderXML" href="http://www.cnblogs.com/vczero/rss"><img src="http://www.cnblogs.com/images/xml.gif" alt="订阅" /></a>--></li>
+<li><a id="MyLinks1_Admin" class="menu" rel="nofollow" href="http://i.cnblogs.com/">管理</a></li>
+</ul>
+		<div class="blogStats">
+			
+			
+<!--done-->
+随笔- 34&nbsp;
+文章- 0&nbsp;
+评论- 159&nbsp;
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post">
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="http://www.cnblogs.com/vczero/p/leaflet_1.html">leaflet开源地图库源码研读（一）——简介&amp;Demo初体验(by vczero)</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body"><p><strong><span style="font-family: 'Microsoft YaHei';">一、简介</span></strong></p>
+<p><img src="leaflet%E5%BC%80%E6%BA%90%E5%9C%B0%E5%9B%BE%E5%BA%93%E6%BA%90%E7%A0%81%E7%A0%94%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E4%BB%8B&amp;Demo%E5%88%9D%E4%BD%93%E9%AA%8C%28by%20vczero%29%20-%20%27vczero%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/292148378165463.png" alt="" height="129" width="791"></p>
+<p><span style="font-family: 'Microsoft YaHei';">电子地图已经在O2O、生活服务、出行等领域布
+局，传统的GIS也孕育着互联网基因。传统GIS的图商有ESRI（Arc系列）、四维、高德、超图、中地等等。在web互联网领域，百度和高德较为出
+色。但是开放源代码都远远做的不够，相比而言国外开源较多且丰富，最近认真研读了openlayers2/3和leaflet的源码，收获颇多，不仅加强
+对浏览器兼容性、HTML5、CSS3等基础，还增强了GIS的基础。本人现在也在一家互联网公司做js 
+api的研发，因此，需要不断地吸取开源代码的营养。</span></p>
+<p><span style="font-family: 'Microsoft YaHei';">leaflet：An Open-Source 
+JavaScript Library for Mobile-Friendly Interactive 
+Maps。leaflef具有很好的其兼容性、HTML5新特性、轻量级吸引着我。引百度百科：Leaflet 
+是一个为建设移动设备友好的互动地图，而开发的现代的、开源的 JavaScript 库。它是由 Vladimir Agafonkin 
+带领一个专业贡献者团队开发，虽然代码仅有 33 
+KB，但它具有开发人员开发在线地图的大部分功能。Leaflet是一个为建设移动设备友好的互动地图，而开发的现代的、开源的 JavaScript 
+库。它是由 Vladimir Agafonkin 带领一个专业贡献者团队开发，虽然代码仅有 33 
+KB，但它具有开发人员开发在线地图的大部分功能。Leaflet设计坚持简便、高性能和可用性好的思想，在所有主要桌面和移动平台能高效运作，在现代浏
+览器上会利用HTML5和CSS3的优势，同时也支持旧的浏览器访问。支持插件扩展，有一个友好、易于使用的API文档和一个简单的、可读的源代码。使用
+和阅读leaflet是一种享受。</span></p>
+<p><span style="font-family: 'Microsoft YaHei';">leaflet document：<a href="http://leafletjs.com/index.html" target="_blank">http://leafletjs.com/index.html</a></span></p>
+<p><span style="font-family: 'Microsoft YaHei';">github：<a href="https://github.com/Leaflet/Leaflet" target="_blank">https://github.com/Leaflet/Leaflet</a></span></p>
+<p><strong><span style="font-family: 'Microsoft YaHei';">二、初体验</span></strong></p>
+<p><span style="font-family: 'Microsoft YaHei';">下面上一副地图，多么优雅！</span></p>
+<p><img src="leaflet%E5%BC%80%E6%BA%90%E5%9C%B0%E5%9B%BE%E5%BA%93%E6%BA%90%E7%A0%81%E7%A0%94%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E4%BB%8B&amp;Demo%E5%88%9D%E4%BD%93%E9%AA%8C%28by%20vczero%29%20-%20%27vczero%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/292150435034829.png" alt="" height="520" width="695"></p>
+<p><strong>三、上面地图的源码</strong></p>
+<p><span style="font-family: 'Microsoft YaHei';">修改下了leaflet的demo，以最为简介的代码构建了上面的地图。这就是leaflet的魅力。</span></p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="leaflet%E5%BC%80%E6%BA%90%E5%9C%B0%E5%9B%BE%E5%BA%93%E6%BA%90%E7%A0%81%E7%A0%94%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E4%BB%8B&amp;Demo%E5%88%9D%E4%BD%93%E9%AA%8C%28by%20vczero%29%20-%20%27vczero%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="color: #008080;"> 1</span> &lt;!DOCTYPE html&gt;
+<span style="color: #008080;"> 2</span> &lt;html&gt;
+<span style="color: #008080;"> 3</span> &lt;head&gt;
+<span style="color: #008080;"> 4</span>     &lt;meta charset="utf-8" /&gt;
+<span style="color: #008080;"> 5</span>     &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+<span style="color: #008080;"> 6</span>     &lt;title&gt;Leaflet初体验&lt;/title&gt;
+<span style="color: #008080;"> 7</span>     &lt;link rel="stylesheet" href="../../dist/leaflet.css" /&gt;
+<span style="color: #008080;"> 8</span>     &lt;link rel="stylesheet" href="../css/screen.css" /&gt;
+<span style="color: #008080;"> 9</span>     &lt;script type="text/javascript" src="../../build/deps.js"&gt;&lt;/script&gt;
+<span style="color: #008080;">10</span>     &lt;script src="../leaflet-include.js"&gt;&lt;/script&gt;
+<span style="color: #008080;">11</span> &lt;/head&gt;
+<span style="color: #008080;">12</span> &lt;body&gt;
+<span style="color: #008080;">13</span>     &lt;div id="map"&gt;&lt;/div&gt;
+<span style="color: #008080;">14</span>     &lt;script type="text/javascript"&gt;
+<span style="color: #008080;">15</span>         <span style="color: #008000;">//</span><span style="color: #008000;">获取切片数据的URL，x,y是切片的坐标，z是缩放级别</span>
+<span style="color: #008080;">16</span>         <span style="color: #0000ff;">var</span> osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'<span style="color: #000000;">,
+</span><span style="color: #008080;">17</span>             osm = L.tileLayer(osmUrl, {maxZoom: 17<span style="color: #000000;">});
+</span><span style="color: #008080;">18</span>         <span style="color: #008000;">//</span><span style="color: #008000;">创建map对象</span>
+<span style="color: #008080;">19</span>         <span style="color: #0000ff;">var</span> map = L.map('map'<span style="color: #000000;">);
+</span><span style="color: #008080;">20</span>         map.setView([50.5, 30.51], 15<span style="color: #000000;">);
+</span><span style="color: #008080;">21</span> <span style="color: #000000;">        map.addLayer(osm);
+</span><span style="color: #008080;">22</span>         
+<span style="color: #008080;">23</span>         <span style="color: #008000;">//</span><span style="color: #008000;">创建marker</span>
+<span style="color: #008080;">24</span>         <span style="color: #0000ff;">var</span> marker = <span style="color: #0000ff;">new</span> L.Marker(<span style="color: #0000ff;">new</span> L.latLng(50.5, 30.51<span style="color: #000000;">));
+</span><span style="color: #008080;">25</span> <span style="color: #000000;">        map.addLayer(marker);
+</span><span style="color: #008080;">26</span>         
+<span style="color: #008080;">27</span>         <span style="color: #008000;">//</span><span style="color: #008000;">创建infowindow</span>
+<span style="color: #008080;">28</span>         marker.bindPopup('这个是infowindow对象'<span style="color: #000000;">);
+</span><span style="color: #008080;">29</span>     &lt;/script&gt;
+<span style="color: #008080;">30</span> &lt;/body&gt;
+<span style="color: #008080;">31</span> &lt;/html&gt;</pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="leaflet%E5%BC%80%E6%BA%90%E5%9C%B0%E5%9B%BE%E5%BA%93%E6%BA%90%E7%A0%81%E7%A0%94%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E4%BB%8B&amp;Demo%E5%88%9D%E4%BD%93%E9%AA%8C%28by%20vczero%29%20-%20%27vczero%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p><strong><span style="font-family: 'Microsoft YaHei';">四、下一篇</span></strong></p>
+<p><span style="font-family: 'Microsoft YaHei';">（1）<span style="color: #ff0000;">下一篇：leaflet的代码总体框架，预计产出时间：国庆期间</span></span></p>
+<p><span style="font-family: 'Microsoft YaHei';">（2）该系列博客（leaflet源码笔记）总体设想12篇，深入剖析leaflet源码和如何使用。</span></p>
+<p><a href="http://www.cnblogs.com/vczero/p/leaflet_2.html" target="_blank"><span style="font-family: 'Microsoft YaHei';">链接：下一篇</span></a></p>
+<p>&nbsp;</p></div><div style="display: block;" id="MySignature">——by vczero 前端工程如此浩大，孜孜不倦，孜孜不倦（专注web框架和架构，擅长JS &amp; Node.js）</div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="http://www.cnblogs.com/vczero/category/601318.html">JavaScript</a></div>
+<div id="EntryTag">标签: <a href="http://www.cnblogs.com/vczero/tag/%E5%BC%80%E6%BA%90GIS/">开源GIS</a>, <a href="http://www.cnblogs.com/vczero/tag/webGIS/">webGIS</a>, <a href="http://www.cnblogs.com/vczero/tag/LBS%E7%94%B5%E5%AD%90%E5%9C%B0%E5%9B%BE/">LBS电子地图</a>, <a href="http://www.cnblogs.com/vczero/tag/map/">map</a>, <a href="http://www.cnblogs.com/vczero/tag/leaflet/">leaflet</a>, <a href="http://www.cnblogs.com/vczero/tag/openlayers/">openlayers</a></div>
+<div id="blog_post_info"><div id="green_channel">
+<a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(4001055,cb_blogId,1);green_channel_success(this,'谢谢推荐！');">好文要顶</a>
+<a id="green_channel_follow" onclick="c_follow();" href="javascript:void(0);">关注我</a>
+<a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a><a id="green_channel_contact" href="http://msg.cnblogs.com/send/%26%2339%3Bvczero" target="_blank">联系我</a>
+<a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="leaflet%E5%BC%80%E6%BA%90%E5%9C%B0%E5%9B%BE%E5%BA%93%E6%BA%90%E7%A0%81%E7%A0%94%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E4%BB%8B&amp;Demo%E5%88%9D%E4%BD%93%E9%AA%8C%28by%20vczero%29%20-%20%27vczero%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/icon_weibo_24.png" alt=""></a>
+<a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="leaflet%E5%BC%80%E6%BA%90%E5%9C%B0%E5%9B%BE%E5%BA%93%E6%BA%90%E7%A0%81%E7%A0%94%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E4%BB%8B&amp;Demo%E5%88%9D%E4%BD%93%E9%AA%8C%28by%20vczero%29%20-%20%27vczero%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+<div id="author_profile_info" class="author_profile_info">
+<a href="http://home.cnblogs.com/u/vczero/" target="_blank"><img src="leaflet%E5%BC%80%E6%BA%90%E5%9C%B0%E5%9B%BE%E5%BA%93%E6%BA%90%E7%A0%81%E7%A0%94%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E4%BB%8B&amp;Demo%E5%88%9D%E4%BD%93%E9%AA%8C%28by%20vczero%29%20-%20%27vczero%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/20150110132206.png" class="author_avatar" alt=""></a>
+<div id="author_profile_detail" class="author_profile_info">
+<a href="http://home.cnblogs.com/u/vczero/">'vczero</a><br>
+<a href="http://home.cnblogs.com/u/vczero/followees">关注 - 7</a><br>
+<a href="http://home.cnblogs.com/u/vczero/followers">粉丝 - 152</a>
+</div>
+</div>
+<div class="clear"></div>
+<div id="author_profile_honor"></div>
+<div id="author_profile_follow">
+    <a href="javascript:void(0);" onclick="c_follow();return false;">+加关注</a>
+</div>
+</div>
+<div id="div_digg">										
+    <div class="diggit" onclick="votePost(4001055,'Digg')">
+        <span class="diggnum" id="digg_count">2</span>
+    </div>
+	<div class="buryit" onclick="votePost(4001055,'Bury')"> 
+		<span class="burynum" id="bury_count">0</span>
+	</div>
+	<div class="clear"></div>	
+	<div class="diggword" id="digg_tips">
+    (请您对文章做出评价)
+    </div>	
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/vczero/p/mongodb_1.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/vczero/p/mongodb_1.html" title="发布于2014-09-25 16:24">基于Node.js平台mongoDB开发——mongoskin(by vczero)</a><br><a href="http://www.cnblogs.com/vczero/p/leaflet_2.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/vczero/p/leaflet_2.html" title="发布于2014-10-07 23:08">leaflet开源地图库源码研读（二）——整体框架(by vczero)</a><br></div>
+</div>
+
+
+		</div>
+		<div class="postDesc">posted @ <span id="post-date">2014-09-29 22:00</span> <a href="http://www.cnblogs.com/vczero/">'vczero</a> 阅读(<span id="post_view_count">1837</span>) 评论(<span id="post_comment_count">5</span>)  <a href="http://i.cnblogs.com/EditPosts.aspx?postid=4001055" rel="nofollow">编辑</a> <a href="#" onclick="AddToWz(4001055);return false;">收藏</a></div>
+	</div>
+	<script type="text/javascript">var allowComments=true,isLogined=false,cb_blogId=193895,cb_entryId=4001055,cb_blogApp=currentBlogApp,cb_blogUserGuid='cd28f27c-471c-e411-8d02-90b11c0b17d6',cb_entryCreatedDate='2014/9/29 22:00:00';loadViewCount(cb_entryId);</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"><div id="comments_pager_top"></div>
+<br>
+<div class="feedback_area_title">评论列表</div>
+<div class="feedbackNoItems"></div>	
+
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3037331" class="layer">#1楼</a><a name="3037331" id="comment_anchor_3037331"></a>  <span class="comment_date">2014-09-29 23:30</span> <a id="a_comment_author_3037331" href="http://www.cnblogs.com/haitao-fan/" target="_blank">尼玛范爷</a> <a href="http://msg.cnblogs.com/send/%E5%B0%BC%E7%8E%9B%E8%8C%83%E7%88%B7" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3037331" class="blog_comment_body">涨姿势了，谢谢</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3037331,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3037331,'Bury',this)">反对(0)</a></div><span id="comment_3037331_avatar" style="display:none;">http://pic.cnblogs.com/face/395638/20140818132358.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3037371" class="layer">#2楼</a><a name="3037371" id="comment_anchor_3037371"></a>  <span class="comment_date">2014-09-30 08:48</span> <a id="a_comment_author_3037371" href="http://www.cnblogs.com/luxiaoxun/" target="_blank">阿凡卢</a> <a href="http://msg.cnblogs.com/send/%E9%98%BF%E5%87%A1%E5%8D%A2" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3037371" class="blog_comment_body">infowindow是arcgis里的叫法吧，同做Gis，顶一下。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3037371,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3037371,'Bury',this)">反对(0)</a></div><span id="comment_3037371_avatar" style="display:none;">http://pic.cnblogs.com/face/434101/20140116213903.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3037372" class="layer">#3楼</a><a name="3037372" id="comment_anchor_3037372"></a>  <span class="comment_date">2014-09-30 08:50</span> <a id="a_comment_author_3037372" href="http://www.cnblogs.com/perpetual/" target="_blank">yu.恒</a> <a href="http://msg.cnblogs.com/send/yu.%E6%81%92" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3037372" class="blog_comment_body">不知道楼主对于获取地图上某点坐标，有没有做过研究，如果基于百度地图，坐标经纬度完全不准确 。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3037372,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3037372,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3037523" class="layer">#4楼</a><a name="3037523" id="comment_anchor_3037523"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2014-09-30 10:36</span> <a id="a_comment_author_3037523" href="http://www.cnblogs.com/vczero/" target="_blank">'vczero</a> <a href="http://msg.cnblogs.com/send/%26%2339%3Bvczero" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3037523" class="blog_comment_body"><a href="#3037371" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3037371);">@</a>阿凡卢<br>呵呵，Arc,百度和高德都这么叫，我觉得更贴合中国人的思维吧。pop有点像国外人思维，所以....你懂得，嘿嘿...</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3037523,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3037523,'Bury',this)">反对(0)</a></div><span id="comment_3037523_avatar" style="display:none;">http://pic.cnblogs.com/face/659857/20150110132206.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3037534" class="layer">#5楼</a><a name="3037534" id="comment_anchor_3037534"></a>[<span class="louzhu">楼主</span>]<span id="comment-maxId" style="display:none;">3037534</span><span id="comment-maxDate" style="display:none;">2014/9/30 10:42:36</span>  <span class="comment_date">2014-09-30 10:42</span> <a id="a_comment_author_3037534" href="http://www.cnblogs.com/vczero/" target="_blank">'vczero</a> <a href="http://msg.cnblogs.com/send/%26%2339%3Bvczero" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3037534" class="blog_comment_body"><a href="#3037372" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3037372);">@</a>yu.恒<br>这个有两点：<br>(1)地图坐标是进行偏移后的，所以要与实际坐标匹配就有些不吻合。<br>(2)百度地图这块有个服务在做支撑，就是通过切片坐标（即相对坐标）来获取实际的经纬坐标（如：切片坐标 z:997 x 13 y 13 转经纬度 lng lat）<br>(3)二则，四维的数据来源的坐标信息的地理编码和逆地理编码不知是否存在响应的问题。呵呵，你明白！<br>多交流~~</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3037534,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3037534,'Bury',this)">反对(0)</a></div><span id="comment_3037534_avatar" style="display:none;">http://pic.cnblogs.com/face/659857/20150110132206.png</span>
+			</div>
+		</div>
+	<div id="comments_pager_bottom"></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" id="lnk_RefreshComments" onclick="return RefreshCommentList();">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login('commentform');">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="site_nav_under"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】50万行VC++源码: 大型组态工控、电力仿真CAD与GIS源码库</a><br><a href="http://www.rongcloud.cn/" target="_blank">【推荐】融云即时通讯云－专注为 App 开发者提供IM云服务</a><br><a href="https://www.jpush.cn/" target="_blank">【福利】极光推送-富媒体+大数据驱动精准推送，完全免费开放啦</a><br><a href="http://click.aliyun.com/m/994/" target="_blank">【精品】根据网站PV推荐完整架构方案</a><br></div>
+<div id="opt_under_post"></div>
+<script type="text/javascript">
+    fixPostBodyFormat();
+</script>
+<div id="google_ad_c1" class="c_ad_block"><a href="http://www.gcpowertools.com.cn/products/componentone.htm?utm_source=cnblogs&amp;utm_medium=blogpage&amp;utm_term=bottom&amp;utm_content=C1&amp;utm_campaign=community" target="_blank"><img src="leaflet%E5%BC%80%E6%BA%90%E5%9C%B0%E5%9B%BE%E5%BA%93%E6%BA%90%E7%A0%81%E7%A0%94%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E4%BB%8B&amp;Demo%E5%88%9D%E4%BD%93%E9%AA%8C%28by%20vczero%29%20-%20%27vczero%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/24442-20151030141701419-628671799.gif" alt="" title="" height="250" width="300"></a></div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="http://news.cnblogs.com/n/533949/" target="_blank">豆瓣十年，一个典型精英社区的起伏兴衰</a><br> ·  <a href="http://news.cnblogs.com/n/533948/" target="_blank">12月6日起两款人气PS4同捆套装降价至300美元促销</a><br> ·  <a href="http://news.cnblogs.com/n/533947/" target="_blank">上线15个月 黑莓宣布关闭BBM Meeting服务</a><br> ·  <a href="http://news.cnblogs.com/n/533920/" target="_blank">身价2000亿的扎克伯格为何总开一辆破车</a><br> ·  <a href="http://news.cnblogs.com/n/533946/" target="_blank">精工爱普生开发出小型再生纸制造机"PaperLab"</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="google_ad_c2" class="c_ad_block"><a href="http://e.jikexueyuan.com/java.html?hmsr=cnb_banner_java_11.20" target="_blank"><img src="leaflet%E5%BC%80%E6%BA%90%E5%9C%B0%E5%9B%BE%E5%BA%93%E6%BA%90%E7%A0%81%E7%A0%94%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89%E2%80%94%E2%80%94%E7%AE%80%E4%BB%8B&amp;Demo%E5%88%9D%E4%BD%93%E9%AA%8C%28by%20vczero%29%20-%20%27vczero%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/24442-20151120154810296-978269479.jpg" alt="" title="" height="60" width="468"></a></div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/527814/" target="_blank">从涂鸦到发布——理解API的设计过程</a><br> ·  <a href="http://kb.cnblogs.com/page/531834/" target="_blank">好的架构是进化来的，不是设计来的</a><br> ·  <a href="http://kb.cnblogs.com/page/532236/" target="_blank">被误解的MVC和被神化的MVVM</a><br> ·  <a href="http://kb.cnblogs.com/page/530046/" target="_blank">再谈设计和编码</a><br> ·  <a href="http://kb.cnblogs.com/page/531270/" target="_blank">什么时候应该避免写代码注释？</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+$(function () {
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 200);
+});
+</script>
+</div>
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"><div id="profile_block">昵称：<a href="http://home.cnblogs.com/u/vczero/">'vczero</a><br>园龄：<a href="http://home.cnblogs.com/u/vczero/" title="入园时间：2014-08-05">1年3个月</a><br>粉丝：<a href="http://home.cnblogs.com/u/vczero/followers/">152</a><br>关注：<a href="http://home.cnblogs.com/u/vczero/followees/">7</a><div id="p_b_follow"><a href="javascript:void(0);" onclick="cnblogs.UserManager.FollowBlogger('cd28f27c-471c-e411-8d02-90b11c0b17d6')">+加关注</a></div></div></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="blog-calendar" style=""><table id="blogCalendar" class="Cal" title="Calendar" cellpadding="0" cellspacing="0">
+	<tbody><tr><td colspan="7"><table class="CalTitle" cellspacing="0">
+		<tbody><tr><td class="CalNextPrev"><a href="javascript:void(0);" onclick="loadBlogCalendar('2015/11/01');return false;">&lt;</a></td><td align="center">2015年12月</td><td class="CalNextPrev" align="right"><a href="javascript:void(0);" onclick="loadBlogCalendar('2016/01/01');return false;">&gt;</a></td></tr>
+	</tbody></table></td></tr><tr><th class="CalDayHeader" abbr="日" scope="col" align="center">日</th><th class="CalDayHeader" abbr="一" scope="col" align="center">一</th><th class="CalDayHeader" abbr="二" scope="col" align="center">二</th><th class="CalDayHeader" abbr="三" scope="col" align="center">三</th><th class="CalDayHeader" abbr="四" scope="col" align="center">四</th><th class="CalDayHeader" abbr="五" scope="col" align="center">五</th><th class="CalDayHeader" abbr="六" scope="col" align="center">六</th></tr><tr><td class="CalOtherMonthDay" align="center">29</td><td class="CalOtherMonthDay" align="center">30</td><td align="center">1</td><td class="CalTodayDay" align="center">2</td><td align="center">3</td><td align="center">4</td><td class="CalWeekendDay" align="center">5</td></tr><tr><td class="CalWeekendDay" align="center">6</td><td align="center">7</td><td align="center">8</td><td align="center">9</td><td align="center">10</td><td align="center">11</td><td class="CalWeekendDay" align="center">12</td></tr><tr><td class="CalWeekendDay" align="center">13</td><td align="center">14</td><td align="center">15</td><td align="center">16</td><td align="center">17</td><td align="center">18</td><td class="CalWeekendDay" align="center">19</td></tr><tr><td class="CalWeekendDay" align="center">20</td><td align="center">21</td><td align="center">22</td><td align="center">23</td><td align="center">24</td><td align="center">25</td><td class="CalWeekendDay" align="center">26</td></tr><tr><td class="CalWeekendDay" align="center">27</td><td align="center">28</td><td align="center">29</td><td align="center">30</td><td align="center">31</td><td class="CalOtherMonthDay" align="center">1</td><td class="CalOtherMonthDay" align="center">2</td></tr><tr><td class="CalOtherMonthDay" align="center">3</td><td class="CalOtherMonthDay" align="center">4</td><td class="CalOtherMonthDay" align="center">5</td><td class="CalOtherMonthDay" align="center">6</td><td class="CalOtherMonthDay" align="center">7</td><td class="CalOtherMonthDay" align="center">8</td><td class="CalOtherMonthDay" align="center">9</td></tr>
+</tbody></table></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+<div id="sidebar_search_box">
+<div id="widget_my_zzk" class="div_my_zzk"><input id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk" type="text">&nbsp;<input onclick="zzk_go()" value="找找看" id="btnZzk" class="btn_my_zzk" type="button"></div>
+<div id="widget_my_google" class="div_my_zzk"><input name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk" type="text">&nbsp;<input onclick="google_go()" value="谷歌搜索" class="btn_my_zzk" type="button"></div>
+</div>
+</div>
+
+</div><div id="sidebar_shortcut" class="sidebar-block">
+<div class="catListLink">
+<h3 class="catListTitle">常用链接</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/vczero/p/" title="我的博客的随笔列表">我的随笔</a></li><li><a href="http://www.cnblogs.com/vczero/MyComments.html" title="我发表过的评论列表">我的评论</a></li><li><a href="http://www.cnblogs.com/vczero/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li><li><a href="http://www.cnblogs.com/vczero/RecentComments.html" title="我的博客的评论列表">最新评论</a></li><li><a href="http://www.cnblogs.com/vczero/tag/" title="我的博客的标签列表">我的标签</a></li>
+<li><a id="itemListLink" onclick="this.blur();WarpClass('itemListLink', 'itemListLin_con');return false;" href="#">更多链接</a></li>
+</ul>
+<div id="itemListLin_con" style="display:none;">
+<ul>
+
+</ul>
+</div>
+</div></div><div id="sidebar_toptags" class="sidebar-block">
+<div class="catListTag">
+<h3 class="catListTitle">我的标签</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/vczero/tag/react%20native/">react native</a>(8)</li><li><a href="http://www.cnblogs.com/vczero/tag/react/">react</a>(7)</li><li><a href="http://www.cnblogs.com/vczero/tag/react%20native%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/">react native入门指南</a>(7)</li><li><a href="http://www.cnblogs.com/vczero/tag/react-native/">react-native</a>(7)</li><li><a href="http://www.cnblogs.com/vczero/tag/react%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/">react入门指南</a>(7)</li><li><a href="http://www.cnblogs.com/vczero/tag/node.js/">node.js</a>(5)</li><li><a href="http://www.cnblogs.com/vczero/tag/leaflet%E5%BC%80%E6%BA%90/">leaflet开源</a>(3)</li><li><a href="http://www.cnblogs.com/vczero/tag/%E5%8E%9F%E7%94%9FJS/">原生JS</a>(3)</li><li><a href="http://www.cnblogs.com/vczero/tag/javascript/">javascript</a>(3)</li><li><a href="http://www.cnblogs.com/vczero/tag/javascript%E6%97%A5%E5%8E%86/">javascript日历</a>(3)</li><li><a href="http://www.cnblogs.com/vczero/tag/">更多</a></li>
+</ul>
+</div></div><div id="sidebar_categories">
+<div id="sidebar_postcategory" class="catListPostCategory sidebar-block">
+<h3 class="catListTitle">随笔分类<span style="font-size:11px;font-weight:normal">(40)</span></h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_0_Link_0" href="http://www.cnblogs.com/vczero/category/602261.html">CSS(2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_1" href="http://www.cnblogs.com/vczero/category/601318.html">JavaScript(31)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_2" href="http://www.cnblogs.com/vczero/category/601590.html">Node.js(7)</a> </li>
+
+</ul>
+
+</div>
+
+<div id="sidebar_postarchive" class="catListPostArchive sidebar-block">
+<h3 class="catListTitle">随笔档案<span style="font-size:11px;font-weight:normal">(34)</span></h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_1_Link_0" href="http://www.cnblogs.com/vczero/archive/2015/07.html">2015年7月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_1" href="http://www.cnblogs.com/vczero/archive/2015/06.html">2015年6月 (7)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_2" href="http://www.cnblogs.com/vczero/archive/2015/04.html">2015年4月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_3" href="http://www.cnblogs.com/vczero/archive/2015/01.html">2015年1月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_4" href="http://www.cnblogs.com/vczero/archive/2014/12.html">2014年12月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_5" href="http://www.cnblogs.com/vczero/archive/2014/11.html">2014年11月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_6" href="http://www.cnblogs.com/vczero/archive/2014/10.html">2014年10月 (5)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_7" href="http://www.cnblogs.com/vczero/archive/2014/09.html">2014年9月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_8" href="http://www.cnblogs.com/vczero/archive/2014/08.html">2014年8月 (4)</a> </li>
+
+</ul>
+
+</div>
+
+</div><div id="sidebar_recentcomments" class="sidebar-block"><div id="recent_comments_wrap">
+<div class="catListComment">
+<h3 class="catListTitle">最新评论</h3>
+
+	<div id="RecentCommentsBlock"><ul>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/vczero/p/react-native8.html#3299237">1. Re:React Native开发的通讯录应用（使用JavaScript开发原生iOS应用，vczero）</a></li>
+    <li class="recent_comment_body">里面嵌入了webview来呈现微博的哦，呵呵！</li>
+    <li class="recent_comment_author">--RockyF</li>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/vczero/p/react-native.html#3294963">2. Re:React-Native入门指南（一）——环境配置 &amp; Hello World</a></li>
+    <li class="recent_comment_body">楼主，我一直卡在react-native init HelloWorld，然后就不动了，是怎么回事？你遇到过吗？</li>
+    <li class="recent_comment_author">--zhangteng</li>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/vczero/p/tuban_1.html#3281207">3. Re:AngularJS + Node.js + MongoDB开发的基于位置的通讯录(by vczero)</a></li>
+    <li class="recent_comment_body">安庆人路过。。。</li>
+    <li class="recent_comment_author">--Aralic</li>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/vczero/p/angular_1.html#3238470">4. Re:爱搜索，爱生活，基于豆瓣API &amp; Angular开发的web App（by vczero）</a></li>
+    <li class="recent_comment_body">你好，请问用什么开发工具开发？</li>
+    <li class="recent_comment_author">--像一句广告</li>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/vczero/p/react-native8.html#3233263">5. Re:React Native开发的通讯录应用（使用JavaScript开发原生iOS应用，vczero）</a></li>
+    <li class="recent_comment_body">确认不错，身为前端开发者，感觉略吊~~</li>
+    <li class="recent_comment_author">--赵小磊</li>
+</ul>
+</div>
+</div>
+</div></div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock"><ul><li><a href="http://www.cnblogs.com/vczero/p/sum2014.html">1. 写给过去5年，总结2014，拥抱2015(5164)</a></li><li><a href="http://www.cnblogs.com/vczero/p/BE_FE.html">2. 从.NET到Node.js谈前后端分离实践（by vczero）(2581)</a></li><li><a href="http://www.cnblogs.com/vczero/p/tuban_1.html">3. AngularJS + Node.js + MongoDB开发的基于位置的通讯录(by vczero)(1894)</a></li><li><a href="http://www.cnblogs.com/vczero/p/leaflet_1.html">4. leaflet开源地图库源码研读（一）——简介&amp;Demo初体验(by vczero)(1837)</a></li><li><a href="http://www.cnblogs.com/vczero/p/leaflet_2.html">5. leaflet开源地图库源码研读（二）——整体框架(by vczero)(1610)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topcommentedposts" class="sidebar-block"><div id="topfeedback_posts_wrap">
+<div class="catListFeedback">
+<h3 class="catListTitle">评论排行榜</h3>
+	<div id="TopFeedbackPostsBlock"><ul><li><a href="http://www.cnblogs.com/vczero/p/sum2014.html">1. 写给过去5年，总结2014，拥抱2015(73)</a></li><li><a href="http://www.cnblogs.com/vczero/p/BE_FE.html">2. 从.NET到Node.js谈前后端分离实践（by vczero）(17)</a></li><li><a href="http://www.cnblogs.com/vczero/p/tuban_1.html">3. AngularJS + Node.js + MongoDB开发的基于位置的通讯录(by vczero)(11)</a></li><li><a href="http://www.cnblogs.com/vczero/p/mvc_1.html">4. 构建基础的JavaScript MVC（一）(7)</a></li><li><a href="http://www.cnblogs.com/vczero/p/js_ui_3.html">5. javascript动手写日历组件(3)——内存和性能优化（by vczero）(7)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div id="TopDiggPostsBlock"><ul><li><a href="http://www.cnblogs.com/vczero/p/sum2014.html">1. 写给过去5年，总结2014，拥抱2015(32)</a></li><li><a href="http://www.cnblogs.com/vczero/p/BE_FE.html">2. 从.NET到Node.js谈前后端分离实践（by vczero）(11)</a></li><li><a href="http://www.cnblogs.com/vczero/p/angular_1.html">3. 爱搜索，爱生活，基于豆瓣API &amp; Angular开发的web App（by vczero）(7)</a></li><li><a href="http://www.cnblogs.com/vczero/p/openapi_js.html">4. 高德地图JS-API公开课视频教程(7)</a></li><li><a href="http://www.cnblogs.com/vczero/p/cookie.html">5. 更加方便的操作cookie——cookie封装 (by vczero)(5)</a></li></ul></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright ©2015 'vczero
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+</body></html>

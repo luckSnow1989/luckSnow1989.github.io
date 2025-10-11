@@ -1,0 +1,106 @@
+一、struts2五大核心jar包 
+	<从下载的struts2框架中找出下面的jar包> 
+	1。Commons-logging.jar  --------------   用于通用日志处理 
+	2。Freemarker.jar  --------------   表现层框架，定义了struts2的可视组件主题 
+	3。Ognl.jar  --------------   OGNL表达式语言，struts2支持该EL 
+	4。Struts2-core.jar  --------------    struts2 2.0.11.2的核心库 
+	5。Xwork.jar  --------------   webwork的核心库 
+	如要整合其他框架，则需要添加相应的xxx-plugin.jar如： 
+	整合spring需要将这个jar包导入。struts2-spring-plugin.jar ---struts2的spring插件 
+	开发struts2项目时，不要一股脑把struts2框架lib下的所有jar复制到自己的项目中，要是在整合其他框架。
+	那样使得项目显得非常之臃肿。而且根本没有什么用的加进去。起不了什么作用。
+
+
+
+
+
+二、struts2.3.1.1是目前最新struts2版本，至少需要如下6 个jar包：
+	struts2-core-2.3.1.1.jar
+	freemarker-2.3.18.jar
+	commons-logging-1.1.1.jar
+	ognl-3.0.3.jar
+	xwork-core-2.3.1.1.jar
+	commons-fileupload-1.2.2.jar
+
+	1.struts2-core-2.3.1.1.jar
+		struts核心包
+	
+	2.freemarker-2.3.18.jar
+		freeMarker是一个模板引擎，一个基于模板生成文本输出的通用工具
+	
+	3.commons-logging-1.1.1.jar
+		Jakarta的通用日志记录包
+	
+	4.ognl-3.0.3.jar
+		支持ognl表达式
+	
+	5.xwork-core-2.3.1.1.jar
+		xwork的包 由于Struts2是由xwork的延伸 有些类依然关联着 xwork的类
+	
+	6.commons-fileupload-1.2.2.jar
+		struts的上传下载
+
+三、STRUTS2.3.4最基础的jar包-必须添加完整
+	struts2.3.4,jar包必须添加完整，类容如下：
+	asm-3.3.jar
+	asm-commons-3.3.jar
+	asm-tree-3.3.jar
+	commons-fileupload-1.2.2.jar
+	commons-io-2.0.1.jar
+	commons-lang3-3.1.jar
+	commons-loggin-1.1.1.jar
+	freemarker-2.3.19.jar
+	javassist-3.11.0.GA.jar
+	ognl-3.0.5.jar
+	strut2-core-2.3.4.jar
+	xwork-core-2.3.4.jar
+
+四、对用到的jar包说明一下：
+名称                     			版本                                                          			说明
+spring                 	spring.jar（2.5）                                      		spring基础包
+
+解析excel包          			jxl-2.6.10.jar（2.6.10）                        		样式数目可以不受限制
+
+commons包        			commons-beanutils.jar（1.1）                		主要提供Bean的用法
+                        commons-codec-1.3.jar（1.3）               		主要包括核心的算法（Md5等）
+                        commons-collections-3.2.1.jar（3.2.1）  	各种集合类和集合工具类的封装
+                        commons-dbcp-1.2.2.jar（1.2.2）            	配置数据库用到的工具，如datasource
+						commons-dbutils-1.2.jar（1.2）              	是操作数据库的组件，对传统操作数据库
+                        commons-fileupload-1.2.1.jar（1.2.1）   	文件上传时候的组件
+                        commons-httpclient-3.0.1.jar（3.0.1）    	http相关操作，如HttpURLConnection
+                        commons-io-1.4.jar（1.4）                       		io包
+                        commons-lang-2.3.jar（2.3）                   		基础工具包，封装一些常用的基础操
+                        commons-logging.jar                     日志包
+                        commons-pool-1.3.jar（1.3）                   		连接池相关的包，基本跟数据源等相关
+
+解析xml               	dom4j-1.6.jar（1.6）                          	  		操作较小的xml文件
+                        sax2.jar                                解析大数据量的
+                        xmlxercesImpl.jar　
+                        xml-apis.jar　
+                        xpp3.jar                             	Xml Pull Parser 3rd Edition 
+                        jaxen-1.1-beta-6.jar（1.1）           			xpath相关操作
+
+json相关操作包   			ezmorph-1.0.6.jar（1.0.6）　
+						json-lib-2.3-jdk13.jar（2.3）　
+
+jstl相关包            			jstl.jar　
+						standard.jar　　
+						jython.jar                              是脚本语言 Python 的一种实现包
+　                    				log4j-1.2.15.jar（1.2.15）              		日志包　
+						ojdbc14.jar                             oracle数据库驱动包　
+						servlet-api.jar                         支持servlet的jar包，如用到HttpServlet
+                        xalan.jar                               它是一个XSLT的处理包，用于将XML文
+																档转为HTML文档,IBATIS开发的包。 包括分页等等功能 
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                                                

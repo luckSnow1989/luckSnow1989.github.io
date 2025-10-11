@@ -1,0 +1,225 @@
+一、【全文检索】
+
+	要搜索的数据：
+		文本（重点）。
+		多媒体。
+
+	搜索的方式：
+		不处理语义。
+		是搜索含有指定词汇的文章。
+
+	特点：
+		1，结果准确
+		2，相关度排序。
+		3，速度快。
+		4，不区分大小写。
+==================================================
+	例如：百度、谷歌等搜索引擎，他们的实现原理大致如下：
+		1.预先将整个互联网上的所有的可能被搜索到的网站采用技术手段，将其页面的关键词相对信息保存到内地数据库
+		2.使用特定的搜索引擎对数据进行检索
+		3.用户关键词搜索
+				
+二、Lucene(lucene.apache.org)
+	Lucene是apache软件基金会4 jakarta项目组的一个子项目，是一个开放源代码的全文检索引擎工具包，但它不是一个完整的全文检索引擎，
+	而是一个全文检索引擎的架构，提供了完整的查询引擎和索引引擎，部分文本分析引擎（英文与德文两种西方语言）。Lucene的目的是为
+	软件开发人员提供一个简单易用的工具包，以方便的在目标系统中实现全文检索的功能，或者是以此为基础建立起完整的全文检索引擎。
+	Lucene是一套用于全文检索和搜寻的开源程式库，由Apache软件基金会支持和提供。Lucene提供了一个简单却强大的应用程式接口，能
+	够做全文索引和搜寻。在Java开发环境里Lucene是一个成熟的免费开源工具。就其本身而言，Lucene是当前以及最近几年最受欢迎的
+	免费Java信息检索程序库。人们经常提到信息检索程序库，虽然与搜索引擎有关，但不应该将信息检索程序库与搜索引擎相混淆。
+	
+	1.jar
+		lucene-analyzers-3.0.1.jar		分析器(分词器)
+		lucene-core-3.0.1.jar			核心包
+		lucene-highlighter-3.0.1.jar	高亮器
+		lucene-memory-3.0.1.jar			高亮器--依赖
+
+======================================
+
+ArticleAction extends ActionSupport{
+
+	public String add(..){
+		form --> article;
+		dao.save(article); // 保存到数据库
+		indexDao.save(article); // 保存到索引库中
+	}
+
+	public String delete(..){
+		id = getparam("id");
+		dao.delete(id); // 从数据库中删除
+		indexDao.delete(id); // 从索引库中删除
+	}
+
+	public String modify(..){
+		article = getById(id);
+		form --> article;
+		dao.update(article); // 更新到数据库
+		indexDao.update(article); // 更新到索引库中
+	}
+
+	...
+
+}
+
+保证索引库的状态与数据源中的状态一致的方案：
+
+	方案一：当对数据库做增删改的操作时，就同时索引库也做增删改的操作。
+	
+	方案二：定时重建索引库（或定时与数据源做同步的操作）。
+
+
+根据数据的来源，一般分为三中情况：
+1，数据源是数据库。
+	使用方案一或方案二。
+2，数据源是网页。
+	使用方案二。
+3，数据源是文件。
+	使用方案二。
+
+
+===================================================
+
+
+"000003234" --> 4 Byte
+"123456789" --> 9 Byte
+
+
+
+假设有25条数据，每页显示10条，则总共3页。
+
+
+mysql:
+	select * from ... limit ?,?; // first, max
+
+	limit 0,5;
+	limit 5,5;
+	limit 10,5;
+	limit 15,5;
+
+
+hibernate
+	query.setFirstResult(int);
+	query.setMaxResults(int);
+	query.list();
+
+
+======================
+
+// 指定一段代码，会在JVM退出之前执行。
+Runtime.getRuntime().addShutdownHook(new Thread() {
+	public void run() {
+		try {
+			indexWriter.close();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+});
+=============================
+性能优化
+	// 优化索引库文件（合并多个小文件为一个大文件）
+	@Test
+	public void test() throws Exception {
+		LuceneUtils.getIndexWriter().optimize();
+	}
+
+	// 自动合并文件
+	@Test
+	public void testAuto() throws Exception {
+		// 配置当小文件的数量达到多少个后就自动合并为一个大文件，默认为10，最小为2.
+		LuceneUtils.getIndexWriter().setMergeFactor(5);
+
+		// 建立索引
+		Article article = new Article();
+		article.setId(1);
+		article.setTitle("准备Lucene的开发环境");
+		article.setContent("如果信息检索系统在用户发出了检索请求后再去互联网上找答案，根本无法在有限的时间内返回结果。");
+		new ArticleIndexDao().save(article);
+	}
+
+======================================================
+1，分词器
+	作用：切分关键词的。
+	在什么地方使用到了：在建立索引和搜索时。
+
+	原文：An IndexWriter creates and maintains an index.
+	1，切分：
+		An 
+		IndexWriter 
+		creates 
+		and 
+		maintains 
+		an 
+		index
+		.
+	2，去除停用词
+		IndexWriter 
+		creates 
+		maintains 
+		index
+	3，转为小写
+		indexwriter 
+		creates 
+		maintains 
+		index
+	4.IKAnalyzer扩展分词器
+
+2，高亮
+	作用：
+		截取一段摘要
+		高亮显示其中的关键字
+	配置：
+		摘要大小（字数）
+		关键字的高亮效果（前缀、后缀，示例：<font color='red'>关键字</font>）
+	代码：
+		...
+
+
+3，排序
+	默认是相关度排序。
+	也可以按指定的字段排序。
+
+	
+4，过滤
+
+
+5，各种查询
+	方式一：使用QueryParser与查询语法。（会使用分词器）
+
+	                MultiFieldQueryParser
+		查询字符串 ------------------------> Query对象
+
+		例如：
+			上海 AND 天气
+			上海 OR 天气
+			上海新闻  AND  site:news.163.com
+			...
+
+	方式二：
+		直接创建Query的实例（子类的），不会使用分词器
+		new TermQuery(..);
+		new BooleanQuery(..);
+
+
+
+
+Lucene   ---  JDBC
+Compass  ---  Hibernate
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
