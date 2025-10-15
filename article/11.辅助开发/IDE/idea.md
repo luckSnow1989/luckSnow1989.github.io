@@ -24,9 +24,11 @@ JetBrains成立于2000年，是家私人持股的公司（private company）。�
 
 ### 2.1. 同步配置
 
-导出/导入配置功能无法满足基本需求，还是使用账户同步比较好 PS：很多配置都可以设置为全局配置，我们一般设置新增项目的配置即可。
+方案1：使用账号同步。注册官网账号，并在idea中开启同步。
 
 ![](./img/idea/idea1.png)
+
+方案2：导入/导出配置功能。这个其实比较好（缺点是无法导出插件），可以在PyCharm、golang等工具中导入。
 
 ### 2.2 Appearance & Behavior
 
@@ -779,6 +781,19 @@ jdk9+:  -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:50055
 nohup java \
     -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=50055 \
     -jar remote-debug-0.0.1-SNAPSHOT.jar &
+```
+
+### 7.5.缓存配置
+
+idea安装后会在C盘缓存大量的文件(插件、配置、日志、索引等)，占用大量空间。
+可以修改idea/bin/idea.properties文件，修改缓存路径。只需要修改以下2个配置即可。
+
+```properties
+# idea.config.path=${user.home}/.IntelliJIdea/config
+idea.config.path=D:/Program Files/JetBrains/caches/IntelliJIdea2023.3/config
+
+# idea.system.path=${user.home}/.IntelliJIdea/system
+idea.system.path=D:/Program Files/JetBrains/caches/IntelliJIdea2023.3/system
 ```
 
 ## 8.其他JetBrains
