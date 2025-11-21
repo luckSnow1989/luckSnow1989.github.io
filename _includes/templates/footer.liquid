@@ -50,7 +50,7 @@
 
 <!-- 计算网站运行时间 -->
 <span style="font-size:12px;">
-    <script language=JavaScript>
+    <script type="text/javascript" language="JavaScript">
         function secondToDate(second) {
          if (!second) {
             return 0;
@@ -83,10 +83,8 @@
         }
         return time;
         }
-        </script>
 
         <!-- 动态显示网站运行时间 -->
-        <script type="text/javascript" language="javascript">
         function setTime() {
             var create_time = Math.round(new Date(Date.UTC(2014, 09, 30, 0, 0, 0)).getTime() / 1000);
             var timestamp = Math.round((new Date().getTime() + 8 * 60 * 60 * 1000) / 1000);
@@ -95,5 +93,14 @@
             document.getElementById("htmer_time").innerHTML = currentTimeHtml;
         }
         setInterval(setTime, 1000);
-        </script>
+
+        <!-- 百度统计 -->
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ee60f95fbc58067407b46120cbff963b";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
 </span>
