@@ -802,4 +802,4 @@ idea.system.path=D:/Program Files/JetBrains/caches/IntelliJIdea2023.3/system
 
 如果不习惯pycharm 和 goland的快捷键，可以安装快捷键插件。搜索：  /tag:Keymap
 
-![](../img/idea/c252e33d.png)
+![](img/idea/c252e33d.png)

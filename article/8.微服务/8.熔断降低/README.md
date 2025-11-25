@@ -1,7 +1,7 @@
 ---
 sort: 8
 ---
-# 8.负载均衡
+# 8.熔断降低
 
 {% include list.liquid all=true %}
 
