@@ -7,7 +7,6 @@ sort: 1
 - 使用手册 [https://www.w3cschool.cn/nginxsysc/](https://www.w3cschool.cn/nginxsysc/)  
 - 入门指南[https://www.w3cschool.cn/nginx/](https://www.w3cschool.cn/nginx/)
 - 博客[https://blog.51cto.com/liangey/category5.html](https://blog.51cto.com/liangey/category5.html)
-- 可视化配置[https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN](https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN)
 - [nginx进阶使用](https://blog.csdn.net/long_xu/category_12105928.html)
 - [Nginx开发从入门到精通](https://tengine.taobao.org/book/index.html)
 
@@ -51,6 +50,12 @@ nginx最大的特点是：资源消耗低，性能强、成本低。扩展性其
 - 启动状态：开启10个 Nginx 进程消耗内存：15MB*10=150MB
 - 启动状态：开启64个 php-cgi进程，也就消耗20MB*64=1280MB，总共后台进程使用不到2GB内存。通常不会开启这么多
 - 压测状态：Nginx+PHP的程序任然能够飞速运转，单机处理请求能力在700次／秒，那么日承受访问量在700*60*60*24=60,480,000=6千万，且服务器的负载不会太高。
+
+### 1.5.可视化管理
+
+- 可视化配置[https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN](https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN)
+- nginxWebUI:[https://github.com/cym1102/nginxWebUI](https://github.com/cym1102/nginxWebUI)
+- nginx-ui:[https://github.com/0xJacky/nginx-ui](https://github.com/0xJacky/nginx-ui)
 
 ## 2.Nginx安装
 
@@ -1055,9 +1060,6 @@ curl -s http://localhost/nginx_status
 3. Nginx 内置模块。limit_req_zone 和 limit_conn_zone 限制请求频率和并发，原生支持。
    - 缺点：仅限流/限连接，不能真正封禁
    - 适用场景：防 CC 攻击、防止单 IP 滥用
-
-
-
 
 ## 7.原理
 
