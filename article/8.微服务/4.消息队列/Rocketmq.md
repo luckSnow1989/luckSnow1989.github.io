@@ -784,7 +784,8 @@ https://www.sohu.com/a/129521820_487514
 
 因为master下线期间，消费进度已经落后了，如果直接注册到nameserver，可能造成消息的重新消费。
 
-## 10.Mq配置
+## 10.最佳实践
+
 ### 10.1.broker配置
 ```properties
 #broker所属的集群名字
@@ -884,6 +885,185 @@ checkTransactionMessageEnable=false
 #拉消息线程池数量（如果不做配置，个数为16+（核*线程）*4）
 #pullMessageThreadPoolNums=12
 ```
+
+### 10.2.Prometheus
+
+RocketMQ 的 Prometheus 报警模板分为两类：Prometheus 告警规则模板（定义触发告警的条件）和Alertmanager 通知模板（定义告警消息的格式）。
+
+指标来源：http://127.0.0.1:5557/metrics
+
+避免告警风暴
+1. 使用for字段设置持续时间（如 5 分钟），过滤瞬时抖动 
+2. 通过group_by按主题 / 消费组聚合告警，避免重复通知 
+3. 为不同级别告警设置不同repeat_interval（如 critical 15 分钟，warning 1 小时）
+
+#### 10.2.1.Prometheus 告警规则模板
+涵盖消费堆积、高延迟、无消费者、生产 / 消费失败、Exporter 离线等核心场景，适配你提供的指标：
+
+修改Prometheus的rules/prometheus.yml文件，添加RocketMQ的告警规则：
+
+```yaml
+rule_files:
+  - "/etc/prometheus/rules/rules_rocketmq.yml"
+```
+
+```yaml
+groups:
+  - name: rocketmq_alerts
+    rules:
+      # 1. Exporter离线告警（基础可用性）
+      - alert: RocketMQExporterDown
+        expr: up{job="rocketmq-exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: rocketmq
+        annotations:
+          summary: "RocketMQ Exporter离线 ({{ $labels.instance }})"
+          description: "RocketMQ Exporter实例{{ $labels.instance }}已离线超过1分钟，无法采集监控数据，请立即排查！"
+
+      # 2. 消费高堆积告警（核心业务场景）
+      - alert: RocketMQConsumerLagHigh
+        expr: |
+          sum by (cluster, topic, group) (
+              rocketmq_producer_offset
+              - 
+              rocketmq_consumer_offset
+          ) > 1000  # 阈值根据业务调整
+          and
+          sum by (group) (rocketmq_group_count) > 0  # 排除无消费者场景
+          and
+          rocketmq_producer_tps > 0  # 排除无生产场景
+        for: 5m  # 持续5分钟，避免瞬时抖动
+        labels:
+          severity: warning
+          service: rocketmq
+        annotations:
+          summary: "RocketMQ消费高堆积 ({{ $labels.cluster }}-{{ $labels.topic }}-{{ $labels.group }})"
+          description: "消费组{{ $labels.group }}在主题{{ $labels.topic }}的堆积数为{{ $value }}，已超过阈值1000，且有在线消费者和持续生产，请及时排查！"
+
+      # 3. 消费延迟过高告警（堆积伴随特征）
+      - alert: RocketMQConsumerLatencyHigh
+        expr: rocketmq_group_get_latency_by_storetime > 2000  # 2秒阈值
+        for: 3m
+        labels:
+          severity: warning
+          service: rocketmq
+        annotations:
+          summary: "RocketMQ消费延迟过高 ({{ $labels.group }}-{{ $labels.topic }})"
+          description: "消费组{{ $labels.group }}消费主题{{ $labels.topic }}的消息延迟为{{ $value }}ms，超过阈值2000ms，可能导致业务超时！"
+
+      # 4. 重试主题堆积告警（消费失败风险）
+      - alert: RocketMQRetryTopicLagHigh
+        expr: |
+          sum by (cluster, broker, group) (
+              rocketmq_topic_retry_offset
+              - 
+              rocketmq_consumer_offset{topic=~"%RETRY.*"}
+          ) > 100  # 重试主题阈值更低
+          and
+          sum by (group) (rocketmq_group_count) > 0
+        for: 1m
+        labels:
+          severity: critical
+          service: rocketmq
+        annotations:
+          summary: "RocketMQ重试主题堆积 ({{ $labels.cluster }}-{{ $labels.group }})"
+          description: "消费组{{ $labels.group }}的重试主题堆积数为{{ $value }}，超过阈值100，存在消费失败消息，请立即排查消费逻辑！"
+
+      # 5. 消费TPS过低告警（堆积前兆）
+      - alert: RocketMQConsumerTpsLow
+        expr: rocketmq_consumer_tps < 0.1 and rocketmq_producer_tps > 1  # 生产正常但消费停滞
+        for: 5m
+        labels:
+          severity: warning
+          service: rocketmq
+        annotations:
+          summary: "RocketMQ消费TPS过低 ({{ $labels.group }}-{{ $labels.topic }})"
+          description: "消费组{{ $labels.group }}消费主题{{ $labels.topic }}的TPS为{{ $value }}，远低于生产TPS，可能导致堆积！"
+
+      # 6. 消费失败率过高告警（业务异常）
+      - alert: RocketMQConsumerFailureHigh
+        expr: rocketmq_client_consume_fail_msg_tps > 0.05  # 5%失败率阈值
+        for: 2m
+        labels:
+          severity: critical
+          service: rocketmq
+        annotations:
+          summary: "RocketMQ消费失败率过高 ({{ $labels.group }}-{{ $labels.topic }})"
+          description: "消费组{{ $labels.group }}消费主题{{ $labels.topic }}的失败TPS为{{ $value }}，超过阈值0.05，业务处理逻辑异常！"
+```
+
+#### 10.2.2.Alertmanager 通知模板
+支持邮件 / 钉钉 / 企业微信的通用模板，包含告警核心信息：
+
+修改Prometheus的alertmanager/templates/
+
+```yaml
+global:
+  resolve_timeout: 5m
+
+templates:
+  - "/etc/alertmanager/templates/rocketmq_notify.tmpl"
+
+route:
+  group_by: ['alertname', 'topic', 'group']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'dingtalk'
+
+receivers:
+  - name: 'dingtalk'
+    webhook_configs:
+      - url: 'https://oapi.dingtalk.com/robot/send?access_token=xxx'
+        send_resolved: true
+        http_config:
+          tls_config:
+            insecure_skip_verify: true
+    webhook_configs:
+      - url: 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx'
+        send_resolved: true
+```
+
+```tmpl
+{{ define "rocketmq.default.message" }}
+{{- if gt (len .Alerts.Firing) 0 -}}
+【RocketMQ告警触发】
+告警级别：{{ index .Alerts 0 ".Labels.severity" | toUpper }}
+告警名称：{{ index .Alerts 0 ".Labels.alertname" }}
+触发时间：{{ index .Alerts 0 ".StartsAt" }}
+告警详情：
+{{ range .Alerts }}
+- 主题/消费组：{{ .Labels.topic }}/{{ .Labels.group }}
+  当前值：{{ .Value | printf "%.2f" }}
+  描述：{{ .Annotations.description }}
+{{ end }}
+{{- end -}}
+
+{{- if gt (len .Alerts.Resolved) 0 -}}
+【RocketMQ告警恢复】
+告警名称：{{ index .Alerts 0 ".Labels.alertname" }}
+恢复时间：{{ index .Alerts 0 ".EndsAt" }}
+{{ range .Alerts }}
+- 主题/消费组：{{ .Labels.topic }}/{{ .Labels.group }}
+  恢复前值：{{ .Value | printf "%.2f" }}
+{{ end }}
+{{- end -}}
+{{ end }}
+
+# 钉钉适配模板（支持Markdown）
+{{ define "rocketmq.dingtalk.message" }}
+{
+  "msgtype": "markdown",
+  "markdown": {
+    "title": "【{{ index .Alerts 0 ".Labels.severity" | toUpper }}】RocketMQ告警",
+    "text": "{{ if gt (len .Alerts.Firing) 0 }}### 告警触发\n{{ else }}### 告警恢复\n{{ end }}**告警名称**：{{ index .Alerts 0 ".Labels.alertname" }}\n**触发/恢复时间**：{{ if gt (len .Alerts.Firing) 0 }}{{ index .Alerts 0 ".StartsAt" }}{{ else }}{{ index .Alerts 0 ".EndsAt" }}{{ end }}\n**详情**：\n{{ range .Alerts }}- 主题/消费组：{{ .Labels.topic }}/{{ .Labels.group }}\n  当前值：{{ .Value | printf "%.2f" }}\n  描述：{{ .Annotations.description }}\n{{ end }}"
+  }
+}
+{{ end }}
+```
+
 
 ## 11.面试题
 
