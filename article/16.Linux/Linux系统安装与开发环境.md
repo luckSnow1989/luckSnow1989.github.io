@@ -1494,11 +1494,15 @@ sudo docker run -it -d -p 50001:22 --privileged=true --name centos-node1 \
 3.重启电脑
 
 4.执行命令
-- 查看可以安装的子系统：wsl.exe --list --online
-- 安装window子系统：  wsl.exe --install Ubuntu
-- 启动子系统： 		wsl.exe -d Ubuntu
-- 关闭子系统： 		wsl.exe shutdown
-- 查询状态：			wsl.exe -l -v
+- 查看可以安装的子系统：wsl --list --online
+- 安装window子系统：  wsl --install Ubuntu
+- 启动子系统： 		wsl -d Ubuntu
+- 查看子系统：        wsl --list --all
+- 查询状态：			wsl -l -v
+- 关闭子系统： 		wsl --shutdown
+- 删除子系统：        wsl --unregister Ubuntu-22.04
+- 卸载WSL:           Get-AppxPackage *ubuntu* | Remove-AppxPackage
+
 
 5.可视化界面
 
