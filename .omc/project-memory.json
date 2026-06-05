@@ -1,0 +1,152 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1780620808369,
+  "projectRoot": "d:\\workspace\\luckSnow1989.github.io",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "Ruby",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "Gemfile"
+        ]
+      },
+      {
+        "name": "C/C++",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "Makefile"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "webpack",
+        "version": "5.6.0",
+        "category": "build"
+      }
+    ],
+    "packageManager": "bundler",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": "make test",
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {
+      "report": "lighthouse http://127.0.0.1:4000",
+      "build": "webpack --mode production",
+      "format": "prettier . --check --write"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "assets"
+    ],
+    "gitBranches": {
+      "defaultBranch": "master",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "article": {
+      "path": "article",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1780620808299,
+      "keyFiles": [
+        "README.md"
+      ]
+    },
+    "assets": {
+      "path": "assets",
+      "purpose": "Static assets",
+      "fileCount": 6,
+      "lastAccessed": 1780620808334,
+      "keyFiles": [
+        "404.liquid",
+        "data.liquid",
+        "robots.liquid",
+        "search.liquid",
+        "sitemap.liquid"
+      ]
+    },
+    "vendor": {
+      "path": "vendor",
+      "purpose": "Third-party code",
+      "fileCount": 0,
+      "lastAccessed": 1780620808334,
+      "keyFiles": []
+    },
+    "_includes": {
+      "path": "_includes",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1780620808335,
+      "keyFiles": [
+        "list.liquid",
+        "README.md"
+      ]
+    },
+    "_layouts": {
+      "path": "_layouts",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1780620808336,
+      "keyFiles": [
+        "default.liquid"
+      ]
+    },
+    "_plugins": {
+      "path": "_plugins",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1780620808336,
+      "keyFiles": [
+        "html_postprocess.rb"
+      ]
+    },
+    "_sass": {
+      "path": "_sass",
+      "purpose": null,
+      "fileCount": 8,
+      "lastAccessed": 1780620808337,
+      "keyFiles": [
+        "scrollnavminumd.scss",
+        "theme.scss",
+        "_direction.scss",
+        "_font-face.scss",
+        "_layout.scss"
+      ]
+    },
+    "_sass\\lib": {
+      "path": "_sass\\lib",
+      "purpose": "Library code",
+      "fileCount": 0,
+      "lastAccessed": 1780620808341,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [],
+  "userDirectives": []
+}
