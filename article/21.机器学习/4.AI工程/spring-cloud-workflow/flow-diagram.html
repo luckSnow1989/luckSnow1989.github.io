@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Spring Cloud · 8 阶段流程图</title>
+<style>
+  @page { size: A3 landscape; margin: 8mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: #1a202c;
+    background: white;
+    padding: 8mm;
+    font-size: 11pt;
+    line-height: 1.3;
+  }
+  .header { border-bottom: 4px solid #0e7490; padding-bottom: 6pt; margin-bottom: 8pt;
+            display: flex; justify-content: space-between; align-items: baseline; }
+  h1 { font-size: 24pt; color: #164e63; }
+  .badge { background: #0e7490; color: white; padding: 3pt 12pt; border-radius: 4pt;
+           font-size: 10pt; font-weight: 600; }
+  .subtitle { font-size: 11pt; color: #155e75; margin-top: 2pt; }
+
+  /* 8 阶段主流程 */
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 4pt;
+    margin: 6pt 0;
+  }
+  .stage {
+    background: #ecfeff;
+    border: 2px solid #0e7490;
+    border-radius: 5pt;
+    padding: 5pt 6pt;
+    text-align: center;
+    position: relative;
+  }
+  .stage::after {
+    content: "→";
+    position: absolute;
+    right: -10pt;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #0e7490;
+    font-size: 18pt;
+    font-weight: bold;
+  }
+  .stage:last-child::after { content: ""; }
+  .stage .num {
+    background: #0e7490; color: white;
+    width: 24pt; height: 24pt; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 12pt; margin-bottom: 3pt;
+  }
+  .stage h3 { font-size: 12pt; color: #164e63; margin-bottom: 2pt; }
+  .stage .time { font-size: 8.5pt; color: #0e7490; font-weight: 600; }
+  .stage .framework { font-size: 8pt; color: #155e75; margin-top: 1pt; }
+  .stage .doc { font-size: 8pt; color: #0e7490; font-family: "SF Mono", Consolas, monospace;
+                margin-top: 1pt; }
+
+  /* 留痕机制 */
+  .section { margin: 8pt 0; }
+  .section h2 {
+    font-size: 14pt; color: #164e63; padding-left: 8pt;
+    border-left: 4px solid #0e7490; margin-bottom: 4pt;
+  }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6pt; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6pt; }
+  .card {
+    background: #f0f9ff; border: 1.5px solid #a5f3fc; border-radius: 4pt;
+    padding: 5pt 8pt;
+  }
+  .card h3 { font-size: 11pt; color: #0e7490; margin-bottom: 2pt; }
+  .card ul { margin-left: 14pt; font-size: 9pt; }
+  .card li { margin-bottom: 1pt; }
+  code { font-family: "SF Mono", Consolas, monospace; background: #cffafe;
+         padding: 1pt 4pt; border-radius: 2pt; font-size: 9pt; color: #164e63; }
+
+  /* 测试黄金组合 */
+  .test-pyramid {
+    display: grid;
+    grid-template-columns: 2fr 3fr 4fr;
+    gap: 4pt;
+    align-items: end;
+    margin: 4pt 0;
+    height: 100pt;
+  }
+  .pyramid-tier {
+    text-align: center;
+    color: white; font-weight: 600;
+    padding: 4pt;
+    border-radius: 4pt;
+  }
+  .pyramid-tier.unit { background: #0e7490; }
+  .pyramid-tier.integration { background: #0891b2; }
+  .pyramid-tier.e2e { background: #155e75; }
+
+  /* 决策框架 */
+  .alert {
+    background: #164e63; color: #cffafe;
+    padding: 6pt 10pt; border-radius: 5pt;
+    font-size: 10pt; margin: 4pt 0;
+  }
+  .alert b { color: white; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Spring Cloud · Claude Code 8 阶段工作流</h1>
+    <div class="subtitle">流程纪律 + 单元测试强制 + 过程全留痕 · 贴墙图</div>
+  </div>
+  <div class="badge">A3 横向</div>
+</div>
+
+<div class="alert">
+  <b>🎯 核心理念</b>:Spring Cloud 微服务 + CC 最佳实践,不是「让 AI 多写代码」,而是「让 AI 按工程纪律写代码,且每步留痕」。<b>8 阶段流程 + 8 份文档 = 团队数字资产</b>。
+</div>
+
+<div class="section">
+  <h2>📋 8 阶段主流程(每阶段 1 份留痕文档)</h2>
+  <div class="flow">
+    <div class="stage">
+      <div class="num">0</div>
+      <h3>需求接入</h3>
+      <div class="time">15-30m</div>
+      <div class="framework">brainstorm</div>
+      <div class="doc">01-requirement</div>
+    </div>
+    <div class="stage">
+      <div class="num">1</div>
+      <h3>架构设计</h3>
+      <div class="time">30-60m</div>
+      <div class="framework">write-plan</div>
+      <div class="doc">02-design</div>
+    </div>
+    <div class="stage">
+      <div class="num">2</div>
+      <h3>任务分解</h3>
+      <div class="time">15-30m</div>
+      <div class="framework">Taskmaster</div>
+      <div class="doc">03-tasks</div>
+    </div>
+    <div class="stage">
+      <div class="num">3</div>
+      <h3>Git Worktree</h3>
+      <div class="time">5m</div>
+      <div class="framework">worktree</div>
+      <div class="doc">04-worktree</div>
+    </div>
+    <div class="stage">
+      <div class="num">4</div>
+      <h3>编码实现</h3>
+      <div class="time">2-5d</div>
+      <div class="framework">CC + TDD</div>
+      <div class="doc">05-changes</div>
+    </div>
+    <div class="stage">
+      <div class="num">5</div>
+      <h3>单元测试</h3>
+      <div class="time">1d</div>
+      <div class="framework">JaCoCo</div>
+      <div class="doc">06-test</div>
+    </div>
+    <div class="stage">
+      <div class="num">6</div>
+      <h3>Code Review</h3>
+      <div class="time">30-60m</div>
+      <div class="framework">code-review</div>
+      <div class="doc">07-review</div>
+    </div>
+    <div class="stage">
+      <div class="num">7</div>
+      <h3>收尾归档</h3>
+      <div class="time">15-30m</div>
+      <div class="framework">finishing</div>
+      <div class="doc">08-summary</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>🛠️ CC 框架装配清单</h2>
+  <div class="grid3">
+    <div class="card">
+      <h3>主框架:Superpowers</h3>
+      <ul>
+        <li><code>/superpowers:brainstorm</code></li>
+        <li><code>/superpowers:write-plan</code></li>
+        <li><code>/superpowers:test-driven-development</code></li>
+        <li><code>/superpowers:requesting-code-review</code></li>
+        <li><code>/superpowers:use-git-worktree</code></li>
+        <li><code>/superpowers:systematic-debugging</code></li>
+        <li><code>/superpowers:finishing-a-development-branch</code></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>辅助:planning-with-files</h3>
+      <ul>
+        <li>项目总表 <code>PROJECT_PLAN.md</code></li>
+        <li>需求进度跟踪</li>
+        <li>阶段检查清单</li>
+        <li>所有需求一目了然</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>可选:Taskmaster</h3>
+      <ul>
+        <li>复杂需求的任务分解</li>
+        <li>依赖关系管理</li>
+        <li>优先级排序</li>
+        <li>跨 Cursor / Windsurf / VSCode</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>🧪 Spring Cloud 单测黄金组合(测试金字塔)</h2>
+  <div class="test-pyramid">
+    <div class="pyramid-tier e2e">
+      E2E<br>
+      <span style="font-size:8pt;">少量 / 关键路径</span>
+    </div>
+    <div class="pyramid-tier integration">
+      集成测试(Testcontainers)<br>
+      <span style="font-size:8pt;">真实 MySQL/Redis/Nacos</span>
+    </div>
+    <div class="pyramid-tier unit">
+      单元测试(JUnit 5 + Mockito + AssertJ)<br>
+      <span style="font-size:8pt;">Service 逻辑 80%+ / 工具类 100%</span>
+    </div>
+  </div>
+  <div class="grid2" style="margin-top: 4pt;">
+    <div class="card">
+      <h3>覆盖指标(硬指标)</h3>
+      <ul>
+        <li>Service 核心:行 <b>≥ 80%</b> / 分支 <b>≥ 70%</b></li>
+        <li>Controller:行 ≥ 60%</li>
+        <li>工具类:100%</li>
+        <li>Mapper/Entity:不要求(框架自动)</li>
+        <li>命令: <code>mvn test jacoco:report</code></li>
+        <li>报告: <code>target/site/jacoco/index.html</code></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>测试要点</h3>
+      <ul>
+        <li>✅ 每个验收标准都有对应测试</li>
+        <li>✅ 边界条件(刚好/多一点/少一点)</li>
+        <li>✅ 异常路径(空指针/超时/找不到)</li>
+        <li>✅ Mock 隔离,不依赖 Spring 上下文</li>
+        <li>❌ 不为覆盖率凑数</li>
+        <li>❌ 测试代码不 commit(不跟生产代码 review)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>📁 留痕目录结构(可回溯)</h2>
+  <div class="card" style="background: #164e63; color: #cffafe; border-color: #164e63;">
+    <div style="font-family: 'SF Mono', Consolas, monospace; font-size: 11pt; line-height: 1.4; color: #cffafe;">
+      .history/<br>
+      └── REQ-2026-001-满100减20/<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── 01-requirement.md &nbsp;&nbsp;<span style="color: #94a3b8;"># 需求原始记录</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── 02-design.md &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #94a3b8;"># 技术方案</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── 03-tasks.md &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #94a3b8;"># 任务分解</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── 04-worktree-info.md &nbsp;&nbsp;<span style="color: #94a3b8;"># Worktree 记录</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── 05-changes.md &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #94a3b8;"># 代码变更</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── 06-test-report.md &nbsp;&nbsp;&nbsp;<span style="color: #94a3b8;"># 测试报告 + 覆盖率</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── 07-review.md &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #94a3b8;"># Code Review</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── 08-summary.md &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #94a3b8;"># 收尾总结</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── decisions.md &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #94a3b8;"># 关键决策</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;└── screenshots/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #94a3b8;"># 截图</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>🎯 3 类典型场景调整</h2>
+  <div class="grid3">
+    <div class="card">
+      <h3>🅰 新增需求</h3>
+      <ul>
+        <li>全流程 8 阶段</li>
+        <li>8 份文档齐全</li>
+        <li>适合:新功能 / 业务迭代</li>
+        <li>耗时:2-5 天</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🅱 复杂重构</h3>
+      <ul>
+        <li>阶段 1 重头戏(兼容性/灰度/回滚)</li>
+        <li>阶段 5 全量回归测试</li>
+        <li><b>回滚方案是核心</b></li>
+        <li>适合:架构调整 / 拆分</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🅲 线上 Bug</h3>
+      <ul>
+        <li>阶段 5 复现测试转回归</li>
+        <li>阶段 7 必填复盘</li>
+        <li><b>"bug 墓碑"测试</b></li>
+        <li>适合:生产事故修复</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top: 6pt; padding: 5pt 8pt; background: #ecfeff; border-left: 4px solid #0e7490; font-size: 9pt;">
+  <b>📚 完整教程</b>: <code>spring-cloud-workflow.md</code> ·
+  <b>📋 8 模板</b>: <code>templates/01-08.md</code> ·
+  <b>💡 3 实例</b>: <code>examples/场景A-C.md</code> ·
+  <b>🎨 配色</b>: 深青 #0e7490 ·
+  <b>📐 尺寸</b>: A3 横向(贴墙用)
+</div>
+
+</body>
+</html>

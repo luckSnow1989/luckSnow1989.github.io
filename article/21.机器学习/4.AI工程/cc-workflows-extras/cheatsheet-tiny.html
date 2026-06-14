@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>CC 开源工作流 · A5 口袋卡</title>
+<style>
+  @page { size: A5 portrait; margin: 5mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: #1a202c;
+    background: white;
+    padding: 5mm;
+    font-size: 8.5pt;
+    line-height: 1.3;
+  }
+  .header { border-bottom: 3px solid #2d6a4f; padding-bottom: 3pt; margin-bottom: 4pt; }
+  h1 { font-size: 14pt; color: #1b4332; }
+  .badge { display: inline-block; background: #2d6a4f; color: white;
+           padding: 1pt 5pt; border-radius: 2pt; font-size: 7pt; font-weight: 600; float: right; }
+  h2 { font-size: 9pt; margin: 3pt 0 1pt; padding-left: 4pt;
+       border-left: 3px solid #2d6a4f; color: #1b4332; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3pt; }
+  .card { border: 1px solid #95d5b2; border-radius: 2pt;
+          padding: 2pt 4pt; background: #f0f7f4; }
+  .card h3 { font-size: 8.5pt; color: #1b4332; }
+  .card ul { margin-left: 12pt; font-size: 7.5pt; }
+  .card li { margin-bottom: 0; }
+  code { font-family: "SF Mono", Consolas, monospace; background: #e6f0eb;
+         padding: 0.5pt 2pt; border-radius: 1pt; font-size: 6.8pt; color: #1b4332; }
+  table { width: 100%; border-collapse: collapse; font-size: 7pt; margin: 1pt 0; }
+  th, td { text-align: left; padding: 1.5pt 3pt; border-bottom: 1px solid #c8e6c9; }
+  th { background: #d8eae0; color: #1b4332; font-weight: 600; }
+  .alert { background: #1b4332; color: #d8f3dc; padding: 3pt 5pt;
+           border-radius: 2pt; font-size: 7.5pt; margin: 2pt 0; }
+  .alert b { color: #95d5b2; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="badge">A5</span>
+  <h1>CC 开源工作流扩展</h1>
+  <div style="font-size: 7.5pt; color: #52796f; margin-top: 1pt;">5 框架之外的 5 个项目</div>
+</div>
+
+<div class="alert">
+  <b>判断</b>:生态分<两类>——①「立规矩」(Superpowers/gstack/Waza) ②「团队化」(Ruflo/CE/swarm)
+</div>
+
+<h2>5 项目速览</h2>
+<table>
+  <thead><tr><th>项目</th><th>★</th><th>一句话</th></tr></thead>
+  <tbody>
+    <tr><td><b>Waza</b></td><td>3k</td><td>8 个克制 Skill</td></tr>
+    <tr><td><b>Taskmaster</b></td><td>20.9k</td><td>PRD → 任务清单</td></tr>
+    <tr><td><b>Ruflo</b></td><td>48k</td><td>多智能体编排</td></tr>
+    <tr><td><b>CE</b></td><td>—</td><td>Plan-Work-Review</td></tr>
+    <tr><td><b>claude-squad</b></td><td>—</td><td>worktree + 并行</td></tr>
+  </tbody>
+</table>
+
+<h2>Waza 8 个 Skill</h2>
+<div class="grid2">
+  <div class="card"><h3>/think</h3>写前·方案设计</div>
+  <div class="card"><h3>/design</h3>前端·审美方向</div>
+  <div class="card"><h3>/check</h3>合并前·审查</div>
+  <div class="card"><h3>/hunt</h3>出 bug·系统化</div>
+  <div class="card"><h3>/write</h3>写文档·PR</div>
+  <div class="card"><h3>/act</h3>长任务·主动</div>
+</div>
+<code style="display:block; margin-top:2pt; text-align:center;">npx skills add tw93/waza</code>
+
+<h2>Taskmaster 工作流</h2>
+<div class="card">
+  <ul>
+    <li>写 <code>prd.txt</code></li>
+    <li><b>Parse my PRD</b> → 自动拆任务</li>
+    <li><b>What's the next task</b> → AI 推进</li>
+  </ul>
+</div>
+
+<h2>Ruflo 5 拓扑</h2>
+<table>
+  <tr><th>拓扑</th><th>适合</th></tr>
+  <tr><td>Hierarchical</td><td>大项目,中心化</td></tr>
+  <tr><td>Mesh</td><td>探索,频繁通信</td></tr>
+  <tr><td>Ring</td><td>流水线</td></tr>
+  <tr><td>Star</td><td>轻量协调</td></tr>
+  <tr><td>Adaptive</td><td>系统自动选</td></tr>
+</table>
+<div class="alert" style="background:#fff3cd; color:#856404; border-left:3px solid #ffc107;">
+  <b>⚠️</b> 100+ agents 描述激进,先非关键项目试
+</div>
+
+<h2>Compounding 三步</h2>
+<table>
+  <tr><td><b>Plan</b></td><td><code>/ce:plan</code> → 结构化 Issue</td></tr>
+  <tr><td><b>Work</b></td><td><code>/ce:work</code> → worktree 实施</td></tr>
+  <tr><td><b>Review</b></td><td><code>/ce:review</code> → 12+ 评审 agent</td></tr>
+</table>
+
+<h2>claude-squad 4 模式</h2>
+<div class="grid2">
+  <div class="card"><h3>特征探索</h3>3-4 Claude 多种方法</div>
+  <div class="card"><h3>竞争实施</h3>同 prompt 多 Claude</div>
+  <div class="card"><h3>专业代理</h3>不同 Claude 不同方面</div>
+  <div class="card"><h3>官方模式</h3><code>gw.sh</code> 一键 worktree</div>
+</div>
+
+<h2>决策树</h2>
+<div class="alert" style="background:#1b4332; color:#d8f3dc;">
+  <pre style="font-family: 'SF Mono', Consolas, monospace; font-size: 7pt; color:#d8f3dc;">
+痛点?
+├ 跳过关键步  ─▶ Superpowers(已做)
+├ 想得太多    ─▶ <b>Waza</b>
+├ 不知下一步  ─▶ <b>Taskmaster</b>
+├ 干不动大项目─▶ <b>Ruflo</b>
+├ 想并行提速  ─▶ <b>claude-squad</b>
+└ 质量复利    ─▶ <b>CE</b>
+  </pre>
+</div>
+
+<h2>3 组合拳</h2>
+<div class="card" style="margin-bottom:1pt;"><b>轻量</b>:Waza + Taskmaster</div>
+<div class="card" style="margin-bottom:1pt;"><b>质量</b>:CE + squad</div>
+<div class="card"><b>企业</b>:Ruflo + GSD</div>
+
+<div style="margin-top: 3pt; font-size: 6.5pt; color: #52796f; text-align: center;">
+  墨绿 #2d6a4f · 完整教程: <code>cc-workflows-extras.md</code>
+</div>
+
+</body>
+</html>

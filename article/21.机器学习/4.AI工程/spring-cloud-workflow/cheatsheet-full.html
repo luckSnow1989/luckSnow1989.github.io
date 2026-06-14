@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Spring Cloud · CC 工作流速查卡 A4</title>
+<style>
+  @page { size: A4 portrait; margin: 5mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: #1a202c;
+    background: white;
+    padding: 5mm;
+    font-size: 7.8pt;
+    line-height: 1.25;
+  }
+  .header { display: flex; justify-content: space-between; align-items: baseline;
+            border-bottom: 3px solid #0e7490; padding-bottom: 3pt; margin-bottom: 4pt; }
+  h1 { font-size: 16pt; color: #164e63; }
+  .badge { background: #0e7490; color: white; padding: 2pt 8pt; border-radius: 3pt;
+           font-size: 7.5pt; font-weight: 600; }
+  .subtitle { font-size: 8pt; color: #155e75; margin-top: 1pt; }
+  h2 { font-size: 9.5pt; margin: 3pt 0 1.5pt; padding-left: 5pt;
+       border-left: 3px solid #0e7490; color: #164e63; }
+  h3 { font-size: 8.5pt; margin: 2pt 0 1pt; color: #0e7490; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3pt; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2pt; }
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 2pt; }
+  .card { border: 1px solid #a5f3fc; border-radius: 3pt;
+          padding: 2.5pt 5pt; background: #ecfeff; }
+  .card h3 { font-size: 8.5pt; margin-bottom: 0.3pt; }
+  .card .meta { font-size: 6.8pt; color: #0e7490; margin-bottom: 0.5pt; }
+  .card ul { margin-left: 12pt; font-size: 7.2pt; }
+  .card li { margin-bottom: 0.2pt; }
+  table { width: 100%; border-collapse: collapse; font-size: 6.8pt; margin: 1.5pt 0; }
+  th, td { text-align: left; padding: 1.5pt 3pt; border-bottom: 1px solid #a5f3fc; }
+  th { background: #cffafe; color: #164e63; font-weight: 600; }
+  code { font-family: "SF Mono", Consolas, monospace; background: #cffafe;
+         padding: 0.5pt 3pt; border-radius: 1pt; font-size: 6.5pt; color: #164e63; }
+  .alert { background: #164e63; color: #cffafe; padding: 3pt 5pt;
+           border-radius: 3pt; font-size: 7.3pt; margin: 2pt 0; }
+  .alert b { color: white; }
+  .phase { background: #0e7490; color: white; padding: 2pt 4pt;
+           border-radius: 2pt; font-size: 7pt; font-weight: 600; display: inline-block; }
+  pre { font-family: "SF Mono", Consolas, monospace; font-size: 6.5pt; line-height: 1.3; color: #cffafe; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Spring Cloud · Claude Code 工作流</h1>
+    <div class="subtitle">8 阶段流程 + 单元测试强制 + 过程全留痕</div>
+  </div>
+  <div class="badge">A4 速查卡</div>
+</div>
+
+<div class="alert">
+  <b>🎯 核心理念</b>:Spring Cloud 微服务 + CC 的最佳实践,不是「让 AI 多写代码」,而是「让 AI 按工程纪律写代码,且每一步都留痕」。<b>8 阶段 + 8 份文档 = 团队数字资产</b>。
+</div>
+
+<h2>8 阶段主流程</h2>
+<table>
+  <thead>
+    <tr><th>#</th><th>阶段</th><th>CC 框架</th><th>产出</th><th>耗时</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><b>0</b></td><td>需求接入</td><td>Superpowers brainstorming</td><td><code>01-requirement.md</code></td><td>15-30m</td></tr>
+    <tr><td><b>1</b></td><td>架构设计</td><td>Superpowers writing-plans</td><td><code>02-design.md</code></td><td>30-60m</td></tr>
+    <tr><td><b>2</b></td><td>任务分解</td><td>Taskmaster / planning-with-files</td><td><code>03-tasks.md</code></td><td>15-30m</td></tr>
+    <tr><td><b>3</b></td><td>Git Worktree</td><td>Superpowers use-git-worktree</td><td><code>04-worktree-info.md</code></td><td>5m</td></tr>
+    <tr><td><b>4</b></td><td>编码实现</td><td>Claude Code + TDD</td><td><code>05-changes.md</code></td><td>2-5d</td></tr>
+    <tr><td><b>5</b></td><td>单元测试</td><td>Superpowers TDD + JUnit 5 + JaCoCo</td><td><code>06-test-report.md</code></td><td>1d</td></tr>
+    <tr><td><b>6</b></td><td>Code Review</td><td>Superpowers code-review</td><td><code>07-review.md</code></td><td>30-60m</td></tr>
+    <tr><td><b>7</b></td><td>收尾归档</td><td>finishing-a-development-branch</td><td><code>08-summary.md</code></td><td>15-30m</td></tr>
+  </tbody>
+</table>
+
+<h2>CC 框架装配清单</h2>
+<div class="grid2">
+  <div class="card">
+    <h3>主框架:Superpowers</h3>
+    <div class="meta">流程总指挥,自动触发</div>
+    <ul>
+      <li><code>/superpowers:brainstorm</code></li>
+      <li><code>/superpowers:write-plan</code></li>
+      <li><code>/superpowers:test-driven-development</code></li>
+      <li><code>/superpowers:requesting-code-review</code></li>
+      <li><code>/superpowers:use-git-worktree</code></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>辅助:planning-with-files</h3>
+    <div class="meta">项目记忆</div>
+    <ul>
+      <li><code>PROJECT_PLAN.md</code> 总表</li>
+      <li>阶段检查清单</li>
+      <li>所有需求的进度</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>辅助:Taskmaster(可选)</h3>
+    <div class="meta">复杂任务分解</div>
+    <ul>
+      <li>PRD → 任务清单</li>
+      <li>依赖关系管理</li>
+      <li>任务优先级</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>必备:CLAUDE.md</h3>
+    <div class="meta">项目根目录</div>
+    <ul>
+      <li>技术栈声明</li>
+      <li>编码规范</li>
+      <li>测试规范</li>
+      <li>Git 规范</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Spring Cloud 单测黄金组合</h2>
+<table>
+  <tr><th>类型</th><th>工具</th><th>用途</th><th>覆盖指标</th></tr>
+  <tr><td>单元测试</td><td>JUnit 5 + Mockito + AssertJ</td><td>Service 逻辑</td><td>行 ≥ 80% / 分支 ≥ 70%</td></tr>
+  <tr><td>集成测试</td><td>Testcontainers</td><td>真实 MySQL/Redis/Nacos</td><td>关键场景 100%</td></tr>
+  <tr><td>覆盖率</td><td>JaCoCo</td><td>报告 + 强制门禁</td><td>行 ≥ 80%</td></tr>
+  <tr><td>Mock 框架</td><td>Mockito 5.x</td><td>隔离外部依赖</td><td>—</td></tr>
+  <tr><td>断言</td><td>AssertJ</td><td>流式断言,易读</td><td>—</td></tr>
+  <tr><td>性能</td><td>JMH</td><td>策略/算法压测</td><td>P99 &lt; 设计指标</td></tr>
+</table>
+
+<h2>5 分钟上手命令</h2>
+<div class="card" style="background: #164e63; border-color: #164e63; color: #cffafe;">
+  <pre style="color: #cffafe;"># 1. 装 CC
+npm install -g @anthropic-ai/claude-code
+
+# 2. 装 Superpowers
+/plugin marketplace add obra/superpowers-marketplace
+/plugin install superpowers@superpowers-marketplace
+
+# 3. 装 planning-with-files
+/plugin marketplace add OthmanAdi/planning-with-files
+/plugin install planning-with-files@planning-with-files
+
+# 4. 验证
+/help  # 应该看到 /superpowers:brainstorm 等
+
+# 5. 跑一个需求
+&gt; /superpowers:brainstorm 我想加一个满 100 减 20 的促销
+# → CC 问问题 → 生成 01-requirement.md
+# → 写 CLAUDE.md
+# → 8 阶段走起
+</pre>
+</div>
+
+<h2>CLAUDE.md 核心模板</h2>
+<div class="card">
+  <pre style="color: #164e63; background: #ecfeff; padding: 4pt;"># 技术栈
+Spring Boot 3.2.x + Spring Cloud 2023.x
+Spring Cloud Alibaba: Nacos / Sentinel / Seata
+MyBatis-Plus / MySQL 8.0 / Redis 7.0
+Java 17 / Maven 3.9
+
+# 测试
+- 单元:JUnit 5 + Mockito + AssertJ
+- 集成:Testcontainers
+- 覆盖率:行 ≥ 80% 分支 ≥ 70%
+- 命令:mvn test jacoco:report
+
+# Git
+- 分支:feature/需求编号-描述
+- 提交:feat/fix/test/refactor/docs
+
+# 工作流(8 阶段)
+详见 spring-cloud-workflow.md
+</pre>
+</div>
+
+<h2>3 类场景的阶段调整</h2>
+<table>
+  <thead><tr><th>场景</th><th>调整重点</th><th>关键产物</th></tr></thead>
+  <tbody>
+    <tr><td><b>A. 新增需求</b></td><td>全流程 8 阶段</td><td>8 份文档齐全</td></tr>
+    <tr><td><b>B. 复杂重构</b></td><td>阶段 1 重头戏(兼容性/灰度/回滚);阶段 5 全量回归</td><td>回滚方案是核心</td></tr>
+    <tr><td><b>C. 线上 Bug</b></td><td>阶段 5 复现测试转回归;阶段 7 必填复盘</td><td>"bug 墓碑"测试</td></tr>
+  </tbody>
+</table>
+
+<h2>关键命令速查</h2>
+<div class="grid2">
+  <div class="card">
+    <h3>Superpowers 命令</h3>
+    <ul>
+      <li><code>/superpowers:brainstorm</code> 需求澄清</li>
+      <li><code>/superpowers:write-plan</code> 写实施计划</li>
+      <li><code>/superpowers:test-driven-development</code> TDD</li>
+      <li><code>/superpowers:requesting-code-review</code> 审查</li>
+      <li><code>/superpowers:use-git-worktree</code> 隔离</li>
+      <li><code>/superpowers:systematic-debugging</code> 调试</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Spring Cloud 测试命令</h3>
+    <ul>
+      <li><code>mvn test</code> 跑单测</li>
+      <li><code>mvn test jacoco:report</code> 覆盖率</li>
+      <li><code>mvn -Dtest=ClassName test</code> 跑单个</li>
+      <li><code>mvn -pl order-service test</code> 跑指定模块</li>
+      <li>报告: <code>target/site/jacoco/index.html</code></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Git Worktree</h3>
+    <ul>
+      <li><code>git worktree add ../分支名 -b feature/xxx</code></li>
+      <li><code>git worktree list</code></li>
+      <li><code>git worktree remove ../分支名</code></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Claude Code 命令</h3>
+    <ul>
+      <li><code>/clear</code> 清空上下文</li>
+      <li><code>/compact</code> 压缩上下文</li>
+      <li><code>/init</code> 生成 CLAUDE.md</li>
+      <li><code>/help</code> 帮助</li>
+    </ul>
+  </div>
+</div>
+
+<h2>覆盖率硬指标(分级)</h2>
+<table>
+  <thead><tr><th>层</th><th>行覆盖</th><th>分支覆盖</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>Service 核心</td><td>≥ 80%</td><td>≥ 70%</td><td>硬指标,不达标不合并</td></tr>
+    <tr><td>Controller</td><td>≥ 60%</td><td>—</td><td>可协商</td></tr>
+    <tr><td>工具类</td><td>100%</td><td>100%</td><td>纯函数,好测</td></tr>
+    <tr><td>Mapper/Entity</td><td>不要求</td><td>—</td><td>框架自动生成</td></tr>
+  </tbody>
+</table>
+
+<h2>常见坑(写进 decisions.md)</h2>
+<div class="grid2">
+  <div class="card">
+    <h3>坑 1:BigDecimal 比较</h3>
+    <p>用 <code>==</code> 比较有 scale 坑</p>
+    <p>✅ 用 <code>compareTo</code></p>
+  </div>
+  <div class="card">
+    <h3>坑 2:Redis 锁 TTL</h3>
+    <p>锁 5s,业务 8s</p>
+    <p>✅ 用 Redisson 看门狗</p>
+  </div>
+  <div class="card">
+    <h3>坑 3:Testcontainers 慢</h3>
+    <p>首次 30s(拉镜像)</p>
+    <p>✅ singleton container</p>
+  </div>
+  <div class="card">
+    <h3>坑 4:复现测试不删</h3>
+    <p>修完 bug 顺手删测试</p>
+    <p>✅ 复现测试是 bug 墓碑</p>
+  </div>
+</div>
+
+<h2>留痕目录结构</h2>
+<div class="card" style="background: #164e63; color: #cffafe; border-color: #164e63;">
+  <pre style="color: #cffafe;">.history/
+└── REQ-2026-001-满100减20/
+    ├── 01-requirement.md       # 需求原始记录
+    ├── 02-design.md            # 技术方案
+    ├── 03-tasks.md             # 任务分解
+    ├── 04-worktree-info.md     # Worktree 记录
+    ├── 05-changes.md           # 代码变更
+    ├── 06-test-report.md       # 测试报告 + 覆盖率
+    ├── 07-review.md            # Code Review
+    ├── 08-summary.md           # 收尾总结
+    ├── decisions.md            # 关键决策
+    └── screenshots/            # 截图</pre>
+</div>
+
+<div style="margin-top: 4pt; padding: 4pt 6pt; background: #ecfeff; border-left: 3px solid #0e7490; font-size: 7.3pt;">
+  <b>📚 完整教程</b>:<code>/workspace/spring-cloud-workflow/spring-cloud-workflow.md</code> ·
+  <b>📋 8 模板</b>:<code>templates/01-08.md</code> ·
+  <b>💡 3 实例</b>:<code>examples/场景A-C.md</code> ·
+  <b>🎨 配色</b>:深青 #0e7490(与已做 7 套区分)
+</div>
+
+</body>
+</html>

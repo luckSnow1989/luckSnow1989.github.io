@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>CC 开源工作流扩展 · 速查卡 A4</title>
+<style>
+  @page { size: A4 portrait; margin: 6mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: #1a202c;
+    background: white;
+    padding: 4mm;
+    font-size: 7.5pt;
+    line-height: 1.22;
+  }
+  .header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-bottom: 3px solid #2d6a4f;
+    padding-bottom: 3pt; margin-bottom: 3pt;
+  }
+  h1 { font-size: 15pt; color: #1b4332; }
+  .badge { background: #2d6a4f; color: white; padding: 2pt 8pt; border-radius: 3pt; font-size: 7.5pt; font-weight: 600; }
+  .subtitle { font-size: 8.5pt; color: #52796f; margin-top: 1pt; }
+  h2 {
+    font-size: 9pt; margin: 2pt 0 1pt; padding-left: 5pt;
+    border-left: 3px solid #2d6a4f; color: #1b4332;
+  }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3pt; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2pt; }
+  .card {
+    border: 1px solid #95d5b2; border-radius: 3pt;
+    padding: 2pt 5pt; background: #f0f7f4;
+  }
+  .card h3 { font-size: 8.5pt; color: #1b4332; margin-bottom: 0.5pt; }
+  .card .meta { font-size: 7pt; color: #52796f; margin-bottom: 1pt; }
+  .card ul { margin-left: 13pt; font-size: 7.3pt; }
+  .card li { margin-bottom: 0.3pt; }
+  table { width: 100%; border-collapse: collapse; font-size: 7pt; margin: 1.5pt 0; }
+  th, td { text-align: left; padding: 1.5pt 3pt; border-bottom: 1px solid #c8e6c9; }
+  th { background: #d8eae0; color: #1b4332; font-weight: 600; }
+  td.code { font-family: "SF Mono", Consolas, monospace; font-size: 7pt; color: #2d6a4f; }
+  .decision {
+    background: #1b4332; color: #d8f3dc; padding: 3pt 5pt;
+    border-radius: 3pt; font-size: 7.5pt; margin: 2pt 0;
+  }
+  .decision b { color: #95d5b2; }
+  .tag { display: inline-block; background: #95d5b2; color: #1b4332;
+         padding: 0.5pt 4pt; border-radius: 2pt; font-size: 6.8pt; font-weight: 600; margin-right: 2pt; }
+  .row { display: flex; gap: 4pt; margin: 2pt 0; }
+  .col { flex: 1; }
+  code { font-family: "SF Mono", Consolas, monospace; background: #e6f0eb;
+         padding: 0.5pt 3pt; border-radius: 1pt; font-size: 7.2pt; color: #1b4332; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Claude Code 开源工作流扩展</h1>
+    <div class="subtitle">5 框架之外的第二梯队 · 2026 生态全景</div>
+  </div>
+  <div class="badge">A4 速查卡</div>
+</div>
+
+<div class="decision">
+  <b>🎯 核心判断</b>:Claude Code 生态已分化为<两类>——
+  <b>①「给 AI 立规矩」</b>(5 框架 + Waza):保证质量
+  <b>②「让 AI 团队化」</b>(Ruflo / CE / swarm):提高效率 · 选哪个不重要,<b>组合用</b>才出奇迹
+</div>
+
+<h2>5 个项目一览</h2>
+<table>
+  <thead>
+    <tr><th>项目</th><th>Star</th><th>一句话</th><th>解决什么</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><b>Waza</b></td><td>3k+</td><td>8 个克制 Skill</td><td>嫌 Superpowers 太重、规则太多压垮模型</td></tr>
+    <tr><td><b>Taskmaster</b></td><td>20.9k</td><td>PRD → 任务清单</td><td>多任务有依赖、不知道下一步做啥</td></tr>
+    <tr><td><b>Ruflo</b></td><td>48k+</td><td>多智能体编排</td><td>一个 Claude 干不动大型项目、需要 swarm 协作</td></tr>
+    <tr><td><b>Compounding Eng</b></td><td>—</td><td>Plan-Work-Review</td><td>想每次开发都积累质量(复利)</td></tr>
+    <tr><td><b>claude-squad</b></td><td>—</td><td>worktree + 并行</td><td>一个 Claude 太慢,想要并行提速</td></tr>
+  </tbody>
+</table>
+
+<h2>Waza · 8 个克制 Skill</h2>
+<div class="grid3">
+  <div class="card">
+    <h3>/think</h3>
+    <div class="meta">写代码前</div>
+    <ul><li>方案设计</li><li>压力测试架构</li></ul>
+  </div>
+  <div class="card">
+    <h3>/design</h3>
+    <div class="meta">做前端</div>
+    <ul><li>审美方向</li><li>不千篇一律</li></ul>
+  </div>
+  <div class="card">
+    <h3>/check</h3>
+    <div class="meta">合并前</div>
+    <ul><li>审查 diff</li><li>自动修安全问题</li></ul>
+  </div>
+  <div class="card">
+    <h3>/hunt</h3>
+    <div class="meta">出 bug</div>
+    <ul><li>系统化调试</li><li>根因后才动手</li></ul>
+  </div>
+  <div class="card">
+    <h3>/write</h3>
+    <div class="meta">写文档</div>
+    <ul><li>PR 描述</li><li>commit message</li></ul>
+  </div>
+  <div class="card">
+    <h3>/act</h3>
+    <div class="meta">长任务</div>
+    <ul><li>主动行动</li><li>不让模型干等</li></ul>
+  </div>
+  <div class="card">
+    <h3>/review</h3>
+    <div class="meta">代码评审</div>
+    <ul><li>Tech Lead 视角</li></ul>
+  </div>
+  <div class="card">
+    <h3>/ship</h3>
+    <div class="meta">发布前</div>
+    <ul><li>完整检查清单</li></ul>
+  </div>
+  <div class="card">
+    <h3>📦 安装</h3>
+    <div class="meta">一键</div>
+    <code>npx skills add tw93/waza</code>
+  </div>
+</div>
+
+<h2>Taskmaster · PRD → 任务清单</h2>
+<div class="grid">
+  <div class="card">
+    <h3>核心工作流</h3>
+    <ul>
+      <li>写 <code>prd.txt</code></li>
+      <li><b>Parse my PRD</b> → 自动拆任务</li>
+      <li>输出带<依赖关系>的任务清单</li>
+      <li><b>What's the next task</b> → AI 推进</li>
+      <li><b>Implement task N</b> → 标记完成</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>跨编辑器</h3>
+    <ul>
+      <li>✅ Cursor(原生 MCP)</li>
+      <li>✅ Windsurf</li>
+      <li>✅ VS Code</li>
+      <li>✅ Claude Code(免 API Key)</li>
+      <li>✅ Lovable / Roo / Kiro</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Ruflo · 多智能体编排</h2>
+<div class="grid">
+  <div class="card">
+    <h3>硬核数据</h3>
+    <ul>
+      <li>100+ Agent 角色</li>
+      <li>210+ MCP 工具</li>
+      <li>32 原生 + 21 npm 插件</li>
+      <li>AgentDB(HNSW)记忆,快 150x-12,500x</li>
+      <li>Token 优化 30-50%</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>5 种 Swarm 拓扑</h3>
+    <ul>
+      <li><b>Hierarchical</b>:Queen + Workers,大项目</li>
+      <li><b>Mesh</b>:互通无中心,探索任务</li>
+      <li><b>Ring</b>:流水线,代码→测试→review</li>
+      <li><b>Star</b>:Hub 路由,轻协调</li>
+      <li><b>Adaptive</b>:系统自动选</li>
+    </ul>
+  </div>
+</div>
+<div class="decision">
+  <b>⚠️ 冷静看</b>:Ruflo 描述能力很激进(100+ agents、enterprise security),Reddit 有质疑宣传与实际差距;每天发版,建议 pin 版本;<b>不要直接上生产</b>,先非关键项目试
+</div>
+
+<h2>Compounding Engineering · Plan-Work-Review</h2>
+<table>
+  <thead><tr><th>阶段</th><th>命令</th><th>做什么</th></tr></thead>
+  <tbody>
+    <tr><td><b>Plan</b></td><td><code>/ce:plan</code></td><td>模糊想法 → 结构化 GitHub Issue(研究代码库 + 验收标准)</td></tr>
+    <tr><td><b>Work</b></td><td><code>/ce:work</code></td><td>独立 git worktree + 持续验证 + 测试覆盖</td></tr>
+    <tr><td><b>Review</b></td><td><code>/ce:review</code></td><td>并行 12+ 评审 agent(安全 / 性能 / 架构 / 质量)</td></tr>
+  </tbody>
+</table>
+<div class="card" style="background: #fff3cd; border-color: #ffc107; margin: 2pt 0;">
+  <b>💡 核心理念</b>:质量应该是<复利>的,不是线性的。每完成一个功能,下次起点应该更高,不是拉平。
+</div>
+
+<h2>claude-squad · Git Worktree + 并行 Claude</h2>
+<div class="grid">
+  <div class="card">
+    <h3>4 种使用模式</h3>
+    <ul>
+      <li><b>特征探索</b>:3-4 Claude 不同方法实现同功能</li>
+      <li><b>竞争实施</b>:同 prompt 多 Claude,赌一次就对</li>
+      <li><b>专业代理</b>:不同 Claude 做不同方面</li>
+      <li><b>官方推荐</b>:<code>gw.sh</code> / <code>gwr.sh</code> 一键 worktree</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>性能数据</h3>
+    <table>
+      <tr><td>单 Agent</td><td>60 分钟 / $0.10 / 70% 一次成功</td></tr>
+      <tr><td>4 Agent 并行</td><td>20 分钟 / $0.40 / 95% 一次成功</td></tr>
+      <tr><td>ROI</td><td><b>40 分钟换 $0.30</b></td></tr>
+    </table>
+  </div>
+</div>
+
+<h2>选型决策树</h2>
+<div class="card" style="background: #1b4332; color: #d8f3dc; border-color: #1b4332;">
+<pre style="font-family: 'SF Mono', Consolas, monospace; font-size: 7.5pt; line-height: 1.4; color: #d8f3dc;">
+我的痛点是什么?
+├─ "AI 跳过关键步骤"    ──▶ Superpowers / gstack(已做)
+├─ "AI 想得太多"        ──▶ Waza
+├─ "AI 不知下一步"      ──▶ Taskmaster
+├─ "AI 一个人干不动"    ──▶ Ruflo / Compounding
+├─ "想并行提速"         ──▶ claude-squad
+└─ "想质量复利"         ──▶ Compounding Engineering
+</pre>
+</div>
+
+<h2>3 个实战组合拳</h2>
+<div class="grid">
+  <div class="card"><b>轻量</b>:Waza + Taskmaster</div>
+  <div class="card"><b>质量</b>:CE + squad</div>
+  <div class="card"><b>企业</b>:Ruflo + GSD</div>
+</div>
+
+<div style="margin-top: 4pt; padding: 4pt 6pt; background: #f0f7f4; border-left: 3px solid #2d6a4f; font-size: 7.5pt;">
+  <b>📚 完整教程</b>:<code>/workspace/cc-workflows-extras/cc-workflows-extras.md</code> ·
+  <b>🔗 已做 5 框架</b>:<code>/workspace/{gstack,superpowers,ecc,pwf,gsd}-tutorial/</code> ·
+  <b>🎨 配色</b>:墨绿 #2d6a4f(与已做 6 套配色区分)
+</div>
+
+</body>
+</html>

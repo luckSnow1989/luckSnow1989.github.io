@@ -1,0 +1,713 @@
+# Claude Code AI 工作流全景图:能装的所有"外挂"完全指南
+
+> 之前你让我搞了 5 个 AI 编程框架(Superpowers / gstack / ECC / pwf / GSD),但其实**那些只是冰山一角**。Claude Code 生态里能扩展 AI 工作流的方式远不止"装个 skill 框架"。这份教程把**所有方向**都讲清楚。
+
+---
+
+## 目录
+
+- [第 0 章:重新认识 Claude Code——它是个"Agent 操作系统"](#第-0-章重新认识-claude-code它是个-agent-操作系统)
+- [第 1 章:8 大扩展方向总览](#第-1-章8-大扩展方向总览)
+- [第 2 章:Skills —— 你最熟悉的](#第-2-章skills--你-最熟悉的)
+- [第 3 章:Plugins / Marketplaces —— 包管理](#第-3-章plugins--marketplaces--包管理)
+- [第 4 章:Sub-Agents —— 专业分工](#第-4-章sub-agents--专业分工)
+- [第 5 章:Hooks —— 事件驱动的自动化](#第-5-章hooks--事件驱动的自动化)
+- [第 6 章:MCP Servers —— 外部世界接入](#第-6-章mcp-servers--外部世界接入)
+- [第 7 章:LSP —— 代码智能](#第-7-章lsp--代码智能)
+- [第 8 章:Slash Commands —— 快捷入口](#第-8-章slash-commands--快捷入口)
+- [第 9 章:Output Styles + Workflow Studio —— 可视化工作流](#第-9-章output-styles--workflow-studio--可视化工作流)
+- [第 10 章:CLAUDE.md / Settings —— 配置文件](#第-10-章claudemd--settings--配置文件)
+- [第 11 章:实战组合 + 推荐路径](#第-11-章实战组合--推荐路径)
+- [附录:资源清单](#附录资源清单)
+
+---
+
+## 第 0 章:重新认识 Claude Code——它是个"Agent 操作系统"
+
+很多人(包括几个月前的我)把 Claude Code 当成"一个更聪明的命令行 AI"。这是**严重低估**。
+
+**Claude Code 真正的定位**:一个**运行在本地项目环境中的 AI 执行代理(Agent Runtime)**,可以:
+
+- 常驻项目目录、读写文件
+- 执行 shell 命令
+- 维护长期上下文
+- 调用外部工具
+- 编排多 Agent 协作
+- 通过事件钩子拦截自己的行为
+
+**类比**:
+- 它**不是**聊天机器人(那是网页版 Claude)
+- 它**不是** IDE 插件(那是 Cursor / Copilot)
+- 它**更像是** VS Code + Claude + 终端 + 插件市场 的**合体**
+
+正因为这个"Agent 操作系统"的定位,它才有**这么多扩展点**——和你给操作系统装软件一样多。
+
+---
+
+## 第 1 章:8 大扩展方向总览
+
+```
+                  Claude Code 扩展点全景
+                         │
+       ┌─────────────────┼─────────────────┐
+       │                 │                 │
+    内容层            行为层            能力层
+       │                 │                 │
+  ┌────┴────┐      ┌────┴────┐      ┌────┴────┐
+  │         │      │         │      │         │
+Skills  Commands  Agents  Hooks  MCP     LSP
+(方法论) (快捷)  (分工) (拦截) (外部)  (代码)
+  │                       │              │
+  │                       │              │
+  └──── Plugins/Marketplaces 包装 ──────┘
+              (分发机制)
+
+       ┌────────────────────────┐
+       │  CLAUDE.md + Settings   │
+       │  (基础配置)              │
+       └────────────────────────┘
+
+       ┌────────────────────────┐
+       │  Output Styles + Studio │
+       │  (响应风格 + 可视化)     │
+       └────────────────────────┘
+```
+
+### 一句话定位每个方向
+
+| 方向 | 解决什么 | 比喻 |
+|---|---|---|
+| **Skills** | AI 怎么做事(方法论) | 给 AI 培训 |
+| **Plugins** | 一键安装整套方案 | 手机上的 App |
+| **Marketplaces** | 包的"应用商店" | App Store |
+| **Sub-Agents** | 谁来做(分工) | 团队成员 |
+| **Hooks** | 什么时候自动跑(事件) | 自动化触发器 |
+| **MCP Servers** | 外部世界接入(数据/工具) | API 网关 |
+| **LSP** | 代码智能(跳转/类型) | IDE 的"代码大脑" |
+| **Commands** | 快捷入口 | 快捷指令 |
+| **Output Styles** | 响应风格 | 主题皮肤 |
+| **CLAUDE.md** | 项目级提示词 | README |
+| **Settings** | 行为配置 | 设置面板 |
+| **Workflow Studio** | 可视化编排 | flowchart 工具 |
+
+---
+
+## 第 2 章:Skills —— 你最熟悉的
+
+**核心**:把"做某事的最佳实践"封装成 Markdown 文件,AI 触发时自动加载。
+
+**这正是我们之前做的 5 个框架**:
+- Superpowers(14 skill)
+- gstack(23 角色,可当 skill 看待)
+- ECC(181 skill)
+- pwf(3 文件 + 5 hook 混合)
+- GSD(33 agent + 41 文档)
+
+**Skill 文件结构**:
+```
+skills/
+├── SKILL.md           # 主入口(必填)
+├── references/        # 详细文档
+├── scripts/           # 可执行脚本
+└── examples/          # 示例
+```
+
+**SKILL.md 关键字段**:
+```yaml
+---
+name: my-skill
+description: 触发条件 + 应用场景
+---
+# 角色定义
+# 工作流步骤
+# 决策树
+# 输出格式
+```
+
+**什么时候用 Skill**:
+- ✅ 你想让 AI 永远按某套方法论办事
+- ✅ 团队需要统一的工作流
+- ✅ 跨项目复用的领域知识
+
+**生态情况**:目前社区有 **15,000+ 个 skills** 在 skills.sh 上。
+
+---
+
+## 第 3 章:Plugins / Marketplaces —— 包管理
+
+**核心问题**:Skill / Agent / Hook / MCP 经常要**打包一起用**。一个个手动装太麻烦。
+
+**Plugin = 一个 bundle**,包含:
+- 多个 Skills
+- 多个 Sub-Agents
+- 多个 Commands
+- 多个 Hooks
+- 多个 MCP Servers
+- LSP 配置(可选)
+
+**Plugin 文件结构**:
+```
+my-plugin/
+├── .claude-plugin/
+│   └── plugin.json       # 插件清单
+├── skills/                # 技能
+├── agents/                # 子代理
+├── commands/              # 命令
+├── hooks/                 # 钩子
+└── .mcp.json              # MCP 配置
+```
+
+**Marketplace = 插件的"应用商店"**:
+- 官方:Anthropic 维护的 `claude-plugins-official`
+- 第三方:任何人都可以发布自己的 marketplace
+
+**命令**:
+```bash
+# 浏览
+/plugin
+
+# 添加市场
+/plugin marketplace add <owner>/<repo>
+
+# 安装插件
+/plugin install <plugin-name>@<marketplace>
+
+# 卸载
+/plugin uninstall <plugin-name>@<marketplace>
+```
+
+**生态情况**:
+- `claude-plugins-official`(官方,自动可用)
+- `anthropics/claude-code`(官方 demo 集)
+- 社区:daymade/claude-code-skills、awesomeclaude.ai 等
+- 截至 2026 年中,Anthropic 官方市场有 **100+ 插件**
+
+**推荐插件**(按场景):
+- **代码智能**:clangd-lsp / pyright-lsp / rust-analyzer-lsp(各种语言 LSP)
+- **外部集成**:github / gitlab / atlassian / linear / figma / vercel / supabase
+- **开发工作流**:commit-commands / pr-review-toolkit / plugin-dev
+- **学习**:explanatory-output-style / learning-output-style
+
+---
+
+## 第 4 章:Sub-Agents —— 专业分工
+
+**核心**:把任务**分给专业子代理**,主代理只负责协调。
+
+**典型结构**:
+```
+主代理
+├── Planner(规划)
+├── Implementer(实现)
+├── Tester(测试)
+├── Reviewer(审查)
+└── Researcher(调研)
+```
+
+**优势**:
+- 上下文隔离(子代理独立 context)
+- 职责清晰(每个代理一个工具集)
+- 可并行(多个 Implementer 同时跑)
+
+**示例定义**(`agents/reviewer.md`):
+```yaml
+---
+name: code-reviewer
+description: 多维度代码审查
+allowed-tools: Read, Grep, Glob, Bash
+---
+你是一个资深工程师,审查代码变更...
+```
+
+**什么时候用 Agent**:
+- ✅ 任务可以拆分成独立子任务
+- ✅ 需要不同专业视角
+- ✅ 想跑长任务不漂移
+
+**对比**:
+- **Agent** = "我分派一个专家去做"(主动调用)
+- **Skill** = "AI 触发某个流程"(被动触发)
+- **Hook** = "在某个时机自动跑"(事件触发)
+
+---
+
+## 第 5 章:Hooks —— 事件驱动的自动化
+
+**核心**:**事件触发**自动执行脚本,像"在 git commit 前自动跑 lint"。
+
+**8 类事件**(Claude Code 2.1+):
+- **PreToolUse** — 工具调用前(安全检查 / 权限验证)
+- **PostToolUse** — 工具调用后(自动格式化 / 日志)
+- **UserPromptSubmit** — 用户提交消息时(输入净化)
+- **SessionStart** — 会话启动时(加载历史)
+- **SessionEnd** — 会话结束时(保存状态)
+- **Stop** — AI 准备"交差"时(验证完成)
+- **PreCompact** — 上下文压缩前(抢救信息)
+- **Notification** — 任务完成通知
+
+**配置**:`~/.claude/hooks.json` 或项目级 `.claude/hooks.json`:
+```json
+{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Edit|Write",
+      "hooks": [{
+        "type": "command",
+        "command": "npx prettier --write $FILE_PATH"
+      }]
+    }]
+  }
+}
+```
+
+**实战示例**(安全 + 效率):
+```bash
+# .claude/hooks/post-edit-format.sh
+#!/bin/bash
+# Edit 后自动跑 prettier + 检查 console.log
+FILE="$CLAUDE_TOOL_INPUT_FILE_PATH"
+npx prettier --write "$FILE" 2>/dev/null
+if grep -q "console.log" "$FILE"; then
+    echo "⚠️ 警告:发现 console.log 残留"
+fi
+```
+
+**pwf / ECC / GSD 的核心机制都是 Hook**:
+- pwf:PreToolUse 强制重读 plan
+- ECC:PreCompact + Stop + SessionStart 三钩记忆
+- GSD:PostToolUse 提醒更新 progress
+
+---
+
+## 第 6 章:MCP Servers —— 外部世界接入
+
+**核心**:MCP = **Model Context Protocol**,让 AI 安全地访问**外部数据 / 工具**。
+
+**类比**:HTTP 是 Web 的协议,MCP 是 AI 调外部工具的协议。
+
+**它能接什么**:
+| 类别 | 示例 |
+|---|---|
+| **数据库** | PostgreSQL / MongoDB / ClickHouse / Supabase |
+| **Git 平台** | GitHub / GitLab / Bitbucket |
+| **项目管理** | Jira / Linear / Notion / Asana |
+| **设计** | Figma |
+| **部署** | Vercel / Firebase / Netlify / Railway / Cloudflare |
+| **通信** | Slack / Discord |
+| **监控** | Sentry / DataDog |
+| **浏览器** | Chrome DevTools / Playwright |
+| **AI 工具** | 各种 LLM(Claude / OpenAI / Gemini / 本地 Ollama) |
+
+**配置**:`.mcp.json`
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "..." }
+    }
+  }
+}
+```
+
+**官方市场包含**(部分):
+- `github` / `gitlab` — 版本控制
+- `atlassian` — Jira/Confluence
+- `figma` — 设计
+- `vercel` / `firebase` / `supabase` — 部署
+
+**踩坑警告**(重要!):
+- ⚠️ **MCP 工具描述会吃 context** — 经验值:激活工具 < 80 个,MCP < 10 个
+- ⚠️ **权限最小化** — 千万别给 MCP 写权限访问生产数据库
+- ⚠️ **沙箱运行** — 用 systemd 隔离用户运行 MCP 服务器
+
+**什么时候用 MCP**:
+- ✅ 你想让 AI 直接查 GitHub issues / DB / Jira
+- ✅ AI 需要真实业务数据(不是只读 README)
+- ✅ 想用 AI 操作外部服务(部署 / 发消息)
+
+---
+
+## 第 7 章:LSP —— 代码智能
+
+**核心**:LSP = **Language Server Protocol**,让 Claude Code 拥有 IDE 级别的代码理解能力。
+
+**VS Code 的"跳转到定义 / 找引用"是怎么实现的?** LSP。Claude Code 通过 LSP 插件获得同样能力。
+
+**官方支持的 LSP 插件**:
+| 语言 | 插件名 | 需要的二进制 |
+|---|---|---|
+| C/C++ | `clangd-lsp` | clangd |
+| C# | `csharp-lsp` | csharp-ls |
+| Go | `gopls-lsp` | gopls |
+| Java | `jdtls-lsp` | jdtls |
+| Kotlin | `kotlin-lsp` | kotlin-language-server |
+| Python | `pyright-lsp` | pyright-langserver |
+| Rust | `rust-analyzer-lsp` | rust-analyzer |
+| TypeScript | `typescript-lsp` | typescript-language-server |
+| ... | ... | ... |
+
+**安装**:
+```bash
+# 先装 LSP 二进制(以 Rust 为例)
+curl -L https://github.com/rust-lang/rust-analyzer/releases/latest/download/rust-analyzer-x86_64-unknown-linux-gnu.gz | gunzip > /usr/local/bin/rust-analyzer
+chmod +x /usr/local/bin/rust-analyzer
+
+# 然后在 Claude Code 里装插件
+/plugin install rust-analyzer-lsp@claude-plugins-official
+```
+
+**获得的两大能力**:
+1. **自动诊断**:每次 Edit 后,语言服务器立刻报告类型错误、缺失 import、语法问题
+2. **代码导航**:Claude 可以跳转到定义、找引用、查类型、追踪调用栈
+
+**踩坑**:
+- 内存占用大(rust-analyzer / pyright 在大项目上能吃 1-2GB)
+- 解决方案:大项目 disable:`/plugin disable rust-analyzer-lsp`
+- 单仓库(monorepo)可能有"未解析 import"的误报
+
+**什么时候用 LSP**:
+- ✅ 你做严肃的中大型项目
+- ✅ 你重视代码质量(类型安全 / 不留死代码)
+- ✅ 你想体验"AI 写的代码 IDE 立刻检查"的反馈循环
+
+---
+
+## 第 8 章:Slash Commands —— 快捷入口
+
+**核心**:**用户主动调用的快捷方式**,最直接的扩展点。
+
+**两种命令**:
+
+### 8.1 内置命令(Claude Code 自带)
+```
+/help         # 看所有命令
+/plugin       # 插件管理
+/clear        # 清空 context
+/compact      # 压缩 context
+/cost         # 看 token 消耗
+/rewind       # 回到前一个状态
+/checkpoints  # 文件级撤销点
+/fork         # 分支当前对话
+/model        # 切换模型
+```
+
+### 8.2 自定义命令(用户/插件创建)
+```bash
+# 项目级命令(团队共享)
+mkdir -p .claude/commands
+cat > .claude/commands/deploy.md << 'EOF'
+---
+description: 部署到生产
+---
+运行 deploy 脚本,确认 staging 测试通过
+EOF
+
+# 全局命令(个人用)
+mkdir -p ~/.claude/commands
+cat > ~/.claude/commands/standup.md << 'EOF'
+---
+description: 生成每日站会
+---
+读 git log 和 PR 列表,生成昨天做了什么/今天要做什么/有什么阻塞
+EOF
+```
+
+**对比其他**:
+- **Command** = 用户主动调(主动)
+- **Hook** = 事件触发(被动,自动)
+- **Skill** = AI 决定何时加载(智能)
+
+**什么时候用**:
+- ✅ 你有反复做的事(部署、生成报告、跑测试)
+- ✅ 想把"个人快捷方式"沉淀下来
+- ✅ 团队标准化工作流
+
+---
+
+## 第 9 章:Output Styles + Workflow Studio —— 可视化工作流
+
+### 9.1 Output Styles(响应风格)
+
+**核心**:改 Claude 响应的**外观 / 风格**,像"主题皮肤"。
+
+**官方提供**:
+- **explanatory-output-style**:教育性洞察,讲为什么这么实现
+- **learning-output-style**:互动学习模式,适合学新技能
+
+**自定义**(在 plugin 中):
+```yaml
+---
+name: concise-style
+description: 极简响应,只用代码 + 必要注释
+---
+你的响应应该:
+- 极简、直接
+- 默认只用代码块
+- 解释不超过一句话
+- 不寒暄、不重复
+```
+
+### 9.2 Claude Code Workflow Studio(可视化编排)
+
+**核心**:用**拖拽节点**编排多 Agent 协作流,**导出**为 Claude Code 可直接执行的 `.claude/agents` + `.claude/commands`。
+
+**项目**:`breaking-brake/cc-wf-studio`
+
+**节点类型**:
+- Prompt 节点
+- Sub-Agent 节点
+- Skill 节点
+- MCP 节点
+- 条件分支
+- 用户交互
+
+**适合场景**:
+- 复杂工作流想可视化设计
+- 团队成员都能改(不需要懂 Markdown)
+- 一键导出为 Claude Code 可执行文件
+
+**什么时候用**:
+- ✅ 你的工作流超过 5 步,要画图
+- ✅ 想和不懂代码的产品/运营协作
+- ✅ 团队要"工作流资产"沉淀
+
+---
+
+## 第 10 章:CLAUDE.md / Settings —— 配置文件
+
+**核心**:Claude Code 的"项目说明"和"行为配置"。
+
+### 10.1 CLAUDE.md(项目级提示词)
+
+**位置**:
+- `~/.claude/CLAUDE.md` — 全局
+- `./CLAUDE.md` — 项目级(进 git 共享)
+- `./.claude/CLAUDE.md` — 项目级另一种位置
+
+**写什么**:
+```markdown
+# 项目说明
+这是一个用 Next.js 14 + Supabase 的 SaaS
+
+# 代码规范
+- 使用 TypeScript strict 模式
+- 函数命名:camelCase
+- 组件命名:PascalCase
+- 不使用 any
+
+# 测试要求
+- 每个新功能必须有单元测试
+- 覆盖率不低于 80%
+
+# 工作流
+- 改 API 前先看 docs/API.md
+- 完成后跑 npm run test:ci
+
+# 禁止
+- 不要用 console.log 留在生产代码
+- 不要在 src/components/ 写 utils
+```
+
+**什么时候用**:
+- ✅ 每个新项目都应该有 CLAUDE.md
+- ✅ 团队规范、新人上手说明
+- ✅ 关键业务约束
+
+### 10.2 settings.json(行为配置)
+
+**位置**:`~/.claude/settings.json` 或 `./.claude/settings.json`
+
+**能配什么**:
+```json
+{
+  "model": "sonnet",
+  "permissions": {
+    "allow": ["Bash(git *)", "Bash(npm *)"]
+  },
+  "env": {
+    "MAX_THINKING_TOKENS": "10000",
+    "DISABLE_TELEMETRY": "1"
+  },
+  "theme": "dark",
+  "autoCompact": true,
+  "mcpServers": { ... }
+}
+```
+
+**什么时候用**:
+- ✅ 改默认模型(省钱)
+- ✅ 配置权限白名单
+- ✅ 团队级行为约束
+
+---
+
+## 第 11 章:实战组合 + 推荐路径
+
+### 11.1 不同角色的推荐组合
+
+#### 🟢 新手(刚开始用 Claude Code)
+```
+CLAUDE.md(项目说明)
+  +
+LSP(typescript-lsp)
+  +
+内置命令(/clear / /compact)
+```
+> 先打好基础,不要急于装一堆 skill。
+
+#### 🟡 进阶(想增强 AI 能力)
+```
++ 1 个 Skill 框架(Superpowers 起步,最稳)
++ 1 个 MCP(github,日常用)
++ 1 个 Sub-Agent(reviewer / planner 之类)
++ Hook:PostToolUse 自动 prettier
+```
+
+#### 🔴 重度用户(每天用 Claude Code 4 小时+)
+```
++ 2~3 个 Skill 框架(Superpowers + GSD + pwf 组合)
++ 多个 MCP(github / figma / vercel / db)
++ 多 Sub-Agent 编排
++ Hook 全套(安全 + 效率 + 记忆)
++ Workflow Studio 可视化编排
++ Claude Code 配套 IDE 插件
+```
+
+#### 🏢 团队
+```
++ 团队 Marketplace(私有)
++ 团队定制 Plugin(打包所有规范)
++ 项目级 CLAUDE.md
++ 团队 Settings(权限白名单)
++ Workflow Studio(让非技术成员也能改流程)
+```
+
+### 11.2 学习路径(2 周)
+
+```
+Day 1-2:基础
+  - 写 CLAUDE.md
+  - 装 1 个 LSP(你的主语言)
+  - 学会 /clear / /compact
+
+Day 3-5:第一个 Skill
+  - 装 Superpowers
+  - 跑完 5 步流程
+  - 写自己的 conventions.md
+
+Day 6-8:MCP
+  - 装 github MCP
+  - 试 Linear / Jira / Figma
+  - 学 .mcp.json 配置
+
+Day 9-10:Hooks
+  - 写第一个 PostToolUse hook(自动 prettier)
+  - 写一个 PreToolUse hook(危险命令拦截)
+
+Day 11-12:Sub-Agents
+  - 试 /agents 命令
+  - 写一个 code-reviewer agent
+  - 体验多 Agent 协作
+
+Day 13-14:Plugin
+  - 装 1 个社区 Plugin(pr-review-toolkit)
+  - 试用 /plugin 命令
+  - 想一下你自己的 skill 能不能打包成 Plugin
+```
+
+### 11.3 哪些不该碰
+
+| 别碰 | 原因 |
+|---|---|
+| 一上来就装 10+ skill | context 污染,反而变慢 |
+| 同一类框架装多个(Superpowers + GSD 全装) | 互相干扰 |
+| MCP 工具超过 80 个 | context 爆炸 |
+| 在生产环境用 yolo 模式 | 灾难风险 |
+| 不写 CLAUDE.md 就开干 | 每次都要重复解释背景 |
+
+---
+
+## 附录:资源清单
+
+### 必装官方市场插件(`claude-plugins-official`)
+
+**LSP(选你的语言)**:
+- typescript-lsp / pyright-lsp / rust-analyzer-lsp / gopls-lsp / clangd-lsp / csharp-lsp / jdtls-lsp / kotlin-lsp / lua-lsp / php-lsp / swift-lsp
+
+**MCP**:
+- github / gitlab / atlassian / linear / notion / asana / figma / vercel / firebase / supabase / sentry / slack
+
+**工作流**:
+- commit-commands
+- pr-review-toolkit
+- agent-sdk-dev
+- plugin-dev
+- explanatory-output-style
+- learning-output-style
+
+### 社区 Plugin / Skill 推荐
+
+| 名字 | 用途 | Stars |
+|---|---|---|
+| `garrytan/gstack` | 23 角色虚拟工程团队 | 60k+ |
+| `obra/superpowers` | 14 skill 工程方法论 | 145k+ |
+| `affaan-m/everything-claude-code` | 181+47+34+8+79 全家桶 | 150k+ |
+| `OthmanAdi/planning-with-files` | 3 文件 + 5 hook 持久化记忆 | 7.5k+ |
+| `gsd-build/get-shit-done` | 上下文隔离 + 多 Agent 编排 | 49k+ |
+| `vercel-labs/agent-browser` | 浏览器自动化 | - |
+| `vercel-labs/frontend-design` | 避免 AI 风格前端 | - |
+| `anthropics/skills`(官方 demo) | LSP / format / commit 等 demo | - |
+| `daymade/claude-code-skills` | 30 个生产级技能 | - |
+| `breaking-brake/cc-wf-studio` | 可视化工作流编排 | - |
+
+### 导航站
+
+- `awesomeclaude.ai` — Skills / MCP / Plugins / Prompts 大目录
+- `agentskills.io` — Agent Skills 规范站
+- `agenstskills.com` — SkillKit marketplace(15,000+ skills)
+- `skills.sh` — Vercel Labs 维护的 skills 中心
+
+### Skills 平台
+
+- `npx skills add <repo>` — 一键安装(从 GitHub)
+- `/plugin marketplace add` — Claude Code 内置市场
+- `anthropics/claude-code` — 官方 demo 插件
+
+### 文档
+
+- 官方:claude.com/docs/claude-code
+- 插件开发:claude.com/docs/claude-code/plugins
+- MCP 规范:modelcontextprotocol.io
+- Agent Skills 规范:agentskills.io
+
+---
+
+## 写在最后
+
+Claude Code 生态**已经大到让人晕**——光 Skills 就有 15,000+ 个,Plugin 100+,MCP 数百个。
+
+**别试图全装**。和我做 5 个框架对比时说的:**先从一个开始,跑熟,再加第二个**。
+
+如果你不知道从哪开始:
+
+| 你是谁 | 先装什么 |
+|---|---|
+| 任何新手 | CLAUDE.md + 你的语言 LSP |
+| 想要方法论 | Superpowers |
+| 想要记忆持久化 | pwf |
+| 想要大项目不跑偏 | GSD |
+| 想要真实浏览器测试 | gstack |
+| 想要全场景配置 | ECC |
+| 想要团队标准化 | 自建 Plugin + Marketplace |
+| 想要可视化 | Workflow Studio |
+
+**记住**:工具不会让你变强,工具 + 你的判断 + 持续使用 = 变强。
+
+去用起来。
+
+——
+
+**版本**:基于 Claude Code 2.1+ / 2026 Q2 生态撰写。
+**最后更新**:2026 年 6 月
