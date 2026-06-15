@@ -1,5 +1,7 @@
 /.idea/
+/.omc
 /_site/
 node_modules
 /vendor/
 /.bundle/
+/.trae

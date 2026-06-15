@@ -123,11 +123,11 @@ AI 工作流全景
 | 框架 / 项目 | 完整版(A4) | 极简版(A5) |
 |---|---|---|
 | **5 框架** | | |
-| gstack | [🟦 cheatsheet-full-1.png](gstack-tutorial/cheatsheet-full-1.png) | [🟦 cheatsheet-tiny-1.png](gstack-tutorial/cheatsheet-tiny-1.png) |
+| gstack | [🟦 cheatsheet-full-1.png](gstack-tutorial/gstack-full-1.png) | [🟦 cheatsheet-tiny-1.png](gstack-tutorial/gstack-tiny-1.png) |
 | Superpowers | [🟪 cheatsheet-full-1.png](superpowers-tutorial/cheatsheet-full-1.png) | [🟪 cheatsheet-tiny-1.png](superpowers-tutorial/cheatsheet-tiny-1.png) |
-| ECC | [🟧 cheatsheet-full-1.png](ecc-tutorial/cheatsheet-full-1.png) | [🟧 cheatsheet-tiny-1.png](ecc-tutorial/cheatsheet-tiny-1.png) |
-| pwf | [🟩 cheatsheet-full-1.png](pwf-tutorial/cheatsheet-full-1.png) | [🟩 cheatsheet-tiny-1.png](pwf-tutorial/cheatsheet-tiny-1.png) |
-| GSD | [🟥 cheatsheet-full-1.png](gsd-tutorial/cheatsheet-full-1.png) | [🟥 cheatsheet-tiny-1.png](gsd-tutorial/cheatsheet-tiny-1.png) |
+| ECC | [🟧 cheatsheet-full-1.png](ecc-tutorial/ecc-full-1.png) | [🟧 cheatsheet-tiny-1.png](ecc-tutorial/ecc-tiny-1.png) |
+| pwf | [🟩 cheatsheet-full-1.png](pwf-tutorial/pwf-full-1.png) | [🟩 cheatsheet-tiny-1.png](pwf-tutorial/pwf-tiny-1.png) |
+| GSD | [🟥 cheatsheet-full-1.png](gsd-tutorial/gsd-full-1.png) | [🟥 cheatsheet-tiny-1.png](gsd-tutorial/gsd-tiny-1.png) |
 | **A2 第二梯队** | | |
 | CC 工作流第二梯队 | [🟢 cheatsheet-full-1.png](cc-workflows-extras/cheatsheet-full-1.png) | [🟢 cheatsheet-tiny-1.png](cc-workflows-extras/cheatsheet-tiny-1.png) |
 | **A3 全景** | | |
