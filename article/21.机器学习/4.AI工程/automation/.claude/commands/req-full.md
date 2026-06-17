@@ -11,8 +11,8 @@ description: 一句话启动 8 阶段 Spring Cloud 需求开发流程
 ## 参数解析
 
 ```
-/req-full [需求编号] [需求标题]
-/req-full REQ-2026-001 满100减20
+/req-full [需求编号] [需求标题] [需求描述]
+/req-full REQ-2026-001 满100减20  促销功能，包括满减优惠券和满减订单等等。。。
 ```
 
 或者用一句话描述:
@@ -21,67 +21,84 @@ description: 一句话启动 8 阶段 Spring Cloud 需求开发流程
 /req-full 我要加一个满100减20的促销功能
 ```
 
+如果参数中没有需求编号。则自定义一个编号，格式：`REQ-YYYY-NNN`
+- REQ:固定前缀
+- YYYY:年份，例如2026
+- NNN:序号，今年第几个需求，例如001
+
 ---
 
 ## 行为流程(8 阶段串接)
 
 ### 阶段 0:需求接入 ⏸️ **检查点 1**
 
-- 在 `PROJECT_PLAN.md` 创建 `[REQ-YYYY-NNN] 标题`
-- 创建目录 `.history/REQ-YYYY-NNN/`
-- **运行**:Superpowers `brainstorming`(问 8-12 个澄清问题)
-- 生成 `01-requirement.md`
+- 在 `PROJECT_PLAN.md` 创建一行数据： `[需求编号] 标题`
+- 创建目录 `.history/[需求编号]/`
+- **运行命令**: /superpowers:brainstorming (问 8-12 个澄清问题)
+- 参考模版：`.claude/spring-templates/01-requirement.md` 生成 `.history/[需求编号]/01-requirement.md`
 - ⏸️ **停下来等用户确认需求**
 
 ### 阶段 1:架构设计(自动)
 
-- 基于 `01-requirement.md`
-- **运行**:Superpowers `writing-plans` + 用户在 `CLAUDE.md` 里的技术栈约束
+- 基于 `01-requirement.md` 设计技术方案。
+- 注意:用户在 `CLAUDE.md` 里的技术栈约束
 - 输出:接口设计、库表 DDL、缓存设计、风险评估
-- 生成 `02-design.md`
+- 参考模版：`.claude/spring-templates/02-design.md` 生成 `.history/[需求编号]/02-design.md`
 - **不自动停下**(可通过 hook 配置)
 
 ### 阶段 2:任务分解(自动)
 
 - 基于 `02-design.md`
-- **运行**:Taskmaster parse + 依赖排序
-- 生成 `03-tasks.md`(每个任务 2-5 分钟)
+- **运行**: /superpowers:writing-plans 把设计拆成可执行的小任务(2-5 分钟一件)
+- 参考模版：`.claude/spring-templates/03-tasks.md` 生成 `.history/[需求编号]/03-tasks.md`
 
 ### 阶段 3:Git Worktree ⏸️ **检查点 2**
 
 - 创建 `../<service>-<short-desc>` worktree
 - 分支:`feature/REQ-2026-NNN-短描述`
-- 写 `04-worktree-info.md`
+- **运行**:/superpowers:using-git-worktrees
+- 参考模版：`.claude/spring-templates/04-worktree-info.md` 生成 `.history/[需求编号]/04-worktree-info.md`
 - ⏸️ **停下来等用户确认分支名**
 
 ### 阶段 4:编码实现(自动)
 
 - 按 `03-tasks.md` 逐项实现
-- **运行**:Superpowers `test-driven-development`(强制先写测试)
-- **运行**:Superpowers `subagent-driven-development`(子代理并行)
+- **运行**: /superpowers:test-driven-development (强制先写测试)
+  - **关键习惯**:
+  - ✅ 测试代码和生产代码同 PR(不分开)
+  - ✅ 关键场景必须有边界测试(刚好 / 多一点 / 少一点)
+  - ✅ 异常路径必须有测试(空指针 / 超时 / 找不到)
+  - ✅ Mock 不依赖 Spring 上下文(快)
+- **运行**: /superpowers:subagent-driven-development (子代理并行)
+- 用 planning-with-files 写任务进度
 - 每个任务单独 commit
-- 自动生成 `05-changes.md`(git log + diff 统计)
+- (git log + diff 统计)：参考模版：`.claude/spring-templates/05-changes.md` 生成 `.history/[需求编号]/05-changes.md`
 - **不自动停下**(全自动跑)
 
 ### 阶段 5:单元测试(自动)
 
 - 跑 `mvn test jacoco:report`
-- 检查覆盖率:Service ≥ 80% / 工具类 100%
-- 不达标 → 触发 `systematic-debugging` 补测试
-- 达标 → 生成 `06-test-report.md`
+- **覆盖率硬指标要求**:
+  - ✅ Controller 层:行覆盖 ≥ 60%(主要测路由 + 异常)
+  - ✅ Service 层:**行覆盖 ≥ 80%,分支 ≥ 70%**
+  - ✅ Mapper/Entity:不强制(框架自动生成)
+  - ✅ 工具类:100%(纯函数好测)
+- 不达标 → 触发 /superpowers:systematic-debugging 补测试
+- 达标 → 参考模版：`.claude/spring-templates/06-test-report.md` 生成 `.history/[需求编号]/06-test-report.md`
 - ⏸️ **如果覆盖率不达标,停下来提示用户**
 
 ### 阶段 6:Code Review ⏸️ **检查点 3**
 
-- **运行**:Superpowers `requesting-code-review`(4 维度:功能/质量/安全/性能)
-- 生成 `07-review.md`(P0/P1/P2 分级)
+- **运行**: /superpowers:requesting-code-review (4 维度:功能/质量/安全/性能)
+- 参考模版：`.claude/spring-templates/07-review.md` 生成 `.history/[需求编号]/07-review.md`
 - ⏸️ **停下来给用户看 review 结果**
 
 ### 阶段 7:收尾归档 ⏸️ **检查点 4**
 
 - 自动合并到主分支(需用户确认)
-- 部署命令(可选)
-- 生成 `08-summary.md`
+- 部署命令(需用户确认，可选方案)：`mvn  deploy -Pprod`
+- 写收尾文档: /superpowers:finishing-a-development-branch
+- 参考模版：`.claude/spring-templates/08-summary.md` 生成 `.history/[需求编号]/08-summary.md`
 - 更新 `PROJECT_PLAN.md`(移到"已完成")
 - 清理 worktree
 - ⏸️ **最后停下来报告完成**
