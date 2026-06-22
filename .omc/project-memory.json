@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1781572719306,
+  "lastScanned": 1782119212906,
   "projectRoot": "D:\\workspace\\luckSnow1989.github.io",
   "techStack": {
     "languages": [
@@ -73,7 +73,7 @@
       "path": "article",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1781572719271,
+      "lastAccessed": 1782119212826,
       "keyFiles": [
         "README.md"
       ]
@@ -82,7 +82,7 @@
       "path": "assets",
       "purpose": "Static assets",
       "fileCount": 6,
-      "lastAccessed": 1781572719272,
+      "lastAccessed": 1782119212861,
       "keyFiles": [
         "404.liquid",
         "data.liquid",
@@ -95,14 +95,14 @@
       "path": "vendor",
       "purpose": "Third-party code",
       "fileCount": 0,
-      "lastAccessed": 1781572719282,
+      "lastAccessed": 1782119212862,
       "keyFiles": []
     },
     "_includes": {
       "path": "_includes",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1781572719283,
+      "lastAccessed": 1782119212862,
       "keyFiles": [
         "list.liquid",
         "README.md"
@@ -112,7 +112,7 @@
       "path": "_layouts",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1781572719284,
+      "lastAccessed": 1782119212864,
       "keyFiles": [
         "default.liquid"
       ]
@@ -121,7 +121,7 @@
       "path": "_plugins",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1781572719284,
+      "lastAccessed": 1782119212864,
       "keyFiles": [
         "html_postprocess.rb"
       ]
@@ -130,7 +130,7 @@
       "path": "_sass",
       "purpose": null,
       "fileCount": 8,
-      "lastAccessed": 1781572719285,
+      "lastAccessed": 1782119212864,
       "keyFiles": [
         "scrollnavminumd.scss",
         "theme.scss",
@@ -143,7 +143,7 @@
       "path": "_site",
       "purpose": null,
       "fileCount": 13,
-      "lastAccessed": 1781572719285,
+      "lastAccessed": 1782119212865,
       "keyFiles": [
         "404.html",
         "404.md",
@@ -156,7 +156,7 @@
       "path": "vendor\\bin",
       "purpose": "Executable scripts",
       "fileCount": 26,
-      "lastAccessed": 1781572719286,
+      "lastAccessed": 1782119212867,
       "keyFiles": [
         "commonmarker",
         "commonmarker.cmd",
@@ -167,14 +167,14 @@
       "path": "_sass\\lib",
       "purpose": "Library code",
       "fileCount": 0,
-      "lastAccessed": 1781572719288,
+      "lastAccessed": 1782119212869,
       "keyFiles": []
     },
     "_site\\assets": {
       "path": "_site\\assets",
       "purpose": "Static assets",
       "fileCount": 0,
-      "lastAccessed": 1781572719288,
+      "lastAccessed": 1782119212869,
       "keyFiles": []
     }
   },
