@@ -867,3 +867,10 @@ scvg: inuse: 2, idle: 61, sys: 63, released: 59, consumed: 3 (MB)
    - sys: #：从系统映射的内存大小。
    - released: #：已经释放的系统内存大小。
    - consumed: #：已经从系统所申请分配的内存大小。
+
+## 10.web框架
+
+Web框架：Gin、Echo、Fiber、Kratos、GoFrame
+
+![](./img/golang/1123388627759800.png)
+
